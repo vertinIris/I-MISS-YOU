@@ -3422,6 +3422,43 @@ button {
     font-size: 0.85rem;
 }
 
+/* ============ v7.6: 评论删除按钮 ============ */
+.comment-delete-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 50, 50, 0.08);
+    color: rgba(255, 100, 100, 0.7);
+    font-size: 0.75rem;
+    line-height: 20px;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.25s ease;
+    padding: 0;
+    z-index: 2;
+}
+.comment-item {
+    position: relative;  /* 为删除按钮定位 */
+}
+.comment-item:hover .comment-delete-btn {
+    opacity: 1;
+}
+.comment-delete-btn:hover {
+    background: rgba(255, 50, 50, 0.25);
+    color: #fff;
+    border-color: rgba(255, 100, 100, 0.5);
+    transform: scale(1.15);
+    box-shadow: 0 0 8px rgba(255, 50, 50, 0.3);
+}
+.comment-delete-btn:active {
+    transform: scale(0.9);
+}
+
 /* ============ Phase 3: Submit Form ============ */
 .section-subtitle {
     text-align: center;

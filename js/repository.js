@@ -135,13 +135,15 @@
                 var cloudComments = cloudData.map(function(row) {
                     var d = new Date(row.created_at);
                     return {
-                        name:    row.author_name || '匿名信号源',
-                        color:   row.author_color || '#6B8AFF',
-                        text:    row.content || '',
-                        time:    d.getTime(),
-                        timeStr: (d.getMonth()+1) + '月' + d.getDate() + '日 ' +
-                                 String(d.getHours()).padStart(2,'0') + ':' +
-                                 String(d.getMinutes()).padStart(2,'0')
+                        id:       row.id,                          /* 数据库主键，用于删除定位 */
+                        authorId: row.author_id || '',             /* 匿名用户 UUID，用于自删权限 */
+                        name:     row.author_name || '匿名信号源',
+                        color:    row.author_color || '#6B8AFF',
+                        text:     row.content || '',
+                        time:     d.getTime(),
+                        timeStr:  (d.getMonth()+1) + '月' + d.getDate() + '日 ' +
+                                  String(d.getHours()).padStart(2,'0') + ':' +
+                                  String(d.getMinutes()).padStart(2,'0')
                     };
                 });
                 /* 合并去重：本地 + 云端，按 name+text+time 去重 */
@@ -216,8 +218,57 @@
     }
 
     /**
-     * 获取所有评论（归档用）
+     * 删除一条评论（云端 + 本地双删）
+     * @param {string} targetId — 评论所属目标
+     * @param {Object} comment — 完整评论对象，需含 id(云端) 或 name+text+time(本地)
+     * @param {Object} opts — { admin: bool }
+     * @returns {Promise<boolean>}
      */
+    function deleteComment(targetId, comment, opts) {
+        opts = opts || {};
+        var deleted = false;
+
+        /* 1. 本地删除 — 按 id 匹配优先，否则按 name+text+time */
+        localDeleteComment(targetId, comment);
+
+        /* 2. 云端删除 — 有数据库 id 才调 Supabase */
+        if (comment.id && provider === 'supabase' && cloudAvailable) {
+            return window.SupabaseAdapter.deleteComment(comment.id).then(function(success) {
+                if (success) {
+                    emit('commentDeleted', { targetId: targetId, comment: comment, admin: opts.admin });
+                }
+                return success;
+            }).catch(function(err) {
+                console.warn('[Repository] 云端删除失败:', err.message);
+                /* 本地已删，仍视为成功 */
+                emit('commentDeleted', { targetId: targetId, comment: comment, admin: opts.admin });
+                return true;
+            });
+        }
+
+        /* 纯本地模式 */
+        emit('commentDeleted', { targetId: targetId, comment: comment, admin: opts.admin });
+        return Promise.resolve(true);
+    }
+
+    function localDeleteComment(targetId, comment) {
+        try {
+            var key  = 'fxre_comments_' + targetId;
+            var data = safeGetItem(key);
+            if (!data) return;
+            var list = JSON.parse(data);
+            var before = list.length;
+            /* 按 id 匹配（云端同步过来的已有 id），否则按 name+text+time */
+            list = list.filter(function(c) {
+                if (comment.id && c.id === comment.id) return false;
+                if (!comment.id && c.name === comment.name && c.text === comment.text && c.time === comment.time) return false;
+                return true;
+            });
+            if (list.length < before) {
+                safeSetItem(key, JSON.stringify(list));
+            }
+        } catch(e) {}
+    }
     function getAllComments() {
         if (provider === 'supabase' && cloudAvailable) {
             return window.SupabaseAdapter.getAllComments().then(function(cloudData) {
@@ -486,6 +537,7 @@
         /* 评论 */
         getComments:    getComments,
         addComment:     addComment,
+        deleteComment:  deleteComment,
         getAllComments: getAllComments,
 
         /* 投稿 */

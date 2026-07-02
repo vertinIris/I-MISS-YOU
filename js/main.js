@@ -1003,6 +1003,48 @@
                 });
             }
         });
+
+        /* ===== 删除按钮事件委托 ===== */
+        var commentLists = document.querySelectorAll('.comment-list');
+        commentLists.forEach(function(list) {
+            list.addEventListener('click', function(e) {
+                var btn = e.target.closest('.comment-delete-btn');
+                if (!btn) return;
+                e.preventDefault();
+                e.stopPropagation();
+
+                /* 提取目标 ID（从父级 comment-area 的 id） */
+                var area = btn.closest('.comment-area');
+                if (!area) return;
+                var targetId = area.id.replace('comments-', '');
+
+                /* 提取评论数据 */
+                var commentData = {
+                    id:       btn.getAttribute('data-comment-id'),
+                    authorId: btn.getAttribute('data-comment-author'),
+                    name:     btn.getAttribute('data-comment-name'),
+                    text:     btn.getAttribute('data-comment-text'),
+                    time:     btn.getAttribute('data-comment-time')
+                };
+
+                handleDeleteComment(targetId, commentData, btn);
+            });
+        });
+
+        /* ===== 实时订阅：云端删除时同步 UI ===== */
+        if (typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.isAuthenticated()) {
+            var allTargets = document.querySelectorAll('.comment-area');
+            allTargets.forEach(function(area) {
+                var targetId = area.id.replace('comments-', '');
+                SupabaseAdapter.subscribeComments(targetId,
+                    null,  /* onInsert — 已有渲染逻辑 */
+                    function(deletedRow) {
+                        console.log('[Realtime] 收到删除事件:', targetId, deletedRow.id);
+                        renderComments(targetId);
+                    }
+                );
+            });
+        }
     }
 
     function buildCommentAreaHTML(targetId) {
@@ -1067,7 +1109,7 @@
         ]
     };
 
-    var SEED_VERSION = 'v7.4';
+    var SEED_VERSION = 'v7.6';
 
     /* ===== Seed Submissions (Community pre-population) ===== */
     var SEED_SUBMISSIONS = [
@@ -1138,9 +1180,15 @@
             list.innerHTML = '<div class="comment-empty">还没有评论，来第一个留言吧 ~</div>';
             return;
         }
+        var canDeleteAny = (typeof AdminAuth !== 'undefined') && AdminAuth.isAdmin();
         list.innerHTML = comments.map(function(c) {
             var initial = c.name.charAt(0).toUpperCase();
             var bgColor = c.color || 'var(--color-pink)';
+            /* 仅当管理员或当前匿名用户是该评论作者时显示删除按钮 */
+            var showDelete = canDeleteAny || (typeof AdminAuth !== 'undefined' && AdminAuth.canDelete(c));
+            var deleteBtn = showDelete
+                ? '<button class="comment-delete-btn" title="删除此评论" data-comment-id="' + (c.id || '') + '" data-comment-name="' + escapeHTML(c.name) + '" data-comment-text="' + escapeHTML(c.text) + '" data-comment-time="' + (c.time || 0) + '" data-comment-author="' + (c.authorId || '') + '">×</button>'
+                : '';
             return '<div class="comment-item">' +
                 '<div class="comment-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
                 '<div class="comment-body">' +
@@ -1150,6 +1198,7 @@
                 '</div>' +
                 '<div class="comment-text">' + escapeHTML(c.text) + '</div>' +
                 '</div>' +
+                deleteBtn +
                 '</div>';
         }).join('');
     }
@@ -1157,9 +1206,28 @@
     function handleCommentSubmit(targetId, form) {
         var nameInput = form.querySelector('.comment-form-name');
         var textInput = form.querySelectorAll('.comment-form-input')[1];
-        var name = nameInput.value.trim();
-        var text = textInput.value.trim();
-        if (!name || !text) return;
+        var rawName = nameInput.value.trim();
+        var rawText = textInput.value.trim();
+
+        /* --- 输入校验 --- */
+        if (!rawName || !rawText) return;
+        if (rawName.length > 20) { showSubmitToast('昵称限20字以内'); return; }
+        if (rawText.length > 500) { showSubmitToast('评论限500字以内'); return; }
+        if (rawText.length < 2) { showSubmitToast('评论至少2个字～'); return; }
+
+        /* --- 速率限制 --- */
+        if (typeof RateLimiter !== 'undefined') {
+            var rl = RateLimiter.checkComment(targetId);
+            if (!rl.allowed) {
+                showSubmitToast(rl.reason, 4000);
+                return;
+            }
+            RateLimiter.recordComment(targetId);
+        }
+
+        /* 安全转义 */
+        var name = escapeHTML(rawName);
+        var text = escapeHTML(rawText);
 
         var now = new Date();
         var nameHash = 0;
@@ -1182,7 +1250,7 @@
             comments = Array.isArray(comments) ? comments : [];
             comments.push(newComment);
             saveComments(targetId, comments);
-            /* 乐观渲染：直接展示本地合并后的列表，不再立即从云端拉取 */
+            /* 乐观渲染：直接展示本地合并后的列表 */
             if (list) _renderCommentsList(list, comments);
         }
 
@@ -1206,10 +1274,80 @@
         textInput.value = '';
     }
 
+    /**
+     * 删除一条评论
+     * - 非管理员只能删自己的评论（匹配 authorId）
+     * - 管理员可删任意评论
+     * - 双写删除（本地 + 云端）
+     */
+    function handleDeleteComment(targetId, commentData, btn) {
+        if (!commentData) return;
+
+        var isAdmin = (typeof AdminAuth !== 'undefined') && AdminAuth.isAdmin();
+
+        /* 确认对话框 */
+        var confirmMsg = isAdmin
+            ? '确定要删除此评论吗？（管理员操作）'
+            : '确定要删除你的这条评论吗？';
+        if (!confirm(confirmMsg)) return;
+
+        /* 构造评论对象 */
+        var comment = {
+            id:       commentData.id       ? parseInt(commentData.id, 10) : null,
+            authorId: commentData.authorId || '',
+            name:     commentData.name     || '',
+            text:     commentData.text     || '',
+            time:     commentData.time     ? parseInt(commentData.time, 10) : 0
+        };
+
+        if (typeof DataRepository !== 'undefined') {
+            DataRepository.deleteComment(targetId, comment, { admin: isAdmin }).then(function(success) {
+                if (success) {
+                    /* UI 移除（按钮所在 item 淡出） */
+                    var item = btn ? btn.closest('.comment-item') : null;
+                    if (item) {
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateX(20px)';
+                        item.style.transition = 'all 0.3s ease';
+                        setTimeout(function() {
+                            item.remove();
+                            /* 如果列表为空，显示空状态 */
+                            var list = document.getElementById('comment-list-' + targetId);
+                            if (list && list.querySelectorAll('.comment-item').length === 0) {
+                                list.innerHTML = '<div class="comment-empty">还没有评论，来第一个留言吧 ~</div>';
+                            }
+                        }, 300);
+                    } else {
+                        /* 回退：整表刷新 */
+                        renderComments(targetId);
+                    }
+                }
+            });
+        } else {
+            /* 降级：仅本地删除 + 刷新 */
+            var key = 'fxre_comments_' + targetId;
+            try {
+                var data = localStorage.getItem(key);
+                if (data) {
+                    var list = JSON.parse(data);
+                    list = list.filter(function(c) {
+                        return !(c.name === comment.name && c.text === comment.text && c.time === comment.time);
+                    });
+                    localStorage.setItem(key, JSON.stringify(list));
+                }
+            } catch(e) {}
+            renderComments(targetId);
+        }
+    }
+
     function escapeHTML(str) {
-        var div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
+        if (typeof str !== 'string') return '';
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
 
     /* ===== Phase 3: Submission System ===== */
@@ -1227,11 +1365,32 @@
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            var name = document.getElementById('submit-nickname').value.trim();
-            var type = document.getElementById('submit-type').value;
-            var title = document.getElementById('submit-title').value.trim();
-            var content = document.getElementById('submit-content').value.trim();
-            if (!name || !title || !content) return;
+            var rawName    = document.getElementById('submit-nickname').value.trim();
+            var type       = document.getElementById('submit-type').value;
+            var rawTitle   = document.getElementById('submit-title').value.trim();
+            var rawContent = document.getElementById('submit-content').value.trim();
+
+            /* --- 输入校验 --- */
+            if (!rawName || !rawTitle || !rawContent) return;
+            if (rawName.length > 20)    { showSubmitToast('昵称限20字以内'); return; }
+            if (rawTitle.length > 100)  { showSubmitToast('标题限100字以内'); return; }
+            if (rawContent.length > 2000) { showSubmitToast('内容限2000字以内'); return; }
+            if (rawContent.length < 10)   { showSubmitToast('内容至少10个字～'); return; }
+
+            /* --- 速率限制 --- */
+            if (typeof RateLimiter !== 'undefined') {
+                var rl = RateLimiter.checkSubmission();
+                if (!rl.allowed) {
+                    showSubmitToast(rl.reason, 4000);
+                    return;
+                }
+                RateLimiter.recordSubmission();
+            }
+
+            /* 安全转义 */
+            var name    = escapeHTML(rawName);
+            var title   = escapeHTML(rawTitle);
+            var content = escapeHTML(rawContent);
 
             var now = new Date();
             var newSub = {
@@ -1449,9 +1608,27 @@
                     e.preventDefault();
                     var nameInput = commentForm.querySelector('.comment-form-name');
                     var textInput = commentForm.querySelectorAll('.comment-form-input')[1];
-                    var name = nameInput.value.trim();
-                    var text = textInput.value.trim();
-                    if (!name || !text) return;
+                    var rawName = nameInput.value.trim();
+                    var rawText = textInput.value.trim();
+
+                    /* --- 输入校验 --- */
+                    if (!rawName || !rawText) return;
+                    if (rawName.length > 20) { showSubmitToast('昵称限20字以内'); return; }
+                    if (rawText.length > 500) { showSubmitToast('评论限500字以内'); return; }
+                    if (rawText.length < 2) { showSubmitToast('评论至少2个字～'); return; }
+
+                    /* --- 速率限制 --- */
+                    if (typeof RateLimiter !== 'undefined') {
+                        var rl = RateLimiter.checkComment('community_' + id);
+                        if (!rl.allowed) {
+                            showSubmitToast(rl.reason, 4000);
+                            return;
+                        }
+                        RateLimiter.recordComment('community_' + id);
+                    }
+
+                    var name = escapeHTML(rawName);
+                    var text = escapeHTML(rawText);
 
                     var commentsResult = getComments('community_' + id);
                     var list = document.getElementById('cc-list-' + id);
@@ -1563,6 +1740,11 @@
             if (status.pending > 0) html += ' \xb7 \u5f85\u540c\u6b65: ' + status.pending;
         }
 
+        /* 管理员标识 */
+        if (typeof AdminAuth !== 'undefined' && AdminAuth.isAdmin()) {
+            html = '\ud83d\udee1 ' + html + ' \xb7 \u7ba1\u7406\u5458';
+        }
+
         el.innerHTML = html;
         el.className = cls;
         el.dataset.diagnostic = JSON.stringify({
@@ -1603,6 +1785,40 @@
                     showSubmitToast('\u8bca\u65ad\u4fe1\u606f\u5df2\u590d\u5236 \u2713');
                 }
             } catch(e) {}
+        });
+
+        /* 双击页脚 → 管理员登录 */
+        el.addEventListener('dblclick', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof AdminAuth === 'undefined') {
+                alert('管理员模块未加载');
+                return;
+            }
+            if (AdminAuth.isAdmin()) {
+                if (confirm('当前已是管理员模式，要退出吗？')) {
+                    AdminAuth.logout();
+                    updateSyncStatus();
+                    showSubmitToast('已退出管理员模式');
+                    /* 刷新评论区以隐藏删除按钮 */
+                    document.querySelectorAll('.comment-area').forEach(function(area) {
+                        var id = area.id.replace('comments-', '');
+                        renderComments(id);
+                    });
+                }
+            } else {
+                AdminAuth.login(function(success) {
+                    if (success) {
+                        updateSyncStatus();
+                        showSubmitToast('\u2705 \u7ba1\u7406\u5458\u6a21\u5f0f\u5df2\u5f00\u542f\uff0c\u53ef\u5220\u9664\u4efb\u610f\u8bc4\u8bba');
+                        /* 刷新评论区以显示删除按钮 */
+                        document.querySelectorAll('.comment-area').forEach(function(area) {
+                            var id = area.id.replace('comments-', '');
+                            renderComments(id);
+                        });
+                    }
+                });
+            }
         });
         updateSyncStatus();
         setInterval(updateSyncStatus, 5000);
