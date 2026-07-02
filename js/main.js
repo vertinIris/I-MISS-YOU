@@ -1820,8 +1820,67 @@
                 });
             }
         });
+
+        /* 主动同步按钮 */
+        var syncBtn = document.getElementById('sync-now-btn');
+        if (syncBtn) {
+            syncBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                handleManualSync(syncBtn);
+            });
+        }
+
         updateSyncStatus();
         setInterval(updateSyncStatus, 5000);
+    }
+
+    function handleManualSync(btn) {
+        if (typeof SupabaseAdapter === 'undefined') {
+            showSubmitToast('\u2601 \u4e91\u7aef\u6a21\u5757\u672a\u52a0\u8f7d\uff0c\u65e0\u6cd5\u540c\u6b65');
+            return;
+        }
+
+        var status = SupabaseAdapter.getStatus();
+        if (!status.configValid) {
+            showSubmitToast('\u2601 Supabase \u672a\u914d\u7f6e\uff0c\u65e0\u6cd5\u540c\u6b65');
+            return;
+        }
+        if (!status.ready || !status.user) {
+            showSubmitToast('\u26a0 \u4e91\u7aef\u672a\u5c31\u7eea\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5');
+            return;
+        }
+
+        if (btn) {
+            btn.classList.add('syncing');
+            btn.disabled = true;
+        }
+
+        showSubmitToast('\ud83d\udd04 \u6b63\u5728\u540c\u6b65\u5f85\u53d1\u9001\u6570\u636e\u2026');
+
+        SupabaseAdapter.syncPendingQueue().then(function() {
+            updateSyncStatus();
+            var s = SupabaseAdapter.getStatus();
+            if (s.pending === 0) {
+                showSubmitToast('\u2705 \u540c\u6b65\u5b8c\u6210\uff0c\u6240\u6709\u6570\u636e\u5df2\u4e0a\u4f20\u4e91\u7aef');
+                /* 刷新评论和社区以展示云端数据 */
+                document.querySelectorAll('.comment-area').forEach(function(area) {
+                    var id = area.id.replace('comments-', '');
+                    renderComments(id);
+                });
+                if (typeof initCommunity === 'function') initCommunity();
+            } else {
+                showSubmitToast('\u26a0 \u540c\u6b65\u7ed3\u675f\uff0c\u4ecd\u6709 ' + s.pending + ' \u6761\u672a\u80fd\u53d1\u9001\uff08\u53ef\u80fd\u89e6\u53d1\u4e86\u901f\u7387\u9650\u5236\uff09');
+            }
+        }).catch(function(err) {
+            console.warn('[Sync] 手动同步失败:', err);
+            showSubmitToast('\u274c \u540c\u6b65\u5931\u8d25\uff1a' + (err.message || '\u672a\u77e5\u9519\u8bef'));
+        }).finally(function() {
+            if (btn) {
+                btn.classList.remove('syncing');
+                btn.disabled = false;
+            }
+        });
     }
 
     function init() {

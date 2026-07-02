@@ -31,7 +31,31 @@
     var AUTH_TIMEOUT = 12000;  /* 认证超时 12 秒 */
 
     /* 本地待同步队列（离线上传） */
-    var pendingSync = [];
+    var PENDING_KEY = 'fxre_pending_sync';
+
+    function savePendingQueue() {
+        try { localStorage.setItem(PENDING_KEY, JSON.stringify(pendingSync)); } catch(e){}
+    }
+
+    function loadPendingQueue() {
+        try {
+            var raw = localStorage.getItem(PENDING_KEY);
+            if (raw) return JSON.parse(raw);
+        } catch(e){}
+        return [];
+    }
+
+    function clearPendingQueue() {
+        pendingSync = [];
+        try { localStorage.removeItem(PENDING_KEY); } catch(e){}
+    }
+
+    function queuePending(item) {
+        pendingSync.push(item);
+        savePendingQueue();
+    }
+
+    var pendingSync = loadPendingQueue();
 
     /* ================================================================
      * 初始化
@@ -221,7 +245,7 @@
      */
     function addComment(targetId, comment) {
         if (!isReady) {
-            pendingSync.push({
+            queuePending({
                 action: 'addComment',
                 targetId: targetId,
                 comment: comment,
@@ -245,7 +269,7 @@
                 .then(function(result) {
                     if (result.error) {
                         console.warn('[SupabaseAdapter] addComment 失败:', result.error.message);
-                        pendingSync.push({
+                        queuePending({
                             action: 'addComment',
                             targetId: targetId,
                             comment: comment,
@@ -261,7 +285,7 @@
         if (!currentUser) {
             return ensureAuth().then(function(user) {
                 if (!user) {
-                    pendingSync.push({
+                    queuePending({
                         action: 'addComment',
                         targetId: targetId,
                         comment: comment,
@@ -373,7 +397,7 @@
      */
     function addSubmission(submission) {
         if (!isReady) {
-            pendingSync.push({
+            queuePending({
                 action: 'addSubmission',
                 submission: submission,
                 timestamp: new Date().toISOString()
@@ -397,7 +421,7 @@
                 .then(function(result) {
                     if (result.error) {
                         console.warn('[SupabaseAdapter] addSubmission 失败:', result.error.message);
-                        pendingSync.push({
+                        queuePending({
                             action: 'addSubmission',
                             submission: submission,
                             timestamp: new Date().toISOString()
@@ -421,7 +445,7 @@
         if (!currentUser) {
             return ensureAuth().then(function(user) {
                 if (!user) {
-                    pendingSync.push({
+                    queuePending({
                         action: 'addSubmission',
                         submission: submission,
                         timestamp: new Date().toISOString()
@@ -540,7 +564,7 @@
         });
 
         return Promise.all(promises).then(function() {
-            pendingSync = [];
+            clearPendingQueue();
             console.log('[SupabaseAdapter] 离线同步完成');
         });
     }

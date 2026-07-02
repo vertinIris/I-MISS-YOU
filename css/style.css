@@ -3039,6 +3039,47 @@ button {
     box-shadow: 0 0 8px #ef4444;
 }
 
+.sync-now-btn {
+    background: rgba(107, 138, 255, 0.12);
+    border: 1px solid rgba(107, 138, 255, 0.35);
+    border-radius: 50%;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.78rem;
+    width: 1.9rem;
+    height: 1.9rem;
+    padding: 0;
+    margin-left: 0.35rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.sync-now-btn:hover {
+    background: rgba(107, 138, 255, 0.25);
+    border-color: rgba(107, 138, 255, 0.6);
+    transform: scale(1.12);
+    box-shadow: 0 0 12px rgba(107, 138, 255, 0.3);
+}
+
+.sync-now-btn:active {
+    transform: scale(0.95);
+}
+
+.sync-now-btn.syncing {
+    animation: syncSpin 1s linear infinite;
+    pointer-events: none;
+    opacity: 0.75;
+}
+
+@keyframes syncSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 /* ============ Scroll Reveal ============ */
 .reveal {
     opacity: 0;
