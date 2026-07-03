@@ -1305,6 +1305,10 @@
         if (typeof DataRepository !== 'undefined') {
             DataRepository.addComment(targetId, { author: name, color: autoColor, text: text })
                 .then(function(cloudRow) {
+                    if (cloudRow && cloudRow._error) {
+                        showSubmitToast('评论已显示，但云端同步失败：' + cloudRow._error, 6000);
+                        return;
+                    }
                     if (cloudRow && cloudRow.id) {
                         var stored = getComments(targetId);
                         function patchList(comments) {
@@ -1327,6 +1331,7 @@
                             renderComments(targetId);
                         }
                     } else {
+                        showSubmitToast('评论已本地保存，等待云端同步…', 3000);
                         renderComments(targetId);
                     }
                 })

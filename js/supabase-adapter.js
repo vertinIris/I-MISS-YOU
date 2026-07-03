@@ -294,14 +294,16 @@
                 .single()
                 .then(function(result) {
                     if (result.error) {
-                        console.warn('[SupabaseAdapter] addComment 失败:', result.error.message);
+                        var errMsg = result.error.message || '未知错误';
+                        console.warn('[SupabaseAdapter] addComment 失败:', errMsg);
+                        result._errorMsg = errMsg;
                         queuePending({
                             action: 'addComment',
                             targetId: targetId,
                             comment: comment,
                             timestamp: new Date().toISOString()
                         });
-                        return null;
+                        return { _error: errMsg };
                     }
                     return result.data;
                 });

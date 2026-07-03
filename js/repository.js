@@ -296,6 +296,7 @@
         if (isCloudEnabled()) {
             return window.SupabaseAdapter.addComment(targetId, comment)
                 .then(function(row) {
+                    if (row && row._error) return row;
                     if (row && row.id) {
                         console.log('[Repository] 云端同步成功:', targetId, 'id=' + row.id);
                         return mapCloudComment(row);
