@@ -1,0 +1,43 @@
+{
+  "name": "flying-edelweiss",
+  "version": "7.8.0",
+  "description": "飞行雪绒 — 鸣潮角色爱弥斯的同人社交账号体验网站",
+  "type": "module",
+  "scripts": {
+    "serve": "python -m http.server 8848",
+    "serve:node": "npx serve .",
+    "deploy": "echo 'Push to GitHub → Settings → Pages → main branch'",
+    "syntax-check": "for f in js/*.js; do node -c \"$f\" && echo \"OK: $f\" || echo \"FAIL: $f\"; done",
+    "db:migrate-001": "echo 'Run db/migration-001-init.sql in Supabase SQL Editor'",
+    "db:migrate-002": "echo 'Run db/migration-002-rls-hardening.sql in Supabase SQL Editor'",
+    "db:migrate-003": "echo 'Run db/migration-003-fixes.sql in Supabase SQL Editor'",
+    "serve:win": "powershell -ExecutionPolicy Bypass -File ./run.ps1"
+  },
+  "keywords": [
+    "wuthering-waves",
+    "aemeath",
+    "fan-project",
+    "static-site",
+    "supabase",
+    "web-audio-api",
+    "three-js"
+  ],
+  "author": "VertinIris",
+  "license": "UNLICENSED",
+  "homepage": "https://vertiniris.github.io/I-MISS-YOU/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vertiniris/I-MISS-YOU.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "Chrome >= 90",
+    "Firefox >= 88",
+    "Safari >= 14",
+    "Edge >= 90"
+  ],
+  "dependencies": {},
+  "devDependencies": {}
+}
