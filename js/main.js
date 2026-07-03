@@ -1033,9 +1033,11 @@
 
     }
 
-    /** 云端就绪后订阅 Realtime（评论 INSERT/DELETE + 新投稿） */
+    /** 云端就绪后订阅 Realtime，并全量拉取云端评论 */
     function setupCloudRealtime() {
         if (typeof SupabaseAdapter === 'undefined' || !SupabaseAdapter.isAuthenticated()) return;
+
+        refreshAllCommentsFromCloud();
 
         document.querySelectorAll('.comment-area').forEach(function(area) {
             var targetId = area.id.replace('comments-', '');
@@ -1050,7 +1052,37 @@
             renderCommunity();
         });
 
+        /* Realtime 偶发失效时的兜底轮询 */
+        if (!window.__fxreCommentPoll) {
+            window.__fxreCommentPoll = setInterval(function() {
+                if (typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.isAuthenticated()) {
+                    refreshAllCommentsFromCloud();
+                }
+            }, 30000);
+        }
+
         console.log('[Phase3] Realtime 订阅已启用');
+    }
+
+    /** 从云端拉取全部评论区并写回 localStorage + 刷新 UI */
+    function refreshAllCommentsFromCloud() {
+        if (typeof DataRepository === 'undefined') return Promise.resolve();
+
+        var areas = document.querySelectorAll('.comment-area');
+        var tasks = [];
+        areas.forEach(function(area) {
+            var targetId = area.id.replace('comments-', '');
+            tasks.push(
+                DataRepository.pullCommentsAndPersist(targetId).then(function(comments) {
+                    var list = document.getElementById('comment-list-' + targetId);
+                    if (list) _renderCommentsList(list, comments || []);
+                })
+            );
+        });
+
+        return Promise.all(tasks).then(function() {
+            renderCommunity();
+        });
     }
 
     function buildCommentAreaHTML(targetId) {
@@ -1174,6 +1206,8 @@
         var result = getComments(targetId);
         if (result && typeof result.then === 'function') {
             result.then(function(comments) {
+                comments = comments || [];
+                saveComments(targetId, comments);
                 _renderCommentsList(list, comments);
             });
         } else {
@@ -1267,11 +1301,34 @@
             _doSubmit(result || []);
         }
 
-        /* Phase 3: 同步写云端；完成后重新拉取并渲染，确保跨设备一致 */
+        /* Phase 3: 同步写云端；完成后合并并刷新，确保跨设备一致 */
         if (typeof DataRepository !== 'undefined') {
             DataRepository.addComment(targetId, { author: name, color: autoColor, text: text })
-                .then(function() {
-                    renderComments(targetId);
+                .then(function(cloudRow) {
+                    if (cloudRow && cloudRow.id) {
+                        var stored = getComments(targetId);
+                        function patchList(comments) {
+                            comments = Array.isArray(comments) ? comments : [];
+                            for (var i = comments.length - 1; i >= 0; i--) {
+                                if (comments[i].time === newComment.time &&
+                                    comments[i].text === newComment.text &&
+                                    comments[i].name === newComment.name) {
+                                    comments[i].id = cloudRow.id;
+                                    comments[i].authorId = cloudRow.authorId || '';
+                                    break;
+                                }
+                            }
+                            saveComments(targetId, comments);
+                        }
+                        if (stored && typeof stored.then === 'function') {
+                            stored.then(patchList).then(function() { renderComments(targetId); });
+                        } else {
+                            patchList(stored || []);
+                            renderComments(targetId);
+                        }
+                    } else {
+                        renderComments(targetId);
+                    }
                 })
                 .catch(function(err) {
                     console.warn('[Main] 云端同步失败:', err);
@@ -1940,11 +1997,22 @@
                     setupCloudRealtime();
                 } else if (status.ready) {
                     console.warn('[Phase3] SDK 就绪但用户未认证，匿名登录可能未启用');
+                    /* 只读仍可用：拉取他人评论 */
+                    refreshAllCommentsFromCloud();
                 } else {
                     console.warn('[Phase3] 云端同步未就绪:', status.error);
                 }
             });
         }
+
+        /* 切回标签页时刷新评论 */
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible' &&
+                typeof SupabaseAdapter !== 'undefined' &&
+                SupabaseAdapter.getStatus().ready) {
+                refreshAllCommentsFromCloud();
+            }
+        });
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

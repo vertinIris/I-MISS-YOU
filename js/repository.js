@@ -87,7 +87,12 @@
                     /* 默认启用云端作为 provider */
                     switchProvider('supabase');
                     /* 首次云端连接时，同步本地种子数据到云端 */
-                    seedCloudIfEmpty().then(function() { resolve(); });
+                    seedCloudIfEmpty()
+                        .then(function() { return syncLocalOnlyComments(); })
+                        .then(function() {
+                            emit('cloudReady', { provider: provider });
+                            resolve();
+                        });
                 } else {
                     resolve();
                 }
@@ -121,65 +126,154 @@
      * 评论
      * ================================================================ */
 
+    function isCloudReady() {
+        return !!(window.SupabaseAdapter &&
+                  window.SupabaseAdapter.getStatus &&
+                  window.SupabaseAdapter.getStatus().ready);
+    }
+
+    function isCloudEnabled() {
+        return !!(window.SupabaseAdapter &&
+                  window.SupabaseAdapter.config &&
+                  window.SupabaseAdapter.config.enabled);
+    }
+
+    /**
+     * 将云端行映射为前端评论对象
+     */
+    function mapCloudComment(row) {
+        var d = new Date(row.created_at);
+        return {
+            id:       row.id,
+            authorId: row.author_id || '',
+            name:     row.author_name || '匿名信号源',
+            color:    row.author_color || '#6B8AFF',
+            text:     row.content || '',
+            time:     d.getTime(),
+            timeStr:  (d.getMonth() + 1) + '月' + d.getDate() + '日 ' +
+                      String(d.getHours()).padStart(2, '0') + ':' +
+                      String(d.getMinutes()).padStart(2, '0')
+        };
+    }
+
     /**
      * 获取指定目标的评论列表
      * @param {string} targetId
-     * @returns {Promise<Array>}
+     * @returns {Promise<Array>|Array}
      */
     function getComments(targetId) {
         var localData = localGetComments(targetId);
 
-        /* 优先云端，但与本地合并 */
-        if (provider === 'supabase' && cloudAvailable) {
+        /* SDK 就绪即拉云端（不依赖 cloudAvailable，避免初始化竞态） */
+        if (isCloudReady()) {
             return window.SupabaseAdapter.getComments(targetId).then(function(cloudData) {
-                var cloudComments = cloudData.map(function(row) {
-                    var d = new Date(row.created_at);
-                    return {
-                        id:       row.id,                          /* 数据库主键，用于删除定位 */
-                        authorId: row.author_id || '',             /* 匿名用户 UUID，用于自删权限 */
-                        name:     row.author_name || '匿名信号源',
-                        color:    row.author_color || '#6B8AFF',
-                        text:     row.content || '',
-                        time:     d.getTime(),
-                        timeStr:  (d.getMonth()+1) + '月' + d.getDate() + '日 ' +
-                                  String(d.getHours()).padStart(2,'0') + ':' +
-                                  String(d.getMinutes()).padStart(2,'0')
-                    };
-                });
-                /* 合并去重：本地 + 云端，按 name+text+time 去重 */
+                var cloudComments = (cloudData || []).map(mapCloudComment);
                 return mergeComments(localData, cloudComments);
             }).catch(function(err) {
                 console.warn('[Repository] 获取云端评论失败，回退本地:', err.message);
                 return localData;
             });
         }
-        /* 回退本地 — 同步返回，不包 Promise（调用方兼容同步代码） */
         return localData;
     }
 
     /**
-     * 合并评论列表并去重
-     * 本地数据可能包含未同步的新评论，云端数据包含其他设备评论
+     * 合并评论列表并去重（云端条目优先保留 id/authorId）
      */
     function mergeComments(localComments, cloudComments) {
         localComments = Array.isArray(localComments) ? localComments : [];
         cloudComments = Array.isArray(cloudComments) ? cloudComments : [];
-        var seen = {};
-        var merged = [];
+        var byKey = {};
 
-        function add(c) {
-            if (!c || !c.text) return;
-            var key = (c.name || '') + '::' + c.text + '::' + (c.time || 0);
-            if (seen[key]) return;
-            seen[key] = true;
-            merged.push(c);
+        function commentKey(c) {
+            if (c.id) return 'id:' + c.id;
+            return (c.name || '') + '::' + c.text + '::' + (c.time || 0);
         }
 
-        localComments.forEach(add);
-        cloudComments.forEach(add);
-        /* 按时间升序排列 */
+        function upsert(c) {
+            if (!c || !c.text) return;
+            var key = commentKey(c);
+            var existing = byKey[key];
+            if (!existing) {
+                byKey[key] = c;
+                return;
+            }
+            /* 同内容时优先保留带云端 id 的版本 */
+            if (c.id && !existing.id) {
+                byKey[key] = Object.assign({}, existing, c);
+            } else if (c.id && existing.id && c.authorId && !existing.authorId) {
+                byKey[key] = Object.assign({}, existing, c);
+            }
+        }
+
+        localComments.forEach(upsert);
+        cloudComments.forEach(upsert);
+
+        var merged = Object.keys(byKey).map(function(k) { return byKey[k]; });
         merged.sort(function(a, b) { return (a.time || 0) - (b.time || 0); });
         return merged;
+    }
+
+    /**
+     * 拉取云端评论并写回 localStorage（跨设备可见的关键步骤）
+     */
+    function pullCommentsAndPersist(targetId) {
+        return Promise.resolve(getComments(targetId)).then(function(comments) {
+            comments = Array.isArray(comments) ? comments : [];
+            safeSetItem('fxre_comments_' + targetId, JSON.stringify(comments));
+            return comments;
+        });
+    }
+
+    /**
+     * 将仅存在本地的用户评论补传到云端（有 time 无 id 的条目）
+     */
+    function syncLocalOnlyComments() {
+        if (!isCloudReady()) return Promise.resolve();
+
+        var keyTasks = [];
+
+        try {
+            for (var i = 0; i < localStorage.length; i++) {
+                var key = localStorage.key(i);
+                if (!key || key.indexOf('fxre_comments_') !== 0) continue;
+                var targetId = key.replace('fxre_comments_', '');
+                if (targetId === 'seed_version') continue;
+
+                var list;
+                try { list = JSON.parse(safeGetItem(key) || '[]'); } catch(e) { continue; }
+                if (!Array.isArray(list)) continue;
+
+                var uploadTasks = [];
+                list.forEach(function(c, idx) {
+                    if (c.id || !c.text || !c.time) return;
+                    uploadTasks.push(
+                        window.SupabaseAdapter.addComment(targetId, {
+                            author: c.name || c.author || '匿名信号源',
+                            color:  c.color || '#6B8AFF',
+                            text:   c.text
+                        }).then(function(row) {
+                            if (row && row.id) {
+                                list[idx].id = row.id;
+                                list[idx].authorId = row.author_id || '';
+                            }
+                        })
+                    );
+                });
+
+                if (uploadTasks.length) {
+                    keyTasks.push(
+                        Promise.all(uploadTasks).then(function() {
+                            safeSetItem(key, JSON.stringify(list));
+                        })
+                    );
+                }
+            }
+        } catch(e) {}
+
+        return Promise.all(keyTasks).then(function() {
+            if (keyTasks.length) console.log('[Repository] 本地未同步评论补传完成');
+        });
     }
 
     function localGetComments(targetId) {
@@ -196,16 +290,17 @@
      * @returns {Promise<Object|null>}
      */
     function addComment(targetId, comment) {
-        /* 本地写入由 main.js handleCommentSubmit 的 saveComments 完成，
-           此处只负责云端同步，避免字段名不一致导致数据被覆盖
-           (main.js 用 {name,time,timeStr}，repository 用 {author,time}) */
         emit('commentAdded', { targetId: targetId, comment: comment });
 
-        /* 异步写云端（失败不影响本地） */
-        if (provider === 'supabase' && cloudAvailable) {
+        /* 只要 Supabase 已启用就尝试写入（适配器内部会排队 pending） */
+        if (isCloudEnabled()) {
             return window.SupabaseAdapter.addComment(targetId, comment)
-                .then(function() {
-                    console.log('[Repository] 云端同步成功:', targetId);
+                .then(function(row) {
+                    if (row && row.id) {
+                        console.log('[Repository] 云端同步成功:', targetId, 'id=' + row.id);
+                        return mapCloudComment(row);
+                    }
+                    console.log('[Repository] 云端同步已排队或跳过:', targetId);
                     return comment;
                 })
                 .catch(function(err) {
@@ -229,7 +324,7 @@
         localDeleteComment(targetId, comment);
 
         /* 管理员删他人评论：RLS 不允许，仅本地移除 */
-        if (opts.admin && comment.id && provider === 'supabase' && cloudAvailable) {
+        if (opts.admin && comment.id && isCloudReady()) {
             var currentUser = window.SupabaseAdapter.getCurrentUser();
             if (currentUser && comment.authorId && comment.authorId !== currentUser.id) {
                 emit('commentDeleted', { targetId: targetId, comment: comment, admin: true, cloud: false });
@@ -237,7 +332,7 @@
             }
         }
 
-        if (comment.id && provider === 'supabase' && cloudAvailable) {
+        if (comment.id && isCloudReady()) {
             return window.SupabaseAdapter.deleteComment(comment.id).then(function(success) {
                 if (success) {
                     emit('commentDeleted', { targetId: targetId, comment: comment, admin: opts.admin });
@@ -273,7 +368,7 @@
         } catch(e) {}
     }
     function getAllComments() {
-        if (provider === 'supabase' && cloudAvailable) {
+        if (isCloudReady()) {
             return window.SupabaseAdapter.getAllComments().then(function(cloudData) {
                 if (Object.keys(cloudData).length > 0) return cloudData;
                 return localGetAllComments();
@@ -309,7 +404,7 @@
     function getSubmissions(typeFilter) {
         var localData = localGetSubmissions(typeFilter);
 
-        if (provider === 'supabase' && cloudAvailable) {
+        if (isCloudReady()) {
             return window.SupabaseAdapter.getSubmissions(typeFilter).then(function(cloudData) {
                 var cloudSubs = cloudData.map(function(row) {
                     var d = new Date(row.time);
@@ -384,8 +479,8 @@
            此处只负责云端同步，避免格式冲突 */
         emit('submissionAdded', { submission: submission });
 
-        /* 异步写云端 */
-        if (provider === 'supabase' && cloudAvailable) {
+        /* 异步写云端（适配器内部 pending 队列） */
+        if (isCloudEnabled()) {
             return window.SupabaseAdapter.addSubmission(submission)
                 .then(function() {
                     console.log('[Repository] 投稿云端同步成功');
@@ -538,10 +633,12 @@
         initCloud:         initCloud,
 
         /* 评论 */
-        getComments:    getComments,
-        addComment:     addComment,
-        deleteComment:  deleteComment,
-        getAllComments: getAllComments,
+        getComments:           getComments,
+        addComment:            addComment,
+        deleteComment:         deleteComment,
+        getAllComments:        getAllComments,
+        pullCommentsAndPersist: pullCommentsAndPersist,
+        syncLocalOnlyComments: syncLocalOnlyComments,
 
         /* 投稿 */
         getSubmissions: getSubmissions,
