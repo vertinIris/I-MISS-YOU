@@ -5,7 +5,7 @@
 鸣潮角色爱弥斯（Aemeath）的秘密歌手身份「飞行雪绒」的同人社交账号页面。  
 非商业同人创作项目，融合角色叙事、音乐合成、社区互动于一体。
 
-**当前版本**: v7.8  
+**当前版本**: v7.8.1  
 **最后更新**: 2026-07-03
 
 ---
@@ -55,48 +55,56 @@
 ```
 Snow/
 ├── README.md                          # 本文件 — 项目总览
-├── .gitignore                         # Git 忽略规则
-├── .env.example                       # 环境变量示例（Supabase配置）
-├── package.json                       # 项目元数据与脚本
+├── .gitignore
+├── .env.example                       # 配置项参考（实际写入 supabase-adapter.js）
+├── package.json
 │
-├── index.html                         # 主页面（唯一HTML入口）
+├── index.html                         # 主页面（唯一 HTML 入口）
+│
+├── 打开本地预览.bat                    # Windows 本地预览（8848 端口）
+├── run.ps1                            # PowerShell 本地预览
+├── 更新GitHubPages.bat                 # Git pull + commit + push
+├── 解决合并冲突.bat                    # 合并冲突时保留本地 v7.8
 │
 ├── css/
-│   └── style.css                      # 全部样式（~91KB，含动画系统）
+│   └── style.css
 │
 ├── js/
-│   ├── main.js                        # 核心逻辑（~100KB，动态/日志/音乐/评论/投稿/彩蛋）
-│   ├── particles.js                   # Three.js 粒子背景系统
-│   ├── repository.js                  # DataRepository 抽象层（localStorage ↔ Supabase）
-│   ├── supabase-adapter.js            # Supabase 云端同步适配器
-│   ├── admin-auth.js                  # 管理员认证模块（SHA-256口令）
-│   └── rate-limiter.js                # 前端速率限制模块
+│   ├── main.js                        # 核心逻辑
+│   ├── particles.js                   # Three.js 粒子背景
+│   ├── repository.js                  # localStorage ↔ Supabase 抽象层
+│   ├── supabase-adapter.js            # Supabase 云端适配器
+│   ├── admin-auth.js                  # 管理员认证（SHA-256）
+│   └── rate-limiter.js                # 前端速率限制
 │
 ├── db/
-│   ├── migration-001-init.sql         # 初始迁移：建表 + RLS + 种子数据
-│   └── migration-003-fixes.sql      # v7.8 修复：速率限制接入 + 10分钟删评 + 点赞 RPC
+│   ├── migration-001-init.sql         # 建表 + RLS + 种子
+│   ├── migration-002-rls-hardening.sql
+│   ├── migration-003-fixes.sql        # v7.8 触发器 / 点赞 RPC
+│   └── migration-004-fix-search-path.sql  # 【必跑】修复 003 search_path bug
 │
 ├── docs/
-│   ├── architecture.md                # 系统架构设计文档
-│   ├── database-design.md             # 数据库设计与ER图
-│   ├── api-reference.md               # 数据层API参考
-│   ├── design-system.md               # UI/UX 设计系统规范
-│   ├── security.md                    # 安全措施全景
-│   ├── deployment.md                  # 部署指南
-│   ├── changelog.md                   # 版本变更日志
-│   ├── phase3-architecture-plan.md    # Phase 3 云端同步架构规划
-│   └── supabase-setup-guide.md        # Supabase 注册与配置指南
-│
-├── assets/
-│   ├── preview-v2-full.png            # v2 全页预览
-│   ├── preview-v3-full.png            # v3 全页预览
-│   ├── preview-v3-hero.png            # v3 Hero区预览
-│   ├── preview-v3-music.png           # v3 音乐模块预览
-│   └── ...                            # 其他版本截图
+│   ├── README.md                      # 文档索引（从这里开始）
+│   ├── deployment-checklist.md        # 从零部署勾选清单
+│   ├── troubleshooting.md             # 运维排错手册
+│   ├── fix-journal-v7.8.md            # v7.8 修正日志与纠错思路
+│   ├── known-gaps.md                  # 已知疏漏与路线图
+│   ├── architecture.md
+│   ├── database-design.md
+│   ├── api-reference.md
+│   ├── design-system.md
+│   ├── security.md
+│   ├── deployment.md
+│   ├── changelog.md
+│   ├── phase3-architecture-plan.md
+│   └── supabase-setup-guide.md
 │
 └── scripts/
-    └── serve.sh                       # 本地开发服务器启动脚本
+    ├── serve.sh                       # Linux/macOS 本地预览
+    └── README.md                      # 脚本说明
 ```
+
+> **工作区说明**：上级目录 `CURSOR/app/` 为独立 Python 项目，与 Snow 无关。
 
 ---
 
@@ -135,9 +143,9 @@ cd Snow
 cd Snow
 .\run.ps1
 
-# 或 Python
-python -m http.server 8080
-# 浏览器访问 http://localhost:8080
+# 或 Python（默认 8848，避免 8080 冲突）
+python -m http.server 8848
+# 浏览器访问 http://localhost:8848
 ```
 
 > **不要直接双击 `index.html`**：用 `file://` 打开时，部分浏览器会限制脚本/CDN/云端同步，页面可能空白或功能失效。必须通过 `http://localhost` 访问。
@@ -158,10 +166,17 @@ https://vertiniris.github.io/I-MISS-YOU/
 
 1. 注册 [Supabase](https://supabase.com)（用 GitHub 登录）
 2. 创建新项目
-3. 在 SQL Editor 中依次执行 `db/migration-001-init.sql`、`db/migration-002-rls-hardening.sql` 和 `db/migration-003-fixes.sql`
+3. 在 SQL Editor 中依次执行：
+   - `db/migration-001-init.sql`
+   - `db/migration-002-rls-hardening.sql`
+   - `db/migration-003-fixes.sql`
+   - `db/migration-004-fix-search-path.sql` **（必跑，否则评论无法入库）**
 4. 在 Authentication → Settings 中启用 Anonymous Sign-ins
 5. 在 Authentication → URL Configuration 中设置 Site URL
 6. 将 Project URL 和 anon key 填入 `js/supabase-adapter.js` 顶部的 CONFIG
+
+完整勾选清单：[docs/deployment-checklist.md](docs/deployment-checklist.md)  
+出问题先看：[docs/troubleshooting.md](docs/troubleshooting.md)
 
 ### 4. 部署到 GitHub Pages
 
@@ -258,13 +273,19 @@ git push -u origin main
 
 | 文档 | 内容 |
 |------|------|
+| [**文档索引**](docs/README.md) | 所有文档入口与迁移顺序 |
+| [**部署清单**](docs/deployment-checklist.md) | 从零到上线勾选步骤 |
+| [**排错手册**](docs/troubleshooting.md) | 评论不同步、404、本地预览等 |
+| [**修正日志 v7.8**](docs/fix-journal-v7.8.md) | 根因分析与纠错思路 |
+| [**疏漏审计清单**](docs/gaps-audit.md) | 完整疏漏编号表（G/D/S/O/E 系列） |
+| [**已知疏漏摘要**](docs/known-gaps.md) | Top 10 与路线图 |
 | [架构设计](docs/architecture.md) | 系统架构、模块划分、数据流 |
 | [数据库设计](docs/database-design.md) | 表结构、索引、RLS策略、ER图 |
 | [API参考](docs/api-reference.md) | DataRepository接口、Supabase适配器API |
 | [设计系统](docs/design-system.md) | 色彩、字体、动画、组件规范 |
 | [安全措施](docs/security.md) | 速率限制、XSS防护、RLS、管理员认证 |
 | [部署指南](docs/deployment.md) | GitHub Pages、Supabase配置、域名设置 |
-| [变更日志](docs/changelog.md) | v1.0 → v7.7 完整版本历史 |
+| [变更日志](docs/changelog.md) | v1.0 → v7.8.1 完整版本历史 |
 | [Phase 3 架构规划](docs/phase3-architecture-plan.md) | 云端同步方案选型与实施路线 |
 | [Supabase 配置指南](docs/supabase-setup-guide.md) | 注册、建表、认证配置步骤 |
 

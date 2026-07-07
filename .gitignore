@@ -4,3 +4,4 @@ edgeone.json
 Thumbs.db
 *.log
 node_modules/
+.workbuddy/

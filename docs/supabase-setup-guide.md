@@ -26,14 +26,18 @@
 
 ## 第三步：执行数据库迁移
 
-1. 左侧菜单 → **SQL Editor**
-2. 点击 **「New query」**
-3. 打开本项目的 `db/migration-001-init.sql`
-4. 复制全部内容到 SQL Editor
-5. 点击 **「Run」** 按钮
-6. 看到 `Success. No rows returned` 即为成功
+在 **SQL Editor** 中**按顺序** Run 以下文件（每次 New query → 粘贴 → Run）：
 
-> **验证**：左侧菜单 → **Table Editor**，应能看到 `profiles`、`comments`、`submissions` 三张表
+| 顺序 | 文件 | 说明 |
+|------|------|------|
+| 1 | `db/migration-001-init.sql` | 建表 + RLS + 种子 |
+| 2 | `db/migration-002-rls-hardening.sql` | RLS 加固 |
+| 3 | `db/migration-003-fixes.sql` | v7.8 触发器 / 点赞 RPC |
+| 4 | `db/migration-004-fix-search-path.sql` | **必跑** — 修复 003 评论写入失败 |
+
+> **验证**：Table Editor 应能看到 `profiles`、`comments`、`submissions`、`rate_limits` 四张表。
+
+> **常见错误**：跳过 004 会导致发评论时数据库报错，评论只保存在本机。见 [troubleshooting.md](./troubleshooting.md)。
 
 ## 第四步：启用匿名登录
 

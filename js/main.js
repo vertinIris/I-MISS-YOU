@@ -78,16 +78,47 @@
         setTimeout(function() { heart.remove(); }, 800);
     }
 
+    /* ===== 博文点赞状态持久化（G-09 修复）===== */
+    var POST_LIKES_KEY = 'fxre_post_likes';
+    function getPostLikedStates() {
+        try { return JSON.parse(safeGetItem(POST_LIKES_KEY) || '{}'); } catch(e) { return {}; }
+    }
+    function savePostLikedStates(states) {
+        safeSetItem(POST_LIKES_KEY, JSON.stringify(states));
+    }
+
     function initLikeButtons() {
         var btns = document.querySelectorAll('.like-btn');
+        var likedStates = getPostLikedStates();
+
         for (var i = 0; i < btns.length; i++) {
             (function(btn) {
                 var countEl = btn.querySelector('.like-count');
-                var count = parseInt(btn.dataset.likes || '0', 10) || 0;
+                var baseCount = parseInt(btn.dataset.likes || '0', 10) || 0;
+
+                /* 用 post-card 的 data-post-id 作为唯一标识 */
+                var card = btn.closest('.post-card');
+                var postId = card ? card.getAttribute('data-post-id') : ('idx-' + i);
+
+                /* 恢复页面加载时的 liked 状态 */
+                if (likedStates[postId]) {
+                    btn.classList.add('liked');
+                    if (countEl) countEl.textContent = formatNumber(baseCount + 1);
+                }
+
                 btn.addEventListener('click', function() {
-                    if (btn.classList.contains('liked')) { btn.classList.remove('liked'); count--; }
-                    else { btn.classList.add('liked'); count++; createHeartParticle(btn); }
-                    if (countEl) countEl.textContent = formatNumber(count);
+                    var states = getPostLikedStates();
+                    if (btn.classList.contains('liked')) {
+                        btn.classList.remove('liked');
+                        states[postId] = false;
+                        if (countEl) countEl.textContent = formatNumber(baseCount);
+                    } else {
+                        btn.classList.add('liked');
+                        states[postId] = true;
+                        if (countEl) countEl.textContent = formatNumber(baseCount + 1);
+                        createHeartParticle(btn);
+                    }
+                    savePostLikedStates(states);
                 });
             })(btns[i]);
         }
@@ -1215,7 +1246,34 @@
         }
     }
 
+    /**
+     * 更新博文卡片上的评论数显示（修复 G-04：评论数写死在 HTML 中）
+     * @param {string} targetId — post id 或 diary id
+     * @param {number} count — 实际评论条数
+     */
+    function updatePostCommentCount(targetId, count) {
+        /* 博文卡片：data-post-id + 第2个 .post-action 按钮的 span */
+        var post = document.querySelector('.post-card[data-post-id="' + targetId + '"]');
+        var actionBtn = null;
+        if (post) {
+            var actions = post.querySelector('.post-actions');
+            if (actions) {
+                var btns = actions.querySelectorAll('.post-action');
+                if (btns.length >= 2) actionBtn = btns[1]; /* 第2个按钮 = 评论 */
+            }
+        }
+        if (actionBtn) {
+            var span = actionBtn.querySelector('span');
+            if (span) span.textContent = formatNumber(count);
+        }
+    }
+
     function _renderCommentsList(list, comments) {
+        /* 更新博文评论计数（评论区所在的 targetId 从 list.id 推断） */
+        if (list && list.id) {
+            var tid = list.id.replace('comment-list-', '');
+            updatePostCommentCount(tid, comments ? comments.length : 0);
+        }
         if (comments.length === 0) {
             list.innerHTML = '<div class="comment-empty">还没有评论，来第一个留言吧 ~</div>';
             return;
@@ -1386,9 +1444,12 @@
                     setTimeout(function() {
                         item.remove();
                         var list = document.getElementById('comment-list-' + targetId);
-                        if (list && list.querySelectorAll('.comment-item').length === 0) {
+                        var remaining = list ? list.querySelectorAll('.comment-item').length : 0;
+                        if (list && remaining === 0) {
                             list.innerHTML = '<div class="comment-empty">还没有评论，来第一个留言吧 ~</div>';
                         }
+                        /* 博文评论计数 -1 */
+                        updatePostCommentCount(targetId, Math.max(0, remaining));
                     }, 300);
                 } else {
                     renderComments(targetId);
@@ -1517,6 +1578,13 @@
         safeSetItem('fxre_submissions', JSON.stringify(submissions));
     }
 
+    /** 同步读取 localStorage 中的投稿（不调云端，用于乐观更新后修正） */
+    function getSubmissionsSync() {
+        var data = safeGetItem('fxre_submissions');
+        if (data) { try { return JSON.parse(data); } catch(e) { return []; } }
+        return [];
+    }
+
     function showSubmitToast(msg) {
         var toast = document.createElement('div');
         toast.style.cssText = 'position:fixed;top:90px;left:50%;transform:translateX(-50%);' +
@@ -1636,22 +1704,60 @@
             var likeBtn = card.querySelector('[data-action="like"]');
             if (likeBtn) {
                 likeBtn.addEventListener('click', function() {
+                    var cloudOk = /^\d+$/.test(String(id)) && typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.isAuthenticated();
+
                     function _doLike(submissions) {
                         submissions = Array.isArray(submissions) ? submissions : [];
                         for (var i = 0; i < submissions.length; i++) {
                             if (String(submissions[i].id) !== String(id)) continue;
-                            if (submissions[i].liked) {
-                                submissions[i].liked = false;
-                                submissions[i].likes--;
+
+                            var wasLiked = submissions[i].liked;
+                            submissions[i].liked = !wasLiked;
+
+                            /* 乐观更新本地计数 */
+                            if (wasLiked) {
+                                submissions[i].likes = Math.max(0, (submissions[i].likes || 1) - 1);
                             } else {
-                                submissions[i].liked = true;
-                                submissions[i].likes++;
-                                /* 云端投稿（数字 id）同步点赞 */
-                                if (/^\d+$/.test(String(id)) && typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.isAuthenticated()) {
-                                    SupabaseAdapter.likeSubmission(parseInt(id, 10));
+                                submissions[i].likes = (submissions[i].likes || 0) + 1;
+                            }
+
+                            saveSubmissions(submissions);
+
+                            /* 云端同步 + 用返回值修正真实计数（G-10 修复） */
+                            if (cloudOk) {
+                                var numericId = parseInt(id, 10);
+                                if (wasLiked) {
+                                    SupabaseAdapter.unlikeSubmission(numericId).then(function(newLikes) {
+                                        if (newLikes > 0) {
+                                            /* 刷新本地为云端权威值 */
+                                            var latest = getSubmissionsSync();
+                                            for (var j = 0; j < latest.length; j++) {
+                                                if (String(latest[j].id) === String(id)) {
+                                                    latest[j].likes = newLikes;
+                                                    saveSubmissions(latest);
+                                                    break;
+                                                }
+                                            }
+                                            renderCommunity();
+                                        }
+                                    });
+                                } else {
+                                    SupabaseAdapter.likeSubmission(numericId).then(function(newLikes) {
+                                        if (newLikes > 0) {
+                                            var latest = getSubmissionsSync();
+                                            for (var j = 0; j < latest.length; j++) {
+                                                if (String(latest[j].id) === String(id)) {
+                                                    latest[j].likes = newLikes;
+                                                    saveSubmissions(latest);
+                                                    break;
+                                                }
+                                            }
+                                            renderCommunity();
+                                        }
+                                    });
                                 }
                             }
-                            saveSubmissions(submissions);
+
                             break;
                         }
                         renderCommunity();
@@ -2085,6 +2191,6 @@
         archive: ArchiveAPI,
         sync: SyncAPI,
         user: UserAPI,
-        version: 'v7.8'
+        version: 'v7.9'
     };
 })();

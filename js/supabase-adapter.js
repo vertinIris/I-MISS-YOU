@@ -502,6 +502,21 @@
             });
     }
 
+    /**
+     * 取消点赞投稿（G-10 修复）
+     * @param {number} submissionId
+     * @returns {Promise<number>} 返回新的点赞数
+     */
+    function unlikeSubmission(submissionId) {
+        if (!isReady) return Promise.resolve(0);
+
+        return client.rpc('decrement_submission_likes', { submission_id: submissionId })
+            .then(function(result) {
+                if (result.error) return 0;
+                return result.data || 0;
+            });
+    }
+
     /* ================================================================
      * 实时订阅
      * ================================================================ */
@@ -639,6 +654,7 @@
         getSubmissions:  getSubmissions,
         addSubmission:   addSubmission,
         likeSubmission:  likeSubmission,
+        unlikeSubmission: unlikeSubmission,
 
         /* 实时 */
         subscribeComments:    subscribeComments,

@@ -1,6 +1,63 @@
 # 变更日志
 
-> 完整版本历史：v1.0 → v7.7
+> 完整版本历史：v1.0 → v7.9
+
+---
+
+## v7.9 (2026-07-07)
+
+### 修复
+- **G-04 博文评论数动态更新**：评论渲染/提交/删除后自动更新 `.post-action` 中的评论计数，不再依赖 HTML 写死的静态数字（28/47/63/92/51/156）
+- **G-09 博文点赞持久化**：`initLikeButtons()` 改为 localStorage 持久化方案，页面刷新后保留 liked 状态和计数
+- **G-10 社区取消点赞云端同步**：新增 `decrement_submission_likes` RPC + `SupabaseAdapter.unlikeSubmission()`，取消点赞现在同步到云端
+- **G-10 社区点赞 liked 状态合并修复**：`mergeSubmissions()` 重写为 byKey 合并策略，保留本地 `liked` 状态并使用云端 `likes` 权威值
+- **社区点赞 RPC 返回值**：like/unlike 后用云端返回的真实计数修正本地乐观值
+
+### 新增
+- `db/migration-005-unlike-rpc.sql` — `decrement_submission_likes` RPC
+- `js/supabase-adapter.js` — `unlikeSubmission()` 方法
+- `js/main.js` — `updatePostCommentCount()` / `getSubmissionsSync()` / `getPostLikedStates()` / `savePostLikedStates()`
+
+### 修改
+- `js/main.js`：`initLikeButtons()` 重写（持久化）；`_renderCommentsList()` 增加评论计数更新；`handleDeleteComment()` 动画分支增加计数更新；社区点赞逻辑全面重写
+- `js/repository.js`：`mergeSubmissions()` 重写（byKey 合并 + liked 保留 + cloud likes 权威）
+- `js/supabase-adapter.js`：导出 `unlikeSubmission`
+
+---
+
+## v7.8.1 (2026-07-03)
+
+### 修复
+- **migration-004**：修复 migration-003 中 `SET search_path = ''` 导致 `rate_limits` 表找不到、评论 INSERT 全部失败的问题
+- 评论提交失败时 Toast 提示「云端同步失败，仅保存在本机」
+- 文档：新增排错手册、修正日志、**疏漏审计清单**、部署清单（`docs/`）
+
+### 修改
+- `db/migration-004-fix-search-path.sql`（新文件）
+- `docs/troubleshooting.md`、`docs/fix-journal-v7.8.md`、`docs/gaps-audit.md`、`docs/known-gaps.md`、`docs/deployment-checklist.md`
+
+---
+
+## v7.8 (2026-07-03)
+
+### 修复
+- **投稿 type 映射**：前端英文 ↔ 数据库中文 CHECK 约束
+- **评论跨设备同步**：云端就绪后全量拉取 + Realtime + 30s 轮询 + 本地-only 评论补传
+- **种子同步**：`c.name` → `c.author`
+- **AdminAuth**：10 分钟自删窗口常量 `SELF_DELETE_MS`
+- **本地预览**：默认端口 8848，避免 8080 冲突
+
+### 新增
+- `db/migration-003-fixes.sql` — INSERT 触发器、点赞 RPC、10 分钟删评 RLS
+- `打开本地预览.bat`、`run.ps1`、`更新GitHubPages.bat`、`解决合并冲突.bat`
+- `repository.isCloudReady()` / `isCloudEnabled()` / `pullCommentsAndPersist()`
+
+### 修改
+- `js/main.js`：`refreshAllCommentsFromCloud()`、`setupCloudRealtime()` 延后
+- `js/repository.js`：合并策略、始终尝试云端写入
+- `js/supabase-adapter.js`：`TYPE_TO_DB` / `TYPE_FROM_DB`
+- `index.html`：页脚 v7.8、投稿标题 maxlength 100
+- `package.json`：version 7.8.0
 
 ---
 

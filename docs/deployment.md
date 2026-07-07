@@ -1,6 +1,6 @@
 # 部署指南
 
-> **版本**: v7.7 | **平台**: GitHub Pages + Supabase
+> **版本**: v7.8.1 | **平台**: GitHub Pages + Supabase
 
 ---
 
@@ -99,9 +99,14 @@ git push origin main
 ### 3.2 执行数据库迁移
 
 1. Dashboard → **SQL Editor** → **New query**
-2. 复制 `db/migration-001-init.sql` 全部内容 → **Run**
-3. 看到成功消息后，再复制 `db/migration-002-rls-hardening.sql` → **Run**
-4. 验证：Dashboard → **Table Editor**，应看到 `profiles`、`comments`、`submissions`、`rate_limits` 四张表
+2. **按顺序**复制并 Run 以下四个文件：
+   - `db/migration-001-init.sql`
+   - `db/migration-002-rls-hardening.sql`
+   - `db/migration-003-fixes.sql`
+   - `db/migration-004-fix-search-path.sql` **← 必跑（修复 003 的 search_path bug）**
+3. 验证：Dashboard → **Table Editor**，应看到 `profiles`、`comments`、`submissions`、`rate_limits` 四张表
+
+> 若只执行 003 未执行 004，评论 INSERT 会全部失败，表现为「每人只能看到自己的评论」。详见 [troubleshooting.md](./troubleshooting.md) 与 [fix-journal-v7.8.md](./fix-journal-v7.8.md)。
 
 ### 3.3 启用匿名登录
 
@@ -150,7 +155,7 @@ var CONFIG = {
 ### 4.1 基础访问
 - [ ] 访问 GitHub Pages URL，页面正常加载
 - [ ] 页面标题显示「飞行雪绒」
-- [ ] 页脚版本号显示 v7.7
+- [ ] 页脚版本号显示 v7.8.1
 - [ ] 所有 section（资料/音乐/动态/日志/投稿/社区）可见
 
 ### 4.2 视觉效果
@@ -228,15 +233,23 @@ var CONFIG = {
 - 确认 Anonymous Sign-ins 已启用
 - 检查浏览器扩展是否拦截了 jsdelivr CDN
 
-### Q: 评论发表后刷新消失
+### Q: 评论发表后刷新消失 / 多人互不可见
 
-**原因**: 云端写入失败，仅写入 localStorage。
+**原因**: 云端写入失败（常见：未跑 migration-004），或仅写入 localStorage。
 
 **解决**:
-- 检查 Console 是否有 RLS 策略拒绝错误
-- 确认 migration-001 和 migration-002 都已执行
+- **必跑** `db/migration-004-fix-search-path.sql`（003 之后）
+- 检查 Console 是否有 `relation "rate_limits" does not exist`
+- 确认 migration-001～004 都已执行
 - 确认匿名登录成功（页脚显示用户 UUID）
-- 检查 Supabase Dashboard → Table Editor → comments 表是否有数据
+- 详见 [troubleshooting.md](./troubleshooting.md)
+
+### Q: Git push rejected / 合并冲突
+
+**解决**:
+- `git pull origin main --allow-unrelated-histories` 后 push
+- 或运行项目根目录 `解决合并冲突.bat`（保留本地 v7.8）
+- Pages 源设为 **Deploy from a branch**，勿与 Actions 冲突
 
 ### Q: CDN 被拦截
 
@@ -256,6 +269,8 @@ var CONFIG = {
 - 或升级到 Supabase Pro ($25/月) 消除休眠限制
 
 ---
+
+> 更完整的排错步骤见 [troubleshooting.md](./troubleshooting.md) | 修正记录见 [fix-journal-v7.8.md](./fix-journal-v7.8.md)
 
 ## 6. 备选部署平台
 

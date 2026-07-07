@@ -438,23 +438,40 @@
 
     /**
      * 合并投稿列表并去重
+     * 保留本地 liked 状态，使用云端 likes 权威值（G-10 修复）
      */
     function mergeSubmissions(localSubs, cloudSubs, typeFilter) {
         localSubs = Array.isArray(localSubs) ? localSubs : [];
         cloudSubs = Array.isArray(cloudSubs) ? cloudSubs : [];
-        var seen = {};
+        var byKey = {};
         var merged = [];
 
-        function add(s) {
-            if (!s || !s.title) return;
-            var key = (s.id || '') + '::' + (s.title || '') + '::' + (s.time || 0);
-            if (seen[key]) return;
-            seen[key] = true;
-            merged.push(s);
+        function key(s) {
+            return (s.id || '') + '::' + (s.title || '') + '::' + (s.time || 0);
         }
 
-        localSubs.forEach(add);
-        cloudSubs.forEach(add);
+        /* 先放本地（保留 liked 状态） */
+        localSubs.forEach(function(s) {
+            if (!s || !s.title) return;
+            var k = key(s);
+            if (!byKey[k]) { byKey[k] = s; }
+        });
+
+        /* 云端覆盖：同 key 时用云端 likes，但保留本地 liked */
+        cloudSubs.forEach(function(s) {
+            if (!s || !s.title) return;
+            var k = key(s);
+            if (byKey[k]) {
+                /* 合并：云端 likes 权威 + 本地 liked 保留 */
+                byKey[k].likes = s.likes;
+                byKey[k].id = s.id || byKey[k].id;
+                /* liked 以本地为准（云端永远是 false） */
+            } else {
+                byKey[k] = s;
+            }
+        });
+
+        merged = Object.keys(byKey).map(function(k) { return byKey[k]; });
         merged.sort(function(a, b) { return (b.time || 0) - (a.time || 0); });
 
         if (typeFilter && typeFilter !== '全部') {
