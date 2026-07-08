@@ -1,6 +1,6 @@
 {
   "name": "flying-edelweiss",
-  "version": "7.9.0",
+  "version": "9.0.0",
   "description": "飞行雪绒 — 鸣潮角色爱弥斯的同人社交账号体验网站",
   "type": "module",
   "scripts": {
@@ -13,6 +13,10 @@
     "db:migrate-003": "echo 'Run db/migration-003-fixes.sql in Supabase SQL Editor'",
     "db:migrate-004": "echo 'Run db/migration-004-fix-search-path.sql in Supabase SQL Editor — REQUIRED after 003'",
     "db:migrate-005": "echo 'Run db/migration-005-unlike-rpc.sql in Supabase SQL Editor — enables unlike sync'",
+    "db:migrate-006": "echo 'Run db/migration-006-comment-moderation.sql in Supabase SQL Editor — comment deletion tokens + roles + soft delete'",
+    "db:migrate-007": "echo 'Run db/migration-007-rate-limit-v2.sql in Supabase SQL Editor — tiered rate limiting'",
+    "db:migrate-008": "echo 'Run db/migration-008-tags-bookmarks.sql in Supabase SQL Editor — tags + bookmarks + collections'",
+    "db:migrate-009": "echo 'Run db/migration-009-storage-bucket.sql in Supabase SQL Editor — Storage bucket for uploads'",
     "serve:win": "powershell -ExecutionPolicy Bypass -File ./run.ps1"
   },
   "keywords": [

@@ -1044,10 +1044,17 @@
                 e.preventDefault();
                 e.stopPropagation();
 
-                /* 提取目标 ID（从父级 comment-area 的 id） */
-                var area = btn.closest('.comment-area');
-                if (!area) return;
-                var targetId = area.id.replace('comments-', '');
+                /* v9.0: 支持社区评论（data-community-target）和博文评论（.comment-area） */
+                var communityTarget = btn.getAttribute('data-community-target');
+                var targetId;
+                if (communityTarget) {
+                    /* 社区评论: targetId 从 cc-list-{id} 提取 */
+                    targetId = 'community_' + communityTarget.replace('cc-list-', '');
+                } else {
+                    var area = btn.closest('.comment-area');
+                    if (!area) return;
+                    targetId = area.id.replace('comments-', '');
+                }
 
                 /* 提取评论数据 */
                 var commentData = {
@@ -1060,6 +1067,39 @@
 
                 handleDeleteComment(targetId, commentData, btn);
             });
+
+            /* v9.0: 版主隐藏按钮事件委托 */
+            list.addEventListener('click', function(e) {
+                var btn = e.target.closest('.comment-hide-btn');
+                if (!btn) return;
+                e.preventDefault();
+                e.stopPropagation();
+
+                var communityTarget = btn.getAttribute('data-community-target');
+                var targetId;
+                if (communityTarget) {
+                    targetId = 'community_' + communityTarget.replace('cc-list-', '');
+                } else {
+                    var area = btn.closest('.comment-area');
+                    if (!area) return;
+                    targetId = area.id.replace('comments-', '');
+                }
+                var commentId = btn.getAttribute('data-comment-id');
+                if (!commentId) return;
+
+                if (!confirm('确定要隐藏此评论吗？（版主操作）')) return;
+
+                if (typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.moderateComment) {
+                    SupabaseAdapter.moderateComment(parseInt(commentId, 10), 'hide', '版主隐藏').then(function(success) {
+                        if (success) {
+                            _removeCommentFromUI(targetId, btn);
+                            showSubmitToast('评论已隐藏', 2000);
+                        } else {
+                            showSubmitToast('隐藏失败', 4000);
+                        }
+                    });
+                }
+            });
         });
 
     }
@@ -1070,18 +1110,48 @@
 
         refreshAllCommentsFromCloud();
 
-        document.querySelectorAll('.comment-area').forEach(function(area) {
-            var targetId = area.id.replace('comments-', '');
-            SupabaseAdapter.subscribeComments(
-                targetId,
-                function() { renderComments(targetId); },
-                function() { renderComments(targetId); }
-            );
-        });
+        /* v9.0: 使用 SyncManager 替代直接 subscribeComments */
+        if (typeof SyncManager !== 'undefined') {
+            document.querySelectorAll('.comment-area').forEach(function(area) {
+                var targetId = area.id.replace('comments-', '');
+                SyncManager.connectComments(targetId, {
+                    onNewComment: function(comment) {
+                        /* 去重检查后追加渲染 */
+                        renderComments(targetId);
+                    },
+                    onUpdateComment: function(newData, oldData) {
+                        /* 隐藏评论从列表移除 */
+                        if (newData && newData.is_hidden === true) {
+                            renderComments(targetId);
+                        } else {
+                            renderComments(targetId);
+                        }
+                    },
+                    onDeleteComment: function(oldData) {
+                        renderComments(targetId);
+                    }
+                });
+            });
 
-        SupabaseAdapter.subscribeSubmissions(function() {
-            renderCommunity();
-        });
+            /* 投稿变更同步 */
+            SyncManager.connectSubmissions(function() {
+                renderCommunity();
+            });
+        } else {
+            /* 降级：使用旧的订阅方式 */
+            document.querySelectorAll('.comment-area').forEach(function(area) {
+                var targetId = area.id.replace('comments-', '');
+                SupabaseAdapter.subscribeComments(
+                    targetId,
+                    function() { renderComments(targetId); },
+                    function() { renderComments(targetId); }
+                );
+            });
+
+            SupabaseAdapter.subscribeSubmissions(function() {
+                renderCommunity();
+            });
+        }
 
         /* Realtime 偶发失效时的兜底轮询 */
         if (!window.__fxreCommentPoll) {
@@ -1092,7 +1162,7 @@
             }, 30000);
         }
 
-        console.log('[Phase3] Realtime 订阅已启用');
+        console.log('[v9.0] Realtime 同步已启用' + (typeof SyncManager !== 'undefined' ? ' (SyncManager)' : ' (legacy)'));
     }
 
     /** 从云端拉取全部评论区并写回 localStorage + 刷新 UI */
@@ -1286,13 +1356,24 @@
             return;
         }
         var canDeleteAny = (typeof AdminAuth !== 'undefined') && AdminAuth.isAdmin();
+        var canModerate = (typeof AuthManager !== 'undefined') && AuthManager.canHideComment();
         list.innerHTML = comments.map(function(c) {
             var initial = c.name.charAt(0).toUpperCase();
             var bgColor = c.color || 'var(--color-pink)';
-            /* 仅当管理员或当前匿名用户是该评论作者时显示删除按钮 */
-            var showDelete = canDeleteAny || (typeof AdminAuth !== 'undefined' && AdminAuth.canDelete(c));
+            /* v9.0: 权限判定 — 管理员/版主/令牌持有者/作者 */
+            var showDelete = canDeleteAny || canModerate;
+            if (!showDelete && typeof AuthManager !== 'undefined') {
+                showDelete = AuthManager.canDeleteComment(c);
+            }
+            if (!showDelete && (typeof AdminAuth !== 'undefined' && AdminAuth.canDelete(c))) {
+                showDelete = true;
+            }
             var deleteBtn = showDelete
                 ? '<button class="comment-delete-btn" title="删除此评论" data-comment-id="' + (c.id || '') + '" data-comment-name="' + escapeHTML(c.name) + '" data-comment-text="' + escapeHTML(c.text) + '" data-comment-time="' + (c.time || 0) + '" data-comment-author="' + (c.authorId || '') + '">×</button>'
+                : '';
+            /* v9.0: 版主隐藏按钮 */
+            var hideBtn = (canModerate && !showDelete)
+                ? '<button class="comment-hide-btn" title="隐藏此评论（版主操作）" data-comment-id="' + (c.id || '') + '">👁</button>'
                 : '';
             return '<div class="comment-item">' +
                 '<div class="comment-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
@@ -1303,7 +1384,7 @@
                 '</div>' +
                 '<div class="comment-text">' + escapeHTML(c.text) + '</div>' +
                 '</div>' +
-                deleteBtn +
+                deleteBtn + hideBtn +
                 '</div>';
         }).join('');
     }
@@ -1330,6 +1411,15 @@
             RateLimiter.recordComment(targetId);
         }
 
+        /* v9.0: 客户端限流增强（冷却 + 重复检测） */
+        if (typeof ClientRateLimiter !== 'undefined') {
+            var clCheck = ClientRateLimiter.canSendComment(rawText);
+            if (!clCheck.allowed) {
+                showSubmitToast(clCheck.reason, 4000);
+                return;
+            }
+        }
+
         /* 安全转义 */
         var name = escapeHTML(rawName);
         var text = escapeHTML(rawText);
@@ -1348,6 +1438,9 @@
                      String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0'),
             color: autoColor
         };
+
+        /* v9.0: 生成删除令牌 */
+        var deleteToken = (typeof AuthManager !== 'undefined') ? AuthManager.generateToken() : null;
 
         var list = document.getElementById('comment-list-' + targetId);
 
@@ -1368,13 +1461,21 @@
 
         /* Phase 3: 同步写云端；完成后合并并刷新，确保跨设备一致 */
         if (typeof DataRepository !== 'undefined') {
-            DataRepository.addComment(targetId, { author: name, color: autoColor, text: text })
+            DataRepository.addComment(targetId, { author: name, color: autoColor, text: text }, deleteToken ? { delete_token: deleteToken } : null)
                 .then(function(cloudRow) {
                     if (cloudRow && cloudRow._error) {
                         showSubmitToast('评论已显示，但云端同步失败：' + cloudRow._error, 6000);
                         return;
                     }
                     if (cloudRow && cloudRow.id) {
+                        /* v9.0: 存储删除令牌 */
+                        if (deleteToken && typeof AuthManager !== 'undefined') {
+                            AuthManager.storeDeleteToken(cloudRow.id, deleteToken);
+                        }
+                        /* v9.0: 记录限流 */
+                        if (typeof ClientRateLimiter !== 'undefined') {
+                            ClientRateLimiter.recordCommentSent(rawText);
+                        }
                         var stored = getComments(targetId);
                         function patchList(comments) {
                             comments = Array.isArray(comments) ? comments : [];
@@ -1408,31 +1509,95 @@
     }
 
     /**
+     * v9.0: 评论 UI 移除辅助函数（动画淡出 + 计数更新）
+     */
+    function _removeCommentFromUI(targetId, btn) {
+        var item = btn ? btn.closest('.comment-item') : null;
+        if (item) {
+            item.style.opacity = '0';
+            item.style.transform = 'translateX(20px)';
+            item.style.transition = 'all 0.3s ease';
+            setTimeout(function() {
+                item.remove();
+                var list = document.getElementById('comment-list-' + targetId);
+                var remaining = list ? list.querySelectorAll('.comment-item').length : 0;
+                if (list && remaining === 0) {
+                    list.innerHTML = '<div class="comment-empty">还没有评论，来第一个留言吧 ~</div>';
+                }
+                updatePostCommentCount(targetId, Math.max(0, remaining));
+            }, 300);
+        } else {
+            renderComments(targetId);
+        }
+    }
+
+    /**
      * 删除一条评论
-     * - 非管理员只能删自己的评论（匹配 authorId）
-     * - 管理员可删任意评论
+     * - v9.0: 令牌删除（匿名用户）/ 身份删除（注册用户）/ 版主隐藏 / 管理员删除
      * - 双写删除（本地 + 云端）
      */
     function handleDeleteComment(targetId, commentData, btn) {
         if (!commentData) return;
 
         var isAdmin = (typeof AdminAuth !== 'undefined') && AdminAuth.isAdmin();
+        var commentId = commentData.id ? parseInt(commentData.id, 10) : null;
+
+        /* v9.0: 优先检查删除令牌（匿名用户） */
+        var deleteToken = null;
+        if (typeof AuthManager !== 'undefined' && commentId) {
+            deleteToken = AuthManager.getDeleteToken(commentId);
+        }
+
+        /* v9.0: 版主权限 */
+        var canModerate = (typeof AuthManager !== 'undefined') && AuthManager.canHideComment();
 
         /* 确认对话框 */
-        var confirmMsg = isAdmin
-            ? '确定要删除此评论吗？（管理员操作）'
-            : '确定要删除你的这条评论吗？';
+        var confirmMsg;
+        if (isAdmin) confirmMsg = '确定要删除此评论吗？（管理员操作）';
+        else if (canModerate) confirmMsg = '确定要隐藏此评论吗？（版主操作）';
+        else confirmMsg = '确定要删除你的这条评论吗？';
         if (!confirm(confirmMsg)) return;
 
         /* 构造评论对象 */
         var comment = {
-            id:       commentData.id       ? parseInt(commentData.id, 10) : null,
+            id:       commentId,
             authorId: commentData.authorId || '',
             name:     commentData.name     || '',
             text:     commentData.text     || '',
             time:     commentData.time     ? parseInt(commentData.time, 10) : 0
         };
 
+        /* v9.0: 令牌删除路径 */
+        if (deleteToken && typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.deleteCommentWithToken) {
+            SupabaseAdapter.deleteCommentWithToken(commentId, deleteToken).then(function(success) {
+                if (success) {
+                    if (typeof AuthManager !== 'undefined') AuthManager.removeDeleteToken(commentId);
+                    _removeCommentFromUI(targetId, btn);
+                    showSubmitToast('评论已删除', 2000);
+                } else {
+                    showSubmitToast('删除失败：令牌可能已失效', 4000);
+                }
+            }).catch(function(err) {
+                console.warn('[v9.0] 令牌删除失败:', err);
+                showSubmitToast('删除失败，请稍后重试', 4000);
+            });
+            return;
+        }
+
+        /* v9.0: 版主隐藏路径 */
+        if (canModerate && !isAdmin && typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.moderateComment) {
+            SupabaseAdapter.moderateComment(commentId, 'hide', '版主隐藏').then(function(success) {
+                if (success) {
+                    _removeCommentFromUI(targetId, btn);
+                    showSubmitToast('评论已隐藏', 2000);
+                } else {
+                    showSubmitToast('隐藏失败', 4000);
+                }
+            });
+            return;
+        }
+
+        /* 原有路径：管理员/本地删除 */
         if (typeof DataRepository !== 'undefined') {
             DataRepository.deleteComment(targetId, comment, { admin: isAdmin }).then(function(result) {
                 var ok = result && (result.local || result === true);
@@ -1502,6 +1667,23 @@
             });
         }
 
+        /* v9.0: 投稿标签选择器交互 */
+        var submissionTagSelector = document.getElementById('submission-tag-selector');
+        if (submissionTagSelector) {
+            submissionTagSelector.addEventListener('click', function(e) {
+                var chip = e.target.closest('.select-tag');
+                if (!chip) return;
+                e.preventDefault();
+                /* 限制最多5个 */
+                var activeCount = submissionTagSelector.querySelectorAll('.select-tag.active').length;
+                if (!chip.classList.contains('active') && activeCount >= 5) {
+                    showSubmitToast('最多选择5个标签', 2000);
+                    return;
+                }
+                chip.classList.toggle('active');
+            });
+        }
+
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             var rawName    = document.getElementById('submit-nickname').value.trim();
@@ -1526,6 +1708,29 @@
                 RateLimiter.recordSubmission();
             }
 
+            /* v9.0: 客户端限流增强（冷却 + 字数校验） */
+            if (typeof ClientRateLimiter !== 'undefined') {
+                var clCheck = ClientRateLimiter.canSubmitWork(rawTitle, rawContent);
+                if (!clCheck.allowed) {
+                    showSubmitToast(clCheck.reason, 4000);
+                    return;
+                }
+            }
+
+            /* v9.0: 生成删除令牌（匿名用户） */
+            var submissionDeleteToken = (typeof AuthManager !== 'undefined') ? AuthManager.generateToken() : null;
+
+            /* v9.0: 获取选中的标签 */
+            var selectedTags = [];
+            var tagChips = document.querySelectorAll('#submission-tag-selector .select-tag.active');
+            tagChips.forEach(function(chip) {
+                selectedTags.push(chip.getAttribute('data-tag'));
+            });
+            if (selectedTags.length > 5) {
+                showSubmitToast('最多选择5个标签');
+                return;
+            }
+
             /* 安全转义 */
             var name    = escapeHTML(rawName);
             var title   = escapeHTML(rawTitle);
@@ -1538,6 +1743,7 @@
                 type: type,
                 title: title,
                 content: content,
+                tags: selectedTags,
                 time: now.getTime(),
                 timeStr: now.getFullYear() + '-' +
                          String(now.getMonth() + 1).padStart(2, '0') + '-' +
@@ -1554,13 +1760,43 @@
                 saveSubmissions(submissions);
                 form.reset();
                 if (counter) counter.textContent = '0 / 2000';
+                /* v9.0: 清除标签选择 */
+                if (submissionTagSelector) {
+                    submissionTagSelector.querySelectorAll('.select-tag.active').forEach(function(c) {
+                        c.classList.remove('active');
+                    });
+                }
                 showSubmitToast('作品提交成功！已发布到社区 ✨');
                 renderCommunity();
 
-                /* Phase 3: 同步到云端 */
+                /* v9.0: 记录投稿限流 */
+                if (typeof ClientRateLimiter !== 'undefined') {
+                    ClientRateLimiter.recordSubmissionSent();
+                }
+
+                /* Phase 3: 同步到云端（附带删除令牌和标签） */
                 if (typeof DataRepository !== 'undefined') {
-                    DataRepository.addSubmission(newSub)
-                        .then(function() { renderCommunity(); })
+                    var subExtraFields = {};
+                    if (submissionDeleteToken) {
+                        subExtraFields.delete_token = submissionDeleteToken;
+                    }
+                    if (selectedTags.length > 0) {
+                        subExtraFields.tags = selectedTags;
+                    }
+                    DataRepository.addSubmission(newSub, Object.keys(subExtraFields).length > 0 ? subExtraFields : null)
+                        .then(function(cloudRow) {
+                            /* v9.0: 存储删除令牌 */
+                            if (cloudRow && cloudRow.id && submissionDeleteToken && typeof AuthManager !== 'undefined') {
+                                AuthManager.storeDeleteToken(cloudRow.id, submissionDeleteToken);
+                            }
+                            /* v9.0: 同步标签到云端 */
+                            if (cloudRow && cloudRow.id && selectedTags.length > 0 &&
+                                typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.addSubmissionTags) {
+                                SupabaseAdapter.addSubmissionTags(cloudRow.id, selectedTags)
+                                    .catch(function(err) { console.warn('[v9.0] 标签同步失败:', err); });
+                            }
+                            renderCommunity();
+                        })
                         .catch(function(err) { console.warn('[Main] 投稿云端同步失败:', err); });
                 }
             }
@@ -1650,6 +1886,29 @@
             ? submissions
             : submissions.filter(function(s) { return s.type === communityFilter; });
 
+        /* v9.0: 标签筛选 — 获取活跃标签并过滤 */
+        var activeTagChips = document.querySelectorAll('.tag-chip.active');
+        var activeTags = [];
+        activeTagChips.forEach(function(chip) {
+            activeTags.push(chip.getAttribute('data-tag'));
+        });
+        if (activeTags.length > 0) {
+            filtered = filtered.filter(function(s) {
+                /* 检查投稿是否有匹配的标签 */
+                if (!s.tags || !Array.isArray(s.tags)) return false;
+                return activeTags.every(function(tag) {
+                    return s.tags.indexOf(tag) !== -1;
+                });
+            });
+        }
+
+        /* v9.0: 标记书签状态 */
+        var localBookmarks = {};
+        try { localBookmarks = JSON.parse(localStorage.getItem('fxre_bookmarks') || '{}'); } catch(e) {}
+        filtered.forEach(function(s) {
+            if (localBookmarks[s.id]) s.bookmarked = true;
+        });
+
         if (filtered.length === 0) {
             grid.innerHTML = '';
             if (empty) empty.classList.add('show');
@@ -1689,6 +1948,10 @@
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
                 '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>' +
                 '</svg><span>评论</span></button>' +
+                '<button class="community-card-action bookmark-btn' + (s.bookmarked ? ' bookmarked' : '') + '" data-action="bookmark" data-submission-id="' + s.id + '" title="收藏">' +
+                '<svg viewBox="0 0 24 24" fill="' + (s.bookmarked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2">' +
+                '<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>' +
+                '</svg><span>收藏</span></button>' +
                 '</div>' +
                 '<div class="community-card-comments" id="cc-comments-' + s.id + '">' +
                 '<div class="comment-list" id="cc-list-' + s.id + '"></div>' +
@@ -1789,6 +2052,47 @@
                 });
             }
 
+            /* v9.0: 书签收藏按钮 */
+            var bookmarkBtn = card.querySelector('[data-action="bookmark"]');
+            if (bookmarkBtn) {
+                bookmarkBtn.addEventListener('click', function() {
+                    var numericId = parseInt(id, 10);
+                    var isBookmarked = bookmarkBtn.classList.contains('bookmarked');
+
+                    /* 乐观更新 UI */
+                    bookmarkBtn.classList.toggle('bookmarked');
+                    var svg = bookmarkBtn.querySelector('svg');
+                    if (svg) svg.setAttribute('fill', !isBookmarked ? 'currentColor' : 'none');
+
+                    /* 云端同步 */
+                    if (!isNaN(numericId) && typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.isAuthenticated()) {
+                        SupabaseAdapter.toggleBookmark(numericId).then(function(result) {
+                            if (result && result.success) {
+                                showSubmitToast(!isBookmarked ? '已收藏' : '已取消收藏', 1500);
+                            }
+                        }).catch(function(err) {
+                            console.warn('[v9.0] 书签操作失败:', err);
+                            /* 回滚 UI */
+                            bookmarkBtn.classList.toggle('bookmarked');
+                            if (svg) svg.setAttribute('fill', isBookmarked ? 'currentColor' : 'none');
+                        });
+                    } else {
+                        /* 本地存储降级 */
+                        var bookmarkKey = 'fxre_bookmarks';
+                        try {
+                            var bookmarks = JSON.parse(localStorage.getItem(bookmarkKey) || '{}');
+                            if (isBookmarked) {
+                                delete bookmarks[id];
+                            } else {
+                                bookmarks[id] = { time: Date.now() };
+                            }
+                            localStorage.setItem(bookmarkKey, JSON.stringify(bookmarks));
+                            showSubmitToast(!isBookmarked ? '已收藏（本地）' : '已取消收藏', 1500);
+                        } catch(e) {}
+                    }
+                });
+            }
+
             var commentForm = card.querySelector('.comment-form[data-target]');
             if (commentForm) {
                 commentForm.addEventListener('submit', function(e) {
@@ -1878,9 +2182,25 @@
             list.innerHTML = '<div class="comment-empty">还没有评论 ~</div>';
             return;
         }
+        var canDeleteAny = (typeof AdminAuth !== 'undefined') && AdminAuth.isAdmin();
+        var canModerate = (typeof AuthManager !== 'undefined') && AuthManager.canHideComment();
         list.innerHTML = comments.map(function(c) {
             var initial = c.name.charAt(0).toUpperCase();
             var bgColor = c.color || 'var(--color-pink)';
+            /* v9.0: 权限判定 */
+            var showDelete = canDeleteAny || canModerate;
+            if (!showDelete && typeof AuthManager !== 'undefined') {
+                showDelete = AuthManager.canDeleteComment(c);
+            }
+            if (!showDelete && (typeof AdminAuth !== 'undefined' && AdminAuth.canDelete(c))) {
+                showDelete = true;
+            }
+            var deleteBtn = showDelete
+                ? '<button class="comment-delete-btn" title="删除此评论" data-comment-id="' + (c.id || '') + '" data-comment-name="' + escapeHTML(c.name) + '" data-comment-text="' + escapeHTML(c.text) + '" data-comment-time="' + (c.time || 0) + '" data-comment-author="' + (c.authorId || '') + '" data-community-target="' + (list.id || '') + '">×</button>'
+                : '';
+            var hideBtn = (canModerate && !showDelete)
+                ? '<button class="comment-hide-btn" title="隐藏此评论（版主操作）" data-comment-id="' + (c.id || '') + '" data-community-target="' + (list.id || '') + '">👁</button>'
+                : '';
             return '<div class="comment-item">' +
                 '<div class="comment-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
                 '<div class="comment-body">' +
@@ -1890,6 +2210,7 @@
                 '</div>' +
                 '<div class="comment-text">' + escapeHTML(c.text) + '</div>' +
                 '</div>' +
+                deleteBtn + hideBtn +
                 '</div>';
         }).join('');
     }
@@ -2014,6 +2335,11 @@
             syncBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
+                /* v9.0: 先用 SyncManager 拉取最新数据 */
+                if (typeof SyncManager !== 'undefined') {
+                    SyncManager.manualRefresh();
+                }
+                /* 再执行原有同步流程（推送 pending 数据） */
                 handleManualSync(syncBtn);
             });
         }
@@ -2070,6 +2396,79 @@
         });
     }
 
+    /**
+     * v9.0: 认证状态初始化
+     * - 设置 onAuthStateChange 监听器
+     * - 从 Supabase 获取当前用户并更新 AuthManager
+     * - 从 profiles 表获取角色
+     * - 更新 UI（auth-status-text / auth-upgrade-toggle）
+     */
+    function initAuthState() {
+        if (!window.supabaseClient || typeof AuthManager === 'undefined') return;
+
+        /* 监听认证状态变化 */
+        supabaseClient.auth.onAuthStateChange(function(event, session) {
+            if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
+                if (session && session.user) {
+                    AuthManager.updateSession(session.user);
+                    /* 从 profiles 获取角色 */
+                    AuthManager.fetchRole().then(function(role) {
+                        updateAuthUI(session.user, role);
+                    }).catch(function() {
+                        updateAuthUI(session.user, null);
+                    });
+                }
+            } else if (event === 'SIGNED_OUT') {
+                AuthManager.updateSession(null);
+                updateAuthUI(null, null);
+                /* 重新匿名登录 */
+                if (typeof SupabaseAdapter !== 'undefined') {
+                    SupabaseAdapter.ensureAuth().then(function() {
+                        if (typeof SyncManager !== 'undefined') SyncManager.manualRefresh();
+                    });
+                }
+            } else if (event === 'TOKEN_REFRESHED') {
+                if (session && session.user) {
+                    AuthManager.updateSession(session.user);
+                }
+            }
+        });
+
+        /* 初始状态检查 */
+        var user = SupabaseAdapter.getCurrentUser();
+        if (user) {
+            AuthManager.updateSession(user);
+            AuthManager.fetchRole().then(function(role) {
+                updateAuthUI(user, role);
+            }).catch(function() {
+                updateAuthUI(user, null);
+            });
+        } else {
+            updateAuthUI(null, null);
+        }
+    }
+
+    /**
+     * v9.0: 更新认证 UI
+     */
+    function updateAuthUI(user, role) {
+        var statusText = document.getElementById('auth-status-text');
+        var upgradeToggle = document.getElementById('auth-upgrade-toggle');
+
+        if (user && role && role !== 'anonymous') {
+            /* 注册用户 */
+            var roleLabels = { user: '注册用户', moderator: '版主', admin: '管理员' };
+            var label = roleLabels[role] || '注册用户';
+            var email = user.email || '';
+            if (statusText) statusText.textContent = label + (email ? ' · ' + email : '');
+            if (upgradeToggle) upgradeToggle.style.display = 'none';
+        } else {
+            /* 匿名用户 */
+            if (statusText) statusText.textContent = '匿名用户';
+            if (upgradeToggle) upgradeToggle.style.display = 'inline-block';
+        }
+    }
+
     function init() {
         initTheme();
         initMobileMenu();
@@ -2094,6 +2493,83 @@
         initCommunity();
         initSyncStatus();
 
+        /* v9.0: 初始化新模块 */
+        if (typeof AuthManager !== 'undefined') AuthManager.init();
+        if (typeof SyncManager !== 'undefined') SyncManager.createSyncIndicator();
+
+        /* v9.0: 初始化拖拽上传 */
+        if (typeof UploadManager !== 'undefined' && UploadManager.init) {
+            UploadManager.init('upload-drop-zone', 'upload-file-input', 'upload-progress', function(fileData) {
+                if (fileData.type === 'text') {
+                    /* 文本文件：自动填充内容 */
+                    var contentEl = document.getElementById('submit-content');
+                    var titleEl = document.getElementById('submit-title');
+                    if (contentEl && fileData.content) {
+                        contentEl.value = fileData.content.substring(0, 2000);
+                        var counter = document.getElementById('submit-counter');
+                        if (counter) counter.textContent = contentEl.value.length + ' / 2000';
+                    }
+                    if (titleEl && !titleEl.value && fileData.name) {
+                        titleEl.value = fileData.name.replace(/\.(txt|md)$/i, '').substring(0, 100);
+                    }
+                    showSubmitToast('文件内容已填入', 2000);
+                } else if (fileData.type === 'image') {
+                    /* 图片文件：显示预览或上传到 Storage */
+                    showSubmitToast('图片已加载：' + fileData.name, 3000);
+                }
+            });
+        }
+
+        /* v9.0: 认证升级表单交互 */
+        var upgradeToggle = document.getElementById('auth-upgrade-toggle');
+        var upgradeForm = document.getElementById('auth-upgrade-form');
+        var upgradeCancel = document.getElementById('upgrade-cancel');
+        var upgradeSubmit = document.getElementById('upgrade-submit');
+        if (upgradeToggle && upgradeForm) {
+            upgradeToggle.addEventListener('click', function() {
+                upgradeForm.style.display = upgradeForm.style.display === 'none' ? 'block' : 'none';
+            });
+        }
+        if (upgradeCancel) {
+            upgradeCancel.addEventListener('click', function() {
+                upgradeForm.style.display = 'none';
+            });
+        }
+        if (upgradeSubmit && typeof AuthManager !== 'undefined') {
+            upgradeSubmit.addEventListener('click', function() {
+                var email = document.getElementById('upgrade-email').value.trim();
+                var password = document.getElementById('upgrade-password').value;
+                if (!email || password.length < 6) {
+                    showSubmitToast('邮箱必填，密码至少6位', 3000);
+                    return;
+                }
+                AuthManager.upgradeToRegistered(email, password).then(function(result) {
+                    if (result && result.success) {
+                        showSubmitToast('账号升级成功！UID 保持不变', 3000);
+                        upgradeForm.style.display = 'none';
+                        /* 获取角色并更新 UI */
+                        AuthManager.fetchRole().then(function(role) {
+                            updateAuthUI(result.user || AuthManager.session, role);
+                        }).catch(function() {
+                            updateAuthUI(result.user || AuthManager.session, 'user');
+                        });
+                    } else {
+                        showSubmitToast('升级失败，请稍后重试', 4000);
+                    }
+                });
+            });
+        }
+
+        /* v9.0: 标签筛选交互 */
+        var tagChips = document.querySelectorAll('.tag-chip');
+        tagChips.forEach(function(chip) {
+            chip.addEventListener('click', function() {
+                chip.classList.toggle('active');
+                /* 重新渲染社区 */
+                if (typeof initCommunity === 'function') initCommunity();
+            });
+        });
+
         var themeToggle = document.getElementById('theme-toggle');
         if (themeToggle) {
             themeToggle.addEventListener('click', cycleTheme);
@@ -2112,6 +2588,9 @@
                 var status = SupabaseAdapter.getStatus();
                 if (status.ready && status.user) {
                     console.log('[Phase3] 云端同步已就绪，用户:', status.user);
+
+                    /* v9.0: 初始化认证状态 */
+                    initAuthState();
                     setupCloudRealtime();
                 } else if (status.ready) {
                     console.warn('[Phase3] SDK 就绪但用户未认证，匿名登录可能未启用');
@@ -2198,6 +2677,6 @@
         archive: ArchiveAPI,
         sync: SyncAPI,
         user: UserAPI,
-        version: 'v7.9'
+        version: 'v9.0'
     };
 })();

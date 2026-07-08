@@ -210,6 +210,8 @@
         cloudComments.forEach(upsert);
 
         var merged = Object.keys(byKey).map(function(k) { return byKey[k]; });
+        /* v9.0: 过滤已隐藏评论 */
+        merged = merged.filter(function(c) { return c.is_hidden !== true; });
         merged.sort(function(a, b) { return (a.time || 0) - (b.time || 0); });
         return merged;
     }
@@ -289,12 +291,12 @@
      * @param {Object} comment — { author, color, text }
      * @returns {Promise<Object|null>}
      */
-    function addComment(targetId, comment) {
+    function addComment(targetId, comment, extraFields) {
         emit('commentAdded', { targetId: targetId, comment: comment });
 
         /* 只要 Supabase 已启用就尝试写入（适配器内部会排队 pending） */
         if (isCloudEnabled()) {
-            return window.SupabaseAdapter.addComment(targetId, comment)
+            return window.SupabaseAdapter.addComment(targetId, comment, extraFields)
                 .then(function(row) {
                     if (row && row._error) return row;
                     if (row && row.id) {
@@ -472,6 +474,8 @@
         });
 
         merged = Object.keys(byKey).map(function(k) { return byKey[k]; });
+        /* v9.0: 过滤已隐藏投稿 */
+        merged = merged.filter(function(s) { return s.is_hidden !== true; });
         merged.sort(function(a, b) { return (b.time || 0) - (a.time || 0); });
 
         if (typeFilter && typeFilter !== '全部') {
@@ -492,14 +496,14 @@
     /**
      * 添加一篇投稿
      */
-    function addSubmission(submission) {
+    function addSubmission(submission, extraFields) {
         /* 本地写入由 main.js saveSubmissions 完成，
            此处只负责云端同步，避免格式冲突 */
         emit('submissionAdded', { submission: submission });
 
         /* 异步写云端（适配器内部 pending 队列） */
         if (isCloudEnabled()) {
-            return window.SupabaseAdapter.addSubmission(submission)
+            return window.SupabaseAdapter.addSubmission(submission, extraFields)
                 .then(function() {
                     console.log('[Repository] 投稿云端同步成功');
                     return submission;

@@ -152,6 +152,7 @@
                     }
                 });
                 isReady = true;
+                window.supabaseClient = client;  /* 暴露给 auth-manager / sync-manager / upload-manager */
                 console.log('[SupabaseAdapter] 初始化成功');
             } catch(e) {
                 initError = e.message;
@@ -269,27 +270,33 @@
      * @param {Object} comment — { author, color, text }
      * @returns {Promise<Object|null>} 返回创建后的评论对象或 null
      */
-    function addComment(targetId, comment) {
+    function addComment(targetId, comment, extraFields) {
         if (!isReady) {
             queuePending({
                 action: 'addComment',
                 targetId: targetId,
                 comment: comment,
+                extraFields: extraFields,
                 timestamp: new Date().toISOString()
             });
             return Promise.resolve(null);
         }
 
         function doInsert() {
+            var insertData = {
+                target_id:    targetId,
+                author_id:    currentUser ? currentUser.id : null,
+                author_name:  comment.author || '匿名信号源',
+                author_color: comment.color  || '#6B8AFF',
+                content:      comment.text
+            };
+            /* v9.0: 附带删除令牌（匿名用户） */
+            if (extraFields && extraFields.delete_token) {
+                insertData.delete_token = extraFields.delete_token;
+            }
             return client
                 .from('comments')
-                .insert({
-                    target_id:    targetId,
-                    author_id:    currentUser ? currentUser.id : null,
-                    author_name:  comment.author || '匿名信号源',
-                    author_color: comment.color  || '#6B8AFF',
-                    content:      comment.text
-                })
+                .insert(insertData)
                 .select()
                 .single()
                 .then(function(result) {
@@ -301,6 +308,7 @@
                             action: 'addComment',
                             targetId: targetId,
                             comment: comment,
+                            extraFields: extraFields,
                             timestamp: new Date().toISOString()
                         });
                         return { _error: errMsg };
@@ -317,6 +325,7 @@
                         action: 'addComment',
                         targetId: targetId,
                         comment: comment,
+                        extraFields: extraFields,
                         timestamp: new Date().toISOString()
                     });
                     return null;
@@ -423,27 +432,33 @@
      * @param {Object} submission — { type, title, content, name, color }
      * @returns {Promise<Object|null>}
      */
-    function addSubmission(submission) {
+    function addSubmission(submission, extraFields) {
         if (!isReady) {
             queuePending({
                 action: 'addSubmission',
                 submission: submission,
+                extraFields: extraFields,
                 timestamp: new Date().toISOString()
             });
             return Promise.resolve(null);
         }
 
         function doInsert() {
+            var insertData = {
+                type:         toDbType(submission.type),
+                title:        submission.title,
+                content:      submission.content,
+                author_id:    currentUser ? currentUser.id : null,
+                author_name:  submission.name  || '匿名信号源',
+                author_color: submission.color || '#6B8AFF'
+            };
+            /* v9.0: 附带删除令牌 */
+            if (extraFields && extraFields.delete_token) {
+                insertData.delete_token = extraFields.delete_token;
+            }
             return client
                 .from('submissions')
-                .insert({
-                    type:         toDbType(submission.type),
-                    title:        submission.title,
-                    content:      submission.content,
-                    author_id:    currentUser ? currentUser.id : null,
-                    author_name:  submission.name  || '匿名信号源',
-                    author_color: submission.color || '#6B8AFF'
-                })
+                .insert(insertData)
                 .select()
                 .single()
                 .then(function(result) {
@@ -617,6 +632,161 @@
     }
 
     /* ================================================================
+     * v9.0 评论删除令牌 RPC
+     * ================================================================ */
+
+    function deleteCommentWithToken(commentId, deleteToken) {
+        if (!isReady) return Promise.resolve(false);
+        return client.rpc('delete_comment_with_token', {
+            p_comment_id: commentId,
+            p_delete_token: deleteToken
+        }).then(function(result) {
+            if (result.error) {
+                console.error('[SupabaseAdapter] deleteCommentWithToken error:', result.error);
+                return false;
+            }
+            return result.data || false;
+        });
+    }
+
+    function deleteSubmissionWithToken(submissionId, deleteToken) {
+        if (!isReady) return Promise.resolve(false);
+        return client.rpc('delete_submission_with_token', {
+            p_submission_id: submissionId,
+            p_delete_token: deleteToken
+        }).then(function(result) {
+            if (result.error) {
+                console.error('[SupabaseAdapter] deleteSubmissionWithToken error:', result.error);
+                return false;
+            }
+            return result.data || false;
+        });
+    }
+
+    /* ================================================================
+     * v9.0 版主/管理员操作 RPC
+     * ================================================================ */
+
+    function moderateComment(commentId, action, reason) {
+        if (!isReady) return Promise.resolve(false);
+        return client.rpc('moderate_comment', {
+            p_comment_id: commentId,
+            p_action: action,
+            p_reason: reason || ''
+        }).then(function(result) {
+            if (result.error) {
+                console.error('[SupabaseAdapter] moderateComment error:', result.error);
+                return false;
+            }
+            return result.data || false;
+        });
+    }
+
+    function moderateSubmission(submissionId, action, reason) {
+        if (!isReady) return Promise.resolve(false);
+        return client.rpc('moderate_submission', {
+            p_submission_id: submissionId,
+            p_action: action,
+            p_reason: reason || ''
+        }).then(function(result) {
+            if (result.error) {
+                console.error('[SupabaseAdapter] moderateSubmission error:', result.error);
+                return false;
+            }
+            return result.data || false;
+        });
+    }
+
+    function batchModerateComments(commentIds, action, reason) {
+        if (!isReady) return Promise.resolve({ success: 0, failed: 0 });
+        return client.rpc('batch_moderate_comments', {
+            p_comment_ids: commentIds,
+            p_action: action,
+            p_reason: reason || ''
+        }).then(function(result) {
+            if (result.error) {
+                console.error('[SupabaseAdapter] batchModerateComments error:', result.error);
+                return { success: 0, failed: commentIds.length };
+            }
+            return result.data || { success: 0, failed: 0 };
+        });
+    }
+
+    /* ================================================================
+     * v9.2 标签与收藏 RPC
+     * ================================================================ */
+
+    function toggleBookmark(submissionId, collectionId, note) {
+        if (!isReady) return Promise.resolve({ success: false });
+        return client.rpc('toggle_bookmark', {
+            p_submission_id: submissionId,
+            p_collection_id: collectionId || null,
+            p_note: note || ''
+        }).then(function(result) {
+            if (result.error) {
+                console.error('[SupabaseAdapter] toggleBookmark error:', result.error);
+                return { success: false };
+            }
+            return result.data || { success: false };
+        });
+    }
+
+    function addSubmissionTags(submissionId, tagNames) {
+        if (!isReady) return Promise.resolve(false);
+        return client.rpc('add_submission_tags', {
+            p_submission_id: submissionId,
+            p_tag_names: tagNames
+        }).then(function(result) {
+            if (result.error) {
+                console.error('[SupabaseAdapter] addSubmissionTags error:', result.error);
+                return false;
+            }
+            return result.data || false;
+        });
+    }
+
+    function filterSubmissionsByTags(tagNames, type, sort, limit, offset) {
+        if (!isReady) return Promise.resolve([]);
+        return client.rpc('filter_submissions_by_tags', {
+            p_tag_names: tagNames || null,
+            p_type: type || null,
+            p_sort: sort || 'new',
+            p_limit: limit || 20,
+            p_offset: offset || 0
+        }).then(function(result) {
+            if (result.error) {
+                console.error('[SupabaseAdapter] filterSubmissionsByTags error:', result.error);
+                return [];
+            }
+            return result.data || [];
+        });
+    }
+
+    function getTags() {
+        if (!isReady) return Promise.resolve([]);
+        return client.from('tags')
+            .select('*')
+            .order('usage_count', { ascending: false })
+            .then(function(result) {
+                if (result.error) return [];
+                return result.data || [];
+            });
+    }
+
+    function getSubmissionTags(submissionId) {
+        if (!isReady) return Promise.resolve([]);
+        return client.from('submission_tags')
+            .select('tag_id, tags(id, name, category, color)')
+            .eq('submission_id', submissionId)
+            .then(function(result) {
+                if (result.error) return [];
+                return (result.data || []).map(function(row) {
+                    return row.tags;
+                }).filter(Boolean);
+            });
+    }
+
+    /* ================================================================
      * 状态查询
      * ================================================================ */
 
@@ -637,6 +807,7 @@
         /* 生命周期 */
         init:   init,
         config: CONFIG,
+        isReady: false,
 
         /* 认证 */
         getCurrentUser:         getCurrentUser,
@@ -649,12 +820,29 @@
         addComment:     addComment,
         deleteComment:  deleteComment,
         getAllComments: getAllComments,
+        fetchComments:  getComments,
+
+        /* v9.0 评论删除令牌 */
+        deleteCommentWithToken:     deleteCommentWithToken,
+        deleteSubmissionWithToken:  deleteSubmissionWithToken,
+
+        /* v9.0 版主操作 */
+        moderateComment:        moderateComment,
+        moderateSubmission:     moderateSubmission,
+        batchModerateComments:  batchModerateComments,
 
         /* 投稿 */
         getSubmissions:  getSubmissions,
         addSubmission:   addSubmission,
         likeSubmission:  likeSubmission,
         unlikeSubmission: unlikeSubmission,
+
+        /* v9.2 标签与收藏 */
+        toggleBookmark:           toggleBookmark,
+        addSubmissionTags:        addSubmissionTags,
+        filterSubmissionsByTags:  filterSubmissionsByTags,
+        getTags:                  getTags,
+        getSubmissionTags:        getSubmissionTags,
 
         /* 实时 */
         subscribeComments:    subscribeComments,

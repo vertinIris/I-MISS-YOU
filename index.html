@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="飞行雪绒 — 星炬学院的日常。一个打破第四面墙的沉浸式同人创作项目。">
     <meta name="author" content="同人创作">
+    <!-- v9.0: Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self';
+                   script-src 'self' 'unsafe-inline' cdn.jsdelivr.net;
+                   style-src 'self' 'unsafe-inline' cdn.jsdelivr.net fonts.googleapis.com;
+                   img-src 'self' data: blob: https://*.supabase.co;
+                   connect-src 'self' https://*.supabase.co wss://*.supabase.co;
+                   font-src 'self' cdn.jsdelivr.net fonts.gstatic.com;">
     <title>飞行雪绒 ✨ 星炬学院的日常</title>
 
     <!-- Fonts -->
@@ -1104,6 +1112,19 @@
             <h2 class="section-title">投稿创作</h2>
             <p class="section-subtitle">分享你的同人创作，让飞行雪绒的世界更加丰富</p>
 
+            <!-- v9.0: 认证状态栏 -->
+            <div class="auth-status-bar" id="auth-status">
+                <span class="auth-status-icon">👤</span>
+                <span class="auth-status-text" id="auth-status-text">匿名用户</span>
+                <button class="auth-upgrade-toggle" id="auth-upgrade-toggle" style="display:none;">升级账号</button>
+            </div>
+            <div class="auth-upgrade-form" id="auth-upgrade-form" style="display:none;">
+                <input type="email" class="form-input" id="upgrade-email" placeholder="邮箱地址" maxlength="100">
+                <input type="password" class="form-input" id="upgrade-password" placeholder="密码（至少6位）" maxlength="64">
+                <button type="button" class="btn-primary" id="upgrade-submit">升级账号</button>
+                <button type="button" class="btn-ghost" id="upgrade-cancel">取消</button>
+            </div>
+
             <div class="submit-card glass reveal">
                 <form class="submit-form" id="submit-form">
                     <div class="form-row">
@@ -1126,10 +1147,41 @@
                         <label class="form-label" for="submit-title">标题</label>
                         <input type="text" class="form-input" id="submit-title" placeholder="给作品起个名字" maxlength="100" required>
                     </div>
+                    <!-- v9.0: 投稿标签选择器 -->
+                    <div class="form-group">
+                        <label class="form-label">标签 <span class="form-hint">（可选，最多选5个）</span></label>
+                        <div class="submission-tag-selector" id="submission-tag-selector">
+                            <span class="tag-category-label">角色</span>
+                            <button type="button" class="tag-chip select-tag" data-tag="爱弥斯">爱弥斯</button>
+                            <button type="button" class="tag-chip select-tag" data-tag="达妮娅">达妮娅</button>
+                            <button type="button" class="tag-chip select-tag" data-tag="西格莉卡">西格莉卡</button>
+                            <button type="button" class="tag-chip select-tag" data-tag="漂泊者">漂泊者</button>
+                            <span class="tag-category-label">类型</span>
+                            <button type="button" class="tag-chip select-tag" data-tag="日常">日常</button>
+                            <button type="button" class="tag-chip select-tag" data-tag="冒险">冒险</button>
+                            <button type="button" class="tag-chip select-tag" data-tag="情感">情感</button>
+                            <span class="tag-category-label">自由</span>
+                            <button type="button" class="tag-chip select-tag" data-tag="治愈">治愈</button>
+                            <button type="button" class="tag-chip select-tag" data-tag="甜文">甜文</button>
+                            <button type="button" class="tag-chip select-tag" data-tag="虐心">虐心</button>
+                            <button type="button" class="tag-chip select-tag" data-tag="结契人">结契人</button>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label class="form-label" for="submit-content">内容</label>
                         <textarea class="form-input form-textarea" id="submit-content" placeholder="在这里写下你的创作……" rows="6" maxlength="2000" required></textarea>
                         <span class="form-counter" id="submit-counter">0 / 2000</span>
+                    </div>
+                    <!-- v9.0: 拖拽上传区 -->
+                    <div class="upload-drop-zone" id="upload-drop-zone">
+                        <div class="upload-icon">📂</div>
+                        <div class="upload-hint">拖拽文件到此处，或点击选择文件</div>
+                        <div class="upload-formats">支持: .txt .md .jpg .png .gif | 限制: 文本 10MB / 图片 5MB</div>
+                    </div>
+                    <input type="file" id="upload-file-input" style="display:none;" accept=".txt,.md,.jpg,.jpeg,.png,.gif">
+                    <div class="upload-progress" id="upload-progress" style="display:none;">
+                        <div class="progress-fill" id="upload-progress-fill"></div>
+                        <span class="progress-text" id="upload-progress-text">0%</span>
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn-primary magnetic">
@@ -1160,6 +1212,22 @@
                 <button class="community-filter-btn" data-filter="poem">诗歌</button>
                 <button class="community-filter-btn" data-filter="art">插画</button>
                 <button class="community-filter-btn" data-filter="music">音乐</button>
+            </div>
+
+            <!-- v9.0: 标签筛选栏 -->
+            <div class="tag-filter-bar" id="tag-filter-bar">
+                <span class="tag-category-label">角色</span>
+                <button class="tag-chip" data-tag-type="character" data-tag="爱弥斯">爱弥斯</button>
+                <button class="tag-chip" data-tag-type="character" data-tag="达妮娅">达妮娅</button>
+                <button class="tag-chip" data-tag-type="character" data-tag="西格莉卡">西格莉卡</button>
+                <button class="tag-chip" data-tag-type="character" data-tag="漂泊者">漂泊者</button>
+                <span class="tag-category-label">类型</span>
+                <button class="tag-chip" data-tag-type="category" data-tag="日常">日常</button>
+                <button class="tag-chip" data-tag-type="category" data-tag="冒险">冒险</button>
+                <button class="tag-chip" data-tag-type="category" data-tag="情感">情感</button>
+                <span class="tag-category-label">自由标签</span>
+                <button class="tag-chip" data-tag-type="freeform" data-tag="治愈">治愈</button>
+                <button class="tag-chip" data-tag-type="freeform" data-tag="甜文">甜文</button>
             </div>
 
             <div class="community-grid" id="community-grid">
@@ -1237,7 +1305,7 @@
 
             <div class="footer-bottom">
                 <p>© 2026 飞行雪绒 · 同人创作 · 非商业用途</p>
-                <p class="footer-meta">v7.9 · 三阶段完成 · 评论/点赞实时更新 · 云端同步 + 评论删除 + 管理口令 · Made with ✨ and ❄️</p>
+                <p class="footer-meta">v9.0 · 评论删除令牌 + 角色权限 + Realtime全事件同步 + 标签收藏 + 拖拽上传 · Made with ✨ and ❄️</p>
                 <p class="footer-sync" id="sync-status" title="点击复制诊断信息">☁ 本地模式</p>
                 <button type="button" id="sync-now-btn" class="sync-now-btn" title="立即同步到云端" aria-label="立即同步">🔄</button>
             </div>
@@ -1253,6 +1321,10 @@
     <script src="js/repository.js"></script>
     <script src="js/admin-auth.js"></script>
     <script src="js/rate-limiter.js"></script>
+    <script src="js/auth-manager.js"></script>
+    <script src="js/sync-manager.js"></script>
+    <script src="js/upload-manager.js"></script>
+    <script src="js/rate-limiter-client.js"></script>
     <script src="js/particles.js"></script>
     <script src="js/main.js"></script>
 </body>
