@@ -1133,9 +1133,17 @@
                 });
             });
 
-            /* 投稿变更同步 */
-            SyncManager.connectSubmissions(function() {
-                renderCommunity();
+            /* 投稿变更同步 —— 必须传对象 { onNewSubmission, onUpdateSubmission }，
+               详见 js/sync-manager.js:205 connectSubmissions(handlers) 的契约 */
+            SyncManager.connectSubmissions({
+                onNewSubmission: function(submission) {
+                    /* 其他用户发新帖 → 实时刷新社区列表 */
+                    renderCommunity();
+                },
+                onUpdateSubmission: function(newData, oldData) {
+                    /* 投稿被隐藏/恢复等变更 → 实时刷新社区列表 */
+                    renderCommunity();
+                }
             });
         } else {
             /* 降级：使用旧的订阅方式 */

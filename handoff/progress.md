@@ -1,7 +1,7 @@
 # 飞行雪绒 v9.0 进度报告
 
-> **最后更新**: 2026-07-08 02:10
-> **状态**: 全面审查补全完成，待 Supabase 迁移 + 测试
+> **最后更新**: 2026-07-08 23:18
+> **状态**: 代码全就绪 + 数据库迁移已完成 + P0 实时 bug 已修，待功能完善（管理后台/收藏夹UI）+ 测试验证
 
 ---
 
@@ -49,9 +49,9 @@
 
 ## 未完成事项
 
-### 需要手动操作
-- [ ] **Supabase 执行 migration-006~009**（Dashboard → SQL Editor 依次执行）
-- [ ] 设置管理员角色：`UPDATE profiles SET role = 'admin' WHERE id = '你的 auth.uid';`
+### 需要手动操作（迁移已确认完成）
+- [x] **Supabase 执行 migration-006~009**（用户已于 2026-07-08 在 Dashboard 执行）
+- [ ] 设置管理员角色：`UPDATE profiles SET role = 'admin' WHERE id = '你的 auth.uid';`（迁移已含 `role` 字段，管理员仍需手动设；不设置则 admin UI 无法访问）
 
 ### 全面审查补全（本轮完成）
 - [x] **修复 sync-manager.js submissions 变量 bug** — `submissions['submissions']` → `subscriptions['submissions']`
@@ -71,7 +71,18 @@
 - [x] **CSS 样式补充** — 投稿标签选择器、书签按钮、form-hint 样式
 - [x] 全部 7 个 JS 文件语法检查通过
 
-### 测试清单
+### 本轮修复（2026-07-08 续）— P0 实时同步真 bug
+- [x] **修复投稿实时同步回调失效** — `js/main.js:1137` 原调用 `SyncManager.connectSubmissions(function(){ renderCommunity(); })` 传了裸函数，但 `sync-manager.js:205` 的 `connectSubmissions(handlers)` 契约要求对象 `{ onNewSubmission, onUpdateSubmission }`，导致两个回调被赋为 `undefined`、投稿 INSERT/UPDATE 事件静默丢弃。已改为传入正确对象，投稿实时同步恢复。已通过 `node --check`。
+
+### 剩余功能模块（未实现）
+- [ ] **管理后台面板** [P1] — `batch_moderate_comments` / `apply_moderation` RPC 已建，但无 UI。需版主/管理员批量管理评论 + 查看 `moderation_logs`
+- [ ] **收藏夹管理 UI** [P1] — `bookmarks` 表 + `toggle_bookmark` RPC + 书签按钮已可用，但无收藏夹管理界面（创建/整理/公开）
+- [ ] **评论/投稿分页** [P2] — `renderComments`/`renderCommunity` 全量渲染，数据量大时卡顿
+- [ ] **实时事件增量更新** [P2] — 当前全量重渲染，可改为单条增量插入/更新
+- [ ] **轮询兜底按需启用** [P2] — `setInterval(30s)` 在 Realtime 正常时也常驻，应仅离线/重连时启用
+- [ ] **自动化测试框架** [P3] — 仅有 `syntax-check`，无单测/E2E（todo.md 14 项仍靠手点）
+
+### 测试清单（仍未验证）
 - [ ] 匿名用户发评论 → 生成令牌 → 删除评论（令牌校验）
 - [ ] 注册用户发评论 → 身份删除
 - [ ] 版主隐藏/恢复评论

@@ -8,8 +8,18 @@
 
 ## 任务概览
 
-基础设施已全部就绪（4 个 migration + 4 个新 JS 模块 + adapter 更新 + CSS 样式），  
-**核心剩余工作是 `main.js` 集成** — 将新模块接入现有交互流程。
+> **最新接续文档见根目录 `TASKS.md`**（含已完成摘要、剩余任务、Cursor 分步指引）。
+> 本文件为 v9.0 初期的 `main.js` 集成待办，多数已完工；标记 `[done]` 的为已验证完成项。
+
+基础设施已全部就绪（4 个 migration + 4 个新 JS 模块 + adapter 更新 + CSS 样式）。  
+**main.js 集成已于 2026-07-08 完成并修复 P0 实时 bug**。剩余为功能完善（管理后台/收藏夹UI）+ 测试，见 `TASKS.md`。
+
+---
+
+### Task 4 状态更新 [done]
+- [x] **Supabase 执行 migration-006~009** — 用户已于 2026-07-08 在 Dashboard 执行
+- [ ] 设置管理员角色：`UPDATE profiles SET role = 'admin' WHERE id = '你的 auth.uid';`（仍在手操）
+
 
 ---
 
