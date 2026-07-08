@@ -150,6 +150,7 @@
             color:    row.author_color || '#6B8AFF',
             text:     row.content || '',
             time:     d.getTime(),
+            is_hidden: row.is_hidden === true,
             timeStr:  (d.getMonth() + 1) + '月' + d.getDate() + '日 ' +
                       String(d.getHours()).padStart(2, '0') + ':' +
                       String(d.getMinutes()).padStart(2, '0')
@@ -275,6 +276,60 @@
 
         return Promise.all(keyTasks).then(function() {
             if (keyTasks.length) console.log('[Repository] 本地未同步评论补传完成');
+        });
+    }
+
+    /**
+     * 全量云端同步：刷新 session → 推送 pending → 补传本地-only → 拉取全部评论区
+     * @returns {Promise<Object>} { pushStats, pulledTargets }
+     */
+    function fullCloudSync() {
+        var chain = Promise.resolve();
+
+        if (window.SupabaseAdapter && window.SupabaseAdapter.refreshSession) {
+            chain = chain.then(function() { return SupabaseAdapter.refreshSession(); });
+        }
+        if (window.SupabaseAdapter && window.SupabaseAdapter.ensureAuth) {
+            chain = chain.then(function() { return SupabaseAdapter.ensureAuth(); });
+        }
+
+        return chain.then(function() {
+            if (!window.SupabaseAdapter || !SupabaseAdapter.syncPendingQueue) {
+                return { synced: 0, failed: 0, remaining: 0, errors: [] };
+            }
+            return SupabaseAdapter.syncPendingQueue();
+        }).then(function(pushStats) {
+            return syncLocalOnlyComments().then(function() {
+                return pushStats;
+            });
+        }).then(function(pushStats) {
+            var tasks = [];
+            var targetIds = [];
+            try {
+                for (var i = 0; i < localStorage.length; i++) {
+                    var key = localStorage.key(i);
+                    if (!key || key.indexOf('fxre_comments_') !== 0) continue;
+                    var targetId = key.replace('fxre_comments_', '');
+                    if (targetId === 'seed_version') continue;
+                    targetIds.push(targetId);
+                    tasks.push(pullCommentsAndPersist(targetId));
+                }
+            } catch(e) {}
+
+            /* 也拉取页面上可见但 localStorage 可能尚未有的 target */
+            if (typeof document !== 'undefined') {
+                document.querySelectorAll('.comment-area').forEach(function(area) {
+                    var tid = area.id.replace('comments-', '');
+                    if (tid && targetIds.indexOf(tid) === -1) {
+                        targetIds.push(tid);
+                        tasks.push(pullCommentsAndPersist(tid));
+                    }
+                });
+            }
+
+            return Promise.all(tasks).then(function() {
+                return { pushStats: pushStats, pulledTargets: targetIds.length };
+            });
         });
     }
 
@@ -661,6 +716,7 @@
         getAllComments:        getAllComments,
         pullCommentsAndPersist: pullCommentsAndPersist,
         syncLocalOnlyComments: syncLocalOnlyComments,
+        fullCloudSync:         fullCloudSync,
 
         /* 投稿 */
         getSubmissions: getSubmissions,

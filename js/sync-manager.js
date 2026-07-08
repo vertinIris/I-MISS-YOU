@@ -6,7 +6,7 @@
  *   - Realtime Channel 管理（INSERT/UPDATE/DELETE 全事件）
  *   - 断连自动降级轮询
  *   - 指数退避重连
- *   - 同步状态指示器 UI
+ *   - 右下角同步状态指示器 + 可点击同步按钮
  *   - 评论/投稿双通道订阅
  */
 
@@ -16,19 +16,20 @@ var SyncManager = (function() {
         REALTIME: 'realtime',
         POLLING: 'polling',
         OFFLINE: 'offline',
-        RECONNECTING: 'reconnecting'
+        RECONNECTING: 'reconnecting',
+        SYNCING: 'syncing'
     };
 
     var state = STATE.OFFLINE;
     var reconnectAttempts = 0;
     var maxReconnect = 5;
     var pollInterval = null;
-    var pollIntervalMs = 15000;  // 15秒
+    var pollIntervalMs = 15000;
     var lastSyncTime = new Date(0).toISOString();
     var subscriptions = {};
     var callbacks = {};
-
-    // ---- 状态管理 ----
+    var lastSyncResult = null;
+    var onManualSync = null;
 
     function setState(newState) {
         if (state === newState) return;
@@ -45,6 +46,16 @@ var SyncManager = (function() {
         return state;
     }
 
+    function getCommentTargetIds() {
+        var ids = [];
+        document.querySelectorAll('.comment-area').forEach(function(area) {
+            if (area.id && area.id.indexOf('comments-') === 0) {
+                ids.push(area.id.replace('comments-', ''));
+            }
+        });
+        return ids;
+    }
+
     // ---- 评论 Realtime 订阅 ----
 
     function connectComments(targetId, handlers) {
@@ -57,7 +68,6 @@ var SyncManager = (function() {
         callbacks.onUpdateComment = handlers.onUpdateComment;
         callbacks.onDeleteComment = handlers.onDeleteComment;
 
-        // 如果已有该 targetId 的订阅，先取消
         disconnectComments(targetId);
 
         var channel = supabaseClient
@@ -126,8 +136,6 @@ var SyncManager = (function() {
         setState(STATE.OFFLINE);
     }
 
-    // ---- 指数退避重连 ----
-
     function attemptReconnect(targetId) {
         if (reconnectAttempts >= maxReconnect) {
             setState(STATE.POLLING);
@@ -135,7 +143,7 @@ var SyncManager = (function() {
             return;
         }
 
-        var delay = Math.pow(2, reconnectAttempts) * 1000; // 1s/2s/4s/8s/16s
+        var delay = Math.pow(2, reconnectAttempts) * 1000;
         reconnectAttempts++;
 
         setTimeout(function() {
@@ -144,8 +152,6 @@ var SyncManager = (function() {
             }
         }, delay);
     }
-
-    // ---- 轮询降级 ----
 
     function startPolling(targetId) {
         stopPolling();
@@ -180,27 +186,32 @@ var SyncManager = (function() {
         }
     }
 
-    // ---- 手动刷新 ----
-
+    /**
+     * 刷新单个 target 的评论（从云端拉取）
+     */
     function manualRefresh(targetId) {
         if (!window.SupabaseAdapter || !SupabaseAdapter.isReady) {
             return Promise.resolve([]);
         }
 
-        return SupabaseAdapter.fetchComments(targetId).then(function(comments) {
-            if (comments && comments.length > 0) {
-                comments.forEach(function(c) {
-                    if (typeof callbacks.onNewComment === 'function') {
-                        callbacks.onNewComment(c);
-                    }
-                });
-                lastSyncTime = new Date().toISOString();
-            }
-            return comments;
+        var fetchFn = SupabaseAdapter.fetchComments.bind(SupabaseAdapter);
+        return fetchFn(targetId).then(function(comments) {
+            lastSyncTime = new Date().toISOString();
+            return comments || [];
         });
     }
 
-    // ---- 投稿 Realtime 订阅 ----
+    /**
+     * 刷新页面上所有评论区
+     */
+    function refreshAllCommentTargets() {
+        var ids = getCommentTargetIds();
+        if (!ids.length) return Promise.resolve([]);
+
+        return Promise.all(ids.map(function(id) {
+            return manualRefresh(id);
+        }));
+    }
 
     function connectSubmissions(handlers) {
         if (!window.supabaseClient) return;
@@ -233,23 +244,43 @@ var SyncManager = (function() {
         subscriptions['submissions'] = channel;
     }
 
-    // ---- 同步状态指示器 UI ----
+    function setLastSyncResult(result) {
+        lastSyncResult = result;
+        updateSyncIndicator(state);
+    }
 
     function updateSyncIndicator(s) {
         var indicator = document.getElementById('sync-indicator');
         if (!indicator) return;
 
+        var pending = (window.SupabaseAdapter && SupabaseAdapter.getStatus)
+            ? SupabaseAdapter.getStatus().pending : 0;
+
         var config = {
-            realtime:    { icon: '\uD83D\uDD34', text: '\u5B9E\u65F6\u540C\u6B65', class: 'sync-live' },
-            polling:     { icon: '\uD83D\uDFE1', text: '\u8F6E\u8BE2\u540C\u6B65', class: 'sync-poll' },
-            offline:     { icon: '\uD83D\uDD34', text: '\u5DF2\u65AD\u5F00',   class: 'sync-off' },
-            reconnecting:{ icon: '\uD83D\uDD04', text: '\u91CD\u8FDE\u4E2D',   class: 'sync-conn' }
+            syncing:     { icon: '\uD83D\uDD04', text: '\u540c\u6b65\u4e2d\u2026', class: 'sync-syncing' },
+            realtime:    { icon: '\uD83D\uDFE2', text: '\u5b9e\u65f6\u540c\u6b65', class: 'sync-live' },
+            polling:     { icon: '\uD83D\uDFE1', text: '\u8f6e\u8be2\u540c\u6b65', class: 'sync-poll' },
+            offline:     { icon: '\uD83D\uDD34', text: '\u672a\u8fde\u63a5', class: 'sync-off' },
+            reconnecting:{ icon: '\uD83D\uDD04', text: '\u91cd\u8fde\u4e2d', class: 'sync-conn' }
         };
 
         var c = config[s] || config.offline;
+        var pendingHint = pending > 0 ? ' \xb7 \u5f85\u53d1 ' + pending : '';
+        var resultHint = '';
+        if (lastSyncResult && lastSyncResult.time) {
+            if (lastSyncResult.failed > 0) {
+                resultHint = ' \xb7 \u5931\u8d25' + lastSyncResult.failed;
+            } else if (lastSyncResult.uploaded > 0 || lastSyncResult.pulled) {
+                resultHint = ' \xb7 \u2713';
+            }
+        }
+
         indicator.className = 'sync-indicator ' + c.class;
-        indicator.innerHTML = '<span class="sync-dot">' + c.icon + '</span>' +
-            '<span class="sync-text">' + c.text + '</span>';
+        var statusEl = indicator.querySelector('.sync-status-text');
+        if (statusEl) {
+            statusEl.innerHTML = '<span class="sync-dot">' + c.icon + '</span>' +
+                '<span class="sync-text">' + c.text + pendingHint + resultHint + '</span>';
+        }
     }
 
     function createSyncIndicator() {
@@ -258,20 +289,35 @@ var SyncManager = (function() {
         var div = document.createElement('div');
         div.id = 'sync-indicator';
         div.className = 'sync-indicator sync-off';
-        div.innerHTML = '<span class="sync-dot">\uD83D\uDD34</span><span class="sync-text">\u5DF2\u65AD\u5F00</span>';
-        div.title = '\u70B9\u51FB\u624B\u52A8\u5237\u65B0';
-        div.addEventListener('click', function() {
-            // 手动刷新当前活跃的 targetId
-            Object.keys(subscriptions).forEach(function(key) {
-                if (key !== 'submissions') {
-                    manualRefresh(key);
-                }
-            });
+        div.innerHTML =
+            '<div class="sync-status-text">' +
+                '<span class="sync-dot">\uD83D\uDD34</span>' +
+                '<span class="sync-text">\u672a\u8fde\u63a5</span>' +
+            '</div>' +
+            '<button type="button" class="sync-indicator-btn" id="sync-indicator-btn" title="立即同步：上传待发送 + 拉取云端最新" aria-label="立即同步">\uD83D\uDD04</button>';
+
+        var btn = div.querySelector('#sync-indicator-btn');
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof onManualSync === 'function') {
+                onManualSync(btn);
+            }
         });
+
+        div.querySelector('.sync-status-text').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (typeof onManualSync === 'function') {
+                onManualSync(btn);
+            }
+        });
+
         document.body.appendChild(div);
     }
 
-    // ---- 导出 ----
+    function setManualSyncHandler(fn) {
+        onManualSync = fn;
+    }
 
     return {
         STATE: STATE,
@@ -280,8 +326,12 @@ var SyncManager = (function() {
         disconnectAll: disconnectAll,
         connectSubmissions: connectSubmissions,
         manualRefresh: manualRefresh,
+        refreshAllCommentTargets: refreshAllCommentTargets,
         getState: getState,
         createSyncIndicator: createSyncIndicator,
-        updateSyncIndicator: updateSyncIndicator
+        updateSyncIndicator: updateSyncIndicator,
+        setLastSyncResult: setLastSyncResult,
+        setManualSyncHandler: setManualSyncHandler,
+        setState: setState
     };
 })();

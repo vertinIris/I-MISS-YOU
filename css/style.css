@@ -3912,26 +3912,72 @@ article, section, nav, footer, header {
     bottom: 20px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    border-radius: 20px;
-    background: rgba(20, 20, 35, 0.9);
+    gap: 10px;
+    padding: 8px 10px 8px 14px;
+    border-radius: 24px;
+    background: rgba(20, 20, 35, 0.92);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.85);
     z-index: 9999;
-    cursor: pointer;
     transition: all 0.3s ease;
-    opacity: 0.7;
+    opacity: 0.85;
     user-select: none;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
 }
 
 .sync-indicator:hover {
     opacity: 1;
     transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.sync-indicator .sync-status-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    flex: 1;
+    min-width: 0;
+}
+
+.sync-indicator-btn {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(107, 138, 255, 0.45);
+    background: rgba(107, 138, 255, 0.18);
+    color: #fff;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    padding: 0;
+}
+
+.sync-indicator-btn:hover {
+    background: rgba(107, 138, 255, 0.35);
+    transform: scale(1.08);
+    box-shadow: 0 0 16px rgba(107, 138, 255, 0.4);
+}
+
+.sync-indicator-btn:active {
+    transform: scale(0.95);
+}
+
+.sync-indicator-btn.syncing {
+    animation: syncSpin 0.9s linear infinite;
+    pointer-events: none;
+    opacity: 0.85;
+}
+
+.sync-syncing .sync-dot {
+    animation: syncSpin 0.9s linear infinite;
 }
 
 .sync-indicator .sync-dot {

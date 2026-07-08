@@ -160,6 +160,15 @@
                 return false;
             }
 
+            /* 监听认证变化，保持 currentUser 与 session 一致（邮箱注册/升级后必需） */
+            client.auth.onAuthStateChange(function(event, session) {
+                if (session && session.user) {
+                    currentUser = session.user;
+                } else if (event === 'SIGNED_OUT') {
+                    currentUser = null;
+                }
+            });
+
             /* 自动执行匿名登录（带超时） */
             return ensureAuthWithTimeout().then(function(user) {
                 if (!user) {
@@ -170,6 +179,21 @@
             }).catch(function() {
                 return true; /* 认证失败不阻塞页面 */
             });
+        });
+    }
+
+    /**
+     * 从 Supabase session 刷新 currentUser（手动同步 / 注册升级后调用）
+     */
+    function refreshSession() {
+        if (!isReady || !client) return Promise.resolve(null);
+        return client.auth.getSession().then(function(result) {
+            if (result.data && result.data.session) {
+                currentUser = result.data.session.user;
+                return currentUser;
+            }
+            currentUser = null;
+            return null;
         });
     }
 
@@ -608,22 +632,65 @@
      * ================================================================ */
 
     function syncPendingQueue() {
-        if (pendingSync.length === 0) return Promise.resolve();
+        if (pendingSync.length === 0) {
+            return Promise.resolve({ synced: 0, failed: 0, remaining: 0, errors: [] });
+        }
 
-        console.log('[SupabaseAdapter] 同步', pendingSync.length, '条离线数据...');
-        var promises = pendingSync.map(function(item) {
-            if (item.action === 'addComment') {
-                return addComment(item.targetId, item.comment);
-            }
-            if (item.action === 'addSubmission') {
-                return addSubmission(item.submission);
-            }
-            return Promise.resolve();
-        });
+        var batch = pendingSync.slice();
+        var failed = [];
+        var synced = 0;
+        var errors = [];
 
-        return Promise.all(promises).then(function() {
-            clearPendingQueue();
-            console.log('[SupabaseAdapter] 离线同步完成');
+        console.log('[SupabaseAdapter] 同步', batch.length, '条离线数据...');
+
+        return refreshSession().then(function() {
+            if (!currentUser) return ensureAuth();
+        }).then(function() {
+            return Promise.all(batch.map(function(item) {
+                var task;
+                if (item.action === 'addComment') {
+                    task = addComment(item.targetId, item.comment, item.extraFields);
+                } else if (item.action === 'addSubmission') {
+                    task = addSubmission(item.submission, item.extraFields);
+                } else {
+                    return Promise.resolve({ ok: true });
+                }
+
+                return task.then(function(result) {
+                    if (item.action === 'addComment') {
+                        if (result && result._error) {
+                            errors.push({ action: item.action, targetId: item.targetId, error: result._error });
+                            failed.push(item);
+                            return { ok: false };
+                        }
+                        if (!result || !result.id) {
+                            failed.push(item);
+                            return { ok: false };
+                        }
+                    } else if (item.action === 'addSubmission') {
+                        if (result && result._error) {
+                            errors.push({ action: item.action, error: result._error });
+                            failed.push(item);
+                            return { ok: false };
+                        }
+                        if (!result) {
+                            failed.push(item);
+                            return { ok: false };
+                        }
+                    }
+                    synced++;
+                    return { ok: true };
+                }).catch(function(err) {
+                    errors.push({ action: item.action, error: err.message || String(err) });
+                    failed.push(item);
+                    return { ok: false };
+                });
+            }));
+        }).then(function() {
+            pendingSync = failed;
+            savePendingQueue();
+            console.log('[SupabaseAdapter] 离线同步完成: 成功', synced, '失败', failed.length);
+            return { synced: synced, failed: failed.length, remaining: failed.length, errors: errors };
         });
     }
 
@@ -807,13 +874,14 @@
         /* 生命周期 */
         init:   init,
         config: CONFIG,
-        isReady: false,
+        get isReady() { return isReady; },
 
         /* 认证 */
         getCurrentUser:         getCurrentUser,
         isAuthenticated:        isAuthenticated,
         ensureAuth:             ensureAuth,
         ensureAuthWithTimeout:  ensureAuthWithTimeout,
+        refreshSession:         refreshSession,
 
         /* 评论 */
         getComments:    getComments,

@@ -1473,6 +1473,7 @@
                 .then(function(cloudRow) {
                     if (cloudRow && cloudRow._error) {
                         showSubmitToast('评论已显示，但云端同步失败：' + cloudRow._error, 6000);
+                        updateSyncStatus();
                         return;
                     }
                     if (cloudRow && cloudRow.id) {
@@ -1499,10 +1500,14 @@
                             saveComments(targetId, comments);
                         }
                         if (stored && typeof stored.then === 'function') {
-                            stored.then(patchList).then(function() { renderComments(targetId); });
+                            stored.then(patchList).then(function() {
+                                renderComments(targetId);
+                                updateSyncStatus();
+                            });
                         } else {
                             patchList(stored || []);
                             renderComments(targetId);
+                            updateSyncStatus();
                         }
                     } else {
                         showSubmitToast('评论已本地保存，等待云端同步…', 3000);
@@ -2261,6 +2266,13 @@
             html = '\ud83d\udee1 ' + html + ' \xb7 \u7ba1\u7406\u5458';
         }
 
+        /* v9.0 AuthManager 角色 */
+        if (typeof AuthManager !== 'undefined' && AuthManager.session.role === 'admin') {
+            html = '\ud83d\udee1 ' + html + ' \xb7 \u7ba1\u7406\u5458(DB)';
+        } else if (typeof AuthManager !== 'undefined' && AuthManager.session.role === 'moderator') {
+            html += ' \xb7 \u7248\u4e3b';
+        }
+
         el.innerHTML = html;
         el.className = cls;
         el.dataset.diagnostic = JSON.stringify({
@@ -2337,71 +2349,132 @@
             }
         });
 
-        /* 主动同步按钮 */
-        var syncBtn = document.getElementById('sync-now-btn');
-        if (syncBtn) {
-            syncBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                /* v9.0: 先用 SyncManager 拉取最新数据 */
-                if (typeof SyncManager !== 'undefined') {
-                    SyncManager.manualRefresh();
-                }
-                /* 再执行原有同步流程（推送 pending 数据） */
-                handleManualSync(syncBtn);
-            });
-        }
-
+        /* 页脚同步按钮已移至右下角 SyncManager 指示器 */
         updateSyncStatus();
         setInterval(updateSyncStatus, 5000);
     }
 
-    function handleManualSync(btn) {
+    var __fxreRealtimeSetup = false;
+    var __fxreAuthStateInit = false;
+
+    /**
+     * 确保已认证并启用 Realtime（认证延迟 / 邮箱登录后重试）
+     */
+    function ensureCloudConnected() {
+        if (typeof SupabaseAdapter === 'undefined') return Promise.resolve(false);
+
+        return SupabaseAdapter.refreshSession()
+            .then(function() { return SupabaseAdapter.ensureAuth(); })
+            .then(function(user) {
+                if (!user) return false;
+                if (!__fxreAuthStateInit) {
+                    initAuthState();
+                    __fxreAuthStateInit = true;
+                }
+                if (!__fxreRealtimeSetup) {
+                    setupCloudRealtime();
+                    __fxreRealtimeSetup = true;
+                }
+                updateSyncStatus();
+                return true;
+            })
+            .catch(function() { return false; });
+    }
+
+    function finishSyncUI(btn) {
+        if (btn) {
+            btn.classList.remove('syncing');
+            btn.disabled = false;
+        }
+        updateSyncStatus();
+    }
+
+    /**
+     * 全量云端同步：上传 pending + 补传本地-only + 拉取全部评论区 + 刷新 UI
+     */
+    function performFullCloudSync(btn) {
         if (typeof SupabaseAdapter === 'undefined') {
             showSubmitToast('\u2601 \u4e91\u7aef\u6a21\u5757\u672a\u52a0\u8f7d\uff0c\u65e0\u6cd5\u540c\u6b65');
-            return;
+            return Promise.resolve();
         }
 
         var status = SupabaseAdapter.getStatus();
         if (!status.configValid) {
             showSubmitToast('\u2601 Supabase \u672a\u914d\u7f6e\uff0c\u65e0\u6cd5\u540c\u6b65');
-            return;
+            return Promise.resolve();
         }
-        if (!status.ready || !status.user) {
+        if (!status.ready) {
             showSubmitToast('\u26a0 \u4e91\u7aef\u672a\u5c31\u7eea\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5');
-            return;
+            return Promise.resolve();
         }
 
         if (btn) {
             btn.classList.add('syncing');
             btn.disabled = true;
         }
+        if (typeof SyncManager !== 'undefined') {
+            SyncManager.setState(SyncManager.STATE.SYNCING);
+        }
 
-        showSubmitToast('\ud83d\udd04 \u6b63\u5728\u540c\u6b65\u5f85\u53d1\u9001\u6570\u636e\u2026');
+        showSubmitToast('\ud83d\udd04 \u6b63\u5728\u540c\u6b65\uff08\u4e0a\u4f20 + \u62c9\u53d6\u2026\uff09');
 
-        SupabaseAdapter.syncPendingQueue().then(function() {
-            updateSyncStatus();
-            var s = SupabaseAdapter.getStatus();
-            if (s.pending === 0) {
-                showSubmitToast('\u2705 \u540c\u6b65\u5b8c\u6210\uff0c\u6240\u6709\u6570\u636e\u5df2\u4e0a\u4f20\u4e91\u7aef');
-                /* 刷新评论和社区以展示云端数据 */
-                document.querySelectorAll('.comment-area').forEach(function(area) {
-                    var id = area.id.replace('comments-', '');
-                    renderComments(id);
+        return ensureCloudConnected().then(function(connected) {
+            if (!connected) {
+                showSubmitToast('\u26a0 \u4e91\u7aef\u672a\u8ba4\u8bc1\uff01\u8bf7\u5230 Supabase \u2192 Authentication \u2192 \u542f\u7528 Anonymous Sign-ins', 6000);
+                throw new Error('not_authenticated');
+            }
+            if (typeof DataRepository !== 'undefined' && DataRepository.fullCloudSync) {
+                return DataRepository.fullCloudSync();
+            }
+            return SupabaseAdapter.syncPendingQueue().then(function(s) {
+                return { pushStats: s, pulledTargets: 0 };
+            });
+        }).then(function(result) {
+            var stats = result.pushStats || result;
+            var uploaded = stats.synced || 0;
+            var failed = stats.failed || stats.remaining || 0;
+
+            document.querySelectorAll('.comment-area').forEach(function(area) {
+                var id = area.id.replace('comments-', '');
+                renderComments(id);
+            });
+            if (typeof initCommunity === 'function') initCommunity();
+
+            if (typeof SyncManager !== 'undefined') {
+                SyncManager.setLastSyncResult({
+                    time: Date.now(),
+                    uploaded: uploaded,
+                    failed: failed,
+                    pulled: result.pulledTargets || 0
                 });
-                if (typeof initCommunity === 'function') initCommunity();
+                if (SyncManager.getState() === SyncManager.STATE.SYNCING) {
+                    SyncManager.setState(__fxreRealtimeSetup ? SyncManager.STATE.REALTIME : SyncManager.STATE.OFFLINE);
+                }
+            }
+
+            updateSyncStatus();
+
+            if (failed > 0) {
+                var errMsg = (stats.errors && stats.errors[0]) ? stats.errors[0].error : '';
+                showSubmitToast('\u26a0 \u540c\u6b65\u7ed3\u675f\uff1a\u6210\u529f ' + uploaded + ' \u6761\uff0c\u5931\u8d25 ' + failed + ' \u6761' +
+                    (errMsg ? '\uff08' + errMsg + '\uff09' : ''), 6000);
+            } else if (uploaded > 0) {
+                showSubmitToast('\u2705 \u5df2\u4e0a\u4f20 ' + uploaded + ' \u6761\u5230\u4e91\u7aef', 3000);
             } else {
-                showSubmitToast('\u26a0 \u540c\u6b65\u7ed3\u675f\uff0c\u4ecd\u6709 ' + s.pending + ' \u6761\u672a\u80fd\u53d1\u9001\uff08\u53ef\u80fd\u89e6\u53d1\u4e86\u901f\u7387\u9650\u5236\uff09');
+                showSubmitToast('\u2705 \u5df2\u4ece\u4e91\u7aef\u62c9\u53d6\u6700\u65b0\u6570\u636e', 3000);
             }
         }).catch(function(err) {
-            console.warn('[Sync] 手动同步失败:', err);
-            showSubmitToast('\u274c \u540c\u6b65\u5931\u8d25\uff1a' + (err.message || '\u672a\u77e5\u9519\u8bef'));
-        }).finally(function() {
-            if (btn) {
-                btn.classList.remove('syncing');
-                btn.disabled = false;
+            if (err && err.message !== 'not_authenticated') {
+                console.warn('[Sync] \u5168\u91cf\u540c\u6b65\u5931\u8d25:', err);
+                showSubmitToast('\u274c \u540c\u6b65\u5931\u8d25\uff1a' + (err.message || '\u672a\u77e5\u9519\u8bef'), 5000);
             }
+        }).finally(function() {
+            finishSyncUI(btn);
         });
+    }
+
+    function handleManualSync(btn) {
+        return performFullCloudSync(btn);
     }
 
     /**
@@ -2412,7 +2485,9 @@
      * - 更新 UI（auth-status-text / auth-upgrade-toggle）
      */
     function initAuthState() {
+        if (__fxreAuthStateInit) return;
         if (!window.supabaseClient || typeof AuthManager === 'undefined') return;
+        __fxreAuthStateInit = true;
 
         /* 监听认证状态变化 */
         supabaseClient.auth.onAuthStateChange(function(event, session) {
@@ -2464,11 +2539,15 @@
         var upgradeToggle = document.getElementById('auth-upgrade-toggle');
 
         if (user && role && role !== 'anonymous') {
-            /* 注册用户 */
+            /* 注册用户 / 版主 / 管理员 */
             var roleLabels = { user: '注册用户', moderator: '版主', admin: '管理员' };
             var label = roleLabels[role] || '注册用户';
             var email = user.email || '';
             if (statusText) statusText.textContent = label + (email ? ' · ' + email : '');
+            if (upgradeToggle) upgradeToggle.style.display = 'none';
+        } else if (user && user.email && user.is_anonymous === false) {
+            /* profiles 未就绪但已是邮箱账号 */
+            if (statusText) statusText.textContent = '注册用户 · ' + user.email;
             if (upgradeToggle) upgradeToggle.style.display = 'none';
         } else {
             /* 匿名用户 */
@@ -2503,7 +2582,10 @@
 
         /* v9.0: 初始化新模块 */
         if (typeof AuthManager !== 'undefined') AuthManager.init();
-        if (typeof SyncManager !== 'undefined') SyncManager.createSyncIndicator();
+        if (typeof SyncManager !== 'undefined') {
+            SyncManager.createSyncIndicator();
+            SyncManager.setManualSyncHandler(performFullCloudSync);
+        }
 
         /* v9.0: 初始化拖拽上传 */
         if (typeof UploadManager !== 'undefined' && UploadManager.init) {
@@ -2593,19 +2675,18 @@
         if (typeof DataRepository !== 'undefined' && typeof SupabaseAdapter !== 'undefined') {
             DataRepository.initCloud().then(function() {
                 updateSyncStatus();
-                var status = SupabaseAdapter.getStatus();
-                if (status.ready && status.user) {
-                    console.log('[Phase3] 云端同步已就绪，用户:', status.user);
-
-                    /* v9.0: 初始化认证状态 */
-                    initAuthState();
-                    setupCloudRealtime();
-                } else if (status.ready) {
-                    console.warn('[Phase3] SDK 就绪但用户未认证，匿名登录可能未启用');
-                    /* 只读仍可用：拉取他人评论 */
-                    refreshAllCommentsFromCloud();
+                return ensureCloudConnected();
+            }).then(function(connected) {
+                refreshAllCommentsFromCloud();
+                if (connected) {
+                    console.log('[Phase3] 云端同步已就绪，用户:', SupabaseAdapter.getStatus().user);
                 } else {
-                    console.warn('[Phase3] 云端同步未就绪:', status.error);
+                    var status = SupabaseAdapter.getStatus();
+                    if (status.ready) {
+                        console.warn('[Phase3] SDK 就绪但用户未认证，将只读拉取 + 可点右下角同步重试');
+                    } else {
+                        console.warn('[Phase3] 云端同步未就绪:', status.error);
+                    }
                 }
             });
         }
