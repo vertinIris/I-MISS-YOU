@@ -1,13 +1,12 @@
 /**
  * SyncManager — Realtime 实时同步 + 轮询降级
- * 飞行雪绒 v9.1
+ * 飞行雪绒 v9.5
  *
  * 职责:
  *   - Realtime Channel 管理（INSERT/UPDATE/DELETE 全事件）
+ *   - per-target 回调（多评论区互不覆盖）
  *   - 断连自动降级轮询
- *   - 指数退避重连
  *   - 右下角同步状态指示器 + 可点击同步按钮
- *   - 评论/投稿双通道订阅
  */
 
 var SyncManager = (function() {
@@ -27,18 +26,20 @@ var SyncManager = (function() {
     var pollIntervalMs = 15000;
     var lastSyncTime = new Date(0).toISOString();
     var subscriptions = {};
-    var callbacks = {};
+    /** @type {Object.<string, {onNewComment, onUpdateComment, onDeleteComment}>} */
+    var targetCallbacks = {};
+    var submissionCallbacks = {};
     var lastSyncResult = null;
     var onManualSync = null;
+    var onStateChange = null;
 
     function setState(newState) {
         if (state === newState) return;
         var oldState = state;
         state = newState;
         updateSyncIndicator(newState);
-
-        if (typeof callbacks.onStateChange === 'function') {
-            callbacks.onStateChange(newState, oldState);
+        if (typeof onStateChange === 'function') {
+            onStateChange(newState, oldState);
         }
     }
 
@@ -48,15 +49,18 @@ var SyncManager = (function() {
 
     function getCommentTargetIds() {
         var ids = [];
-        document.querySelectorAll('.comment-area').forEach(function(area) {
-            if (area.id && area.id.indexOf('comments-') === 0) {
-                ids.push(area.id.replace('comments-', ''));
-            }
+        Object.keys(targetCallbacks).forEach(function(id) {
+            if (id !== 'submissions') ids.push(id);
         });
         return ids;
     }
 
-    // ---- 评论 Realtime 订阅 ----
+    function invokeHandler(targetId, handlerName, arg1, arg2) {
+        var h = targetCallbacks[targetId];
+        if (h && typeof h[handlerName] === 'function') {
+            h[handlerName](arg1, arg2);
+        }
+    }
 
     function connectComments(targetId, handlers) {
         if (!window.supabaseClient) {
@@ -64,11 +68,11 @@ var SyncManager = (function() {
             return;
         }
 
-        callbacks.onNewComment = handlers.onNewComment;
-        callbacks.onUpdateComment = handlers.onUpdateComment;
-        callbacks.onDeleteComment = handlers.onDeleteComment;
+        targetCallbacks[targetId] = handlers || {};
 
-        disconnectComments(targetId);
+        if (subscriptions[targetId]) {
+            return;
+        }
 
         var channel = supabaseClient
             .channel('public:comments:' + targetId)
@@ -78,9 +82,7 @@ var SyncManager = (function() {
                 table: 'comments',
                 filter: 'target_id=eq.' + targetId
             }, function(payload) {
-                if (typeof callbacks.onNewComment === 'function') {
-                    callbacks.onNewComment(payload.new);
-                }
+                invokeHandler(targetId, 'onNewComment', payload.new);
                 lastSyncTime = new Date().toISOString();
             })
             .on('postgres_changes', {
@@ -89,9 +91,7 @@ var SyncManager = (function() {
                 table: 'comments',
                 filter: 'target_id=eq.' + targetId
             }, function(payload) {
-                if (typeof callbacks.onUpdateComment === 'function') {
-                    callbacks.onUpdateComment(payload.new, payload.old);
-                }
+                invokeHandler(targetId, 'onUpdateComment', payload.new, payload.old);
                 lastSyncTime = new Date().toISOString();
             })
             .on('postgres_changes', {
@@ -100,9 +100,7 @@ var SyncManager = (function() {
                 table: 'comments',
                 filter: 'target_id=eq.' + targetId
             }, function(payload) {
-                if (typeof callbacks.onDeleteComment === 'function') {
-                    callbacks.onDeleteComment(payload.old);
-                }
+                invokeHandler(targetId, 'onDeleteComment', payload.old);
             })
             .subscribe(function(status) {
                 if (status === 'SUBSCRIBED') {
@@ -111,7 +109,7 @@ var SyncManager = (function() {
                     stopPolling();
                 } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
                     setState(STATE.POLLING);
-                    startPolling(targetId);
+                    startPolling();
                 } else if (status === 'CLOSED') {
                     setState(STATE.RECONNECTING);
                     attemptReconnect(targetId);
@@ -126,11 +124,17 @@ var SyncManager = (function() {
             supabaseClient.removeChannel(subscriptions[targetId]);
             delete subscriptions[targetId];
         }
+        delete targetCallbacks[targetId];
     }
 
     function disconnectAll() {
         Object.keys(subscriptions).forEach(function(key) {
-            disconnectComments(key);
+            if (key === 'submissions') {
+                supabaseClient.removeChannel(subscriptions[key]);
+                delete subscriptions[key];
+            } else {
+                disconnectComments(key);
+            }
         });
         stopPolling();
         setState(STATE.OFFLINE);
@@ -139,7 +143,7 @@ var SyncManager = (function() {
     function attemptReconnect(targetId) {
         if (reconnectAttempts >= maxReconnect) {
             setState(STATE.POLLING);
-            startPolling(targetId);
+            startPolling();
             return;
         }
 
@@ -153,28 +157,27 @@ var SyncManager = (function() {
         }, delay);
     }
 
-    function startPolling(targetId) {
+    function startPolling() {
         stopPolling();
 
         pollInterval = setInterval(function() {
             if (!window.SupabaseAdapter || !SupabaseAdapter.isReady) return;
 
-            SupabaseAdapter.fetchComments(targetId).then(function(comments) {
-                if (!comments || comments.length === 0) return;
-
-                var maxTime = lastSyncTime;
-                comments.forEach(function(c) {
-                    var cTime = c.created_at || new Date(0).toISOString();
-                    if (new Date(cTime) > new Date(lastSyncTime)) {
-                        if (typeof callbacks.onNewComment === 'function') {
-                            callbacks.onNewComment(c);
+            getCommentTargetIds().forEach(function(targetId) {
+                SupabaseAdapter.fetchComments(targetId).then(function(comments) {
+                    if (!comments || comments.length === 0) return;
+                    var maxTime = lastSyncTime;
+                    comments.forEach(function(c) {
+                        var cTime = c.created_at || new Date(0).toISOString();
+                        if (new Date(cTime) > new Date(lastSyncTime)) {
+                            invokeHandler(targetId, 'onNewComment', c);
                         }
-                    }
-                    if (cTime > maxTime) maxTime = cTime;
+                        if (cTime > maxTime) maxTime = cTime;
+                    });
+                    lastSyncTime = maxTime;
+                }).catch(function(err) {
+                    console.warn('[SyncManager] Polling error:', err);
                 });
-                lastSyncTime = maxTime;
-            }).catch(function(err) {
-                console.warn('[SyncManager] Polling error:', err);
             });
         }, pollIntervalMs);
     }
@@ -186,38 +189,28 @@ var SyncManager = (function() {
         }
     }
 
-    /**
-     * 刷新单个 target 的评论（从云端拉取）
-     */
     function manualRefresh(targetId) {
         if (!window.SupabaseAdapter || !SupabaseAdapter.isReady) {
             return Promise.resolve([]);
         }
-
-        var fetchFn = SupabaseAdapter.fetchComments.bind(SupabaseAdapter);
-        return fetchFn(targetId).then(function(comments) {
+        return SupabaseAdapter.fetchComments(targetId).then(function(comments) {
             lastSyncTime = new Date().toISOString();
             return comments || [];
         });
     }
 
-    /**
-     * 刷新页面上所有评论区
-     */
     function refreshAllCommentTargets() {
         var ids = getCommentTargetIds();
         if (!ids.length) return Promise.resolve([]);
-
-        return Promise.all(ids.map(function(id) {
-            return manualRefresh(id);
-        }));
+        return Promise.all(ids.map(function(id) { return manualRefresh(id); }));
     }
 
     function connectSubmissions(handlers) {
         if (!window.supabaseClient) return;
 
-        callbacks.onNewSubmission = handlers.onNewSubmission;
-        callbacks.onUpdateSubmission = handlers.onUpdateSubmission;
+        submissionCallbacks = handlers || {};
+
+        if (subscriptions['submissions']) return;
 
         var channel = supabaseClient
             .channel('public:submissions')
@@ -226,8 +219,8 @@ var SyncManager = (function() {
                 schema: 'public',
                 table: 'submissions'
             }, function(payload) {
-                if (typeof callbacks.onNewSubmission === 'function') {
-                    callbacks.onNewSubmission(payload.new);
+                if (typeof submissionCallbacks.onNewSubmission === 'function') {
+                    submissionCallbacks.onNewSubmission(payload.new);
                 }
             })
             .on('postgres_changes', {
@@ -235,8 +228,8 @@ var SyncManager = (function() {
                 schema: 'public',
                 table: 'submissions'
             }, function(payload) {
-                if (typeof callbacks.onUpdateSubmission === 'function') {
-                    callbacks.onUpdateSubmission(payload.new, payload.old);
+                if (typeof submissionCallbacks.onUpdateSubmission === 'function') {
+                    submissionCallbacks.onUpdateSubmission(payload.new, payload.old);
                 }
             })
             .subscribe();
@@ -276,6 +269,9 @@ var SyncManager = (function() {
                 if (lastSyncResult.errorMsg) parts.push(lastSyncResult.errorMsg);
             } else if (lastSyncResult.uploaded > 0) {
                 parts.push('上次成功上传 ' + lastSyncResult.uploaded + ' 条');
+            }
+            if (lastSyncResult.quotaSkipped > 0) {
+                parts.push('配额满跳过 ' + lastSyncResult.quotaSkipped + ' 条');
             }
         }
         if (s === 'offline' && window.SupabaseAdapter) {
@@ -337,16 +333,12 @@ var SyncManager = (function() {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            if (typeof onManualSync === 'function') {
-                onManualSync(btn);
-            }
+            if (typeof onManualSync === 'function') onManualSync(btn);
         });
 
         div.querySelector('.sync-status-text').addEventListener('click', function(e) {
             e.preventDefault();
-            if (typeof onManualSync === 'function') {
-                onManualSync(btn);
-            }
+            if (typeof onManualSync === 'function') onManualSync(btn);
         });
 
         document.body.appendChild(div);

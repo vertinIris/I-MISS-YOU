@@ -41,7 +41,8 @@ var SecurityShield = (function() {
         /(\bdrop\b[\s\S]*\btable\b)/i,
         /(\binsert\b[\s\S]*\binto\b)/i,
         /(\bdelete\b[\s\S]*\bfrom\b)/i,
-        /(--|#|\/\*)/,
+        /(?:^|\s)--(?:\s|$)/,
+        /\/\*[\s\S]*?\*\//,
         /;\s*shutdown/i
     ];
 

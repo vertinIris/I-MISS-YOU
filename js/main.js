@@ -1133,68 +1133,109 @@
         });
 
         initCommentReplyDelegation();
+        initCommentDeleteDelegation();
+    }
 
-        /* ===== 删除按钮事件委托 ===== */
-        var commentLists = document.querySelectorAll('.comment-list');
-        commentLists.forEach(function(list) {
-            list.addEventListener('click', function(e) {
-                var btn = e.target.closest('.comment-delete-btn');
-                if (!btn) return;
+    function resolveCommentTargetFromBtn(btn) {
+        var communityTarget = btn.getAttribute('data-community-target');
+        if (communityTarget) {
+            return 'community_' + communityTarget.replace('cc-list-', '');
+        }
+        var area = btn.closest('.comment-area');
+        if (area) return area.id.replace('comments-', '');
+        var list = btn.closest('.comment-list');
+        if (list && list.id && list.id.indexOf('cc-list-') === 0) {
+            return 'community_' + list.id.replace('cc-list-', '');
+        }
+        return null;
+    }
+
+    function initCommentDeleteDelegation() {
+        if (__fxreCommentDeleteDelegationInit) return;
+        __fxreCommentDeleteDelegationInit = true;
+
+        document.addEventListener('click', function(e) {
+            var deleteBtn = e.target.closest('.comment-delete-btn');
+            if (deleteBtn) {
                 e.preventDefault();
                 e.stopPropagation();
-
-                var communityTarget = btn.getAttribute('data-community-target');
-                var targetId;
-                if (communityTarget) {
-                    targetId = 'community_' + communityTarget.replace('cc-list-', '');
-                } else {
-                    var area = btn.closest('.comment-area');
-                    if (!area) return;
-                    targetId = area.id.replace('comments-', '');
-                }
-
+                var targetId = resolveCommentTargetFromBtn(deleteBtn);
+                if (!targetId) return;
                 var commentData = {
-                    id:       btn.getAttribute('data-comment-id'),
-                    authorId: btn.getAttribute('data-comment-author'),
-                    name:     btn.getAttribute('data-comment-name'),
-                    text:     btn.getAttribute('data-comment-text'),
-                    time:     btn.getAttribute('data-comment-time')
+                    id:       deleteBtn.getAttribute('data-comment-id'),
+                    authorId: deleteBtn.getAttribute('data-comment-author'),
+                    name:     deleteBtn.getAttribute('data-comment-name'),
+                    text:     deleteBtn.getAttribute('data-comment-text'),
+                    time:     deleteBtn.getAttribute('data-comment-time')
                 };
+                handleDeleteComment(targetId, commentData, deleteBtn);
+                return;
+            }
 
-                handleDeleteComment(targetId, commentData, btn);
-            });
-
-            list.addEventListener('click', function(e) {
-                var btn = e.target.closest('.comment-hide-btn');
-                if (!btn) return;
+            var hideBtn = e.target.closest('.comment-hide-btn');
+            if (hideBtn) {
                 e.preventDefault();
                 e.stopPropagation();
-
-                var communityTarget = btn.getAttribute('data-community-target');
-                var targetId;
-                if (communityTarget) {
-                    targetId = 'community_' + communityTarget.replace('cc-list-', '');
-                } else {
-                    var area = btn.closest('.comment-area');
-                    if (!area) return;
-                    targetId = area.id.replace('comments-', '');
-                }
-                var commentId = btn.getAttribute('data-comment-id');
+                var targetId = resolveCommentTargetFromBtn(hideBtn);
+                if (!targetId) return;
+                var commentId = hideBtn.getAttribute('data-comment-id');
                 if (!commentId) return;
-
                 if (!confirm('确定要隐藏此评论吗？（版主操作）')) return;
-
                 if (typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.moderateComment) {
                     SupabaseAdapter.moderateComment(parseInt(commentId, 10), 'hide', '版主隐藏').then(function(success) {
                         if (success) {
-                            _removeCommentFromUI(targetId, btn);
+                            _removeCommentFromUI(targetId, hideBtn);
                             showSubmitToast('评论已隐藏', 2000);
                         } else {
                             showSubmitToast('隐藏失败', 4000);
                         }
                     });
                 }
-            });
+            }
+        });
+    }
+
+    function makeCommunityCommentHandlers(subId) {
+        var targetId = 'community_' + subId;
+        return {
+            onNewComment: function() {
+                if (typeof DataRepository !== 'undefined') {
+                    DataRepository.pullCommentsAndPersist(targetId).then(function(comments) {
+                        var list = document.getElementById('cc-list-' + subId);
+                        if (list) _renderCommunityCommentsList(list, comments || []);
+                    });
+                } else {
+                    renderCommunityComments(subId);
+                }
+            },
+            onUpdateComment: function() {
+                if (typeof DataRepository !== 'undefined') {
+                    DataRepository.pullCommentsAndPersist(targetId).then(function(comments) {
+                        var list = document.getElementById('cc-list-' + subId);
+                        if (list) _renderCommunityCommentsList(list, comments || []);
+                    });
+                } else {
+                    renderCommunityComments(subId);
+                }
+            },
+            onDeleteComment: function() {
+                if (typeof DataRepository !== 'undefined') {
+                    DataRepository.pullCommentsAndPersist(targetId).then(function(comments) {
+                        var list = document.getElementById('cc-list-' + subId);
+                        if (list) _renderCommunityCommentsList(list, comments || []);
+                    });
+                } else {
+                    renderCommunityComments(subId);
+                }
+            }
+        };
+    }
+
+    function subscribeCommunityCommentRealtime(submissions) {
+        if (typeof SyncManager === 'undefined') return;
+        (submissions || []).forEach(function(s) {
+            if (!s || !/^\d+$/.test(String(s.id))) return;
+            SyncManager.connectComments('community_' + s.id, makeCommunityCommentHandlers(s.id));
         });
     }
 
@@ -1246,14 +1287,21 @@
                详见 js/sync-manager.js:205 connectSubmissions(handlers) 的契约 */
             SyncManager.connectSubmissions({
                 onNewSubmission: function(submission) {
-                    /* 其他用户发新帖 → 实时刷新社区列表 */
                     renderCommunity();
                 },
                 onUpdateSubmission: function(newData, oldData) {
-                    /* 投稿被隐藏/恢复等变更 → 实时刷新社区列表 */
                     renderCommunity();
                 }
             });
+
+            var subsResult = getSubmissions();
+            if (subsResult && typeof subsResult.then === 'function') {
+                subsResult.then(function(subs) {
+                    subscribeCommunityCommentRealtime(subs);
+                });
+            } else {
+                subscribeCommunityCommentRealtime(subsResult || getSubmissionsSync());
+            }
         } else {
             /* 降级：使用旧的订阅方式 */
             document.querySelectorAll('.comment-area').forEach(function(area) {
@@ -1311,6 +1359,8 @@
     var commentReplyState = {};
     var __fxrePendingAttachment = null;
     var __fxreReplyDelegationInit = false;
+    var __fxreCommentDeleteDelegationInit = false;
+    var __fxreCommunityInited = false;
 
     function getCommentFormTargetId(form) {
         if (!form) return null;
@@ -2518,11 +2568,21 @@
                     }
                     DataRepository.addSubmission(newSub, Object.keys(subExtraFields).length > 0 ? subExtraFields : null)
                         .then(function(cloudRow) {
-                            /* v9.0: 存储删除令牌 */
+                            if (cloudRow && cloudRow.id && String(cloudRow.id) !== String(newSub.id)) {
+                                var localId = newSub.id;
+                                var latest = getSubmissionsSync();
+                                for (var pi = 0; pi < latest.length; pi++) {
+                                    if (String(latest[pi].id) === String(localId)) {
+                                        latest[pi].id = cloudRow.id;
+                                        if (cloudRow.time) latest[pi].time = cloudRow.time;
+                                        saveSubmissions(latest);
+                                        break;
+                                    }
+                                }
+                            }
                             if (cloudRow && cloudRow.id && submissionDeleteToken && typeof AuthManager !== 'undefined') {
                                 AuthManager.storeDeleteToken(cloudRow.id, submissionDeleteToken);
                             }
-                            /* v9.0: 同步标签到云端 */
                             if (cloudRow && cloudRow.id && selectedTags.length > 0 &&
                                 typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.addSubmissionTags) {
                                 SupabaseAdapter.addSubmissionTags(cloudRow.id, selectedTags)
@@ -2778,9 +2838,10 @@
         }
 
         if (typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.deleteSubmissionWithToken) {
-            SupabaseAdapter.deleteSubmissionWithToken(numericId, token || '').then(function(ok) {
+            SupabaseAdapter.deleteSubmissionWithToken(numericId, token || '').then(function(result) {
+                var ok = result === true || (result && result.success === true);
                 if (ok) removeLocal();
-                else showSubmitToast('删除失败，可能无权限或已超时', 4000);
+                else showSubmitToast((result && result.reason) || '删除失败，可能无权限或已超时', 4000);
             });
         } else {
             removeLocal();
@@ -2788,16 +2849,19 @@
     }
 
     function initCommunity() {
-        var filterBtns = document.querySelectorAll('.community-filter-btn');
-        filterBtns.forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                filterBtns.forEach(function(b) { b.classList.remove('active'); });
-                btn.classList.add('active');
-                communityFilter = btn.getAttribute('data-filter');
-                communityPage = 0;
-                renderCommunity();
+        if (!__fxreCommunityInited) {
+            __fxreCommunityInited = true;
+            var filterBtns = document.querySelectorAll('.community-filter-btn');
+            filterBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    filterBtns.forEach(function(b) { b.classList.remove('active'); });
+                    btn.classList.add('active');
+                    communityFilter = btn.getAttribute('data-filter');
+                    communityPage = 0;
+                    renderCommunity();
+                });
             });
-        });
+        }
         renderCommunity();
     }
 
@@ -2820,13 +2884,10 @@
     }
 
     function _renderCommunityGrid(grid, empty, countEl, submissions) {
-        if (countEl) countEl.textContent = submissions.length;
-
         var filtered = communityFilter === 'all'
             ? submissions
             : submissions.filter(function(s) { return s.type === communityFilter; });
 
-        /* v9.0: 标签筛选 — 获取活跃标签并过滤 */
         var activeTagChips = document.querySelectorAll('.tag-chip.active');
         var activeTags = [];
         activeTagChips.forEach(function(chip) {
@@ -2834,7 +2895,6 @@
         });
         if (activeTags.length > 0) {
             filtered = filtered.filter(function(s) {
-                /* 检查投稿是否有匹配的标签 */
                 if (!s.tags || !Array.isArray(s.tags)) return false;
                 return activeTags.every(function(tag) {
                     return s.tags.indexOf(tag) !== -1;
@@ -2842,12 +2902,12 @@
             });
         }
 
-        /* 标记书签状态（含云端同步后的 localStorage） */
         filtered = applyBookmarkFlags(filtered);
+        var totalFiltered = filtered.length;
+
+        if (countEl) countEl.textContent = totalFiltered;
 
         renderTodayPick(submissions);
-
-        var totalFiltered = filtered.length;
         renderCommunityPagination(totalFiltered);
 
         if (filtered.length === 0) {
@@ -2935,10 +2995,12 @@
         }).join('');
 
         attachCommunityCardEvents();
+        subscribeCommunityCommentRealtime(pageItems);
     }
 
     function attachCommunityCardEvents() {
-        document.querySelectorAll('.community-card').forEach(function(card) {
+        document.querySelectorAll('.community-card:not([data-fxre-bound])').forEach(function(card) {
+            card.setAttribute('data-fxre-bound', '1');
             var id = card.getAttribute('data-id');
 
             var likeBtn = card.querySelector('[data-action="like"]');
@@ -3087,6 +3149,15 @@
                     if (rawName.length > 20) { showSubmitToast('昵称限20字以内'); return; }
                     if (rawText.length > 500) { showSubmitToast('评论限500字以内'); return; }
                     if (rawText.length < 2) { showSubmitToast('评论至少2个字～'); return; }
+
+                    if (typeof SecurityShield !== 'undefined') {
+                        var sgName = SecurityShield.guardUserInput(rawName, 'comment_name');
+                        var sgText = SecurityShield.guardUserInput(rawText, 'comment_text');
+                        if (!sgName.ok) { showSubmitToast(sgName.reason, 4000); return; }
+                        if (!sgText.ok) { showSubmitToast(sgText.reason, 4000); return; }
+                        rawName = sgName.text;
+                        rawText = sgText.text;
+                    }
 
                     persistNicknameIfNeeded(rawName);
 
@@ -3440,12 +3511,13 @@
             var stats = result.pushStats || result;
             var uploaded = stats.synced || 0;
             var failed = stats.failed || stats.remaining || 0;
+            var quotaSkipped = stats.quotaSkipped || 0;
 
             document.querySelectorAll('.comment-area').forEach(function(area) {
                 var id = area.id.replace('comments-', '');
                 renderComments(id);
             });
-            if (typeof initCommunity === 'function') initCommunity();
+            renderCommunity();
 
             if (typeof SyncManager !== 'undefined') {
                 var errMsg = (stats.errors && stats.errors[0]) ? stats.errors[0].error : '';
@@ -3453,6 +3525,7 @@
                     time: Date.now(),
                     uploaded: uploaded,
                     failed: failed,
+                    quotaSkipped: quotaSkipped,
                     pulled: result.pulledTargets || 0,
                     errorMsg: failed > 0 ? errMsg : ''
                 });
@@ -3466,7 +3539,10 @@
             if (failed > 0) {
                 var errMsg = (stats.errors && stats.errors[0]) ? stats.errors[0].error : '';
                 showSubmitToast('\u26a0 \u540c\u6b65\u7ed3\u675f\uff1a\u6210\u529f ' + uploaded + ' \u6761\uff0c\u5931\u8d25 ' + failed + ' \u6761' +
+                    (quotaSkipped > 0 ? '\uff0c\u914d\u989d\u9650\u5236\u8df3\u8fc7 ' + quotaSkipped + ' \u6761' : '') +
                     (errMsg ? '\uff08' + errMsg + '\uff09' : ''), 6000);
+            } else if (quotaSkipped > 0) {
+                showSubmitToast('\u26a0 \u540c\u6b65\u5b8c\u6210\uff0c' + quotaSkipped + ' \u6761\u56e0\u914d\u989d\u9650\u5236\u672a\u4e0a\u4f20', 5000);
             } else if (uploaded > 0) {
                 showSubmitToast('\u2705 \u5df2\u4e0a\u4f20 ' + uploaded + ' \u6761\u5230\u4e91\u7aef', 3000);
             } else {
@@ -4053,7 +4129,7 @@
             /* Pulls cloud data and merges — triggers re-render */
             if (typeof DataRepository !== 'undefined') {
                 DataRepository.getComments('post_1'); /* warm cache */
-                if (typeof initCommunity === 'function') initCommunity();
+                if (typeof renderCommunity === 'function') renderCommunity();
             }
             return Promise.resolve(null);
         },
@@ -4083,6 +4159,6 @@
         archive: ArchiveAPI,
         sync: SyncAPI,
         user: UserAPI,
-        version: 'v9.4'
+        version: 'v9.5'
     };
 })();

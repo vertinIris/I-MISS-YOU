@@ -34,7 +34,39 @@
     var PENDING_KEY = 'fxre_pending_sync';
 
     function savePendingQueue() {
-        try { localStorage.setItem(PENDING_KEY, JSON.stringify(pendingSync)); } catch(e){}
+        try {
+            localStorage.setItem(PENDING_KEY, JSON.stringify(pendingSync));
+            return true;
+        } catch (e) {
+            console.warn('[SupabaseAdapter] pending 队列持久化失败:', e.message || e);
+            return false;
+        }
+    }
+
+    function isQuotaError(msg) {
+        if (!msg) return false;
+        msg = String(msg);
+        return msg.indexOf('配额已满') >= 0 || msg.indexOf('quota') >= 0;
+    }
+
+    function pendingItemKey(item) {
+        if (item.action === 'addComment') {
+            return item.action + '::' + item.targetId + '::' + (item.comment && item.comment.text) + '::' + (item.timestamp || '');
+        }
+        if (item.action === 'addSubmission') {
+            return item.action + '::' + (item.submission && item.submission.title) + '::' + (item.timestamp || '');
+        }
+        return item.action + '::' + (item.timestamp || '');
+    }
+
+    function queuePending(item) {
+        if (!item) return;
+        var key = pendingItemKey(item);
+        for (var i = 0; i < pendingSync.length; i++) {
+            if (pendingItemKey(pendingSync[i]) === key) return;
+        }
+        pendingSync.push(item);
+        savePendingQueue();
     }
 
     function loadPendingQueue() {
@@ -50,9 +82,10 @@
         try { localStorage.removeItem(PENDING_KEY); } catch(e){}
     }
 
-    function queuePending(item) {
-        pendingSync.push(item);
-        savePendingQueue();
+    function dropQuotaBlockedFromQueue() {
+        var before = pendingSync.length;
+        pendingSync = pendingSync.filter(function(item) { return !item._quotaBlocked; });
+        if (pendingSync.length !== before) savePendingQueue();
     }
 
     var pendingSync = loadPendingQueue();
@@ -330,15 +363,16 @@
                     if (result.error) {
                         var errMsg = result.error.message || '未知错误';
                         console.warn('[SupabaseAdapter] addComment 失败:', errMsg);
-                        result._errorMsg = errMsg;
-                        queuePending({
-                            action: 'addComment',
-                            targetId: targetId,
-                            comment: comment,
-                            extraFields: extraFields,
-                            timestamp: new Date().toISOString()
-                        });
-                        return { _error: errMsg };
+                        if (!isQuotaError(errMsg)) {
+                            queuePending({
+                                action: 'addComment',
+                                targetId: targetId,
+                                comment: comment,
+                                extraFields: extraFields,
+                                timestamp: new Date().toISOString()
+                            });
+                        }
+                        return { _error: errMsg, _quota: isQuotaError(errMsg) };
                     }
                     return result.data;
                 });
@@ -374,14 +408,15 @@
 
         return client
             .from('comments')
-            .delete()
+            .update({ is_hidden: true, hidden_at: new Date().toISOString() })
             .eq('id', commentId)
+            .select('id')
             .then(function(result) {
                 if (result.error) {
                     console.warn('[SupabaseAdapter] deleteComment 失败:', result.error.message);
                     return false;
                 }
-                return true;
+                return !!(result.data && result.data.length);
             });
     }
 
@@ -449,7 +484,8 @@
                     color:    s.author_color,
                     likes:    s.likes,
                     time:     s.created_at,
-                    authorId: s.author_id || ''
+                    authorId: s.author_id || '',
+                    is_hidden: s.is_hidden === true
                 };
             });
         });
@@ -491,13 +527,17 @@
                 .single()
                 .then(function(result) {
                     if (result.error) {
-                        console.warn('[SupabaseAdapter] addSubmission 失败:', result.error.message);
-                        queuePending({
-                            action: 'addSubmission',
-                            submission: submission,
-                            timestamp: new Date().toISOString()
-                        });
-                        return null;
+                        var errMsg = result.error.message || '未知错误';
+                        console.warn('[SupabaseAdapter] addSubmission 失败:', errMsg);
+                        if (!isQuotaError(errMsg)) {
+                            queuePending({
+                                action: 'addSubmission',
+                                submission: submission,
+                                extraFields: extraFields,
+                                timestamp: new Date().toISOString()
+                            });
+                        }
+                        return { _error: errMsg, _quota: isQuotaError(errMsg) };
                     }
                     return {
                         id:      result.data.id,
@@ -643,6 +683,7 @@
         var batch = pendingSync.slice();
         var failed = [];
         var synced = 0;
+        var quotaSkipped = 0;
         var errors = [];
 
         console.log('[SupabaseAdapter] 同步', batch.length, '条离线数据...');
@@ -662,9 +703,14 @@
 
                 return task.then(function(result) {
                     if (item.action === 'addComment') {
+                        if (result && result._quota) {
+                            quotaSkipped++;
+                            return { ok: false, quota: true };
+                        }
                         if (result && result._error) {
                             errors.push({ action: item.action, targetId: item.targetId, error: result._error });
-                            failed.push(item);
+                            if (!isQuotaError(result._error)) failed.push(item);
+                            else quotaSkipped++;
                             return { ok: false };
                         }
                         if (!result || !result.id) {
@@ -672,12 +718,17 @@
                             return { ok: false };
                         }
                     } else if (item.action === 'addSubmission') {
+                        if (result && result._quota) {
+                            quotaSkipped++;
+                            return { ok: false, quota: true };
+                        }
                         if (result && result._error) {
                             errors.push({ action: item.action, error: result._error });
-                            failed.push(item);
+                            if (!isQuotaError(result._error)) failed.push(item);
+                            else quotaSkipped++;
                             return { ok: false };
                         }
-                        if (!result) {
+                        if (!result || !result.id) {
                             failed.push(item);
                             return { ok: false };
                         }
@@ -685,8 +736,10 @@
                     synced++;
                     return { ok: true };
                 }).catch(function(err) {
-                    errors.push({ action: item.action, error: err.message || String(err) });
-                    failed.push(item);
+                    var errMsg = err.message || String(err);
+                    errors.push({ action: item.action, error: errMsg });
+                    if (isQuotaError(errMsg)) quotaSkipped++;
+                    else failed.push(item);
                     return { ok: false };
                 });
             }));
@@ -694,7 +747,7 @@
             pendingSync = failed;
             savePendingQueue();
             console.log('[SupabaseAdapter] 离线同步完成: 成功', synced, '失败', failed.length);
-            return { synced: synced, failed: failed.length, remaining: failed.length, errors: errors };
+            return { synced: synced, failed: failed.length, remaining: failed.length, quotaSkipped: quotaSkipped, errors: errors };
         });
     }
 
@@ -721,16 +774,18 @@
     }
 
     function deleteSubmissionWithToken(submissionId, deleteToken) {
-        if (!isReady) return Promise.resolve(false);
+        if (!isReady) return Promise.resolve({ success: false, reason: '云端未就绪' });
         return client.rpc('delete_submission_with_token', {
             p_submission_id: submissionId,
-            p_delete_token: deleteToken
+            p_delete_token: deleteToken || ''
         }).then(function(result) {
             if (result.error) {
                 console.error('[SupabaseAdapter] deleteSubmissionWithToken error:', result.error);
-                return false;
+                return { success: false, reason: result.error.message };
             }
-            return result.data || false;
+            var data = result.data;
+            if (typeof data === 'boolean') return { success: data };
+            return data || { success: false, reason: '未知错误' };
         });
     }
 

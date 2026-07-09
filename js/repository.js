@@ -505,33 +505,45 @@
         var byKey = {};
         var merged = [];
 
-        function key(s) {
-            return (s.id || '') + '::' + (s.title || '') + '::' + (s.time || 0);
+        function contentKey(s) {
+            var t = s.time || 0;
+            return (s.title || '') + '::' + (s.name || '') + '::' + Math.floor(t / 60000);
         }
 
-        /* 先放本地（保留 liked 状态） */
+        function isNumericId(id) {
+            return /^\d+$/.test(String(id || ''));
+        }
+
+        function mergeEntry(existing, incoming, fromLocal) {
+            if (!existing) return incoming;
+            if (isNumericId(incoming.id) && !isNumericId(existing.id)) {
+                existing.id = incoming.id;
+            } else if (incoming.id && !existing.id) {
+                existing.id = incoming.id;
+            }
+            if (fromLocal) {
+                if (incoming.liked) existing.liked = true;
+            } else {
+                existing.likes = incoming.likes != null ? incoming.likes : existing.likes;
+            }
+            existing.authorId = incoming.authorId || existing.authorId;
+            existing.is_hidden = incoming.is_hidden === true ? true : existing.is_hidden;
+            return existing;
+        }
+
         localSubs.forEach(function(s) {
             if (!s || !s.title) return;
-            var k = key(s);
-            if (!byKey[k]) { byKey[k] = s; }
+            var k = contentKey(s);
+            byKey[k] = mergeEntry(byKey[k], s, true);
         });
 
-        /* 云端覆盖：同 key 时用云端 likes，但保留本地 liked */
         cloudSubs.forEach(function(s) {
             if (!s || !s.title) return;
-            var k = key(s);
-            if (byKey[k]) {
-                /* 合并：云端 likes 权威 + 本地 liked 保留 */
-                byKey[k].likes = s.likes;
-                byKey[k].id = s.id || byKey[k].id;
-                /* liked 以本地为准（云端永远是 false） */
-            } else {
-                byKey[k] = s;
-            }
+            var k = contentKey(s);
+            byKey[k] = mergeEntry(byKey[k], s, false);
         });
 
         merged = Object.keys(byKey).map(function(k) { return byKey[k]; });
-        /* v9.0: 过滤已隐藏投稿 */
         merged = merged.filter(function(s) { return s.is_hidden !== true; });
         merged.sort(function(a, b) { return (b.time || 0) - (a.time || 0); });
 
@@ -561,8 +573,16 @@
         /* 异步写云端（适配器内部 pending 队列） */
         if (isCloudEnabled()) {
             return window.SupabaseAdapter.addSubmission(submission, extraFields)
-                .then(function() {
-                    console.log('[Repository] 投稿云端同步成功');
+                .then(function(cloudRow) {
+                    if (cloudRow && cloudRow._error) {
+                        console.warn('[Repository] 投稿云端同步失败:', cloudRow._error);
+                        return submission;
+                    }
+                    if (cloudRow && cloudRow.id) {
+                        console.log('[Repository] 投稿云端同步成功, id=', cloudRow.id);
+                        return cloudRow;
+                    }
+                    console.log('[Repository] 投稿已入 pending 队列');
                     return submission;
                 })
                 .catch(function(err) {

@@ -88,10 +88,11 @@ var AuthManager = (function() {
 
     function canDeleteComment(comment) {
         if (!comment) return false;
+        var authorId = comment.authorId || comment.author_id;
         // 注册用户：作者是自己
-        if (session.uid && comment.author_id === session.uid) return true;
+        if (session.uid && authorId === session.uid) return true;
         // 匿名用户：有删除令牌
-        if (session.deleteTokens[comment.id]) return true;
+        if (comment.id && session.deleteTokens[comment.id]) return true;
         // 版主以上
         if (session.role === 'moderator' || session.role === 'admin') return true;
         return false;
