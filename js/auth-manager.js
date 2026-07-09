@@ -136,7 +136,8 @@ var AuthManager = (function() {
         } else {
             session.uid = user.id;
             session.email = user.email || null;
-            session.isAnonymous = user.is_anonymous !== false;
+            /* 已绑邮箱即视为「非纯匿名」（可能仍待邮件确认） */
+            session.isAnonymous = !user.email;
 
             // 从 user metadata 获取角色
             var role = 'user';
@@ -157,24 +158,129 @@ var AuthManager = (function() {
         } catch(e) { /* ignore */ }
     }
 
+    function mapAuthError(err) {
+        var msg = (err && (err.message || err.msg)) || String(err || '未知错误');
+        var lower = msg.toLowerCase();
+        if (lower.indexOf('already') >= 0 || lower.indexOf('registered') >= 0 || lower.indexOf('exists') >= 0) {
+            return '该邮箱已被注册，请改用「登录」';
+        }
+        if (lower.indexOf('invalid login') >= 0 || lower.indexOf('invalid credentials') >= 0) {
+            return '邮箱或密码不正确';
+        }
+        if (lower.indexOf('email not confirmed') >= 0 || lower.indexOf('not confirmed') >= 0) {
+            return '请先点击邮箱里的确认链接';
+        }
+        if (lower.indexOf('rate') >= 0 || lower.indexOf('too many') >= 0) {
+            return '操作过于频繁，请稍后再试';
+        }
+        if (lower.indexOf('password') >= 0 && lower.indexOf('6') >= 0) {
+            return '密码至少 6 位';
+        }
+        return msg;
+    }
+
+    function needsEmailConfirm(user) {
+        if (!user || !user.email) return false;
+        return !(user.email_confirmed_at || user.confirmed_at);
+    }
+
     // ---- 匿名→注册升级 ----
 
     function upgradeToRegistered(email, password) {
         if (!window.supabaseClient) {
-            return Promise.reject(new Error('Supabase 未连接'));
+            return Promise.resolve({ success: false, error: '云端未连接' });
         }
 
         return supabaseClient.auth.updateUser({
             email: email,
             password: password
         }).then(function(result) {
-            if (result.error) throw result.error;
+            if (result.error) {
+                return { success: false, error: mapAuthError(result.error) };
+            }
 
             // UID 不变，comments/submissions 中的 author_id 自动关联
-            // delete_token 仍然有效（向后兼容）
             updateSession(result.data.user);
+            var pending = needsEmailConfirm(result.data.user);
 
-            return { success: true, user: result.data.user };
+            return {
+                success: true,
+                user: result.data.user,
+                needsConfirmation: pending,
+                message: pending
+                    ? '升级成功！请查收确认邮件后完成验证'
+                    : '账号升级成功'
+            };
+        }).catch(function(err) {
+            return { success: false, error: mapAuthError(err) };
+        });
+    }
+
+    function signIn(email, password) {
+        if (!window.supabaseClient) {
+            return Promise.resolve({ success: false, error: '云端未连接' });
+        }
+
+        return supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        }).then(function(result) {
+            if (result.error) {
+                return { success: false, error: mapAuthError(result.error) };
+            }
+            updateSession(result.data.user);
+            return {
+                success: true,
+                user: result.data.user,
+                needsConfirmation: needsEmailConfirm(result.data.user)
+            };
+        }).catch(function(err) {
+            return { success: false, error: mapAuthError(err) };
+        });
+    }
+
+    function signOut() {
+        if (!window.supabaseClient) {
+            return Promise.resolve({ success: false, error: '云端未连接' });
+        }
+
+        return supabaseClient.auth.signOut().then(function(result) {
+            if (result.error) {
+                return { success: false, error: mapAuthError(result.error) };
+            }
+            updateSession(null);
+            /* 退出后重新匿名登录，保证仍可发评 */
+            return supabaseClient.auth.signInAnonymously().then(function(anon) {
+                if (anon.error) {
+                    return { success: true, user: null, warning: mapAuthError(anon.error) };
+                }
+                updateSession(anon.data.user);
+                return { success: true, user: anon.data.user };
+            });
+        }).catch(function(err) {
+            return { success: false, error: mapAuthError(err) };
+        });
+    }
+
+    function resendConfirmation(email) {
+        if (!window.supabaseClient) {
+            return Promise.resolve({ success: false, error: '云端未连接' });
+        }
+        var target = email || session.email;
+        if (!target) {
+            return Promise.resolve({ success: false, error: '没有可重发的邮箱' });
+        }
+
+        return supabaseClient.auth.resend({
+            type: 'signup',
+            email: target
+        }).then(function(result) {
+            if (result.error) {
+                return { success: false, error: mapAuthError(result.error) };
+            }
+            return { success: true, message: '确认邮件已重新发送，请查收' };
+        }).catch(function(err) {
+            return { success: false, error: mapAuthError(err) };
         });
     }
 
@@ -251,6 +357,11 @@ var AuthManager = (function() {
         isBanned: isBanned,
         updateSession: updateSession,
         upgradeToRegistered: upgradeToRegistered,
+        signIn: signIn,
+        signOut: signOut,
+        resendConfirmation: resendConfirmation,
+        needsEmailConfirm: needsEmailConfirm,
+        mapAuthError: mapAuthError,
         linkOAuth: linkOAuth,
         fetchRole: fetchRole
     };

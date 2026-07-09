@@ -2532,27 +2532,309 @@
     }
 
     /**
-     * v9.0: 更新认证 UI
+     * v9.1: 更新认证 UI（投稿区摘要 + 导航账号面板）
      */
+    function isRegisteredUser(user) {
+        /* 已绑邮箱即显示账号态（含待确认） */
+        return !!(user && user.email);
+    }
+
+    function setAccountPanelError(msg) {
+        var errEl = document.getElementById('account-panel-error');
+        if (!errEl) return;
+        if (msg) {
+            errEl.textContent = msg;
+            errEl.hidden = false;
+        } else {
+            errEl.textContent = '';
+            errEl.hidden = true;
+        }
+    }
+
+    function openAccountPanel(tab) {
+        var wrap = document.getElementById('nav-account');
+        var panel = document.getElementById('account-panel');
+        var btn = document.getElementById('nav-account-btn');
+        if (!wrap || !panel || !btn) return;
+        panel.hidden = false;
+        wrap.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        if (tab) switchAccountTab(tab);
+        setAccountPanelError('');
+    }
+
+    function closeAccountPanel() {
+        var wrap = document.getElementById('nav-account');
+        var panel = document.getElementById('account-panel');
+        var btn = document.getElementById('nav-account-btn');
+        if (!wrap || !panel || !btn) return;
+        panel.hidden = true;
+        wrap.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        setAccountPanelError('');
+    }
+
+    function switchAccountTab(tab) {
+        var tabs = document.querySelectorAll('.account-tab');
+        var upgradePanel = document.getElementById('account-tab-upgrade');
+        var loginPanel = document.getElementById('account-tab-login');
+        tabs.forEach(function(t) {
+            var active = t.getAttribute('data-tab') === tab;
+            t.classList.toggle('active', active);
+            t.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        if (upgradePanel) upgradePanel.hidden = tab !== 'upgrade';
+        if (loginPanel) loginPanel.hidden = tab !== 'login';
+        setAccountPanelError('');
+    }
+
+    function refreshAccountPanel(user, role) {
+        var guest = document.getElementById('account-panel-guest');
+        var userPane = document.getElementById('account-panel-user');
+        var roleEl = document.getElementById('account-user-role');
+        var emailEl = document.getElementById('account-user-email');
+        var confirmHint = document.getElementById('account-confirm-hint');
+        var navLabel = document.getElementById('nav-account-label');
+        var registered = isRegisteredUser(user) || !!(user && user.email && typeof AuthManager !== 'undefined' && AuthManager.session && !AuthManager.session.isAnonymous);
+
+        if (registered) {
+            if (guest) guest.hidden = true;
+            if (userPane) userPane.hidden = false;
+            var roleLabels = { user: '注册用户', moderator: '版主', admin: '管理员' };
+            var label = roleLabels[role] || '注册用户';
+            if (roleEl) roleEl.textContent = label;
+            if (emailEl) emailEl.textContent = user.email || '';
+            var pending = (typeof AuthManager !== 'undefined' && AuthManager.needsEmailConfirm)
+                ? AuthManager.needsEmailConfirm(user)
+                : !(user.email_confirmed_at || user.confirmed_at);
+            if (confirmHint) confirmHint.hidden = !pending;
+            if (navLabel) navLabel.textContent = '已登录';
+        } else {
+            if (guest) guest.hidden = false;
+            if (userPane) userPane.hidden = true;
+            if (confirmHint) confirmHint.hidden = true;
+            if (navLabel) navLabel.textContent = '账号';
+        }
+    }
+
     function updateAuthUI(user, role) {
         var statusText = document.getElementById('auth-status-text');
         var upgradeToggle = document.getElementById('auth-upgrade-toggle');
+        var statusBar = document.getElementById('auth-status');
+        var roleLabels = { user: '注册用户', moderator: '版主', admin: '管理员' };
 
-        if (user && role && role !== 'anonymous') {
-            /* 注册用户 / 版主 / 管理员 */
-            var roleLabels = { user: '注册用户', moderator: '版主', admin: '管理员' };
+        if (user && role && role !== 'anonymous' && (isRegisteredUser(user) || user.email)) {
             var label = roleLabels[role] || '注册用户';
             var email = user.email || '';
             if (statusText) statusText.textContent = label + (email ? ' · ' + email : '');
-            if (upgradeToggle) upgradeToggle.style.display = 'none';
+            if (upgradeToggle) {
+                upgradeToggle.style.display = 'inline-block';
+                upgradeToggle.textContent = '账号';
+            }
+            if (statusBar) {
+                statusBar.classList.toggle('auth-registered', true);
+                statusBar.classList.toggle('auth-admin', role === 'admin');
+            }
         } else if (user && user.email && user.is_anonymous === false) {
-            /* profiles 未就绪但已是邮箱账号 */
             if (statusText) statusText.textContent = '注册用户 · ' + user.email;
-            if (upgradeToggle) upgradeToggle.style.display = 'none';
+            if (upgradeToggle) {
+                upgradeToggle.style.display = 'inline-block';
+                upgradeToggle.textContent = '账号';
+            }
+            if (statusBar) {
+                statusBar.classList.add('auth-registered');
+                statusBar.classList.remove('auth-admin');
+            }
         } else {
-            /* 匿名用户 */
             if (statusText) statusText.textContent = '匿名用户';
-            if (upgradeToggle) upgradeToggle.style.display = 'inline-block';
+            if (upgradeToggle) {
+                upgradeToggle.style.display = 'inline-block';
+                upgradeToggle.textContent = '打开账号';
+            }
+            if (statusBar) {
+                statusBar.classList.remove('auth-registered', 'auth-admin');
+            }
+        }
+
+        refreshAccountPanel(user, role || (typeof AuthManager !== 'undefined' ? AuthManager.session.role : 'user'));
+        updateSyncStatus();
+    }
+
+    function afterAuthSuccess(user, toastMsg) {
+        if (typeof AuthManager !== 'undefined' && AuthManager.fetchRole) {
+            AuthManager.fetchRole().then(function(role) {
+                updateAuthUI(user, role);
+            }).catch(function() {
+                updateAuthUI(user, 'user');
+            });
+        } else {
+            updateAuthUI(user, 'user');
+        }
+        if (toastMsg) showSubmitToast(toastMsg, 4000);
+        if (typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.refreshSession) {
+            SupabaseAdapter.refreshSession();
+        }
+    }
+
+    function initAccountPanel() {
+        var wrap = document.getElementById('nav-account');
+        var btn = document.getElementById('nav-account-btn');
+        var panel = document.getElementById('account-panel');
+        if (!wrap || !btn || !panel) return;
+
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (panel.hidden) openAccountPanel();
+            else closeAccountPanel();
+        });
+
+        document.querySelectorAll('.account-tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                switchAccountTab(tab.getAttribute('data-tab'));
+            });
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!panel.hidden && !wrap.contains(e.target)) closeAccountPanel();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !panel.hidden) closeAccountPanel();
+        });
+
+        var statusBar = document.getElementById('auth-status');
+        var openBtn = document.getElementById('auth-upgrade-toggle');
+        function openFromSubmit(e) {
+            if (e) e.preventDefault();
+            openAccountPanel('upgrade');
+            btn.focus();
+        }
+        if (openBtn) openBtn.addEventListener('click', openFromSubmit);
+        if (statusBar) {
+            statusBar.addEventListener('click', function(e) {
+                if (e.target && e.target.id === 'auth-upgrade-toggle') return;
+                openFromSubmit(e);
+            });
+        }
+
+        var upgradeSubmit = document.getElementById('account-upgrade-submit');
+        if (upgradeSubmit) {
+            upgradeSubmit.addEventListener('click', function() {
+                if (typeof AuthManager === 'undefined') {
+                    setAccountPanelError('认证模块未加载');
+                    return;
+                }
+                var email = (document.getElementById('account-upgrade-email') || {}).value || '';
+                var password = (document.getElementById('account-upgrade-password') || {}).value || '';
+                var password2 = (document.getElementById('account-upgrade-password2') || {}).value || '';
+                email = email.trim();
+                if (!email || password.length < 6) {
+                    setAccountPanelError('邮箱必填，密码至少 6 位');
+                    return;
+                }
+                if (password !== password2) {
+                    setAccountPanelError('两次密码不一致');
+                    return;
+                }
+                upgradeSubmit.disabled = true;
+                setAccountPanelError('');
+                AuthManager.upgradeToRegistered(email, password).then(function(result) {
+                    upgradeSubmit.disabled = false;
+                    if (!result || !result.success) {
+                        setAccountPanelError((result && result.error) || '升级失败');
+                        return;
+                    }
+                    afterAuthSuccess(result.user, result.message || '升级成功');
+                    if (!result.needsConfirmation) closeAccountPanel();
+                }).catch(function(err) {
+                    upgradeSubmit.disabled = false;
+                    setAccountPanelError((err && err.message) || '升级失败');
+                });
+            });
+        }
+
+        var loginSubmit = document.getElementById('account-login-submit');
+        if (loginSubmit) {
+            loginSubmit.addEventListener('click', function() {
+                if (typeof AuthManager === 'undefined') {
+                    setAccountPanelError('认证模块未加载');
+                    return;
+                }
+                var email = ((document.getElementById('account-login-email') || {}).value || '').trim();
+                var password = (document.getElementById('account-login-password') || {}).value || '';
+                if (!email || !password) {
+                    setAccountPanelError('请填写邮箱和密码');
+                    return;
+                }
+                loginSubmit.disabled = true;
+                setAccountPanelError('');
+                AuthManager.signIn(email, password).then(function(result) {
+                    loginSubmit.disabled = false;
+                    if (!result || !result.success) {
+                        setAccountPanelError((result && result.error) || '登录失败');
+                        return;
+                    }
+                    afterAuthSuccess(result.user, result.needsConfirmation
+                        ? '已登录，请查收确认邮件完成验证'
+                        : '登录成功');
+                    if (!result.needsConfirmation) closeAccountPanel();
+                }).catch(function(err) {
+                    loginSubmit.disabled = false;
+                    setAccountPanelError((err && err.message) || '登录失败');
+                });
+            });
+        }
+
+        var signOutBtn = document.getElementById('account-signout-btn');
+        if (signOutBtn) {
+            signOutBtn.addEventListener('click', function() {
+                if (typeof AuthManager === 'undefined') return;
+                signOutBtn.disabled = true;
+                AuthManager.signOut().then(function(result) {
+                    signOutBtn.disabled = false;
+                    if (!result || !result.success) {
+                        setAccountPanelError((result && result.error) || '退出失败');
+                        return;
+                    }
+                    updateAuthUI(result.user, result.user ? 'anonymous' : null);
+                    if (typeof AuthManager !== 'undefined' && result.user) {
+                        AuthManager.updateSession(result.user);
+                        AuthManager.fetchRole().then(function(role) {
+                            updateAuthUI(result.user, role);
+                        }).catch(function() {
+                            updateAuthUI(result.user, null);
+                        });
+                    }
+                    showSubmitToast('已退出，已切换为匿名模式', 3000);
+                    closeAccountPanel();
+                    if (typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.refreshSession) {
+                        SupabaseAdapter.refreshSession();
+                    }
+                }).catch(function(err) {
+                    signOutBtn.disabled = false;
+                    setAccountPanelError((err && err.message) || '退出失败');
+                });
+            });
+        }
+
+        var resendBtn = document.getElementById('account-resend-btn');
+        if (resendBtn) {
+            resendBtn.addEventListener('click', function() {
+                if (typeof AuthManager === 'undefined') return;
+                resendBtn.disabled = true;
+                AuthManager.resendConfirmation().then(function(result) {
+                    resendBtn.disabled = false;
+                    if (!result || !result.success) {
+                        setAccountPanelError((result && result.error) || '发送失败');
+                        return;
+                    }
+                    showSubmitToast(result.message || '确认邮件已发送', 4000);
+                    setAccountPanelError('');
+                }).catch(function(err) {
+                    resendBtn.disabled = false;
+                    setAccountPanelError((err && err.message) || '发送失败');
+                });
+            });
         }
     }
 
@@ -2610,45 +2892,8 @@
             });
         }
 
-        /* v9.0: 认证升级表单交互 */
-        var upgradeToggle = document.getElementById('auth-upgrade-toggle');
-        var upgradeForm = document.getElementById('auth-upgrade-form');
-        var upgradeCancel = document.getElementById('upgrade-cancel');
-        var upgradeSubmit = document.getElementById('upgrade-submit');
-        if (upgradeToggle && upgradeForm) {
-            upgradeToggle.addEventListener('click', function() {
-                upgradeForm.style.display = upgradeForm.style.display === 'none' ? 'block' : 'none';
-            });
-        }
-        if (upgradeCancel) {
-            upgradeCancel.addEventListener('click', function() {
-                upgradeForm.style.display = 'none';
-            });
-        }
-        if (upgradeSubmit && typeof AuthManager !== 'undefined') {
-            upgradeSubmit.addEventListener('click', function() {
-                var email = document.getElementById('upgrade-email').value.trim();
-                var password = document.getElementById('upgrade-password').value;
-                if (!email || password.length < 6) {
-                    showSubmitToast('邮箱必填，密码至少6位', 3000);
-                    return;
-                }
-                AuthManager.upgradeToRegistered(email, password).then(function(result) {
-                    if (result && result.success) {
-                        showSubmitToast('账号升级成功！UID 保持不变', 3000);
-                        upgradeForm.style.display = 'none';
-                        /* 获取角色并更新 UI */
-                        AuthManager.fetchRole().then(function(role) {
-                            updateAuthUI(result.user || AuthManager.session, role);
-                        }).catch(function() {
-                            updateAuthUI(result.user || AuthManager.session, 'user');
-                        });
-                    } else {
-                        showSubmitToast('升级失败，请稍后重试', 4000);
-                    }
-                });
-            });
-        }
+        /* v9.1: 导航账号面板（升级 / 登录 / 退出） */
+        initAccountPanel();
 
         /* v9.0: 标签筛选交互 */
         var tagChips = document.querySelectorAll('.tag-chip');

@@ -99,6 +99,65 @@
             </div>
 
             <div class="nav-actions">
+                <!-- Account Panel -->
+                <div class="nav-account" id="nav-account">
+                    <button type="button" class="nav-account-btn" id="nav-account-btn" aria-expanded="false" aria-controls="account-panel" title="账号">
+                        <span class="nav-account-icon" aria-hidden="true">✦</span>
+                        <span class="nav-account-label" id="nav-account-label">账号</span>
+                    </button>
+                    <div class="account-panel" id="account-panel" hidden>
+                        <div class="account-panel-inner">
+                            <!-- 匿名：升级 / 登录 -->
+                            <div class="account-panel-guest" id="account-panel-guest">
+                                <p class="account-panel-hint">自愿绑定邮箱，不挡浏览。升级后 UID 不变，评论仍归你。</p>
+                                <div class="account-tabs" role="tablist">
+                                    <button type="button" class="account-tab active" data-tab="upgrade" role="tab" aria-selected="true">升级账号</button>
+                                    <button type="button" class="account-tab" data-tab="login" role="tab" aria-selected="false">登录</button>
+                                </div>
+                                <div class="account-tab-panel active" id="account-tab-upgrade" role="tabpanel">
+                                    <label class="account-field">
+                                        <span>邮箱</span>
+                                        <input type="email" class="form-input" id="account-upgrade-email" placeholder="you@example.com" maxlength="100" autocomplete="email">
+                                    </label>
+                                    <label class="account-field">
+                                        <span>密码（至少 6 位）</span>
+                                        <input type="password" class="form-input" id="account-upgrade-password" placeholder="设置密码" maxlength="64" autocomplete="new-password">
+                                    </label>
+                                    <label class="account-field">
+                                        <span>确认密码</span>
+                                        <input type="password" class="form-input" id="account-upgrade-password2" placeholder="再输入一次" maxlength="64" autocomplete="new-password">
+                                    </label>
+                                    <button type="button" class="btn-primary account-submit" id="account-upgrade-submit">升级账号</button>
+                                </div>
+                                <div class="account-tab-panel" id="account-tab-login" role="tabpanel" hidden>
+                                    <label class="account-field">
+                                        <span>邮箱</span>
+                                        <input type="email" class="form-input" id="account-login-email" placeholder="you@example.com" maxlength="100" autocomplete="username">
+                                    </label>
+                                    <label class="account-field">
+                                        <span>密码</span>
+                                        <input type="password" class="form-input" id="account-login-password" placeholder="登录密码" maxlength="64" autocomplete="current-password">
+                                    </label>
+                                    <button type="button" class="btn-primary account-submit" id="account-login-submit">登录</button>
+                                </div>
+                            </div>
+                            <!-- 已登录 -->
+                            <div class="account-panel-user" id="account-panel-user" hidden>
+                                <div class="account-user-meta">
+                                    <span class="account-user-role" id="account-user-role">注册用户</span>
+                                    <span class="account-user-email" id="account-user-email"></span>
+                                </div>
+                                <p class="account-confirm-hint" id="account-confirm-hint" hidden>
+                                    请查收确认邮件并点击链接完成验证。
+                                    <button type="button" class="btn-ghost account-resend-btn" id="account-resend-btn">重发确认邮件</button>
+                                </p>
+                                <button type="button" class="btn-ghost account-submit" id="account-signout-btn">退出登录</button>
+                            </div>
+                            <p class="account-panel-error" id="account-panel-error" hidden></p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Theme Toggle -->
                 <div class="theme-toggle" id="theme-toggle" role="button" aria-label="切换主题" tabindex="0">
                     <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1112,17 +1171,11 @@
             <h2 class="section-title">投稿创作</h2>
             <p class="section-subtitle">分享你的同人创作，让飞行雪绒的世界更加丰富</p>
 
-            <!-- v9.0: 认证状态栏 -->
-            <div class="auth-status-bar" id="auth-status">
+            <!-- v9.0: 认证状态栏（只读摘要，操作请用导航「账号」） -->
+            <div class="auth-status-bar" id="auth-status" title="点击打开账号面板">
                 <span class="auth-status-icon">👤</span>
                 <span class="auth-status-text" id="auth-status-text">匿名用户</span>
-                <button class="auth-upgrade-toggle" id="auth-upgrade-toggle" style="display:none;">升级账号</button>
-            </div>
-            <div class="auth-upgrade-form" id="auth-upgrade-form" style="display:none;">
-                <input type="email" class="form-input" id="upgrade-email" placeholder="邮箱地址" maxlength="100">
-                <input type="password" class="form-input" id="upgrade-password" placeholder="密码（至少6位）" maxlength="64">
-                <button type="button" class="btn-primary" id="upgrade-submit">升级账号</button>
-                <button type="button" class="btn-ghost" id="upgrade-cancel">取消</button>
+                <button type="button" class="auth-upgrade-toggle" id="auth-upgrade-toggle">打开账号</button>
             </div>
 
             <div class="submit-card glass reveal">
