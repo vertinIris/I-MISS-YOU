@@ -1113,6 +1113,29 @@ button {
     font-size: 0.75rem;
 }
 
+.account-forgot-link {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: rgba(168, 216, 255, 0.85);
+    font-size: 0.78rem;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.account-forgot-link:hover {
+    color: var(--aimisi-pink);
+}
+
+.post-share-btn:hover {
+    color: var(--aimisi-pink);
+}
+
 .account-panel-error {
     margin: 10px 0 0;
     font-size: 0.78rem;

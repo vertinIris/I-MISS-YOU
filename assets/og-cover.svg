@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07070E"/>
+      <stop offset="0.45" stop-color="#120818"/>
+      <stop offset="1" stop-color="#0A1028"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="315" x2="1200" y2="315" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF6B9D"/>
+      <stop offset="0.35" stop-color="#B66BFF"/>
+      <stop offset="0.65" stop-color="#6B8AFF"/>
+      <stop offset="1" stop-color="#A8D8FF"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(900 120) rotate(90) scale(280)">
+      <stop stop-color="#FF6B9D" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#FF6B9D" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <circle cx="180" cy="520" r="2" fill="#FFFFFF" opacity="0.5"/>
+  <circle cx="320" cy="140" r="1.5" fill="#A8D8FF" opacity="0.7"/>
+  <circle cx="980" cy="420" r="2" fill="#FFB6D9" opacity="0.6"/>
+  <circle cx="760" cy="90" r="1.5" fill="#FFFFFF" opacity="0.45"/>
+  <g transform="translate(120 180)" stroke="url(#accent)" stroke-width="6" stroke-linecap="round" opacity="0.85">
+    <line x1="60" y1="20" x2="60" y2="180"/>
+    <line x1="20" y1="50" x2="100" y2="150"/>
+    <line x1="20" y1="150" x2="100" y2="50"/>
+  </g>
+  <text x="260" y="250" fill="#FAF8FF" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif" font-size="72" font-weight="700">ÞLêÒ</text>
+  <text x="262" y="330" fill="url(#accent)" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif" font-size="36" font-weight="500">( ¬fb„å8</text>
+  <text x="262" y="400" fill="rgba(250,248,255,0.72)" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif" font-size="24">1%¯ · ¨ · óP · å× · >:•?</text>
+  <rect x="260" y="440" width="420" height="4" rx="2" fill="url(#accent)" opacity="0.8"/>
+</svg>

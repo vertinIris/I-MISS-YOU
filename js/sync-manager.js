@@ -249,6 +249,42 @@ var SyncManager = (function() {
         updateSyncIndicator(state);
     }
 
+    function getLastSyncResult() {
+        return lastSyncResult;
+    }
+
+    function refreshPendingIndicator() {
+        updateSyncIndicator(state);
+    }
+
+    function buildSyncTitle(s, pending) {
+        var parts = [];
+        var stateLabels = {
+            syncing: '正在同步',
+            realtime: '实时同步已连接',
+            polling: '轮询同步模式',
+            offline: '未连接云端',
+            reconnecting: '正在重连'
+        };
+        parts.push(stateLabels[s] || '未知状态');
+        if (pending > 0) {
+            parts.push('待同步 ' + pending + ' 条（点击 🔄 重试）');
+        }
+        if (lastSyncResult) {
+            if (lastSyncResult.failed > 0) {
+                parts.push('上次失败 ' + lastSyncResult.failed + ' 条');
+                if (lastSyncResult.errorMsg) parts.push(lastSyncResult.errorMsg);
+            } else if (lastSyncResult.uploaded > 0) {
+                parts.push('上次成功上传 ' + lastSyncResult.uploaded + ' 条');
+            }
+        }
+        if (s === 'offline' && window.SupabaseAdapter) {
+            var st = SupabaseAdapter.getStatus();
+            if (st.error) parts.push(st.error);
+        }
+        return parts.join(' · ');
+    }
+
     function updateSyncIndicator(s) {
         var indicator = document.getElementById('sync-indicator');
         if (!indicator) return;
@@ -265,17 +301,18 @@ var SyncManager = (function() {
         };
 
         var c = config[s] || config.offline;
-        var pendingHint = pending > 0 ? ' \xb7 \u5f85\u53d1 ' + pending : '';
+        var pendingHint = pending > 0 ? ' · 待同步 ' + pending + ' 条' : '';
         var resultHint = '';
         if (lastSyncResult && lastSyncResult.time) {
             if (lastSyncResult.failed > 0) {
-                resultHint = ' \xb7 \u5931\u8d25' + lastSyncResult.failed;
+                resultHint = ' · 失败' + lastSyncResult.failed;
             } else if (lastSyncResult.uploaded > 0 || lastSyncResult.pulled) {
-                resultHint = ' \xb7 \u2713';
+                resultHint = ' · ✓';
             }
         }
 
         indicator.className = 'sync-indicator ' + c.class;
+        indicator.title = buildSyncTitle(s, pending);
         var statusEl = indicator.querySelector('.sync-status-text');
         if (statusEl) {
             statusEl.innerHTML = '<span class="sync-dot">' + c.icon + '</span>' +
@@ -331,6 +368,8 @@ var SyncManager = (function() {
         createSyncIndicator: createSyncIndicator,
         updateSyncIndicator: updateSyncIndicator,
         setLastSyncResult: setLastSyncResult,
+        getLastSyncResult: getLastSyncResult,
+        refreshPendingIndicator: refreshPendingIndicator,
         setManualSyncHandler: setManualSyncHandler,
         setState: setState
     };

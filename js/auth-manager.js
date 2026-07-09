@@ -11,11 +11,15 @@
 
 var AuthManager = (function() {
 
+    var PROFILE_CACHE_KEY = 'fxre_profile_cache';
+
     var session = {
         uid: null,
         role: 'anonymous',      // anonymous / user / moderator / admin
         isAnonymous: true,
         email: null,
+        nickname: null,
+        avatarColor: null,
         deleteTokens: {}        // { commentId: token, submissionId: token }
     };
 
@@ -297,6 +301,121 @@ var AuthManager = (function() {
         });
     }
 
+    // ---- profiles 昵称（跨设备身份） ----
+
+    function getCachedProfile() {
+        try {
+            var cached = JSON.parse(localStorage.getItem(PROFILE_CACHE_KEY) || '{}');
+            if (cached.nickname) return cached;
+        } catch (e) { /* ignore */ }
+        return { nickname: null, avatar_color: null };
+    }
+
+    function cacheProfile(profile) {
+        if (!profile) return;
+        try {
+            localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify({
+                nickname: profile.nickname || null,
+                avatar_color: profile.avatar_color || profile.avatarColor || null,
+                updated_at: Date.now()
+            }));
+        } catch (e) { /* ignore */ }
+    }
+
+    function fetchProfile() {
+        var cached = getCachedProfile();
+        if (!window.supabaseClient || !session.uid) {
+            if (cached.nickname) {
+                session.nickname = cached.nickname;
+                session.avatarColor = cached.avatar_color;
+            }
+            return Promise.resolve(cached);
+        }
+
+        return supabaseClient
+            .from('profiles')
+            .select('nickname, avatar_color')
+            .eq('id', session.uid)
+            .single()
+            .then(function(result) {
+                if (result.error || !result.data) {
+                    if (cached.nickname) {
+                        session.nickname = cached.nickname;
+                        session.avatarColor = cached.avatar_color;
+                    }
+                    return cached;
+                }
+                var profile = {
+                    nickname: result.data.nickname || null,
+                    avatar_color: result.data.avatar_color || '#6B8AFF'
+                };
+                if (profile.nickname && profile.nickname !== '匿名信号源') {
+                    session.nickname = profile.nickname;
+                    session.avatarColor = profile.avatar_color;
+                    cacheProfile(profile);
+                }
+                return profile;
+            })
+            .catch(function() {
+                return cached;
+            });
+    }
+
+    function saveNickname(nickname) {
+        if (!nickname) return Promise.resolve(false);
+        nickname = nickname.trim().substring(0, 50);
+        if (!nickname || nickname === '匿名信号源') return Promise.resolve(false);
+
+        session.nickname = nickname;
+        cacheProfile({ nickname: nickname, avatar_color: session.avatarColor });
+
+        if (!window.supabaseClient || !session.uid) {
+            return Promise.resolve(true);
+        }
+
+        return supabaseClient
+            .from('profiles')
+            .update({ nickname: nickname })
+            .eq('id', session.uid)
+            .then(function(result) {
+                if (result.error) {
+                    console.warn('[AuthManager] saveNickname:', result.error.message);
+                    return false;
+                }
+                return true;
+            })
+            .catch(function(err) {
+                console.warn('[AuthManager] saveNickname failed:', err);
+                return false;
+            });
+    }
+
+    function resetPassword(email) {
+        if (!window.supabaseClient) {
+            return Promise.reject(new Error('Supabase 未连接'));
+        }
+        email = (email || '').trim();
+        if (!email) {
+            return Promise.resolve({ success: false, error: '请先填写邮箱' });
+        }
+
+        var redirectTo = window.location.origin + window.location.pathname;
+
+        return supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: redirectTo
+        }).then(function(result) {
+            if (result.error) {
+                return { success: false, error: mapAuthError(result.error) };
+            }
+            return {
+                success: true,
+                message: '重置邮件已发送，请查收邮箱（含垃圾箱）'
+            };
+        }).catch(function(err) {
+            return { success: false, error: mapAuthError(err) };
+        });
+    }
+
     // ---- 获取角色（从 profiles 表） ----
 
     function fetchRole() {
@@ -363,6 +482,10 @@ var AuthManager = (function() {
         needsEmailConfirm: needsEmailConfirm,
         mapAuthError: mapAuthError,
         linkOAuth: linkOAuth,
-        fetchRole: fetchRole
+        fetchRole: fetchRole,
+        fetchProfile: fetchProfile,
+        saveNickname: saveNickname,
+        getCachedProfile: getCachedProfile,
+        resetPassword: resetPassword
     };
 })();

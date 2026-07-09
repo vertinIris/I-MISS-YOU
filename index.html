@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="飞行雪绒 — 星炬学院的日常。一个打破第四面墙的沉浸式同人创作项目。">
     <meta name="author" content="同人创作">
+    <meta name="theme-color" content="#FF6B9D">
+    <!-- Open Graph / 分享预览 -->
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:site_name" content="飞行雪绒">
+    <meta property="og:title" content="飞行雪绒 ✨ 星炬学院的日常">
+    <meta property="og:description" content="爱弥斯秘密歌手身份「飞行雪绒」的同人社交账号 — 动态、音乐、日志与社区投稿。">
+    <meta property="og:url" content="https://vertiniris.github.io/I-MISS-YOU/">
+    <meta property="og:image" content="https://vertiniris.github.io/I-MISS-YOU/assets/og-cover.svg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="飞行雪绒 ✨ 星炬学院的日常">
+    <meta name="twitter:description" content="爱弥斯秘密歌手身份「飞行雪绒」的同人社交账号 — 动态、音乐、日志与社区投稿。">
+    <meta name="twitter:image" content="https://vertiniris.github.io/I-MISS-YOU/assets/og-cover.svg">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="apple-touch-icon" href="assets/favicon.svg">
     <!-- v9.0: Content Security Policy -->
     <meta http-equiv="Content-Security-Policy"
           content="default-src 'self';
@@ -139,6 +154,7 @@
                                         <input type="password" class="form-input" id="account-login-password" placeholder="登录密码" maxlength="64" autocomplete="current-password">
                                     </label>
                                     <button type="button" class="btn-primary account-submit" id="account-login-submit">登录</button>
+                                    <button type="button" class="account-forgot-link" id="account-forgot-btn">忘记密码？</button>
                                 </div>
                             </div>
                             <!-- 已登录 -->
@@ -536,7 +552,7 @@
             <div class="timeline-line"></div>
 
             <!-- Post 1: 达妮娅 -->
-            <article class="post-card glass reveal" data-post-id="1">
+            <article class="post-card glass reveal" id="post-1" data-post-id="1">
                 <div class="post-header">
                     <div class="post-avatar-mini">
                         <svg viewBox="0 0 16 16" class="mini-avatar-svg" shape-rendering="crispEdges">
@@ -614,7 +630,7 @@
             </article>
 
                         <!-- Post 2: 西格莉卡 -->
-            <article class="post-card glass reveal" data-post-id="2">
+            <article class="post-card glass reveal" id="post-2" data-post-id="2">
                 <div class="post-header">
                     <div class="post-avatar-mini">
                         <svg viewBox="0 0 16 16" class="mini-avatar-svg" shape-rendering="crispEdges">
@@ -695,7 +711,7 @@
             </article>
 
                         <!-- Post 3: 达妮娅 -->
-            <article class="post-card glass reveal" data-post-id="3">
+            <article class="post-card glass reveal" id="post-3" data-post-id="3">
                 <div class="post-header">
                     <div class="post-avatar-mini">
                         <svg viewBox="0 0 16 16" class="mini-avatar-svg" shape-rendering="crispEdges">
@@ -778,7 +794,7 @@
             </article>
 
                         <!-- Post 4: 漂泊者 -->
-            <article class="post-card glass reveal" data-post-id="4">
+            <article class="post-card glass reveal" id="post-4" data-post-id="4">
                 <div class="post-header">
                     <div class="post-avatar-mini">
                         <svg viewBox="0 0 16 16" class="mini-avatar-svg" shape-rendering="crispEdges">
@@ -853,7 +869,7 @@
             </article>
 
                         <!-- Post 5: 飞行雪绒 -->
-            <article class="post-card glass reveal" data-post-id="5">
+            <article class="post-card glass reveal" id="post-5" data-post-id="5">
                 <div class="post-header">
                     <div class="post-avatar-mini">
                         <svg viewBox="0 0 16 16" class="mini-avatar-svg" shape-rendering="crispEdges">

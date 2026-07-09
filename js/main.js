@@ -965,6 +965,103 @@
         setTimeout(function() { toast.remove(); }, 3000);
     }
 
+    /* ===== Profile 昵称预填 ===== */
+    function applyProfileToForms(nickname) {
+        if (!nickname || nickname === '匿名信号源') return;
+        document.querySelectorAll('.comment-form-name').forEach(function(input) {
+            if (!input.value.trim()) input.value = nickname;
+        });
+        var submitNick = document.getElementById('submit-nickname');
+        if (submitNick && !submitNick.value.trim()) submitNick.value = nickname;
+    }
+
+    function loadUserProfile() {
+        if (typeof AuthManager === 'undefined' || !AuthManager.fetchProfile) {
+            var cached = (typeof AuthManager !== 'undefined' && AuthManager.getCachedProfile)
+                ? AuthManager.getCachedProfile() : {};
+            if (cached.nickname) applyProfileToForms(cached.nickname);
+            return Promise.resolve();
+        }
+        return AuthManager.fetchProfile().then(function(profile) {
+            if (profile && profile.nickname) applyProfileToForms(profile.nickname);
+        }).catch(function() { /* ignore */ });
+    }
+
+    function persistNicknameIfNeeded(rawName) {
+        if (!rawName || typeof AuthManager === 'undefined' || !AuthManager.saveNickname) return;
+        var current = AuthManager.session.nickname || (AuthManager.getCachedProfile() || {}).nickname;
+        if (current === rawName) return;
+        AuthManager.saveNickname(rawName);
+    }
+
+    /* ===== 分享 ===== */
+    function getSiteBaseUrl() {
+        var base = window.location.href.split('#')[0];
+        return base.endsWith('/') ? base.slice(0, -1) : base;
+    }
+
+    function copyShareLink(url, text) {
+        var payload = text ? (text + '\n' + url) : url;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            return navigator.clipboard.writeText(payload).then(function() {
+                showSubmitToast('链接已复制，可粘贴分享 ✓', 2500);
+            }).catch(function() {
+                showSubmitToast('复制失败，请手动复制地址栏链接', 3000);
+            });
+        }
+        try {
+            var ta = document.createElement('textarea');
+            ta.value = payload;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            showSubmitToast('链接已复制 ✓', 2500);
+        } catch (e) {
+            showSubmitToast('请手动复制：' + url, 4000);
+        }
+        return Promise.resolve();
+    }
+
+    function sharePostCard(card) {
+        if (!card) return;
+        var postId = card.getAttribute('data-post-id');
+        var authorEl = card.querySelector('.post-author');
+        var author = authorEl ? authorEl.textContent.trim() : '飞行雪绒';
+        var hash = postId ? ('#post-' + postId) : '#timeline';
+        var url = getSiteBaseUrl() + hash;
+        var text = '「' + author + '」在飞行雪绒的动态 — 星炬学院的日常';
+        if (navigator.share) {
+            navigator.share({ title: '飞行雪绒 ✨', text: text, url: url }).catch(function() {
+                copyShareLink(url, text);
+            });
+        } else {
+            copyShareLink(url, text);
+        }
+    }
+
+    function initShareButtons() {
+        document.querySelectorAll('.post-card[data-post-id]').forEach(function(card) {
+            var actions = card.querySelectorAll('.post-action');
+            if (actions.length < 3) return;
+            var shareBtn = actions[2];
+            var span = shareBtn.querySelector('span');
+            if (!span || span.textContent.trim() !== '分享') return;
+            shareBtn.classList.add('post-share-btn');
+            shareBtn.setAttribute('title', '复制分享链接');
+            shareBtn.style.cursor = 'pointer';
+            if (shareBtn.dataset.shareBound) return;
+            shareBtn.dataset.shareBound = '1';
+            shareBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                sharePostCard(card);
+            });
+        });
+    }
+
     /* ===== Phase 3: Comment System ===== */
     function initComments() {
         var posts = document.querySelectorAll('.post-card[data-post-id]');
@@ -1351,6 +1448,15 @@
             var span = actionBtn.querySelector('span');
             if (span) span.textContent = formatNumber(count);
         }
+
+        /* 日志区：评论切换按钮显示数量 */
+        var diary = document.querySelector('.diary-entry[data-diary-id="' + targetId + '"]');
+        if (diary) {
+            var toggleSpan = diary.querySelector('.community-card-action span');
+            if (toggleSpan) {
+                toggleSpan.textContent = count > 0 ? ('评论 ' + formatNumber(count)) : '评论';
+            }
+        }
     }
 
     function _renderCommentsList(list, comments) {
@@ -1408,6 +1514,8 @@
         if (rawName.length > 20) { showSubmitToast('昵称限20字以内'); return; }
         if (rawText.length > 500) { showSubmitToast('评论限500字以内'); return; }
         if (rawText.length < 2) { showSubmitToast('评论至少2个字～'); return; }
+
+        persistNicknameIfNeeded(rawName);
 
         /* --- 速率限制 --- */
         if (typeof RateLimiter !== 'undefined') {
@@ -1710,6 +1818,8 @@
             if (rawTitle.length > 100)  { showSubmitToast('标题限100字以内'); return; }
             if (rawContent.length > 2000) { showSubmitToast('内容限2000字以内'); return; }
             if (rawContent.length < 10)   { showSubmitToast('内容至少10个字～'); return; }
+
+            persistNicknameIfNeeded(rawName);
 
             /* --- 速率限制 --- */
             if (typeof RateLimiter !== 'undefined') {
@@ -2121,6 +2231,8 @@
                     if (rawText.length > 500) { showSubmitToast('评论限500字以内'); return; }
                     if (rawText.length < 2) { showSubmitToast('评论至少2个字～'); return; }
 
+                    persistNicknameIfNeeded(rawName);
+
                     /* --- 速率限制 --- */
                     if (typeof RateLimiter !== 'undefined') {
                         var rl = RateLimiter.checkComment('community_' + id);
@@ -2175,6 +2287,8 @@
                 });
             }
         });
+
+        loadUserProfile();
     }
 
     function renderCommunityComments(id) {
@@ -2283,6 +2397,10 @@
             error: status.error,
             time: new Date().toISOString()
         });
+
+        if (typeof SyncManager !== 'undefined' && SyncManager.refreshPendingIndicator) {
+            SyncManager.refreshPendingIndicator();
+        }
     }
 
     function initSyncStatus() {
@@ -2441,11 +2559,13 @@
             if (typeof initCommunity === 'function') initCommunity();
 
             if (typeof SyncManager !== 'undefined') {
+                var errMsg = (stats.errors && stats.errors[0]) ? stats.errors[0].error : '';
                 SyncManager.setLastSyncResult({
                     time: Date.now(),
                     uploaded: uploaded,
                     failed: failed,
-                    pulled: result.pulledTargets || 0
+                    pulled: result.pulledTargets || 0,
+                    errorMsg: failed > 0 ? errMsg : ''
                 });
                 if (SyncManager.getState() === SyncManager.STATE.SYNCING) {
                     SyncManager.setState(__fxreRealtimeSetup ? SyncManager.STATE.REALTIME : SyncManager.STATE.OFFLINE);
@@ -2496,9 +2616,13 @@
                     AuthManager.updateSession(session.user);
                     /* 从 profiles 获取角色 */
                     AuthManager.fetchRole().then(function(role) {
-                        updateAuthUI(session.user, role);
+                        return loadUserProfile().then(function() {
+                            updateAuthUI(session.user, role);
+                        });
                     }).catch(function() {
-                        updateAuthUI(session.user, null);
+                        loadUserProfile().then(function() {
+                            updateAuthUI(session.user, null);
+                        });
                     });
                 }
             } else if (event === 'SIGNED_OUT') {
@@ -2522,9 +2646,13 @@
         if (user) {
             AuthManager.updateSession(user);
             AuthManager.fetchRole().then(function(role) {
-                updateAuthUI(user, role);
+                return loadUserProfile().then(function() {
+                    updateAuthUI(user, role);
+                });
             }).catch(function() {
-                updateAuthUI(user, null);
+                loadUserProfile().then(function() {
+                    updateAuthUI(user, null);
+                });
             });
         } else {
             updateAuthUI(null, null);
@@ -2663,12 +2791,18 @@
     function afterAuthSuccess(user, toastMsg) {
         if (typeof AuthManager !== 'undefined' && AuthManager.fetchRole) {
             AuthManager.fetchRole().then(function(role) {
-                updateAuthUI(user, role);
+                return loadUserProfile().then(function() {
+                    updateAuthUI(user, role);
+                });
             }).catch(function() {
-                updateAuthUI(user, 'user');
+                loadUserProfile().then(function() {
+                    updateAuthUI(user, 'user');
+                });
             });
         } else {
-            updateAuthUI(user, 'user');
+            loadUserProfile().then(function() {
+                updateAuthUI(user, 'user');
+            });
         }
         if (toastMsg) showSubmitToast(toastMsg, 4000);
         if (typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.refreshSession) {
@@ -2836,6 +2970,34 @@
                 });
             });
         }
+
+        var forgotBtn = document.getElementById('account-forgot-btn');
+        if (forgotBtn) {
+            forgotBtn.addEventListener('click', function() {
+                if (typeof AuthManager === 'undefined') {
+                    setAccountPanelError('认证模块未加载');
+                    return;
+                }
+                var email = ((document.getElementById('account-login-email') || {}).value || '').trim();
+                if (!email) {
+                    setAccountPanelError('请先填写登录邮箱');
+                    return;
+                }
+                forgotBtn.disabled = true;
+                setAccountPanelError('');
+                AuthManager.resetPassword(email).then(function(result) {
+                    forgotBtn.disabled = false;
+                    if (!result || !result.success) {
+                        setAccountPanelError((result && result.error) || '发送失败');
+                        return;
+                    }
+                    showSubmitToast(result.message || '重置邮件已发送', 4000);
+                }).catch(function(err) {
+                    forgotBtn.disabled = false;
+                    setAccountPanelError((err && err.message) || '发送失败');
+                });
+            });
+        }
     }
 
     function init() {
@@ -2858,6 +3020,8 @@
         initDiarySignalFlash();
         initCommentKeywordEgg();
         initComments();
+        initShareButtons();
+        loadUserProfile();
         initSubmission();
         initCommunity();
         initSyncStatus();
@@ -2923,6 +3087,7 @@
                 return ensureCloudConnected();
             }).then(function(connected) {
                 refreshAllCommentsFromCloud();
+                loadUserProfile();
                 if (connected) {
                     console.log('[Phase3] 云端同步已就绪，用户:', SupabaseAdapter.getStatus().user);
                 } else {
