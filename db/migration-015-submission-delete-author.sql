@@ -1,6 +1,9 @@
 -- ============================================================================
 -- 飞行雪绒 migration-015 — 投稿删除支持 author_id（对齐 013 编辑）
+-- 注意：006 中该函数返回 BOOLEAN，改 JSONB 须先 DROP
 -- ============================================================================
+
+DROP FUNCTION IF EXISTS public.delete_submission_with_token(BIGINT, VARCHAR);
 
 CREATE OR REPLACE FUNCTION public.delete_submission_with_token(
     p_submission_id BIGINT,
