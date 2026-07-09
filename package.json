@@ -1,6 +1,6 @@
 {
   "name": "flying-edelweiss",
-  "version": "9.3.0",
+  "version": "9.4.0",
   "description": "飞行雪绒 — 鸣潮角色爱弥斯的同人社交账号体验网站",
   "type": "module",
   "scripts": {
@@ -21,6 +21,7 @@
     "db:migrate-011": "echo 'Run db/migration-011-comment-replies.sql in Supabase SQL Editor — comment parent_id for replies'",
     "db:migrate-012": "echo 'Run db/migration-012-content-reports.sql in Supabase SQL Editor — user content report RPC'",
     "db:migrate-013": "echo 'Run db/migration-013-submission-edit.sql in Supabase SQL Editor — submission edit with token/author'",
+    "db:migrate-014": "echo 'Run db/migration-014-security-hardening.sql in Supabase SQL Editor — server-side XSS/injection triggers'",
     "smoke-check": "node scripts/smoke-check.mjs",
     "serve:win": "powershell -ExecutionPolicy Bypass -File ./run.ps1"
   },

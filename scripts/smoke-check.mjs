@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const jsFiles = [
     'js/main.js', 'js/repository.js', 'js/supabase-adapter.js', 'js/auth-manager.js',
-    'js/sync-manager.js', 'js/admin-panel.js', 'js/content-utils.js', 'js/upload-manager.js'
+    'js/sync-manager.js', 'js/admin-panel.js', 'js/content-utils.js', 'js/upload-manager.js', 'js/security-shield.js'
 ];
 const assets = ['index.html', 'reset-password.html', 'assets/favicon.svg', 'assets/og-cover.png'];
 

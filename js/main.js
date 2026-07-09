@@ -860,7 +860,7 @@
             dialogueBubble.innerHTML = '<span class="dialogue-text">' + escapeHTML(hiddenDialogues[dialogueIndex % hiddenDialogues.length]) + '</span><span class="dialogue-close">&times;</span>';
             /* position:fixed escapes overflow:hidden on .profile-card */
             var rect = avatarWrap.getBoundingClientRect();
-            dialogueBubble.style.cssText = 'position:fixed;top:' + (rect.bottom + 12) + 'px;left:' + (rect.left + rect.width / 2) + 'px;transform:translateX(-50%);padding:10px 16px;background:rgba(15,15,24,0.95);border:1px solid rgba(255,107,157,0.3);border-radius:12px;color:#FAF8FF;font-size:0.85rem;z-index:9999;max-width:280px;white-space:normal;word-break:break-word;line-height:1.5;box-shadow:0 8px 25px rgba(0,0,0,0.3),0 0 15px rgba(255,107,157,0.15);animation:fadeInUp 0.3s ease;';
+            dialogueBubble.style.cssText = 'position:fixed;top:' + (rect.bottom + 12) + 'px;left:' + (rect.left + rect.width / 2) + 'px;transform:translateX(-50%);padding:10px 16px;background:rgba(15,15,24,0.95);border:1px solid rgba(168,216,255,0.25);border-radius:12px;color:#FAF8FF;font-size:0.85rem;z-index:9999;max-width:280px;white-space:normal;word-break:break-word;line-height:1.5;box-shadow:0 8px 25px rgba(0,0,0,0.35);animation:fadeInUp 0.3s ease;';
             document.body.appendChild(dialogueBubble);
             dialogueIndex++;
 
@@ -959,7 +959,7 @@
         var toast = document.createElement('div');
         toast.className = 'egg-toast';
         toast.textContent = msg;
-        toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);padding:12px 24px;background:rgba(15,15,24,0.92);border:1px solid rgba(255,107,157,0.3);border-radius:16px;color:#FAF8FF;font-size:0.85rem;z-index:9999;box-shadow:0 8px 30px rgba(0,0,0,0.4),0 0 20px rgba(255,107,157,0.15);animation:fadeInUp 0.3s ease;';
+        toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);padding:12px 24px;background:rgba(15,15,24,0.92);border:1px solid rgba(168,216,255,0.25);border-radius:16px;color:#FAF8FF;font-size:0.85rem;z-index:9999;box-shadow:0 8px 30px rgba(0,0,0,0.4);animation:fadeInUp 0.3s ease;';
         document.body.appendChild(toast);
         setTimeout(function() { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; }, 2500);
         setTimeout(function() { toast.remove(); }, 3000);
@@ -2095,6 +2095,15 @@
         if (rawText.length > 500) { showSubmitToast('评论限500字以内'); return; }
         if (rawText.length < 2) { showSubmitToast('评论至少2个字～'); return; }
 
+        if (typeof SecurityShield !== 'undefined') {
+            var nameGuard = SecurityShield.guardUserInput(rawName, 'comment_name');
+            var textGuard = SecurityShield.guardUserInput(rawText, 'comment_text');
+            if (!nameGuard.ok) { showSubmitToast(nameGuard.reason, 4000); return; }
+            if (!textGuard.ok) { showSubmitToast(textGuard.reason, 4000); return; }
+            rawName = nameGuard.text;
+            rawText = textGuard.text;
+        }
+
         persistNicknameIfNeeded(rawName);
 
         var replyState = commentReplyState[targetId];
@@ -2405,6 +2414,19 @@
             if (rawTitle.length > 100)  { showSubmitToast('标题限100字以内'); return; }
             if (rawContent.length > 2000) { showSubmitToast('内容限2000字以内'); return; }
             if (rawContent.length < 10)   { showSubmitToast('内容至少10个字～'); return; }
+
+            if (typeof SecurityShield !== 'undefined') {
+                var sgName = SecurityShield.guardUserInput(rawName, 'submission_name');
+                var sgTitle = SecurityShield.guardUserInput(rawTitle, 'submission_title');
+                var sgContent = SecurityShield.guardUserInput(rawContent, 'submission_content');
+                if (!sgName.ok || !sgTitle.ok || !sgContent.ok) {
+                    showSubmitToast((sgName.reason || sgTitle.reason || sgContent.reason), 4000);
+                    return;
+                }
+                rawName = sgName.text;
+                rawTitle = sgTitle.text;
+                rawContent = sgContent.text;
+            }
 
             persistNicknameIfNeeded(rawName);
 
@@ -3385,6 +3407,14 @@
             return Promise.resolve();
         }
 
+        if (typeof SecurityShield !== 'undefined') {
+            var syncGuard = SecurityShield.guardSyncAction();
+            if (!syncGuard.ok) {
+                showSubmitToast(syncGuard.reason, 4000);
+                return Promise.resolve();
+            }
+        }
+
         if (btn) {
             btn.classList.add('syncing');
             btn.disabled = true;
@@ -3862,6 +3892,7 @@
     }
 
     function init() {
+        if (typeof SecurityShield !== 'undefined') SecurityShield.init();
         initTheme();
         initMobileMenu();
         initScrollReveal();
@@ -4052,6 +4083,6 @@
         archive: ArchiveAPI,
         sync: SyncAPI,
         user: UserAPI,
-        version: 'v9.3'
+        version: 'v9.4'
     };
 })();

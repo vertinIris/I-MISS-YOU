@@ -27,7 +27,11 @@
                    style-src 'self' 'unsafe-inline' cdn.jsdelivr.net fonts.googleapis.com;
                    img-src 'self' data: blob: https://*.supabase.co;
                    connect-src 'self' https://*.supabase.co wss://*.supabase.co;
-                   font-src 'self' cdn.jsdelivr.net fonts.gstatic.com;">
+                   font-src 'self' cdn.jsdelivr.net fonts.gstatic.com;
+                   base-uri 'self';
+                   form-action 'self';
+                   object-src 'none';
+                   upgrade-insecure-requests;">
     <title>飞行雪绒 ✨ 星炬学院的日常</title>
 
     <!-- Fonts -->
@@ -1497,7 +1501,7 @@
 
             <div class="footer-bottom">
                 <p>© 2026 飞行雪绒 · 同人创作 · 非商业用途</p>
-                <p class="footer-meta">v9.3 · 公开收藏夹 + 投稿编辑 + 今日推荐 + 分页 + OG PNG · Made with ✨ and ❄️</p>
+                <p class="footer-meta">v9.4 · 交互去粉光 · 安全防护网 · 简约 OG · Made with ✨ and ❄️</p>
                 <p class="footer-sync" id="sync-status" title="点击复制诊断信息 · 同步请用右下角 🔄 按钮">☁ 本地模式</p>
             </div>
         </div>
@@ -1521,6 +1525,7 @@
     <!-- Supabase SDK: async 加载，不阻塞页面渲染；弱网环境自动降级 -->
     <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
             onerror="console.warn('[Phase3] Supabase SDK CDN 加载失败，回退纯本地模式'); window.__supabaseLoadFailed=true;"></script>
+    <script src="js/security-shield.js"></script>
     <script src="js/content-utils.js"></script>
     <script src="js/supabase-adapter.js"></script>
     <script src="js/repository.js"></script>
