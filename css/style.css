@@ -4599,3 +4599,214 @@ article, section, nav, footer, header {
 [data-theme="light"] .community-card-action.bookmark-btn {
     color: rgba(0, 0, 0, 0.4);
 }
+
+/* ===== v9.2 收藏面板 / 评论回复 / 上传预览 ===== */
+.community-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+}
+
+.community-bookmarks-btn {
+    font-size: 0.85rem;
+    padding: 8px 16px;
+}
+
+.bookmarks-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(7, 7, 14, 0.72);
+    backdrop-filter: blur(8px);
+}
+
+.bookmarks-panel[hidden] {
+    display: none !important;
+}
+
+.bookmarks-panel-inner {
+    width: min(480px, 100%);
+    max-height: 70vh;
+    overflow: auto;
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 107, 157, 0.25);
+}
+
+.bookmarks-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.bookmarks-panel-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    background: linear-gradient(90deg, #FF6B9D, #6B8AFF);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.bookmarks-panel-close {
+    border: none;
+    background: none;
+    color: rgba(250, 248, 255, 0.7);
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.bookmarks-panel-hint {
+    font-size: 0.78rem;
+    color: rgba(250, 248, 255, 0.55);
+    margin: 0 0 12px;
+}
+
+.bookmarks-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.bookmarks-item-btn {
+    width: 100%;
+    text-align: left;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.bookmarks-item-btn:hover {
+    border-color: rgba(255, 107, 157, 0.4);
+    background: rgba(255, 107, 157, 0.08);
+}
+
+.bookmarks-item-title {
+    display: block;
+    color: #FAF8FF;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.bookmarks-item-meta {
+    display: block;
+    font-size: 0.75rem;
+    color: rgba(250, 248, 255, 0.55);
+}
+
+.bookmarks-empty {
+    text-align: center;
+    color: rgba(250, 248, 255, 0.5);
+    font-size: 0.85rem;
+    padding: 24px 0;
+}
+
+.community-card.bookmark-highlight {
+    box-shadow: 0 0 0 2px rgba(255, 107, 157, 0.6), 0 0 24px rgba(107, 138, 255, 0.25);
+    transition: box-shadow 0.3s ease;
+}
+
+.comment-item-reply {
+    margin-left: 28px;
+    padding-left: 12px;
+    border-left: 2px solid rgba(107, 138, 255, 0.35);
+}
+
+.comment-reply-btn {
+    align-self: flex-start;
+    margin-top: 4px;
+    padding: 2px 8px;
+    font-size: 0.72rem;
+    border: none;
+    border-radius: 8px;
+    background: rgba(107, 138, 255, 0.15);
+    color: #A8D8FF;
+    cursor: pointer;
+}
+
+.comment-reply-btn:hover {
+    background: rgba(255, 107, 157, 0.2);
+    color: #FFB6D9;
+}
+
+.comment-reply-tag {
+    font-size: 0.72rem;
+    color: #6B8AFF;
+    margin-right: 4px;
+}
+
+.comment-reply-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 10px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    background: rgba(107, 138, 255, 0.12);
+    font-size: 0.78rem;
+    color: #A8D8FF;
+}
+
+.comment-reply-bar[hidden] {
+    display: none !important;
+}
+
+.comment-reply-cancel {
+    border: none;
+    background: none;
+    color: rgba(255, 107, 157, 0.9);
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.upload-preview {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 107, 157, 0.25);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.upload-preview[hidden] {
+    display: none !important;
+}
+
+.upload-preview-img {
+    display: block;
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.upload-preview-name {
+    font-size: 0.8rem;
+    color: rgba(250, 248, 255, 0.7);
+    margin: 0 0 8px;
+}
+
+.upload-preview-clear {
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: transparent;
+    color: rgba(250, 248, 255, 0.75);
+    cursor: pointer;
+}
+
+.upload-preview-clear:hover {
+    border-color: rgba(255, 107, 157, 0.4);
+    color: #FFB6D9;
+}

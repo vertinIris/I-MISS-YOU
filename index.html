@@ -1252,6 +1252,11 @@
                         <div class="progress-fill" id="upload-progress-fill"></div>
                         <span class="progress-text" id="upload-progress-text">0%</span>
                     </div>
+                    <div class="upload-preview" id="upload-preview" hidden>
+                        <img id="upload-preview-img" alt="图片预览" class="upload-preview-img">
+                        <p class="upload-preview-name" id="upload-preview-name"></p>
+                        <button type="button" class="upload-preview-clear" id="upload-preview-clear">移除附件</button>
+                    </div>
                     <div class="form-actions">
                         <button type="submit" class="btn-primary magnetic">
                             <span>提交作品</span>
@@ -1273,6 +1278,10 @@
         <div class="container">
             <h2 class="section-title">飞行雪绒社区</h2>
             <p class="section-subtitle">来自星炬学院的创作集合 · 共 <span id="community-count">0</span> 份作品</p>
+
+            <div class="community-toolbar">
+                <button type="button" class="btn-ghost community-bookmarks-btn" id="bookmarks-open-btn" title="查看已收藏的作品">★ 我的收藏</button>
+            </div>
 
             <div class="community-filters" id="community-filters">
                 <button class="community-filter-btn active" data-filter="all">全部</button>
@@ -1301,6 +1310,18 @@
 
             <div class="community-grid" id="community-grid">
                 <!-- Submissions rendered by JS -->
+            </div>
+
+            <div class="bookmarks-panel" id="bookmarks-panel" hidden>
+                <div class="bookmarks-panel-inner glass">
+                    <div class="bookmarks-panel-header">
+                        <h3>我的收藏</h3>
+                        <button type="button" class="bookmarks-panel-close" id="bookmarks-close-btn" aria-label="关闭">×</button>
+                    </div>
+                    <p class="bookmarks-panel-hint" id="bookmarks-panel-hint">登录后收藏会同步到云端；匿名用户仅保存在本机。</p>
+                    <ul class="bookmarks-list" id="bookmarks-list"></ul>
+                    <p class="bookmarks-empty" id="bookmarks-empty" hidden>还没有收藏任何作品</p>
+                </div>
             </div>
 
             <div class="community-empty" id="community-empty">

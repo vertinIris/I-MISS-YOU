@@ -318,6 +318,9 @@
             if (extraFields && extraFields.delete_token) {
                 insertData.delete_token = extraFields.delete_token;
             }
+            if (extraFields && extraFields.parent_id) {
+                insertData.parent_id = extraFields.parent_id;
+            }
             return client
                 .from('comments')
                 .insert(insertData)
@@ -798,6 +801,28 @@
         });
     }
 
+    function getUserBookmarks() {
+        if (!isReady || !currentUser) return Promise.resolve([]);
+
+        return client
+            .from('bookmarks')
+            .select('id, submission_id, note, created_at')
+            .order('created_at', { ascending: false })
+            .then(function(result) {
+                if (result.error) {
+                    console.warn('[SupabaseAdapter] getUserBookmarks:', result.error.message);
+                    return [];
+                }
+                return result.data || [];
+            });
+    }
+
+    function getUserBookmarkIds() {
+        return getUserBookmarks().then(function(rows) {
+            return rows.map(function(row) { return row.submission_id; });
+        });
+    }
+
     function addSubmissionTags(submissionId, tagNames) {
         if (!isReady) return Promise.resolve(false);
         return client.rpc('add_submission_tags', {
@@ -907,6 +932,8 @@
 
         /* v9.2 标签与收藏 */
         toggleBookmark:           toggleBookmark,
+        getUserBookmarks:         getUserBookmarks,
+        getUserBookmarkIds:       getUserBookmarkIds,
         addSubmissionTags:        addSubmissionTags,
         filterSubmissionsByTags:  filterSubmissionsByTags,
         getTags:                  getTags,

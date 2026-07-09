@@ -1132,6 +1132,8 @@
             }
         });
 
+        initCommentReplyDelegation();
+
         /* ===== 删除按钮事件委托 ===== */
         var commentLists = document.querySelectorAll('.comment-list');
         commentLists.forEach(function(list) {
@@ -1141,11 +1143,9 @@
                 e.preventDefault();
                 e.stopPropagation();
 
-                /* v9.0: 支持社区评论（data-community-target）和博文评论（.comment-area） */
                 var communityTarget = btn.getAttribute('data-community-target');
                 var targetId;
                 if (communityTarget) {
-                    /* 社区评论: targetId 从 cc-list-{id} 提取 */
                     targetId = 'community_' + communityTarget.replace('cc-list-', '');
                 } else {
                     var area = btn.closest('.comment-area');
@@ -1153,7 +1153,6 @@
                     targetId = area.id.replace('comments-', '');
                 }
 
-                /* 提取评论数据 */
                 var commentData = {
                     id:       btn.getAttribute('data-comment-id'),
                     authorId: btn.getAttribute('data-comment-author'),
@@ -1165,7 +1164,6 @@
                 handleDeleteComment(targetId, commentData, btn);
             });
 
-            /* v9.0: 版主隐藏按钮事件委托 */
             list.addEventListener('click', function(e) {
                 var btn = e.target.closest('.comment-hide-btn');
                 if (!btn) return;
@@ -1198,7 +1196,6 @@
                 }
             });
         });
-
     }
 
     /** 云端就绪后订阅 Realtime，并全量拉取云端评论 */
@@ -1291,8 +1288,311 @@
         });
     }
 
+    /* ===== 评论回复状态 ===== */
+    var commentReplyState = {};
+    var __fxrePendingAttachment = null;
+    var __fxreReplyDelegationInit = false;
+
+    function getCommentFormTargetId(form) {
+        if (!form) return null;
+        var dataTarget = form.getAttribute('data-target');
+        if (dataTarget) return 'community_' + dataTarget;
+        var area = form.closest('.comment-area');
+        if (area && area.id) return area.id.replace('comments-', '');
+        return null;
+    }
+
+    function setCommentReplyMode(targetId, parentId, replyToName, form) {
+        commentReplyState[targetId] = { parentId: parentId, replyToName: replyToName };
+        var bar = form ? form.parentElement.querySelector('.comment-reply-bar') : null;
+        if (!bar && form) {
+            bar = document.getElementById('reply-bar-' + targetId);
+        }
+        if (bar) {
+            bar.hidden = false;
+            var label = bar.querySelector('.comment-reply-label');
+            if (label) label.textContent = '回复 @' + replyToName;
+        }
+        var textInput = form ? form.querySelectorAll('.comment-form-input')[1] : null;
+        if (textInput) {
+            textInput.placeholder = '回复 @' + replyToName + '……';
+            textInput.focus();
+        }
+    }
+
+    function clearCommentReplyMode(targetId, form) {
+        delete commentReplyState[targetId];
+        var bar = form ? form.parentElement.querySelector('.comment-reply-bar') : null;
+        if (!bar) bar = document.getElementById('reply-bar-' + targetId);
+        if (bar) bar.hidden = true;
+        if (form) {
+            var textInput = form.querySelectorAll('.comment-form-input')[1];
+            if (textInput) textInput.placeholder = '写下你的评论……';
+        }
+    }
+
+    function buildCommentItemHtml(c, opts, isReply) {
+        opts = opts || {};
+        var initial = c.name.charAt(0).toUpperCase();
+        var bgColor = c.color || 'var(--color-pink)';
+        var canDeleteAny = (typeof AdminAuth !== 'undefined') && AdminAuth.isAdmin();
+        var canModerate = (typeof AuthManager !== 'undefined') && AuthManager.canHideComment();
+        var showDelete = canDeleteAny || canModerate;
+        if (!showDelete && typeof AuthManager !== 'undefined') {
+            showDelete = AuthManager.canDeleteComment(c);
+        }
+        if (!showDelete && (typeof AdminAuth !== 'undefined' && AdminAuth.canDelete(c))) {
+            showDelete = true;
+        }
+        var communityAttr = opts.communityListId
+            ? ' data-community-target="' + opts.communityListId + '"'
+            : '';
+        var deleteBtn = showDelete
+            ? '<button class="comment-delete-btn" title="删除此评论" data-comment-id="' + (c.id || '') + '" data-comment-name="' + escapeHTML(c.name) + '" data-comment-text="' + escapeHTML(c.text) + '" data-comment-time="' + (c.time || 0) + '" data-comment-author="' + (c.authorId || '') + '"' + communityAttr + '>×</button>'
+            : '';
+        var hideBtn = (canModerate && !showDelete)
+            ? '<button class="comment-hide-btn" title="隐藏此评论（版主操作）" data-comment-id="' + (c.id || '') + '"' + communityAttr + '>👁</button>'
+            : '';
+        var replyBtn = (c.id && !isReply)
+            ? '<button type="button" class="comment-reply-btn" data-comment-id="' + c.id + '" data-comment-name="' + escapeHTML(c.name) + '" data-target-id="' + escapeHTML(opts.targetId || '') + '">回复</button>'
+            : '';
+        var replyPrefix = isReply ? '<span class="comment-reply-tag">回复</span> ' : '';
+        return '<div class="comment-item' + (isReply ? ' comment-item-reply' : '') + '" data-comment-id="' + (c.id || '') + '">' +
+            '<div class="comment-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
+            '<div class="comment-body">' +
+            '<div class="comment-meta">' +
+            replyPrefix +
+            '<span class="comment-author">' + escapeHTML(c.name) + '</span>' +
+            '<span class="comment-time">' + c.timeStr + '</span>' +
+            '</div>' +
+            '<div class="comment-text">' + escapeHTML(c.text) + '</div>' +
+            '</div>' +
+            replyBtn + deleteBtn + hideBtn +
+            '</div>';
+    }
+
+    function renderCommentsThread(comments, opts) {
+        opts = opts || {};
+        var byId = {};
+        comments.forEach(function(c) {
+            if (c.id) byId[c.id] = c;
+        });
+        var roots = [];
+        var replyMap = {};
+        comments.forEach(function(c) {
+            var pid = c.parentId;
+            if (pid && byId[pid]) {
+                if (!replyMap[pid]) replyMap[pid] = [];
+                replyMap[pid].push(c);
+            } else {
+                roots.push(c);
+            }
+        });
+        var html = '';
+        roots.forEach(function(c) {
+            html += buildCommentItemHtml(c, opts, false);
+            (replyMap[c.id] || []).forEach(function(r) {
+                html += buildCommentItemHtml(r, opts, true);
+            });
+        });
+        return html;
+    }
+
+    function initCommentReplyDelegation() {
+        if (__fxreReplyDelegationInit) return;
+        __fxreReplyDelegationInit = true;
+
+        document.addEventListener('click', function(e) {
+            var replyBtn = e.target.closest('.comment-reply-btn');
+            if (replyBtn) {
+                e.preventDefault();
+                var targetId = replyBtn.getAttribute('data-target-id');
+                var parentId = parseInt(replyBtn.getAttribute('data-comment-id'), 10);
+                var replyToName = replyBtn.getAttribute('data-comment-name') || '';
+                var form = null;
+                if (targetId.indexOf('community_') === 0) {
+                    var subId = targetId.replace('community_', '');
+                    var card = document.querySelector('.community-card[data-id="' + subId + '"]');
+                    if (card) {
+                        form = card.querySelector('.comment-form');
+                        var commentsBox = card.querySelector('.community-card-comments');
+                        if (commentsBox) commentsBox.classList.add('open');
+                    }
+                } else {
+                    var area = document.getElementById('comments-' + targetId);
+                    if (area) {
+                        area.classList.add('open');
+                        form = area.querySelector('.comment-form');
+                    }
+                }
+                if (form && parentId) setCommentReplyMode(targetId, parentId, replyToName, form);
+                return;
+            }
+
+            var cancelBtn = e.target.closest('.comment-reply-cancel');
+            if (cancelBtn) {
+                e.preventDefault();
+                var bar = cancelBtn.closest('.comment-reply-bar');
+                var form = bar && bar.nextElementSibling && bar.nextElementSibling.classList.contains('comment-form')
+                    ? bar.nextElementSibling : cancelBtn.closest('.community-card-comments, .comment-area');
+                if (form && form.querySelector) form = form.querySelector('.comment-form') || form;
+                var targetId = getCommentFormTargetId(form);
+                if (targetId) clearCommentReplyMode(targetId, form);
+            }
+        });
+    }
+
+    /* ===== 收藏云端同步 ===== */
+    function syncBookmarksToLocal(rows) {
+        try {
+            var bookmarks = {};
+            (rows || []).forEach(function(row) {
+                var sid = row.submission_id || row;
+                if (sid != null) bookmarks[sid] = { time: Date.now(), cloud: true };
+            });
+            localStorage.setItem('fxre_bookmarks', JSON.stringify(bookmarks));
+        } catch (e) { /* ignore */ }
+    }
+
+    function syncCloudBookmarks() {
+        if (typeof SupabaseAdapter === 'undefined' || !SupabaseAdapter.isReady || !SupabaseAdapter.isAuthenticated()) {
+            return Promise.resolve();
+        }
+        if (!SupabaseAdapter.getUserBookmarks) return Promise.resolve();
+        return SupabaseAdapter.getUserBookmarks().then(function(rows) {
+            if (rows && rows.length) syncBookmarksToLocal(rows);
+            return rows;
+        }).catch(function() { return []; });
+    }
+
+    function applyBookmarkFlags(submissions) {
+        var localBookmarks = {};
+        try { localBookmarks = JSON.parse(localStorage.getItem('fxre_bookmarks') || '{}'); } catch (e) {}
+        submissions.forEach(function(s) {
+            s.bookmarked = !!localBookmarks[s.id];
+        });
+        return submissions;
+    }
+
+    function openBookmarksPanel() {
+        var panel = document.getElementById('bookmarks-panel');
+        if (!panel) return;
+        panel.hidden = false;
+        renderBookmarksPanel();
+    }
+
+    function closeBookmarksPanel() {
+        var panel = document.getElementById('bookmarks-panel');
+        if (panel) panel.hidden = true;
+    }
+
+    function renderBookmarksPanel() {
+        var listEl = document.getElementById('bookmarks-list');
+        var emptyEl = document.getElementById('bookmarks-empty');
+        var hintEl = document.getElementById('bookmarks-panel-hint');
+        if (!listEl) return;
+
+        var isCloud = typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.isAuthenticated();
+        if (hintEl) {
+            hintEl.textContent = isCloud
+                ? '收藏已与云端同步，点击条目可定位到社区作品。'
+                : '当前为本地收藏；绑定邮箱登录后可跨设备同步。';
+        }
+
+        function paint(submissions) {
+            submissions = applyBookmarkFlags(submissions || []);
+            var bookmarked = submissions.filter(function(s) { return s.bookmarked; });
+            if (bookmarked.length === 0) {
+                listEl.innerHTML = '';
+                if (emptyEl) emptyEl.hidden = false;
+                return;
+            }
+            if (emptyEl) emptyEl.hidden = true;
+            listEl.innerHTML = bookmarked.map(function(s) {
+                return '<li class="bookmarks-item">' +
+                    '<button type="button" class="bookmarks-item-btn" data-submission-id="' + s.id + '">' +
+                    '<span class="bookmarks-item-title">' + escapeHTML(s.title) + '</span>' +
+                    '<span class="bookmarks-item-meta">' + escapeHTML(s.name) + ' · ' + s.timeStr + '</span>' +
+                    '</button></li>';
+            }).join('');
+
+            listEl.querySelectorAll('.bookmarks-item-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var sid = btn.getAttribute('data-submission-id');
+                    closeBookmarksPanel();
+                    var card = document.querySelector('.community-card[data-id="' + sid + '"]');
+                    if (card) {
+                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        card.classList.add('bookmark-highlight');
+                        setTimeout(function() { card.classList.remove('bookmark-highlight'); }, 2000);
+                    } else {
+                        showSubmitToast('该作品可能在当前筛选下不可见', 3000);
+                    }
+                });
+            });
+        }
+
+        syncCloudBookmarks().then(function() {
+            var result = getSubmissions();
+            if (result && typeof result.then === 'function') {
+                result.then(paint);
+            } else {
+                paint(result || []);
+            }
+        });
+    }
+
+    function initBookmarksPanel() {
+        var openBtn = document.getElementById('bookmarks-open-btn');
+        var closeBtn = document.getElementById('bookmarks-close-btn');
+        var panel = document.getElementById('bookmarks-panel');
+        if (openBtn) openBtn.addEventListener('click', openBookmarksPanel);
+        if (closeBtn) closeBtn.addEventListener('click', closeBookmarksPanel);
+        if (panel) {
+            panel.addEventListener('click', function(e) {
+                if (e.target === panel) closeBookmarksPanel();
+            });
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && panel && !panel.hidden) closeBookmarksPanel();
+        });
+    }
+
+    function clearUploadPreview() {
+        __fxrePendingAttachment = null;
+        var preview = document.getElementById('upload-preview');
+        var img = document.getElementById('upload-preview-img');
+        var nameEl = document.getElementById('upload-preview-name');
+        if (preview) preview.hidden = true;
+        if (img) img.removeAttribute('src');
+        if (nameEl) nameEl.textContent = '';
+        if (typeof UploadManager !== 'undefined' && UploadManager.clearCurrentFile) {
+            UploadManager.clearCurrentFile();
+        }
+    }
+
+    function showUploadPreview(fileData) {
+        var preview = document.getElementById('upload-preview');
+        var img = document.getElementById('upload-preview-img');
+        var nameEl = document.getElementById('upload-preview-name');
+        if (!preview) return;
+        if (fileData.type === 'image' && fileData.url) {
+            __fxrePendingAttachment = { type: 'image', url: fileData.url, name: fileData.filename };
+            if (img) img.src = fileData.url;
+            if (nameEl) nameEl.textContent = fileData.filename + '（将随投稿一并发布）';
+            preview.hidden = false;
+            var typeSelect = document.getElementById('submit-type');
+            if (typeSelect) typeSelect.value = 'art';
+        } else if (fileData.type === 'text') {
+            __fxrePendingAttachment = null;
+        }
+    }
+
     function buildCommentAreaHTML(targetId) {
         return '<div class="comment-list" id="comment-list-' + targetId + '"></div>' +
+               '<div class="comment-reply-bar" id="reply-bar-' + targetId + '" hidden>' +
+               '<span class="comment-reply-label"></span>' +
+               '<button type="button" class="comment-reply-cancel">取消回复</button></div>' +
                '<form class="comment-form">' +
                '<input type="text" class="comment-form-input comment-form-name" placeholder="昵称" maxlength="20" required>' +
                '<input type="text" class="comment-form-input" placeholder="写下你的评论……" maxlength="500" required>' +
@@ -1469,38 +1769,8 @@
             list.innerHTML = '<div class="comment-empty">还没有评论，来第一个留言吧 ~</div>';
             return;
         }
-        var canDeleteAny = (typeof AdminAuth !== 'undefined') && AdminAuth.isAdmin();
-        var canModerate = (typeof AuthManager !== 'undefined') && AuthManager.canHideComment();
-        list.innerHTML = comments.map(function(c) {
-            var initial = c.name.charAt(0).toUpperCase();
-            var bgColor = c.color || 'var(--color-pink)';
-            /* v9.0: 权限判定 — 管理员/版主/令牌持有者/作者 */
-            var showDelete = canDeleteAny || canModerate;
-            if (!showDelete && typeof AuthManager !== 'undefined') {
-                showDelete = AuthManager.canDeleteComment(c);
-            }
-            if (!showDelete && (typeof AdminAuth !== 'undefined' && AdminAuth.canDelete(c))) {
-                showDelete = true;
-            }
-            var deleteBtn = showDelete
-                ? '<button class="comment-delete-btn" title="删除此评论" data-comment-id="' + (c.id || '') + '" data-comment-name="' + escapeHTML(c.name) + '" data-comment-text="' + escapeHTML(c.text) + '" data-comment-time="' + (c.time || 0) + '" data-comment-author="' + (c.authorId || '') + '">×</button>'
-                : '';
-            /* v9.0: 版主隐藏按钮 */
-            var hideBtn = (canModerate && !showDelete)
-                ? '<button class="comment-hide-btn" title="隐藏此评论（版主操作）" data-comment-id="' + (c.id || '') + '">👁</button>'
-                : '';
-            return '<div class="comment-item">' +
-                '<div class="comment-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
-                '<div class="comment-body">' +
-                '<div class="comment-meta">' +
-                '<span class="comment-author">' + escapeHTML(c.name) + '</span>' +
-                '<span class="comment-time">' + c.timeStr + '</span>' +
-                '</div>' +
-                '<div class="comment-text">' + escapeHTML(c.text) + '</div>' +
-                '</div>' +
-                deleteBtn + hideBtn +
-                '</div>';
-        }).join('');
+        var targetId = list.id.replace('comment-list-', '');
+        list.innerHTML = renderCommentsThread(comments, { targetId: targetId });
     }
 
     function handleCommentSubmit(targetId, form) {
@@ -1516,6 +1786,9 @@
         if (rawText.length < 2) { showSubmitToast('评论至少2个字～'); return; }
 
         persistNicknameIfNeeded(rawName);
+
+        var replyState = commentReplyState[targetId];
+        var parentId = replyState ? replyState.parentId : null;
 
         /* --- 速率限制 --- */
         if (typeof RateLimiter !== 'undefined') {
@@ -1552,7 +1825,8 @@
             time: now.getTime(),
             timeStr: now.getMonth() + 1 + '月' + now.getDate() + '日 ' +
                      String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0'),
-            color: autoColor
+            color: autoColor,
+            parentId: parentId || null
         };
 
         /* v9.0: 生成删除令牌 */
@@ -1577,7 +1851,9 @@
 
         /* Phase 3: 同步写云端；完成后合并并刷新，确保跨设备一致 */
         if (typeof DataRepository !== 'undefined') {
-            DataRepository.addComment(targetId, { author: name, color: autoColor, text: text }, deleteToken ? { delete_token: deleteToken } : null)
+            var commentExtra = deleteToken ? { delete_token: deleteToken } : {};
+            if (parentId) commentExtra.parent_id = parentId;
+            DataRepository.addComment(targetId, { author: name, color: autoColor, text: text }, Object.keys(commentExtra).length ? commentExtra : null)
                 .then(function(cloudRow) {
                     if (cloudRow && cloudRow._error) {
                         showSubmitToast('评论已显示，但云端同步失败：' + cloudRow._error, 6000);
@@ -1627,11 +1903,8 @@
                 });
         }
         textInput.value = '';
+        clearCommentReplyMode(targetId, form);
     }
-
-    /**
-     * v9.0: 评论 UI 移除辅助函数（动画淡出 + 计数更新）
-     */
     function _removeCommentFromUI(targetId, btn) {
         var item = btn ? btn.closest('.comment-item') : null;
         if (item) {
@@ -1812,6 +2085,10 @@
             var rawTitle   = document.getElementById('submit-title').value.trim();
             var rawContent = document.getElementById('submit-content').value.trim();
 
+            if (__fxrePendingAttachment && __fxrePendingAttachment.url) {
+                rawContent = rawContent + '\n\n[插图] ' + __fxrePendingAttachment.url;
+            }
+
             /* --- 输入校验 --- */
             if (!rawName || !rawTitle || !rawContent) return;
             if (rawName.length > 20)    { showSubmitToast('昵称限20字以内'); return; }
@@ -1882,6 +2159,7 @@
                 submissions.unshift(newSub);
                 saveSubmissions(submissions);
                 form.reset();
+                clearUploadPreview();
                 if (counter) counter.textContent = '0 / 2000';
                 /* v9.0: 清除标签选择 */
                 if (submissionTagSelector) {
@@ -1987,19 +2265,21 @@
     }
 
     function renderCommunity() {
-        var grid = document.getElementById('community-grid');
-        var empty = document.getElementById('community-empty');
-        var countEl = document.getElementById('community-count');
-        if (!grid) return;
+        syncCloudBookmarks().finally(function() {
+            var grid = document.getElementById('community-grid');
+            var empty = document.getElementById('community-empty');
+            var countEl = document.getElementById('community-count');
+            if (!grid) return;
 
-        var result = getSubmissions();
-        if (result && typeof result.then === 'function') {
-            result.then(function(submissions) {
-                _renderCommunityGrid(grid, empty, countEl, submissions);
-            });
-        } else {
-            _renderCommunityGrid(grid, empty, countEl, result || []);
-        }
+            var result = getSubmissions();
+            if (result && typeof result.then === 'function') {
+                result.then(function(submissions) {
+                    _renderCommunityGrid(grid, empty, countEl, submissions);
+                });
+            } else {
+                _renderCommunityGrid(grid, empty, countEl, result || []);
+            }
+        });
     }
 
     function _renderCommunityGrid(grid, empty, countEl, submissions) {
@@ -2025,12 +2305,8 @@
             });
         }
 
-        /* v9.0: 标记书签状态 */
-        var localBookmarks = {};
-        try { localBookmarks = JSON.parse(localStorage.getItem('fxre_bookmarks') || '{}'); } catch(e) {}
-        filtered.forEach(function(s) {
-            if (localBookmarks[s.id]) s.bookmarked = true;
-        });
+        /* 标记书签状态（含云端同步后的 localStorage） */
+        filtered = applyBookmarkFlags(filtered);
 
         if (filtered.length === 0) {
             grid.innerHTML = '';
@@ -2078,6 +2354,9 @@
                 '</div>' +
                 '<div class="community-card-comments" id="cc-comments-' + s.id + '">' +
                 '<div class="comment-list" id="cc-list-' + s.id + '"></div>' +
+                '<div class="comment-reply-bar" id="reply-bar-community_' + s.id + '" hidden>' +
+                '<span class="comment-reply-label"></span>' +
+                '<button type="button" class="comment-reply-cancel">取消回复</button></div>' +
                 '<form class="comment-form" data-target="' + s.id + '">' +
                 '<input type="text" class="comment-form-input comment-form-name" placeholder="昵称" maxlength="20" required>' +
                 '<input type="text" class="comment-form-input" placeholder="写下你的评论……" maxlength="500" required>' +
@@ -2191,7 +2470,17 @@
                     if (!isNaN(numericId) && typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.isAuthenticated()) {
                         SupabaseAdapter.toggleBookmark(numericId).then(function(result) {
                             if (result && result.success) {
+                                try {
+                                    var bookmarks = JSON.parse(localStorage.getItem('fxre_bookmarks') || '{}');
+                                    if (result.action === 'removed') delete bookmarks[id];
+                                    else bookmarks[id] = { time: Date.now(), cloud: true };
+                                    localStorage.setItem('fxre_bookmarks', JSON.stringify(bookmarks));
+                                } catch (e) {}
                                 showSubmitToast(!isBookmarked ? '已收藏' : '已取消收藏', 1500);
+                            } else if (result && result.reason) {
+                                showSubmitToast(result.reason, 3000);
+                                bookmarkBtn.classList.toggle('bookmarked');
+                                if (svg) svg.setAttribute('fill', isBookmarked ? 'currentColor' : 'none');
                             }
                         }).catch(function(err) {
                             console.warn('[v9.0] 书签操作失败:', err);
@@ -2233,6 +2522,10 @@
 
                     persistNicknameIfNeeded(rawName);
 
+                    var commTargetId = 'community_' + id;
+                    var replyState = commentReplyState[commTargetId];
+                    var parentId = replyState ? replyState.parentId : null;
+
                     /* --- 速率限制 --- */
                     if (typeof RateLimiter !== 'undefined') {
                         var rl = RateLimiter.checkComment('community_' + id);
@@ -2255,18 +2548,19 @@
                             text: text,
                             time: now.getTime(),
                             timeStr: now.getMonth() + 1 + '月' + now.getDate() + '日 ' +
-                                     String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0')
+                                     String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0'),
+                            parentId: parentId || null
                         });
                         saveComments('community_' + id, comments);
-                        /* 乐观渲染 */
                         if (list) _renderCommunityCommentsList(list, comments);
-                        /* 云端同步 */
                         if (typeof DataRepository !== 'undefined') {
-                            DataRepository.addComment('community_' + id, { author: name, text: text })
+                            var extra = parentId ? { parent_id: parentId } : null;
+                            DataRepository.addComment('community_' + id, { author: name, text: text }, extra)
                                 .then(function() { renderCommunityComments(id); })
                                 .catch(function(err) { console.warn('[Main] 社区评论云端同步失败:', err); });
                         }
                         textInput.value = '';
+                        clearCommentReplyMode(commTargetId, commentForm);
                     };
                     if (commentsResult && typeof commentsResult.then === 'function') {
                         commentsResult.then(submitCommunityComment);
@@ -2309,37 +2603,11 @@
             list.innerHTML = '<div class="comment-empty">还没有评论 ~</div>';
             return;
         }
-        var canDeleteAny = (typeof AdminAuth !== 'undefined') && AdminAuth.isAdmin();
-        var canModerate = (typeof AuthManager !== 'undefined') && AuthManager.canHideComment();
-        list.innerHTML = comments.map(function(c) {
-            var initial = c.name.charAt(0).toUpperCase();
-            var bgColor = c.color || 'var(--color-pink)';
-            /* v9.0: 权限判定 */
-            var showDelete = canDeleteAny || canModerate;
-            if (!showDelete && typeof AuthManager !== 'undefined') {
-                showDelete = AuthManager.canDeleteComment(c);
-            }
-            if (!showDelete && (typeof AdminAuth !== 'undefined' && AdminAuth.canDelete(c))) {
-                showDelete = true;
-            }
-            var deleteBtn = showDelete
-                ? '<button class="comment-delete-btn" title="删除此评论" data-comment-id="' + (c.id || '') + '" data-comment-name="' + escapeHTML(c.name) + '" data-comment-text="' + escapeHTML(c.text) + '" data-comment-time="' + (c.time || 0) + '" data-comment-author="' + (c.authorId || '') + '" data-community-target="' + (list.id || '') + '">×</button>'
-                : '';
-            var hideBtn = (canModerate && !showDelete)
-                ? '<button class="comment-hide-btn" title="隐藏此评论（版主操作）" data-comment-id="' + (c.id || '') + '" data-community-target="' + (list.id || '') + '">👁</button>'
-                : '';
-            return '<div class="comment-item">' +
-                '<div class="comment-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
-                '<div class="comment-body">' +
-                '<div class="comment-meta">' +
-                '<span class="comment-author">' + escapeHTML(c.name) + '</span>' +
-                '<span class="comment-time">' + c.timeStr + '</span>' +
-                '</div>' +
-                '<div class="comment-text">' + escapeHTML(c.text) + '</div>' +
-                '</div>' +
-                deleteBtn + hideBtn +
-                '</div>';
-        }).join('');
+        var subId = list.id.replace('cc-list-', '');
+        list.innerHTML = renderCommentsThread(comments, {
+            targetId: 'community_' + subId,
+            communityListId: list.id
+        });
     }
 
     function updateSyncStatus() {
@@ -2805,6 +3073,7 @@
             });
         }
         if (toastMsg) showSubmitToast(toastMsg, 4000);
+        syncCloudBookmarks().then(function() { renderCommunity(); });
         if (typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.refreshSession) {
             SupabaseAdapter.refreshSession();
         }
@@ -3024,6 +3293,7 @@
         loadUserProfile();
         initSubmission();
         initCommunity();
+        initBookmarksPanel();
         initSyncStatus();
 
         /* v9.0: 初始化新模块 */
@@ -3035,9 +3305,9 @@
 
         /* v9.0: 初始化拖拽上传 */
         if (typeof UploadManager !== 'undefined' && UploadManager.init) {
+            window.showToast = function(msg) { showSubmitToast(msg, 4000); };
             UploadManager.init('upload-drop-zone', 'upload-file-input', 'upload-progress', function(fileData) {
                 if (fileData.type === 'text') {
-                    /* 文本文件：自动填充内容 */
                     var contentEl = document.getElementById('submit-content');
                     var titleEl = document.getElementById('submit-title');
                     if (contentEl && fileData.content) {
@@ -3048,12 +3318,15 @@
                     if (titleEl && !titleEl.value && fileData.name) {
                         titleEl.value = fileData.name.replace(/\.(txt|md)$/i, '').substring(0, 100);
                     }
+                    showUploadPreview(fileData);
                     showSubmitToast('文件内容已填入', 2000);
                 } else if (fileData.type === 'image') {
-                    /* 图片文件：显示预览或上传到 Storage */
-                    showSubmitToast('图片已加载：' + fileData.name, 3000);
+                    showUploadPreview(fileData);
+                    showSubmitToast('图片已上传，将随投稿发布', 3000);
                 }
             });
+            var previewClear = document.getElementById('upload-preview-clear');
+            if (previewClear) previewClear.addEventListener('click', clearUploadPreview);
         }
 
         /* v9.1: 导航账号面板（升级 / 登录 / 退出） */

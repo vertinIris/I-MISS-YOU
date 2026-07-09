@@ -149,6 +149,7 @@
             name:     row.author_name || '匿名信号源',
             color:    row.author_color || '#6B8AFF',
             text:     row.content || '',
+            parentId: row.parent_id || null,
             time:     d.getTime(),
             is_hidden: row.is_hidden === true,
             timeStr:  (d.getMonth() + 1) + '月' + d.getDate() + '日 ' +
