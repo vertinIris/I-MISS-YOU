@@ -179,7 +179,7 @@ BEGIN
         RAISE EXCEPTION '%', COALESCE(v_check->>'reason', '速率限制');
     END IF;
 
-    v_quota := public.check_daily_quota(v_uid, TG_TABLE_NAME);
+    v_quota := public.check_daily_quota(v_uid, TG_TABLE_NAME::text);
     IF NOT (v_quota->>'allowed')::boolean THEN
         RAISE EXCEPTION '%', COALESCE(v_quota->>'reason', '今日配额已满');
     END IF;
