@@ -1198,35 +1198,14 @@
     function makeCommunityCommentHandlers(subId) {
         var targetId = 'community_' + subId;
         return {
-            onNewComment: function() {
-                if (typeof DataRepository !== 'undefined') {
-                    DataRepository.pullCommentsAndPersist(targetId).then(function(comments) {
-                        var list = document.getElementById('cc-list-' + subId);
-                        if (list) _renderCommunityCommentsList(list, comments || []);
-                    });
-                } else {
-                    renderCommunityComments(subId);
-                }
+            onNewComment: function(comment) {
+                applyRealtimeCommentEvent(targetId, 'INSERT', { new: comment });
             },
-            onUpdateComment: function() {
-                if (typeof DataRepository !== 'undefined') {
-                    DataRepository.pullCommentsAndPersist(targetId).then(function(comments) {
-                        var list = document.getElementById('cc-list-' + subId);
-                        if (list) _renderCommunityCommentsList(list, comments || []);
-                    });
-                } else {
-                    renderCommunityComments(subId);
-                }
+            onUpdateComment: function(newData, oldData) {
+                applyRealtimeCommentEvent(targetId, 'UPDATE', { new: newData, old: oldData });
             },
-            onDeleteComment: function() {
-                if (typeof DataRepository !== 'undefined') {
-                    DataRepository.pullCommentsAndPersist(targetId).then(function(comments) {
-                        var list = document.getElementById('cc-list-' + subId);
-                        if (list) _renderCommunityCommentsList(list, comments || []);
-                    });
-                } else {
-                    renderCommunityComments(subId);
-                }
+            onDeleteComment: function(oldData) {
+                applyRealtimeCommentEvent(targetId, 'DELETE', { old: oldData });
             }
         };
     }
@@ -1251,34 +1230,13 @@
                 var targetId = area.id.replace('comments-', '');
                 SyncManager.connectComments(targetId, {
                     onNewComment: function(comment) {
-                        if (typeof DataRepository !== 'undefined') {
-                            DataRepository.pullCommentsAndPersist(targetId).then(function(comments) {
-                                var list = document.getElementById('comment-list-' + targetId);
-                                if (list) _renderCommentsList(list, comments || []);
-                            });
-                        } else {
-                            renderComments(targetId);
-                        }
+                        applyRealtimeCommentEvent(targetId, 'INSERT', { new: comment });
                     },
                     onUpdateComment: function(newData, oldData) {
-                        if (typeof DataRepository !== 'undefined') {
-                            DataRepository.pullCommentsAndPersist(targetId).then(function(comments) {
-                                var list = document.getElementById('comment-list-' + targetId);
-                                if (list) _renderCommentsList(list, comments || []);
-                            });
-                        } else {
-                            renderComments(targetId);
-                        }
+                        applyRealtimeCommentEvent(targetId, 'UPDATE', { new: newData, old: oldData });
                     },
                     onDeleteComment: function(oldData) {
-                        if (typeof DataRepository !== 'undefined') {
-                            DataRepository.pullCommentsAndPersist(targetId).then(function(comments) {
-                                var list = document.getElementById('comment-list-' + targetId);
-                                if (list) _renderCommentsList(list, comments || []);
-                            });
-                        } else {
-                            renderComments(targetId);
-                        }
+                        applyRealtimeCommentEvent(targetId, 'DELETE', { old: oldData });
                     }
                 });
             });
@@ -1651,6 +1609,39 @@
                     } else {
                         prompt('复制此链接：', url);
                     }
+                };
+            }
+            var renameBtn = document.getElementById('collection-rename-btn');
+            if (renameBtn) {
+                renameBtn.onclick = function() {
+                    if (!col) return;
+                    var newName = prompt('收藏夹新名称', col.name);
+                    if (!newName || !newName.trim() || newName.trim() === col.name) return;
+                    SupabaseAdapter.updateBookmarkCollection(__fxreBookmarkCollectionFilter, { name: newName.trim() })
+                        .then(function(ok) {
+                            if (ok) {
+                                showSubmitToast('已重命名', 2000);
+                                renderBookmarksPanel();
+                            } else {
+                                showSubmitToast('重命名失败', 3000);
+                            }
+                        });
+                };
+            }
+            var deleteColBtn = document.getElementById('collection-delete-btn');
+            if (deleteColBtn) {
+                deleteColBtn.onclick = function() {
+                    if (!col) return;
+                    if (!confirm('确定删除收藏夹「' + col.name + '」？书签会保留为未分组。')) return;
+                    SupabaseAdapter.deleteBookmarkCollection(__fxreBookmarkCollectionFilter).then(function(ok) {
+                        if (ok) {
+                            __fxreBookmarkCollectionFilter = null;
+                            showSubmitToast('收藏夹已删除', 2000);
+                            renderBookmarksPanel();
+                        } else {
+                            showSubmitToast('删除失败', 3000);
+                        }
+                    });
                 };
             }
         }
@@ -2070,11 +2061,6 @@
         }
     }
 
-    /**
-     * 更新博文卡片上的评论数显示（修复 G-04：评论数写死在 HTML 中）
-     * @param {string} targetId — post id 或 diary id
-     * @param {number} count — 实际评论条数
-     */
     function updatePostCommentCount(targetId, count) {
         /* 博文卡片：data-post-id + 第2个 .post-action 按钮的 span */
         var post = document.querySelector('.post-card[data-post-id="' + targetId + '"]');
@@ -2098,6 +2084,107 @@
             if (toggleSpan) {
                 toggleSpan.textContent = count > 0 ? ('评论 ' + formatNumber(count)) : '评论';
             }
+        }
+    }
+
+    function syncAllPostCommentCounts() {
+        document.querySelectorAll('.post-card[data-post-id]').forEach(function(card) {
+            var postId = card.getAttribute('data-post-id');
+            var result = getComments(postId);
+            function apply(comments) {
+                comments = (comments || []).filter(function(c) { return !c.is_hidden; });
+                updatePostCommentCount(postId, comments.length);
+            }
+            if (result && typeof result.then === 'function') result.then(apply);
+            else apply(result);
+        });
+        document.querySelectorAll('.diary-entry[data-diary-id]').forEach(function(entry) {
+            var did = entry.getAttribute('data-diary-id');
+            var result = getComments(did);
+            function apply(comments) {
+                comments = (comments || []).filter(function(c) { return !c.is_hidden; });
+                updatePostCommentCount(did, comments.length);
+            }
+            if (result && typeof result.then === 'function') result.then(apply);
+            else apply(result);
+        });
+    }
+
+    function mapRealtimeCommentRow(row) {
+        if (!row) return null;
+        var d = new Date(row.created_at || Date.now());
+        return {
+            id: row.id,
+            authorId: row.author_id || '',
+            name: row.author_name || '匿名信号源',
+            color: row.author_color || '#6B8AFF',
+            text: row.content || row.text || '',
+            parentId: row.parent_id || null,
+            time: d.getTime(),
+            is_hidden: row.is_hidden === true,
+            timeStr: (d.getMonth() + 1) + '月' + d.getDate() + '日 ' +
+                String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0')
+        };
+    }
+
+    function refreshCommentListUI(targetId, comments) {
+        if (targetId.indexOf('community_') === 0) {
+            var subId = targetId.replace('community_', '');
+            var box = document.getElementById('cc-comments-' + subId);
+            if (box && box.classList.contains('open')) {
+                var list = document.getElementById('cc-list-' + subId);
+                if (list) {
+                    if (comments) _renderCommunityCommentsList(list, comments);
+                    else renderCommunityComments(subId);
+                }
+            }
+            return;
+        }
+        var list = document.getElementById('comment-list-' + targetId);
+        if (list) {
+            if (comments) _renderCommentsList(list, comments);
+            else renderComments(targetId);
+        }
+    }
+
+    function applyRealtimeCommentEvent(targetId, event, payload) {
+        payload = payload || {};
+        var row = payload.new || payload.old;
+        if (event === 'DELETE' || (event === 'UPDATE' && payload.new && payload.new.is_hidden)) {
+            var removeId = payload.old ? payload.old.id : (payload.new ? payload.new.id : null);
+            if (removeId) {
+                var local = [];
+                try { local = JSON.parse(safeGetItem('fxre_comments_' + targetId) || '[]'); } catch (e) {}
+                local = local.filter(function(c) { return String(c.id) !== String(removeId); });
+                saveComments(targetId, local);
+                refreshCommentListUI(targetId, local);
+                updatePostCommentCount(targetId.replace(/^community_/, ''), local.length);
+            } else {
+                refreshCommentListUI(targetId);
+            }
+            return;
+        }
+        if (event === 'INSERT' || event === 'UPDATE') {
+            var c = mapRealtimeCommentRow(row);
+            if (!c) { refreshCommentListUI(targetId); return; }
+            var comments = [];
+            try { comments = JSON.parse(safeGetItem('fxre_comments_' + targetId) || '[]'); } catch (e) {}
+            var found = false;
+            for (var i = 0; i < comments.length; i++) {
+                if (c.id && String(comments[i].id) === String(c.id)) {
+                    comments[i] = c;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found && !c.is_hidden) comments.push(c);
+            if (c.is_hidden) {
+                comments = comments.filter(function(x) { return String(x.id) !== String(c.id); });
+            }
+            saveComments(targetId, comments);
+            refreshCommentListUI(targetId, comments);
+            var countId = targetId.indexOf('community_') === 0 ? targetId.replace('community_', '') : targetId;
+            updatePostCommentCount(countId, comments.length);
         }
     }
 
@@ -3323,7 +3410,10 @@
         } else {
             html = '\u2705 \u4e91\u7aef\u5728\u7ebf';
             cls += ' status-online';
-            if (status.pending > 0) html += ' \xb7 \u5f85\u540c\u6b65: ' + status.pending;
+            if (status.pending > 0) {
+                html += ' \xb7 \u5f85\u540c\u6b65: ' + status.pending;
+                el.title = '\u6709 ' + status.pending + ' \u6761\u672c\u5730\u5185\u5bb9\u5f85\u4e0a\u4f20\uff0c\u70b9\u51fb\u53f3\u4e0b\u89d2 \ud83d\udd04 \u540c\u6b65';
+            }
         }
 
         /* 管理员标识 */
@@ -3581,7 +3671,9 @@
                     AuthManager.updateSession(session.user);
                     /* 从 profiles 获取角色 */
                     AuthManager.fetchRole().then(function(role) {
-                        return loadUserProfile().then(function() {
+                        return (AuthManager.ensureProfile ? AuthManager.ensureProfile() : Promise.resolve()).then(function() {
+                            return loadUserProfile();
+                        }).then(function() {
                             updateAuthUI(session.user, role);
                         });
                     }).catch(function() {
@@ -3611,7 +3703,9 @@
         if (user) {
             AuthManager.updateSession(user);
             AuthManager.fetchRole().then(function(role) {
-                return loadUserProfile().then(function() {
+                return (AuthManager.ensureProfile ? AuthManager.ensureProfile() : Promise.resolve()).then(function() {
+                    return loadUserProfile();
+                }).then(function() {
                     updateAuthUI(user, role);
                 });
             }).catch(function() {
@@ -3988,6 +4082,7 @@
         initDiarySignalFlash();
         initCommentKeywordEgg();
         initComments();
+        syncAllPostCommentCounts();
         initShareButtons();
         initCharacterHub();
         initModals();
@@ -4104,7 +4199,7 @@
      * When Phase 4 features are built, replace stubs with implementations.
      */
 
-    /* Extension 1: Archive System — now delegates to DataRepository */
+    /* Extension 1: Archive System — delegates to DataRepository */
     var ArchiveAPI = {
         exportData: function() {
             if (typeof DataRepository !== 'undefined') return DataRepository.exportData();
@@ -4115,7 +4210,25 @@
             return false;
         },
         clearArchive: function() {
-            return false; /* Stub */
+            try {
+                var keys = [];
+                for (var i = 0; i < localStorage.length; i++) {
+                    var k = localStorage.key(i);
+                    if (k && (k.indexOf('fxre_comments_') === 0 || k === 'fxre_submissions' || k === 'fxre_bookmarks')) {
+                        keys.push(k);
+                    }
+                }
+                keys.forEach(function(k) { localStorage.removeItem(k); });
+                if (typeof renderCommunity === 'function') renderCommunity();
+                document.querySelectorAll('.comment-area').forEach(function(area) {
+                    var tid = area.id.replace('comments-', '');
+                    if (typeof renderComments === 'function') renderComments(tid);
+                });
+                if (typeof syncAllPostCommentCounts === 'function') syncAllPostCommentCounts();
+                return true;
+            } catch (e) {
+                return false;
+            }
         }
     };
 
@@ -4126,11 +4239,14 @@
             return Promise.resolve(null);
         },
         pull: function() {
-            /* Pulls cloud data and merges — triggers re-render */
-            if (typeof DataRepository !== 'undefined') {
-                DataRepository.getComments('post_1'); /* warm cache */
-                if (typeof renderCommunity === 'function') renderCommunity();
+            if (typeof performFullCloudSync === 'function') {
+                return performFullCloudSync().then(function() {
+                    if (typeof refreshAllCommentsFromCloud === 'function') {
+                        return refreshAllCommentsFromCloud();
+                    }
+                });
             }
+            if (typeof renderCommunity === 'function') renderCommunity();
             return Promise.resolve(null);
         },
         getStatus: function() {
@@ -4150,7 +4266,10 @@
             return Promise.resolve(null);
         },
         logout: function() {
-            return false; /* Stub — anonymous users don't log out */
+            if (typeof AuthManager !== 'undefined' && AuthManager.signOut) {
+                return AuthManager.signOut();
+            }
+            return Promise.resolve({ success: false, error: '未初始化' });
         }
     };
 
@@ -4159,6 +4278,6 @@
         archive: ArchiveAPI,
         sync: SyncAPI,
         user: UserAPI,
-        version: 'v9.5'
+        version: 'v9.6'
     };
 })();

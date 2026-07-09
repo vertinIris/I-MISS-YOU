@@ -1370,6 +1370,8 @@
                             <input type="checkbox" id="collection-public-toggle"> 公开此收藏夹
                         </label>
                         <button type="button" class="bookmarks-share-btn" id="collection-share-btn">复制分享链接</button>
+                        <button type="button" class="bookmarks-rename-btn" id="collection-rename-btn">重命名</button>
+                        <button type="button" class="bookmarks-delete-col-btn" id="collection-delete-btn">删除收藏夹</button>
                     </div>
                     <ul class="bookmarks-list" id="bookmarks-list"></ul>
                     <p class="bookmarks-empty" id="bookmarks-empty" hidden>还没有收藏任何作品</p>
@@ -1436,10 +1438,29 @@
                 <button type="button" class="modal-close" id="admin-panel-close-btn" aria-label="关闭">×</button>
             </div>
             <div class="modal-body">
-                <h4 class="admin-section-title">待处理举报</h4>
-                <ul class="admin-list" id="admin-reports-list"></ul>
-                <h4 class="admin-section-title">最近操作日志</h4>
-                <ul class="admin-list" id="admin-logs-list"></ul>
+                <div class="admin-tabs" role="tablist">
+                    <button type="button" class="admin-tab active" data-admin-tab="reports">举报</button>
+                    <button type="button" class="admin-tab" data-admin-tab="comments">评论审核</button>
+                    <button type="button" class="admin-tab" data-admin-tab="logs">操作日志</button>
+                </div>
+                <section class="admin-tab-panel" data-admin-tab="reports">
+                    <h4 class="admin-section-title">待处理举报</h4>
+                    <ul class="admin-list" id="admin-reports-list"></ul>
+                </section>
+                <section class="admin-tab-panel" data-admin-tab="comments" hidden>
+                    <div class="admin-batch-bar" id="admin-batch-bar" hidden>
+                        <span>已选 <strong id="admin-batch-count">0</strong> 条</span>
+                        <button type="button" class="admin-action-btn" data-batch-action="hide">批量隐藏</button>
+                        <button type="button" class="admin-action-btn" data-batch-action="restore">批量恢复</button>
+                        <button type="button" class="admin-action-btn admin-action-danger" data-batch-action="delete">批量删除</button>
+                    </div>
+                    <h4 class="admin-section-title">最近评论（可勾选批量操作，仅管理员）</h4>
+                    <ul class="admin-list" id="admin-comments-list"></ul>
+                </section>
+                <section class="admin-tab-panel" data-admin-tab="logs" hidden>
+                    <h4 class="admin-section-title">最近操作日志</h4>
+                    <ul class="admin-list" id="admin-logs-list"></ul>
+                </section>
             </div>
         </div>
     </div>
@@ -1501,7 +1522,7 @@
 
             <div class="footer-bottom">
                 <p>© 2026 飞行雪绒 · 同人创作 · 非商业用途</p>
-                <p class="footer-meta">v9.4 · 交互去粉光 · 安全防护网 · 简约 OG · Made with ✨ and ❄️</p>
+                <p class="footer-meta">v9.6 · P1/P2/P3 补全 · 版主批量审核 · profiles · Made with ✨ and ❄️</p>
                 <p class="footer-sync" id="sync-status" title="点击复制诊断信息 · 同步请用右下角 🔄 按钮">☁ 本地模式</p>
             </div>
         </div>

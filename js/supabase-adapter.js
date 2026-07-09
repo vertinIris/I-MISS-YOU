@@ -304,17 +304,41 @@
      * @param {string} targetId — 如 'post_1', 'diary_1'
      * @returns {Promise<Array>}
      */
-    function getComments(targetId) {
+    function getComments(targetId, opts) {
+        if (!isReady) return Promise.resolve([]);
+        opts = opts || {};
+
+        var query = client
+            .from('comments')
+            .select('*')
+            .eq('target_id', targetId)
+            .order('created_at', { ascending: true });
+
+        if (opts.limit != null) {
+            var offset = opts.offset || 0;
+            query = query.range(offset, offset + opts.limit - 1);
+        }
+
+        return query.then(function(result) {
+            if (result.error) {
+                console.warn('[SupabaseAdapter] getComments 失败:', result.error.message);
+                return [];
+            }
+            return result.data || [];
+        });
+    }
+
+    function getRecentComments(limit) {
         if (!isReady) return Promise.resolve([]);
 
         return client
             .from('comments')
-            .select('*')
-            .eq('target_id', targetId)
-            .order('created_at', { ascending: true })
+            .select('id, target_id, author_name, content, is_hidden, created_at')
+            .order('created_at', { ascending: false })
+            .limit(limit || 50)
             .then(function(result) {
                 if (result.error) {
-                    console.warn('[SupabaseAdapter] getComments 失败:', result.error.message);
+                    console.warn('[SupabaseAdapter] getRecentComments:', result.error.message);
                     return [];
                 }
                 return result.data || [];
@@ -457,8 +481,9 @@
      * @param {string} typeFilter — 可选类型筛选
      * @returns {Promise<Array>}
      */
-    function getSubmissions(typeFilter) {
+    function getSubmissions(typeFilter, opts) {
         if (!isReady) return Promise.resolve([]);
+        opts = opts || {};
 
         var query = client
             .from('submissions')
@@ -467,6 +492,10 @@
 
         if (typeFilter && typeFilter !== '全部') {
             query = query.eq('type', toDbType(typeFilter));
+        }
+        if (opts.limit != null) {
+            var offset = opts.offset || 0;
+            query = query.range(offset, offset + opts.limit - 1);
         }
 
         return query.then(function(result) {
@@ -850,8 +879,72 @@
                 console.error('[SupabaseAdapter] batchModerateComments error:', result.error);
                 return { success: 0, failed: commentIds.length };
             }
-            return result.data || { success: 0, failed: 0 };
+            var row = Array.isArray(result.data) ? result.data[0] : result.data;
+            if (row) {
+                return {
+                    success: Number(row.success_count != null ? row.success_count : row.success || 0),
+                    failed: Number(row.failed_count != null ? row.failed_count : row.failed || 0)
+                };
+            }
+            return { success: 0, failed: 0 };
         });
+    }
+
+    function upsertProfile(profile) {
+        if (!isReady || !currentUser) return Promise.resolve(false);
+        profile = profile || {};
+        return client
+            .from('profiles')
+            .upsert({
+                id: currentUser.id,
+                nickname: profile.nickname || null,
+                avatar_color: profile.avatar_color || '#6B8AFF'
+            }, { onConflict: 'id' })
+            .then(function(result) {
+                if (result.error) {
+                    console.warn('[SupabaseAdapter] upsertProfile:', result.error.message);
+                    return false;
+                }
+                return true;
+            });
+    }
+
+    function updateBookmarkCollection(collectionId, updates) {
+        if (!isReady || !currentUser) return Promise.resolve(false);
+        return client
+            .from('bookmark_collections')
+            .update(updates)
+            .eq('id', collectionId)
+            .eq('user_id', currentUser.id)
+            .then(function(result) {
+                if (result.error) {
+                    console.warn('[SupabaseAdapter] updateBookmarkCollection:', result.error.message);
+                    return false;
+                }
+                return true;
+            });
+    }
+
+    function deleteBookmarkCollection(collectionId) {
+        if (!isReady || !currentUser) return Promise.resolve(false);
+        return client
+            .from('bookmarks')
+            .update({ collection_id: null })
+            .eq('collection_id', collectionId)
+            .then(function() {
+                return client
+                    .from('bookmark_collections')
+                    .delete()
+                    .eq('id', collectionId)
+                    .eq('user_id', currentUser.id);
+            })
+            .then(function(result) {
+                if (result.error) {
+                    console.warn('[SupabaseAdapter] deleteBookmarkCollection:', result.error.message);
+                    return false;
+                }
+                return true;
+            });
     }
 
     /* ================================================================
@@ -1127,6 +1220,7 @@
 
         /* 评论 */
         getComments:    getComments,
+        getRecentComments: getRecentComments,
         addComment:     addComment,
         deleteComment:  deleteComment,
         getAllComments: getAllComments,
@@ -1141,6 +1235,7 @@
         moderateComment:        moderateComment,
         moderateSubmission:     moderateSubmission,
         batchModerateComments:  batchModerateComments,
+        upsertProfile:          upsertProfile,
 
         /* 投稿 */
         getSubmissions:  getSubmissions,
@@ -1154,6 +1249,8 @@
         getUserBookmarkIds:       getUserBookmarkIds,
         getBookmarkCollections:   getBookmarkCollections,
         createBookmarkCollection: createBookmarkCollection,
+        updateBookmarkCollection: updateBookmarkCollection,
+        deleteBookmarkCollection: deleteBookmarkCollection,
         setBookmarkCollection:         setBookmarkCollection,
         setBookmarkCollectionPublic:   setBookmarkCollectionPublic,
         getPublicCollection:           getPublicCollection,

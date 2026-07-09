@@ -1,22 +1,21 @@
 # 已知疏漏与后续改进（摘要）
 
-> **版本**: v9.3 | **最后更新**: 2026-07-10  
+> **版本**: v9.6 | **最后更新**: 2026-07-10  
 > **完整审计**: [gaps-audit.md](./gaps-audit.md)
 
 ---
 
 ## 已修复 — 勿重复排查
 
-v7.8～v9.2 已处理：migration-004～012、profiles 昵称、收藏云端、评论回复、举报 RPC、版主后台、SyncManager、上传预览等。
+v7.8～v9.6 已处理：migration-004～015、profiles upsert、收藏夹重命名/删除、版主批量审核、Realtime 增量更新、首屏评论数同步、Phase 4 API 实现（logout/pull/clearArchive）、pending 队列提示等。
 
-**v9.3 新增**：
-- 公开收藏夹 + `#collection-{id}` 分享
-- 投稿插图卡片 + 24h 限时编辑（migration-013）
-- 忘记密码落地页 `reset-password.html`
-- OG 封面改 PNG（微信兼容）
-- 今日推荐 + 社区/评论分页
-- Realtime 正常时跳过 30s 全量轮询
-- `scripts/smoke-check.mjs` 语法与资源检查
+**v9.6 新增**：
+- 版主后台三 Tab：举报 / 评论审核（含批量 hide·restore·delete）/ 操作日志
+- profiles `upsert` + 登录后 `ensureProfile`
+- 收藏夹重命名、删除
+- Realtime 评论增量合并（少拉全量）
+- `SyncAPI.pull` / `UserAPI.logout` / `ArchiveAPI.clearArchive` 实现
+- adapter 服务端分页参数（`getComments`/`getSubmissions` opts）
 
 ---
 
@@ -24,22 +23,23 @@ v7.8～v9.2 已处理：migration-004～012、profiles 昵称、收藏云端、�
 
 | 优先级 | 疏漏 | 现状 |
 |--------|------|------|
-| P1 🔧 | migration-013 需在 Supabase 执行 | 投稿编辑 RPC 才生效 |
-| P2 | 种子投稿字符串 id | 点赞/编辑无法走云端 RPC |
-| P2 | 纯前端口令管理员 | 删评仅本地；需 DB 版主角色才能全网隐藏 |
-| P3 | Phase 4 Stub | clearArchive / pull / logout |
-| P3 | 社区卡片 Realtime 评论 | 社区内嵌评论区未单独订阅 Realtime |
+| P2 | 种子投稿字符串 id | 演示数据无法走云端点赞 RPC |
+| P2 | 动态区时间线点赞 | 叙事装饰，刷新后还原 |
+| P2 | 纯前端口令管理员 | 删他人云端评论需 DB 版主角色 |
+| P3 | Edge Function 物理删评 | 无 service_role，RLS 限制 |
+| P3 | E2E 自动化 | 仅有 smoke-check，无 Playwright |
 
 ---
 
 ## 运维备忘
 
 ```
-001 → … → 012 → 013（投稿编辑 RPC）
+001 → … → 014 → 015（author 删投稿 JSONB）
 ```
 
 - Site URL / Redirect URLs 需包含 `reset-password.html`
-- 版主：在 Supabase 将 `profiles.role` 设为 `moderator` 或 `admin`
+- 版主：`UPDATE profiles SET role = 'moderator'/'admin' WHERE id = '你的 uid'`
+- 批量审核 RPC 仅 **admin** 角色可用
 
 ---
 

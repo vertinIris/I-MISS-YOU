@@ -389,8 +389,11 @@ var AuthManager = (function() {
 
         return supabaseClient
             .from('profiles')
-            .update({ nickname: nickname })
-            .eq('id', session.uid)
+            .upsert({
+                id: session.uid,
+                nickname: nickname,
+                avatar_color: session.avatarColor || '#6B8AFF'
+            }, { onConflict: 'id' })
             .then(function(result) {
                 if (result.error) {
                     console.warn('[AuthManager] saveNickname:', result.error.message);
@@ -402,6 +405,23 @@ var AuthManager = (function() {
                 console.warn('[AuthManager] saveNickname failed:', err);
                 return false;
             });
+    }
+
+    function ensureProfile() {
+        if (!window.supabaseClient || !session.uid) return Promise.resolve(false);
+        return fetchProfile().then(function(profile) {
+            if (profile && profile.nickname) return true;
+            if (typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.upsertProfile) {
+                return SupabaseAdapter.upsertProfile({
+                    nickname: session.nickname || null,
+                    avatar_color: session.avatarColor || '#6B8AFF'
+                });
+            }
+            return supabaseClient.from('profiles').upsert({
+                id: session.uid,
+                avatar_color: session.avatarColor || '#6B8AFF'
+            }, { onConflict: 'id' }).then(function(r) { return !r.error; });
+        });
     }
 
     function resetPassword(email) {
@@ -501,6 +521,7 @@ var AuthManager = (function() {
         fetchRole: fetchRole,
         fetchProfile: fetchProfile,
         saveNickname: saveNickname,
+        ensureProfile: ensureProfile,
         getCachedProfile: getCachedProfile,
         resetPassword: resetPassword
     };
