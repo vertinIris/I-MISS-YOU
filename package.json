@@ -19,6 +19,7 @@
     "db:migrate-009": "echo 'Run db/migration-009-storage-bucket.sql in Supabase SQL Editor — Storage bucket for uploads'",
     "db:migrate-010": "echo 'Run db/migration-010-fix-quota-name-type.sql in Supabase SQL Editor — fix check_daily_quota (uuid,name) error'",
     "db:migrate-011": "echo 'Run db/migration-011-comment-replies.sql in Supabase SQL Editor — comment parent_id for replies'",
+    "db:migrate-012": "echo 'Run db/migration-012-content-reports.sql in Supabase SQL Editor — user content report RPC'",
     "serve:win": "powershell -ExecutionPolicy Bypass -File ./run.ps1"
   },
   "keywords": [

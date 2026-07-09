@@ -111,6 +111,7 @@
                 <a href="#diary" class="nav-link">日志</a>
                 <a href="#submit" class="nav-link">投稿</a>
                 <a href="#community" class="nav-link">社区</a>
+                <button type="button" class="nav-link nav-link-btn" id="admin-panel-open-btn" hidden title="版主/管理后台">管理</button>
             </div>
 
             <div class="nav-actions">
@@ -535,6 +536,35 @@
             <div class="music-disclaimer">
                 <p>🎵 所有曲目由飞行雪绒使用 Web Audio API 实时合成，旋律为原创生成，不涉及任何版权音乐。</p>
                 <p>音色灵感来自角色设定（星炬学院、电子幽灵、拉海洛雪原、双形态共鸣），非游戏原声还原。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ Character Hub ============ -->
+    <section class="section" id="characters">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">CHARACTERS</span>
+                <h2 class="section-title">角色专题</h2>
+                <p class="section-desc">按角色浏览社区投稿与标签筛选</p>
+            </div>
+            <div class="character-hub">
+                <button type="button" class="character-card glass" data-character-tag="爱弥斯" data-character-color="#FF6B9D">
+                    <span class="character-card-name">爱弥斯</span>
+                    <span class="character-card-alias">飞行雪绒</span>
+                </button>
+                <button type="button" class="character-card glass" data-character-tag="达妮娅" data-character-color="#B66BFF">
+                    <span class="character-card-name">达妮娅</span>
+                    <span class="character-card-alias">泡泡与虚质</span>
+                </button>
+                <button type="button" class="character-card glass" data-character-tag="西格莉卡" data-character-color="#4EC89A">
+                    <span class="character-card-name">西格莉卡</span>
+                    <span class="character-card-alias">罗伊族的花</span>
+                </button>
+                <button type="button" class="character-card glass" data-character-tag="漂泊者" data-character-color="#D4A040">
+                    <span class="character-card-name">漂泊者</span>
+                    <span class="character-card-alias">黑海岸的信号</span>
+                </button>
             </div>
         </div>
     </section>
@@ -1280,6 +1310,7 @@
             <p class="section-subtitle">来自星炬学院的创作集合 · 共 <span id="community-count">0</span> 份作品</p>
 
             <div class="community-toolbar">
+                <button type="button" class="btn-ghost community-guidelines-btn" id="guidelines-open-btn">社区规范</button>
                 <button type="button" class="btn-ghost community-bookmarks-btn" id="bookmarks-open-btn" title="查看已收藏的作品">★ 我的收藏</button>
             </div>
 
@@ -1319,6 +1350,10 @@
                         <button type="button" class="bookmarks-panel-close" id="bookmarks-close-btn" aria-label="关闭">×</button>
                     </div>
                     <p class="bookmarks-panel-hint" id="bookmarks-panel-hint">登录后收藏会同步到云端；匿名用户仅保存在本机。</p>
+                    <div class="bookmarks-collections-bar" id="bookmarks-collections-bar">
+                        <div class="bookmarks-collections-list" id="bookmarks-collections-list"></div>
+                        <button type="button" class="bookmarks-new-collection" id="bookmarks-new-collection-btn">+ 新建收藏夹</button>
+                    </div>
                     <ul class="bookmarks-list" id="bookmarks-list"></ul>
                     <p class="bookmarks-empty" id="bookmarks-empty" hidden>还没有收藏任何作品</p>
                 </div>
@@ -1337,6 +1372,60 @@
             </div>
         </div>
     </section>
+
+    <!-- ============ Modals ============ -->
+    <div class="modal-overlay" id="guidelines-modal" hidden>
+        <div class="modal-panel glass">
+            <div class="modal-header">
+                <h3>社区规范</h3>
+                <button type="button" class="modal-close" data-close="guidelines-modal" aria-label="关闭">×</button>
+            </div>
+            <div class="modal-body guidelines-body">
+                <p>欢迎来到飞行雪绒社区。本站为《鸣潮》同人创作交流空间，请共同维护友好氛围：</p>
+                <ul>
+                    <li>尊重官方设定与其他创作者，禁止人身攻击与引战</li>
+                    <li>涉及主线剧透请在标题或正文标注「含剧透」</li>
+                    <li>非官方原创设定（如 AO3 结契人等）请注明来源</li>
+                    <li>禁止发布违法、色情、仇恨或商业广告内容</li>
+                    <li>匿名可浏览与互动；绑定邮箱后可跨设备保留身份与收藏</li>
+                </ul>
+                <p class="guidelines-note">遇违规内容请使用评论/作品旁的「举报」，版主会在后台处理。</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="report-modal" hidden>
+        <div class="modal-panel glass">
+            <div class="modal-header">
+                <h3>举报内容</h3>
+                <button type="button" class="modal-close" data-close="report-modal" aria-label="关闭">×</button>
+            </div>
+            <div class="modal-body">
+                <p class="report-target" id="report-target-label"></p>
+                <label class="account-field">
+                    <span>举报原因</span>
+                    <textarea class="form-input form-textarea" id="report-reason" rows="3" maxlength="200" placeholder="请简要说明问题（如骚扰、剧透未标注、违法内容等）"></textarea>
+                </label>
+                <button type="button" class="btn-primary account-submit" id="report-submit-btn">提交举报</button>
+                <p class="account-panel-error" id="report-error" hidden></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="admin-panel" hidden>
+        <div class="modal-panel glass admin-panel-wide">
+            <div class="modal-header">
+                <h3>版主后台</h3>
+                <button type="button" class="modal-close" id="admin-panel-close-btn" aria-label="关闭">×</button>
+            </div>
+            <div class="modal-body">
+                <h4 class="admin-section-title">待处理举报</h4>
+                <ul class="admin-list" id="admin-reports-list"></ul>
+                <h4 class="admin-section-title">最近操作日志</h4>
+                <ul class="admin-list" id="admin-logs-list"></ul>
+            </div>
+        </div>
+    </div>
 
     <!-- ============ Footer ============ -->
     <footer class="footer">
@@ -1414,6 +1503,7 @@
     <script src="js/sync-manager.js"></script>
     <script src="js/upload-manager.js"></script>
     <script src="js/rate-limiter-client.js"></script>
+    <script src="js/admin-panel.js"></script>
     <script src="js/particles.js"></script>
     <script src="js/main.js"></script>
 </body>

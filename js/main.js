@@ -1356,6 +1356,9 @@
         var replyBtn = (c.id && !isReply)
             ? '<button type="button" class="comment-reply-btn" data-comment-id="' + c.id + '" data-comment-name="' + escapeHTML(c.name) + '" data-target-id="' + escapeHTML(opts.targetId || '') + '">回复</button>'
             : '';
+        var reportBtn = c.id
+            ? '<button type="button" class="comment-report-btn" data-report-type="comment" data-report-id="' + c.id + '">举报</button>'
+            : '';
         var replyPrefix = isReply ? '<span class="comment-reply-tag">回复</span> ' : '';
         return '<div class="comment-item' + (isReply ? ' comment-item-reply' : '') + '" data-comment-id="' + (c.id || '') + '">' +
             '<div class="comment-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
@@ -1367,7 +1370,7 @@
             '</div>' +
             '<div class="comment-text">' + escapeHTML(c.text) + '</div>' +
             '</div>' +
-            replyBtn + deleteBtn + hideBtn +
+            replyBtn + deleteBtn + hideBtn + reportBtn +
             '</div>';
     }
 
@@ -1443,12 +1446,21 @@
     }
 
     /* ===== 收藏云端同步 ===== */
+    var __fxreBookmarkCollectionFilter = null;
+    var __fxreReportTarget = null;
+
     function syncBookmarksToLocal(rows) {
         try {
             var bookmarks = {};
             (rows || []).forEach(function(row) {
                 var sid = row.submission_id || row;
-                if (sid != null) bookmarks[sid] = { time: Date.now(), cloud: true };
+                if (sid != null) {
+                    bookmarks[sid] = {
+                        time: Date.now(),
+                        cloud: true,
+                        collection_id: row.collection_id || null
+                    };
+                }
             });
             localStorage.setItem('fxre_bookmarks', JSON.stringify(bookmarks));
         } catch (e) { /* ignore */ }
@@ -1490,31 +1502,99 @@
         var listEl = document.getElementById('bookmarks-list');
         var emptyEl = document.getElementById('bookmarks-empty');
         var hintEl = document.getElementById('bookmarks-panel-hint');
+        var collectionsListEl = document.getElementById('bookmarks-collections-list');
         if (!listEl) return;
 
         var isCloud = typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.isAuthenticated();
         if (hintEl) {
             hintEl.textContent = isCloud
-                ? '收藏已与云端同步，点击条目可定位到社区作品。'
-                : '当前为本地收藏；绑定邮箱登录后可跨设备同步。';
+                ? '收藏已与云端同步；可创建收藏夹分组，点击条目定位作品。'
+                : '当前为本地收藏；绑定邮箱登录后可跨设备同步与分组。';
         }
 
-        function paint(submissions) {
+        function renderCollectionChips(collections) {
+            if (!collectionsListEl) return;
+            var html = '<button type="button" class="bookmarks-col-chip' +
+                (__fxreBookmarkCollectionFilter === null ? ' active' : '') +
+                '" data-collection-id="">全部</button>';
+            (collections || []).forEach(function(col) {
+                html += '<button type="button" class="bookmarks-col-chip' +
+                    (__fxreBookmarkCollectionFilter === col.id ? ' active' : '') +
+                    '" data-collection-id="' + col.id + '">' + escapeHTML(col.name) + '</button>';
+            });
+            collectionsListEl.innerHTML = html;
+            collectionsListEl.querySelectorAll('.bookmarks-col-chip').forEach(function(chip) {
+                chip.addEventListener('click', function() {
+                    var raw = chip.getAttribute('data-collection-id');
+                    __fxreBookmarkCollectionFilter = raw ? parseInt(raw, 10) : null;
+                    renderBookmarksPanel();
+                });
+            });
+        }
+
+        function paint(submissions, bookmarkRows) {
             submissions = applyBookmarkFlags(submissions || []);
-            var bookmarked = submissions.filter(function(s) { return s.bookmarked; });
+            var bookmarkMap = {};
+            try { bookmarkMap = JSON.parse(localStorage.getItem('fxre_bookmarks') || '{}'); } catch (e) {}
+
+            var bookmarked = submissions.filter(function(s) {
+                if (!s.bookmarked) return false;
+                if (__fxreBookmarkCollectionFilter === null) return true;
+                var meta = bookmarkMap[s.id];
+                return meta && meta.collection_id === __fxreBookmarkCollectionFilter;
+            });
+
             if (bookmarked.length === 0) {
                 listEl.innerHTML = '';
                 if (emptyEl) emptyEl.hidden = false;
                 return;
             }
             if (emptyEl) emptyEl.hidden = true;
+
             listEl.innerHTML = bookmarked.map(function(s) {
+                var meta = bookmarkMap[s.id] || {};
+                var colSelect = '';
+                if (isCloud && bookmarkRows) {
+                    colSelect = '<select class="bookmarks-col-select" data-submission-id="' + s.id + '">' +
+                        '<option value="">未分组</option></select>';
+                }
                 return '<li class="bookmarks-item">' +
                     '<button type="button" class="bookmarks-item-btn" data-submission-id="' + s.id + '">' +
                     '<span class="bookmarks-item-title">' + escapeHTML(s.title) + '</span>' +
                     '<span class="bookmarks-item-meta">' + escapeHTML(s.name) + ' · ' + s.timeStr + '</span>' +
-                    '</button></li>';
+                    '</button>' + colSelect + '</li>';
             }).join('');
+
+            if (isCloud && typeof SupabaseAdapter.getBookmarkCollections === 'function') {
+                SupabaseAdapter.getBookmarkCollections().then(function(collections) {
+                    renderCollectionChips(collections);
+                    listEl.querySelectorAll('.bookmarks-col-select').forEach(function(sel) {
+                        collections.forEach(function(col) {
+                            var opt = document.createElement('option');
+                            opt.value = col.id;
+                            opt.textContent = col.name;
+                            sel.appendChild(opt);
+                        });
+                        var sid = sel.getAttribute('data-submission-id');
+                        var meta = bookmarkMap[sid];
+                        if (meta && meta.collection_id) sel.value = String(meta.collection_id);
+                        sel.addEventListener('change', function() {
+                            var submissionId = parseInt(sel.getAttribute('data-submission-id'), 10);
+                            var colId = sel.value ? parseInt(sel.value, 10) : null;
+                            SupabaseAdapter.setBookmarkCollection(submissionId, colId).then(function(ok) {
+                                if (ok) {
+                                    meta.collection_id = colId;
+                                    bookmarkMap[sid] = meta;
+                                    localStorage.setItem('fxre_bookmarks', JSON.stringify(bookmarkMap));
+                                    showSubmitToast('已移入收藏夹', 1500);
+                                }
+                            });
+                        });
+                    });
+                });
+            } else {
+                renderCollectionChips([]);
+            }
 
             listEl.querySelectorAll('.bookmarks-item-btn').forEach(function(btn) {
                 btn.addEventListener('click', function() {
@@ -1532,12 +1612,17 @@
             });
         }
 
-        syncCloudBookmarks().then(function() {
+        Promise.all([
+            syncCloudBookmarks(),
+            (isCloud && SupabaseAdapter.getUserBookmarks)
+                ? SupabaseAdapter.getUserBookmarks() : Promise.resolve([])
+        ]).then(function(results) {
+            var bookmarkRows = results[1] || [];
             var result = getSubmissions();
             if (result && typeof result.then === 'function') {
-                result.then(paint);
+                result.then(function(subs) { paint(subs, bookmarkRows); });
             } else {
-                paint(result || []);
+                paint(result || [], bookmarkRows);
             }
         });
     }
@@ -1553,9 +1638,126 @@
                 if (e.target === panel) closeBookmarksPanel();
             });
         }
+        var newBtn = document.getElementById('bookmarks-new-collection-btn');
+        if (newBtn) {
+            newBtn.addEventListener('click', function() {
+                if (typeof SupabaseAdapter === 'undefined' || !SupabaseAdapter.isAuthenticated()) {
+                    showSubmitToast('请先登录后再创建收藏夹', 3000);
+                    return;
+                }
+                var name = prompt('收藏夹名称（最多 20 字）');
+                if (!name || !name.trim()) return;
+                SupabaseAdapter.createBookmarkCollection(name.trim()).then(function(col) {
+                    if (col) {
+                        showSubmitToast('收藏夹「' + col.name + '」已创建', 2000);
+                        renderBookmarksPanel();
+                    } else {
+                        showSubmitToast('创建失败', 3000);
+                    }
+                });
+            });
+        }
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && panel && !panel.hidden) closeBookmarksPanel();
         });
+    }
+
+    function initCharacterHub() {
+        document.querySelectorAll('.character-card[data-character-tag]').forEach(function(card) {
+            card.addEventListener('click', function() {
+                var tag = card.getAttribute('data-character-tag');
+                document.querySelectorAll('#tag-filter-bar .tag-chip').forEach(function(chip) {
+                    chip.classList.toggle('active', chip.getAttribute('data-tag') === tag);
+                });
+                communityFilter = 'all';
+                document.querySelectorAll('.community-filter-btn').forEach(function(btn) {
+                    btn.classList.toggle('active', btn.getAttribute('data-filter') === 'all');
+                });
+                var section = document.getElementById('community');
+                if (section) section.scrollIntoView({ behavior: 'smooth' });
+                renderCommunity();
+            });
+        });
+    }
+
+    function openModal(id) {
+        var el = document.getElementById(id);
+        if (el) el.hidden = false;
+    }
+
+    function closeModal(id) {
+        var el = document.getElementById(id);
+        if (el) el.hidden = true;
+    }
+
+    function initModals() {
+        document.querySelectorAll('.modal-close[data-close]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                closeModal(btn.getAttribute('data-close'));
+            });
+        });
+        document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) overlay.hidden = true;
+            });
+        });
+
+        var guidelinesBtn = document.getElementById('guidelines-open-btn');
+        if (guidelinesBtn) {
+            guidelinesBtn.addEventListener('click', function() { openModal('guidelines-modal'); });
+        }
+
+        document.addEventListener('click', function(e) {
+            var reportBtn = e.target.closest('.comment-report-btn, [data-action="report"]');
+            if (!reportBtn) return;
+            e.preventDefault();
+            e.stopPropagation();
+            var type = reportBtn.getAttribute('data-report-type') || 'submission';
+            var id = parseInt(reportBtn.getAttribute('data-report-id'), 10);
+            if (!id) return;
+            __fxreReportTarget = { type: type, id: id };
+            var labelEl = document.getElementById('report-target-label');
+            if (labelEl) labelEl.textContent = '举报' + (type === 'comment' ? '评论' : '投稿') + ' #' + id;
+            var errEl = document.getElementById('report-error');
+            if (errEl) errEl.hidden = true;
+            openModal('report-modal');
+        });
+
+        var reportSubmit = document.getElementById('report-submit-btn');
+        if (reportSubmit) {
+            reportSubmit.addEventListener('click', function() {
+                if (!__fxreReportTarget) return;
+                var reason = (document.getElementById('report-reason') || {}).value || '';
+                var errEl = document.getElementById('report-error');
+                if (typeof SupabaseAdapter === 'undefined' || !SupabaseAdapter.submitContentReport) {
+                    if (errEl) { errEl.textContent = '云端未就绪'; errEl.hidden = false; }
+                    return;
+                }
+                reportSubmit.disabled = true;
+                SupabaseAdapter.submitContentReport(__fxreReportTarget.type, __fxreReportTarget.id, reason.trim())
+                    .then(function(result) {
+                        reportSubmit.disabled = false;
+                        if (result && result.success) {
+                            closeModal('report-modal');
+                            showSubmitToast(result.message || '举报已提交', 3000);
+                            if (document.getElementById('report-reason')) {
+                                document.getElementById('report-reason').value = '';
+                            }
+                        } else {
+                            if (errEl) {
+                                errEl.textContent = (result && result.reason) || '提交失败';
+                                errEl.hidden = false;
+                            }
+                        }
+                    }).catch(function(err) {
+                        reportSubmit.disabled = false;
+                        if (errEl) {
+                            errEl.textContent = err.message || '提交失败';
+                            errEl.hidden = false;
+                        }
+                    });
+            });
+        }
     }
 
     function clearUploadPreview() {
@@ -2351,6 +2553,9 @@
                 '<svg viewBox="0 0 24 24" fill="' + (s.bookmarked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2">' +
                 '<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>' +
                 '</svg><span>收藏</span></button>' +
+                (/^\d+$/.test(String(s.id))
+                    ? '<button class="community-card-action" data-action="report" data-report-type="submission" data-report-id="' + s.id + '" title="举报">⚑</button>'
+                    : '') +
                 '</div>' +
                 '<div class="community-card-comments" id="cc-comments-' + s.id + '">' +
                 '<div class="comment-list" id="cc-list-' + s.id + '"></div>' +
@@ -2724,6 +2929,7 @@
                 AdminAuth.login(function(success) {
                     if (success) {
                         updateSyncStatus();
+                        if (typeof AdminPanel !== 'undefined') AdminPanel.updateNavButton();
                         showSubmitToast('\u2705 \u7ba1\u7406\u5458\u6a21\u5f0f\u5df2\u5f00\u542f\uff0c\u53ef\u5220\u9664\u4efb\u610f\u8bc4\u8bba');
                         /* 刷新评论区以显示删除按钮 */
                         document.querySelectorAll('.comment-area').forEach(function(area) {
@@ -3054,6 +3260,7 @@
 
         refreshAccountPanel(user, role || (typeof AuthManager !== 'undefined' ? AuthManager.session.role : 'user'));
         updateSyncStatus();
+        if (typeof AdminPanel !== 'undefined') AdminPanel.updateNavButton();
     }
 
     function afterAuthSuccess(user, toastMsg) {
@@ -3290,10 +3497,13 @@
         initCommentKeywordEgg();
         initComments();
         initShareButtons();
+        initCharacterHub();
+        initModals();
         loadUserProfile();
         initSubmission();
         initCommunity();
         initBookmarksPanel();
+        if (typeof AdminPanel !== 'undefined') AdminPanel.init();
         initSyncStatus();
 
         /* v9.0: 初始化新模块 */

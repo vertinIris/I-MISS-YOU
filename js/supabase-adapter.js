@@ -806,7 +806,7 @@
 
         return client
             .from('bookmarks')
-            .select('id, submission_id, note, created_at')
+            .select('id, submission_id, collection_id, note, created_at')
             .order('created_at', { ascending: false })
             .then(function(result) {
                 if (result.error) {
@@ -821,6 +821,93 @@
         return getUserBookmarks().then(function(rows) {
             return rows.map(function(row) { return row.submission_id; });
         });
+    }
+
+    function getBookmarkCollections() {
+        if (!isReady || !currentUser) return Promise.resolve([]);
+
+        return client
+            .from('bookmark_collections')
+            .select('id, name, description, is_public, sort_order, created_at')
+            .order('sort_order', { ascending: true })
+            .order('created_at', { ascending: true })
+            .then(function(result) {
+                if (result.error) {
+                    console.warn('[SupabaseAdapter] getBookmarkCollections:', result.error.message);
+                    return [];
+                }
+                return result.data || [];
+            });
+    }
+
+    function createBookmarkCollection(name, description) {
+        if (!isReady || !currentUser) return Promise.resolve(null);
+
+        return client
+            .from('bookmark_collections')
+            .insert({
+                user_id: currentUser.id,
+                name: (name || '未命名收藏夹').substring(0, 50),
+                description: (description || '').substring(0, 200)
+            })
+            .select()
+            .single()
+            .then(function(result) {
+                if (result.error) {
+                    console.warn('[SupabaseAdapter] createBookmarkCollection:', result.error.message);
+                    return null;
+                }
+                return result.data;
+            });
+    }
+
+    function setBookmarkCollection(submissionId, collectionId) {
+        if (!isReady || !currentUser) return Promise.resolve(false);
+
+        return client
+            .from('bookmarks')
+            .update({ collection_id: collectionId || null })
+            .eq('user_id', currentUser.id)
+            .eq('submission_id', submissionId)
+            .then(function(result) {
+                if (result.error) {
+                    console.warn('[SupabaseAdapter] setBookmarkCollection:', result.error.message);
+                    return false;
+                }
+                return true;
+            });
+    }
+
+    function submitContentReport(targetType, targetId, reason) {
+        if (!isReady) return Promise.resolve({ success: false, reason: '云端未就绪' });
+
+        return client.rpc('submit_content_report', {
+            p_target_type: targetType,
+            p_target_id: targetId,
+            p_reason: reason || ''
+        }).then(function(result) {
+            if (result.error) {
+                return { success: false, reason: result.error.message };
+            }
+            return result.data || { success: false };
+        });
+    }
+
+    function getModerationLogs(limit) {
+        if (!isReady || !currentUser) return Promise.resolve([]);
+
+        return client
+            .from('moderation_logs')
+            .select('id, action, target_type, target_id, operator_id, operator_role, reason, created_at')
+            .order('created_at', { ascending: false })
+            .limit(limit || 30)
+            .then(function(result) {
+                if (result.error) {
+                    console.warn('[SupabaseAdapter] getModerationLogs:', result.error.message);
+                    return [];
+                }
+                return result.data || [];
+            });
     }
 
     function addSubmissionTags(submissionId, tagNames) {
@@ -934,6 +1021,11 @@
         toggleBookmark:           toggleBookmark,
         getUserBookmarks:         getUserBookmarks,
         getUserBookmarkIds:       getUserBookmarkIds,
+        getBookmarkCollections:   getBookmarkCollections,
+        createBookmarkCollection: createBookmarkCollection,
+        setBookmarkCollection:    setBookmarkCollection,
+        submitContentReport:      submitContentReport,
+        getModerationLogs:        getModerationLogs,
         addSubmissionTags:        addSubmissionTags,
         filterSubmissionsByTags:  filterSubmissionsByTags,
         getTags:                  getTags,
