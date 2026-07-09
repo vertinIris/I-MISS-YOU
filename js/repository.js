@@ -468,15 +468,16 @@
                 var cloudSubs = cloudData.map(function(row) {
                     var d = new Date(row.time);
                     return {
-                        id:      row.id,
-                        type:    row.type,
-                        title:   row.title,
-                        content: row.content,
-                        name:    row.name,
-                        color:   row.color,
-                        likes:   row.likes,
-                        time:    d.getTime(),
-                        timeStr: d.getFullYear() + '-' +
+                        id:       row.id,
+                        type:     row.type,
+                        title:    row.title,
+                        content:  row.content,
+                        name:     row.name,
+                        color:    row.color,
+                        likes:    row.likes,
+                        authorId: row.authorId || '',
+                        time:     d.getTime(),
+                        timeStr:  d.getFullYear() + '-' +
                                  String(d.getMonth()+1).padStart(2,'0') + '-' +
                                  String(d.getDate()).padStart(2,'0') + ' ' +
                                  String(d.getHours()).padStart(2,'0') + ':' +

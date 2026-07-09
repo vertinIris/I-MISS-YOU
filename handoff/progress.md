@@ -1,7 +1,25 @@
-# 飞行雪绒 v9.0 进度报告
+# 飞行雪绒 v9.3 进度报告
 
-> **最后更新**: 2026-07-08 23:18
-> **状态**: 代码全就绪 + 数据库迁移已完成 + P0 实时 bug 已修，待功能完善（管理后台/收藏夹UI）+ 测试验证
+> **最后更新**: 2026-07-10  
+> **状态**: v9.3 规划项已实现；Supabase 需跑 migration-013；smoke-check 通过
+
+---
+
+## v9.3 新增（2026-07-10）
+
+- [x] 公开收藏夹 + `#collection-{id}` 分享链接
+- [x] 投稿插图卡片 + 24h 限时编辑/自删（migration-013）
+- [x] `reset-password.html` 忘记密码落地页
+- [x] `assets/og-cover.png` + OG meta 更新
+- [x] 今日推荐 + 社区分页（12/页）+ 评论加载更多（30/批）
+- [x] Realtime 正常时跳过 30s 全量轮询
+- [x] `js/content-utils.js` + `scripts/smoke-check.mjs`
+- [x] 文档对齐：`known-gaps.md` / `test-checklist-v9.3.md` / README v9.3
+
+### 待用户操作
+- [ ] Supabase 执行 `db/migration-013-submission-edit.sql`
+- [ ] Redirect URLs 加入 `reset-password.html`
+- [ ] （可选）设置 `profiles.role = 'moderator'/'admin'`
 
 ---
 

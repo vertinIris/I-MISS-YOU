@@ -441,14 +441,15 @@
             }
             return (result.data || []).map(function(s) {
                 return {
-                    id:      s.id,
-                    type:    fromDbType(s.type),
-                    title:   s.title,
-                    content: s.content,
-                    name:    s.author_name,
-                    color:   s.author_color,
-                    likes:   s.likes,
-                    time:    s.created_at
+                    id:       s.id,
+                    type:     fromDbType(s.type),
+                    title:    s.title,
+                    content:  s.content,
+                    name:     s.author_name,
+                    color:    s.author_color,
+                    likes:    s.likes,
+                    time:     s.created_at,
+                    authorId: s.author_id || ''
                 };
             });
         });
@@ -733,6 +734,22 @@
         });
     }
 
+    function updateSubmissionWithToken(submissionId, deleteToken, title, content) {
+        if (!isReady) return Promise.resolve({ success: false, reason: '云端未就绪' });
+        return client.rpc('update_submission_with_token', {
+            p_submission_id: submissionId,
+            p_delete_token: deleteToken,
+            p_title: title,
+            p_content: content
+        }).then(function(result) {
+            if (result.error) {
+                console.error('[SupabaseAdapter] updateSubmissionWithToken error:', result.error);
+                return { success: false, reason: result.error.message };
+            }
+            return result.data || { success: false, reason: '未知错误' };
+        });
+    }
+
     /* ================================================================
      * v9.0 版主/管理员操作 RPC
      * ================================================================ */
@@ -878,6 +895,64 @@
             });
     }
 
+    function setBookmarkCollectionPublic(collectionId, isPublic) {
+        if (!isReady || !currentUser) return Promise.resolve(false);
+
+        return client
+            .from('bookmark_collections')
+            .update({ is_public: !!isPublic })
+            .eq('id', collectionId)
+            .eq('user_id', currentUser.id)
+            .then(function(result) {
+                if (result.error) {
+                    console.warn('[SupabaseAdapter] setBookmarkCollectionPublic:', result.error.message);
+                    return false;
+                }
+                return true;
+            });
+    }
+
+    function getPublicCollection(collectionId) {
+        if (!isReady) return Promise.resolve(null);
+
+        return client
+            .from('bookmark_collections')
+            .select('id, name, description, is_public, created_at')
+            .eq('id', collectionId)
+            .eq('is_public', true)
+            .single()
+            .then(function(colResult) {
+                if (colResult.error || !colResult.data) return null;
+
+                return client
+                    .from('bookmarks')
+                    .select('submission_id, note, created_at, submissions(id, title, content, author_name, author_color, type, likes, created_at)')
+                    .eq('collection_id', collectionId)
+                    .eq('is_private', false)
+                    .order('created_at', { ascending: false })
+                    .then(function(bmResult) {
+                        if (bmResult.error) {
+                            console.warn('[SupabaseAdapter] getPublicCollection bookmarks:', bmResult.error.message);
+                            return { collection: colResult.data, items: [] };
+                        }
+                        var items = (bmResult.data || []).map(function(row) {
+                            var sub = row.submissions;
+                            if (!sub) return null;
+                            return {
+                                submissionId: sub.id,
+                                title: sub.title,
+                                name: sub.author_name,
+                                color: sub.author_color,
+                                type: fromDbType(sub.type),
+                                likes: sub.likes,
+                                note: row.note || ''
+                            };
+                        }).filter(Boolean);
+                        return { collection: colResult.data, items: items };
+                    });
+            });
+    }
+
     function submitContentReport(targetType, targetId, reason) {
         if (!isReady) return Promise.resolve({ success: false, reason: '云端未就绪' });
 
@@ -1005,6 +1080,7 @@
         /* v9.0 评论删除令牌 */
         deleteCommentWithToken:     deleteCommentWithToken,
         deleteSubmissionWithToken:  deleteSubmissionWithToken,
+        updateSubmissionWithToken:  updateSubmissionWithToken,
 
         /* v9.0 版主操作 */
         moderateComment:        moderateComment,
@@ -1023,8 +1099,10 @@
         getUserBookmarkIds:       getUserBookmarkIds,
         getBookmarkCollections:   getBookmarkCollections,
         createBookmarkCollection: createBookmarkCollection,
-        setBookmarkCollection:    setBookmarkCollection,
-        submitContentReport:      submitContentReport,
+        setBookmarkCollection:         setBookmarkCollection,
+        setBookmarkCollectionPublic:   setBookmarkCollectionPublic,
+        getPublicCollection:           getPublicCollection,
+        submitContentReport:           submitContentReport,
         getModerationLogs:        getModerationLogs,
         addSubmissionTags:        addSubmissionTags,
         filterSubmissionsByTags:  filterSubmissionsByTags,

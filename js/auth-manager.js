@@ -99,7 +99,20 @@ var AuthManager = (function() {
 
     function canDeleteSubmission(submission) {
         if (!submission) return false;
-        if (session.uid && submission.author_id === session.uid) return true;
+        var authorId = submission.authorId || submission.author_id;
+        if (session.uid && authorId === session.uid) return true;
+        if (session.deleteTokens[submission.id]) return true;
+        if (session.role === 'moderator' || session.role === 'admin') return true;
+        return false;
+    }
+
+    function canEditSubmission(submission) {
+        if (!submission) return false;
+        var EDIT_MS = 24 * 60 * 60 * 1000;
+        var created = submission.time || submission.createdAt;
+        if (created && (Date.now() - created) > EDIT_MS) return false;
+        var authorId = submission.authorId || submission.author_id;
+        if (session.uid && authorId === session.uid) return true;
         if (session.deleteTokens[submission.id]) return true;
         if (session.role === 'moderator' || session.role === 'admin') return true;
         return false;
@@ -399,7 +412,8 @@ var AuthManager = (function() {
             return Promise.resolve({ success: false, error: '请先填写邮箱' });
         }
 
-        var redirectTo = window.location.origin + window.location.pathname;
+        var base = window.location.href.replace(/[#?].*$/, '').replace(/[^/]+$/, '');
+        var redirectTo = base + 'reset-password.html';
 
         return supabaseClient.auth.resetPasswordForEmail(email, {
             redirectTo: redirectTo
@@ -468,6 +482,7 @@ var AuthManager = (function() {
         removeDeleteToken: removeDeleteToken,
         canDeleteComment: canDeleteComment,
         canDeleteSubmission: canDeleteSubmission,
+        canEditSubmission: canEditSubmission,
         canHideComment: canHideComment,
         canDeletePermanently: canDeletePermanently,
         canBatchModerate: canBatchModerate,

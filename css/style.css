@@ -5057,3 +5057,243 @@ article, section, nav, footer, header {
     font-size: 0.75rem;
     cursor: pointer;
 }
+
+/* v9.3 — 今日推荐 / 分页 / 插图卡片 / 公开收藏夹 */
+.today-pick {
+    margin-bottom: 24px;
+    padding: 20px 24px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 215, 0, 0.25);
+    background: linear-gradient(135deg, rgba(255, 107, 157, 0.08), rgba(107, 138, 255, 0.08));
+}
+
+.today-pick-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #FFD700;
+    margin-bottom: 10px;
+}
+
+.today-pick-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 6px;
+}
+
+.today-pick-meta {
+    font-size: 0.8rem;
+    color: rgba(250, 248, 255, 0.55);
+    margin-bottom: 8px;
+}
+
+.today-pick-excerpt {
+    font-size: 0.9rem;
+    color: rgba(250, 248, 255, 0.8);
+    line-height: 1.6;
+}
+
+.today-pick-link {
+    margin-top: 10px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: #A8D8FF;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.community-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+}
+
+.community-page-btn {
+    min-width: 36px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: #FAF8FF;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.community-page-btn.active {
+    border-color: rgba(255, 107, 157, 0.5);
+    background: rgba(255, 107, 157, 0.2);
+    color: #FFB6D9;
+}
+
+.community-page-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.community-page-info {
+    font-size: 0.8rem;
+    color: rgba(250, 248, 255, 0.5);
+    padding: 0 8px;
+}
+
+.community-card-image {
+    width: 100%;
+    max-height: 280px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.community-card-owner-actions {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+}
+
+.community-owner-btn {
+    padding: 2px 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.2);
+    color: rgba(250, 248, 255, 0.7);
+    font-size: 0.72rem;
+    cursor: pointer;
+}
+
+.community-owner-btn:hover {
+    border-color: rgba(255, 107, 157, 0.4);
+    color: #FFB6D9;
+}
+
+.comment-load-more {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px;
+    border-radius: 10px;
+    border: 1px dashed rgba(168, 216, 255, 0.35);
+    background: transparent;
+    color: #A8D8FF;
+    font-size: 0.82rem;
+    cursor: pointer;
+}
+
+.bookmarks-collection-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0 14px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(107, 138, 255, 0.08);
+    border: 1px solid rgba(107, 138, 255, 0.2);
+}
+
+.bookmarks-public-toggle {
+    font-size: 0.82rem;
+    color: rgba(250, 248, 255, 0.75);
+    cursor: pointer;
+}
+
+.bookmarks-share-btn {
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(168, 216, 255, 0.35);
+    background: rgba(168, 216, 255, 0.1);
+    color: #A8D8FF;
+    font-size: 0.78rem;
+    cursor: pointer;
+}
+
+.bookmarks-col-chip.is-public::after {
+    content: ' · 公开';
+    font-size: 0.65rem;
+    opacity: 0.7;
+}
+
+.public-collection-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 9200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(7, 7, 14, 0.78);
+    backdrop-filter: blur(8px);
+}
+
+.public-collection-panel[hidden] {
+    display: none !important;
+}
+
+.public-collection-inner {
+    width: min(520px, 100%);
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 24px;
+    border-radius: 20px;
+}
+
+.public-collection-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.public-collection-header h3 {
+    margin: 0;
+    font-size: 1.15rem;
+}
+
+.public-collection-close {
+    border: none;
+    background: none;
+    color: rgba(250, 248, 255, 0.6);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.public-collection-desc {
+    font-size: 0.85rem;
+    color: rgba(250, 248, 255, 0.55);
+    margin: 0 0 16px;
+}
+
+.public-collection-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.public-collection-list li {
+    margin-bottom: 8px;
+}
+
+.public-collection-list button {
+    width: 100%;
+    text-align: left;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    color: #FAF8FF;
+    cursor: pointer;
+}
+
+.public-collection-list button:hover {
+    border-color: rgba(255, 107, 157, 0.35);
+}
+
+.public-collection-empty {
+    text-align: center;
+    color: rgba(250, 248, 255, 0.45);
+    font-size: 0.85rem;
+}

@@ -13,11 +13,11 @@
     <meta property="og:title" content="飞行雪绒 ✨ 星炬学院的日常">
     <meta property="og:description" content="爱弥斯秘密歌手身份「飞行雪绒」的同人社交账号 — 动态、音乐、日志与社区投稿。">
     <meta property="og:url" content="https://vertiniris.github.io/I-MISS-YOU/">
-    <meta property="og:image" content="https://vertiniris.github.io/I-MISS-YOU/assets/og-cover.svg">
+    <meta property="og:image" content="https://vertiniris.github.io/I-MISS-YOU/assets/og-cover.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="飞行雪绒 ✨ 星炬学院的日常">
     <meta name="twitter:description" content="爱弥斯秘密歌手身份「飞行雪绒」的同人社交账号 — 动态、音乐、日志与社区投稿。">
-    <meta name="twitter:image" content="https://vertiniris.github.io/I-MISS-YOU/assets/og-cover.svg">
+    <meta name="twitter:image" content="https://vertiniris.github.io/I-MISS-YOU/assets/og-cover.png">
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
     <link rel="apple-touch-icon" href="assets/favicon.svg">
     <!-- v9.0: Content Security Policy -->
@@ -1339,9 +1339,16 @@
                 <button class="tag-chip" data-tag-type="freeform" data-tag="甜文">甜文</button>
             </div>
 
+            <div class="today-pick glass" id="today-pick" hidden>
+                <div class="today-pick-label">今日推荐</div>
+                <div class="today-pick-body" id="today-pick-body"></div>
+            </div>
+
             <div class="community-grid" id="community-grid">
                 <!-- Submissions rendered by JS -->
             </div>
+
+            <nav class="community-pagination" id="community-pagination" hidden aria-label="社区分页"></nav>
 
             <div class="bookmarks-panel" id="bookmarks-panel" hidden>
                 <div class="bookmarks-panel-inner glass">
@@ -1353,6 +1360,12 @@
                     <div class="bookmarks-collections-bar" id="bookmarks-collections-bar">
                         <div class="bookmarks-collections-list" id="bookmarks-collections-list"></div>
                         <button type="button" class="bookmarks-new-collection" id="bookmarks-new-collection-btn">+ 新建收藏夹</button>
+                    </div>
+                    <div class="bookmarks-collection-actions" id="bookmarks-collection-actions" hidden>
+                        <label class="bookmarks-public-toggle">
+                            <input type="checkbox" id="collection-public-toggle"> 公开此收藏夹
+                        </label>
+                        <button type="button" class="bookmarks-share-btn" id="collection-share-btn">复制分享链接</button>
                     </div>
                     <ul class="bookmarks-list" id="bookmarks-list"></ul>
                     <p class="bookmarks-empty" id="bookmarks-empty" hidden>还没有收藏任何作品</p>
@@ -1484,17 +1497,31 @@
 
             <div class="footer-bottom">
                 <p>© 2026 飞行雪绒 · 同人创作 · 非商业用途</p>
-                <p class="footer-meta">v9.0 · 评论删除令牌 + 角色权限 + Realtime全事件同步 + 标签收藏 + 拖拽上传 · Made with ✨ and ❄️</p>
+                <p class="footer-meta">v9.3 · 公开收藏夹 + 投稿编辑 + 今日推荐 + 分页 + OG PNG · Made with ✨ and ❄️</p>
                 <p class="footer-sync" id="sync-status" title="点击复制诊断信息 · 同步请用右下角 🔄 按钮">☁ 本地模式</p>
             </div>
         </div>
     </footer>
+
+    <!-- 公开收藏夹浏览 -->
+    <div class="public-collection-panel" id="public-collection-panel" hidden>
+        <div class="public-collection-inner glass">
+            <div class="public-collection-header">
+                <h3 id="public-collection-title">公开收藏夹</h3>
+                <button type="button" class="public-collection-close" id="public-collection-close" aria-label="关闭">×</button>
+            </div>
+            <p class="public-collection-desc" id="public-collection-desc"></p>
+            <ul class="public-collection-list" id="public-collection-list"></ul>
+            <p class="public-collection-empty" id="public-collection-empty" hidden>此收藏夹暂无公开作品</p>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <!-- Phase 3: Supabase SDK (CDN) -->
     <!-- Supabase SDK: async 加载，不阻塞页面渲染；弱网环境自动降级 -->
     <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
             onerror="console.warn('[Phase3] Supabase SDK CDN 加载失败，回退纯本地模式'); window.__supabaseLoadFailed=true;"></script>
+    <script src="js/content-utils.js"></script>
     <script src="js/supabase-adapter.js"></script>
     <script src="js/repository.js"></script>
     <script src="js/admin-auth.js"></script>
