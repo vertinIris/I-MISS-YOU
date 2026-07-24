@@ -240,6 +240,44 @@ var AuthManager = (function() {
             });
     }
 
+    /* 注册：新用户提供独立通道，账号面板「注册」tab 调用。
+       匿名会话复用 upgradeToRegistered（updateUser，保留 UID、评论/投稿归属）；
+       非匿名会话则 signUp 新建账户。升级能力本身仍由 upgradeToRegistered 提供。 */
+    function registerUser(email, password) {
+        if (!window.supabaseClient) {
+            return Promise.resolve({ success: false, error: '云端未连接' });
+        }
+        if (session && session.isAnonymous) {
+            return upgradeToRegistered(email, password).then(function(result) {
+                if (result && result.success && !result.needsConfirmation) {
+                    result.message = '注册成功';
+                }
+                return result;
+            });
+        }
+        return supabaseClient.auth.signUp({ email: email, password: password })
+            .then(function(result) {
+                if (result.error) {
+                    return { success: false, error: mapAuthError(result.error) };
+                }
+                var user = result.data && (result.data.user || (result.data.session && result.data.session.user));
+                if (!user) {
+                    return { success: false, error: '注册失败：未返回用户信息' };
+                }
+                updateSession(user);
+                var pending = needsEmailConfirm(user);
+                return {
+                    success: true,
+                    user: user,
+                    needsConfirmation: pending,
+                    message: pending ? '注册成功！请查收确认邮件后完成验证' : '注册成功'
+                };
+            })
+            .catch(function(err) {
+                return { success: false, error: mapAuthError(err) };
+            });
+    }
+
     function signIn(email, password) {
         if (!window.supabaseClient) {
             return Promise.resolve({ success: false, error: '云端未连接' });
@@ -518,6 +556,7 @@ var AuthManager = (function() {
         isBanned: isBanned,
         updateSession: updateSession,
         upgradeToRegistered: upgradeToRegistered,
+        registerUser: registerUser,
         signIn: signIn,
         signOut: signOut,
         resendConfirmation: resendConfirmation,

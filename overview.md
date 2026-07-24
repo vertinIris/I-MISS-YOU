@@ -1,36 +1,40 @@
-# 本轮修改概述（v9.6 后续）
+# 飞行雪绒 / Snow — 工作概览
 
-## 完成的工作
+当前版本：v9.6（本地 HEAD `877320d` 已同步 GitHub Pages）
 
-### 1. 修复评论卡片删除按钮与回复/举报按钮重叠
-- **问题**：删除按钮（×）使用 `position: absolute` 固定在右上角，与右侧的「回复」「举报」按钮视觉上重叠。
-- **修复**：
-  - 把「回复」「举报」移入评论主体底部左侧（`.comment-footer-actions`）。
-  - 把「删除」「隐藏」组成右侧管理操作栏（`.comment-mod-actions`），垂直排列，hover 整栏显示。
-  - 删除 `.comment-delete-btn` 的绝对定位，改为普通 flex 子元素。
-- **涉及文件**：`js/main.js`、`css/style.css`
+## 本轮改动：账号面板注册 / 登录职责重构
 
-### 2. 账号面板新增管理员快捷入口
-- **问题**：每次要把账号设为管理员都得打开 Supabase Dashboard 执行 SQL，不够方便。
-- **修复**：
-  - 在账号面板（已登录状态）新增「管理员登录」「退出管理员」「管理后台」三个按钮。
-  - 点击「管理员登录」直接弹出管理员口令输入框（口令仍由 `js/admin-auth.js` 的 SHA-256 哈希校验）。
-  - 登录成功后顶部导航的「管理」按钮自动出现；退出后消失。
-- **涉及文件**：`index.html`、`js/main.js`、`css/style.css`
+### 问题（用户审计发现）
+- 游客面板只有「升级账号」+「登录」两个 tab，没有独立「注册」通道
+- 「升级账号」底层是 `updateUser`（匿名→注册），对新用户命名误导
+- 两个 tab 都是邮箱+密码，视觉重复、职责不清
 
-## 重要说明：管理员权限仍分两层
+### 优化方案（已落地）
+游客面板改为清晰的 **「注册 / 登录」** 两个 tab：
 
-| 层级 | 方式 | 持久性 | 修改位置 | 适用场景 |
-|------|------|--------|----------|----------|
-| 正式角色 | Supabase SQL 修改 `profiles.role` | 永久 | 数据库 | 给信任的人长期版主/管理员权限 |
-| 临时口令 | 账号面板「管理员登录」 | 关闭浏览器即失效 | 前端账号面板 | 自己临时管理评论/投稿，无需反复登 SUP |
+| Tab | 职责 | 底层调用 |
+|-----|------|----------|
+| 注册 | 新用户/匿名用户创建或绑定账户 | `AuthManager.registerUser` |
+| 登录 | 已有账户登录 | `AuthManager.signIn` |
 
-**安全底线**：不能绕过 Supabase 直接在前端把任意用户永久提升为管理员，那会让任何人都能篡改权限。临时口令模式已经是这个架构下最便捷的安全方案。
+`registerUser` 内部智能路由：
+- 当前为匿名会话 → 复用 `upgradeToRegistered`（`updateUser`，保留 UID，匿名期间评论/投稿仍归你）
+- 非匿名会话 → `supabaseClient.auth.signUp` 全新注册
 
-## 验证结果
-- `node --check js/main.js` / `js/admin-auth.js` / `js/admin-panel.js`：通过
-- CSS 大括号平衡检查：通过
+### 改动文件
+- `js/auth-manager.js`：新增 `registerUser` 方法 + 导出；`upgradeToRegistered` 保留为底层能力
+- `index.html`：游客面板「升级账号」→「注册」，相关 id 全部改为 `account-register-*`
+- `js/main.js`：`switchAccountTab` 与提交绑定同步到 `register` / `account-register-*`
 
-## 待用户测试
-- 评论卡片 hover 时删除按钮是否还与回复/举报重叠。
-- 账号面板中管理员登录/退出/管理后台按钮的显示状态是否正确。
+### 验证
+- `node --check js/auth-manager.js` 通过
+- `node --check js/main.js` 通过
+- 已确认无遗留 `account-upgrade-*` 引用
+
+### 待办
+- 用户需在 GitHub Desktop 执行 Commit + Push（沙箱无 TTY，无法自动推送）
+- 推送后 `Ctrl + F5` 强刷可见新「注册」tab
+
+## 历史遗留（仍可选）
+- R17 色彩系统重构 / R18 完整 type scale / R19 增量渲染 —— 需设计确认后处理
+- R20 `db/migration-016-replica-identity.sql` —— 去 Supabase SQL Editor 跑一次（可选加固）

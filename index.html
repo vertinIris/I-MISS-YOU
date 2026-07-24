@@ -127,27 +127,27 @@
                     </button>
                     <div class="account-panel" id="account-panel" hidden>
                         <div class="account-panel-inner">
-                            <!-- 匿名：升级 / 登录 -->
+                            <!-- 游客：注册 / 登录 -->
                             <div class="account-panel-guest" id="account-panel-guest">
-                                <p class="account-panel-hint">自愿绑定邮箱，不挡浏览。升级后 UID 不变，评论仍归你。</p>
+                                <p class="account-panel-hint">创建账户即可同步你的评论与投稿。已是会员请点「登录」。</p>
                                 <div class="account-tabs" role="tablist">
-                                    <button type="button" class="account-tab active" data-tab="upgrade" role="tab" aria-selected="true">升级账号</button>
+                                    <button type="button" class="account-tab active" data-tab="register" role="tab" aria-selected="true">注册</button>
                                     <button type="button" class="account-tab" data-tab="login" role="tab" aria-selected="false">登录</button>
                                 </div>
-                                <div class="account-tab-panel active" id="account-tab-upgrade" role="tabpanel">
+                                <div class="account-tab-panel active" id="account-tab-register" role="tabpanel">
                                     <label class="account-field">
                                         <span>邮箱</span>
-                                        <input type="email" class="form-input" id="account-upgrade-email" placeholder="you@example.com" maxlength="100" autocomplete="email">
+                                        <input type="email" class="form-input" id="account-register-email" placeholder="you@example.com" maxlength="100" autocomplete="email">
                                     </label>
                                     <label class="account-field">
                                         <span>密码（至少 6 位）</span>
-                                        <input type="password" class="form-input" id="account-upgrade-password" placeholder="设置密码" maxlength="64" autocomplete="new-password">
+                                        <input type="password" class="form-input" id="account-register-password" placeholder="设置密码" maxlength="64" autocomplete="new-password">
                                     </label>
                                     <label class="account-field">
                                         <span>确认密码</span>
-                                        <input type="password" class="form-input" id="account-upgrade-password2" placeholder="再输入一次" maxlength="64" autocomplete="new-password">
+                                        <input type="password" class="form-input" id="account-register-password2" placeholder="再输入一次" maxlength="64" autocomplete="new-password">
                                     </label>
-                                    <button type="button" class="btn-primary account-submit" id="account-upgrade-submit">升级账号</button>
+                                    <button type="button" class="btn-primary account-submit" id="account-register-submit">注册</button>
                                 </div>
                                 <div class="account-tab-panel" id="account-tab-login" role="tabpanel" hidden>
                                     <label class="account-field">

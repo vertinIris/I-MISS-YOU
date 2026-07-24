@@ -3797,14 +3797,14 @@
 
     function switchAccountTab(tab) {
         var tabs = document.querySelectorAll('.account-tab');
-        var upgradePanel = document.getElementById('account-tab-upgrade');
+        var registerPanel = document.getElementById('account-tab-register');
         var loginPanel = document.getElementById('account-tab-login');
         tabs.forEach(function(t) {
             var active = t.getAttribute('data-tab') === tab;
             t.classList.toggle('active', active);
             t.setAttribute('aria-selected', active ? 'true' : 'false');
         });
-        if (upgradePanel) upgradePanel.hidden = tab !== 'upgrade';
+        if (registerPanel) registerPanel.hidden = tab !== 'register';
         if (loginPanel) loginPanel.hidden = tab !== 'login';
         setAccountPanelError('');
     }
@@ -3956,16 +3956,16 @@
             });
         }
 
-        var upgradeSubmit = document.getElementById('account-upgrade-submit');
-        if (upgradeSubmit) {
-            upgradeSubmit.addEventListener('click', function() {
+        var registerSubmit = document.getElementById('account-register-submit');
+        if (registerSubmit) {
+            registerSubmit.addEventListener('click', function() {
                 if (typeof AuthManager === 'undefined') {
                     setAccountPanelError('认证模块未加载');
                     return;
                 }
-                var email = (document.getElementById('account-upgrade-email') || {}).value || '';
-                var password = (document.getElementById('account-upgrade-password') || {}).value || '';
-                var password2 = (document.getElementById('account-upgrade-password2') || {}).value || '';
+                var email = (document.getElementById('account-register-email') || {}).value || '';
+                var password = (document.getElementById('account-register-password') || {}).value || '';
+                var password2 = (document.getElementById('account-register-password2') || {}).value || '';
                 email = email.trim();
                 if (!email || password.length < 6) {
                     setAccountPanelError('邮箱必填，密码至少 6 位');
@@ -3975,19 +3975,19 @@
                     setAccountPanelError('两次密码不一致');
                     return;
                 }
-                upgradeSubmit.disabled = true;
+                registerSubmit.disabled = true;
                 setAccountPanelError('');
-                AuthManager.upgradeToRegistered(email, password).then(function(result) {
-                    upgradeSubmit.disabled = false;
+                AuthManager.registerUser(email, password).then(function(result) {
+                    registerSubmit.disabled = false;
                     if (!result || !result.success) {
-                        setAccountPanelError((result && result.error) || '升级失败');
+                        setAccountPanelError((result && result.error) || '注册失败');
                         return;
                     }
-                    afterAuthSuccess(result.user, result.message || '升级成功');
+                    afterAuthSuccess(result.user, result.message || '注册成功');
                     if (!result.needsConfirmation) closeAccountPanel();
                 }).catch(function(err) {
-                    upgradeSubmit.disabled = false;
-                    setAccountPanelError((err && err.message) || '升级失败');
+                    registerSubmit.disabled = false;
+                    setAccountPanelError((err && err.message) || '注册失败');
                 });
             });
         }
