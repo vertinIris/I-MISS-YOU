@@ -209,29 +209,35 @@ var AuthManager = (function() {
             return Promise.resolve({ success: false, error: '云端未连接' });
         }
 
-        return supabaseClient.auth.updateUser({
-            email: email,
-            password: password
-        }).then(function(result) {
-            if (result.error) {
-                return { success: false, error: mapAuthError(result.error) };
-            }
+        /* R14: 升级前先刷新会话，避免匿名 token 过期导致 updateUser 直接失败 */
+        return supabaseClient.auth.refreshSession()
+            .catch(function() { return null; })
+            .then(function() {
+                return supabaseClient.auth.updateUser({
+                    email: email,
+                    password: password
+                });
+            })
+            .then(function(result) {
+                if (result.error) {
+                    return { success: false, error: mapAuthError(result.error) };
+                }
 
-            // UID 不变，comments/submissions 中的 author_id 自动关联
-            updateSession(result.data.user);
-            var pending = needsEmailConfirm(result.data.user);
+                // UID 不变，comments/submissions 中的 author_id 自动关联
+                updateSession(result.data.user);
+                var pending = needsEmailConfirm(result.data.user);
 
-            return {
-                success: true,
-                user: result.data.user,
-                needsConfirmation: pending,
-                message: pending
-                    ? '升级成功！请查收确认邮件后完成验证'
-                    : '账号升级成功'
-            };
-        }).catch(function(err) {
-            return { success: false, error: mapAuthError(err) };
-        });
+                return {
+                    success: true,
+                    user: result.data.user,
+                    needsConfirmation: pending,
+                    message: pending
+                        ? '升级成功！请查收确认邮件后完成验证'
+                        : '账号升级成功'
+                };
+            }).catch(function(err) {
+                return { success: false, error: mapAuthError(err) };
+            });
     }
 
     function signIn(email, password) {

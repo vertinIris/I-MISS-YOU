@@ -121,10 +121,37 @@ var UploadManager = (function() {
         showProgress(0);
 
         if (file.type.startsWith('image/')) {
-            uploadToStorage(file, callback);
+            /* R11: 校验文件真实内容（魔数/文件签名），防止扩展名或类型伪造的非图片被上传 */
+            verifyImageSignature(file, function(ok) {
+                if (!ok) {
+                    hideProgress();
+                    showError('文件内容与图片格式不符，已拦截');
+                    return;
+                }
+                uploadToStorage(file, callback);
+            });
         } else {
             readTextFile(file, callback);
         }
+    }
+
+    /* R11: 读取文件头 8 字节校验图片魔数（JPEG/PNG/GIF 签名） */
+    function verifyImageSignature(file, done) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var b = new Uint8Array(e.target.result);
+            var ok = true;
+            if (file.type === 'image/jpeg') {
+                ok = b.length > 2 && b[0] === 0xFF && b[1] === 0xD8 && b[2] === 0xFF;
+            } else if (file.type === 'image/png') {
+                ok = b.length > 3 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4E && b[3] === 0x47;
+            } else if (file.type === 'image/gif') {
+                ok = b.length > 3 && b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x38;
+            }
+            done(ok);
+        };
+        reader.onerror = function() { done(false); };
+        reader.readAsArrayBuffer(file.slice(0, 8));
     }
 
     function readTextFile(file, callback) {

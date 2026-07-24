@@ -228,17 +228,18 @@
             return;
         }
 
-        var pass = prompt('🔐 请输入管理员口令：');
+        /* R15: 移除 emoji 功能图标，改用纯文本提示（符合 P0-1 图标规范） */
+        var pass = prompt('请输入管理员口令：');
         if (pass === null) {
             if (callback) callback(false);
             return;
         }
         var result = verify(pass);
         if (result.success) {
-            alert('✅ 管理员模式已开启\n\n• 可删除任意评论\n• 关闭浏览器后自动退出');
+            alert('管理员模式已开启\n\n• 可删除任意评论\n• 关闭浏览器后自动退出');
             if (callback) callback(true);
         } else {
-            alert('❌ ' + result.reason);
+            alert('验证失败：' + result.reason);
             if (callback) callback(false);
         }
     }

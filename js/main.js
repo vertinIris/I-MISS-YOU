@@ -1206,6 +1206,10 @@
             },
             onDeleteComment: function(oldData) {
                 applyRealtimeCommentEvent(targetId, 'DELETE', { old: oldData });
+            },
+            /* R4: 轮询降级时全量对账（复用 applyRealtimeCommentEvent，覆盖新增/编辑/隐藏） */
+            onBulkComments: function(comments) {
+                (comments || []).forEach(function(cc) { applyRealtimeCommentEvent(targetId, 'UPDATE', { new: cc }); });
             }
         };
     }
@@ -1224,6 +1228,11 @@
 
         refreshAllCommentsFromCloud();
 
+        /* R7: 云端就绪时冲刷离线队列，避免离线投稿/评论需刷新页面才同步 */
+        if (typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.syncPendingQueue) {
+            SupabaseAdapter.syncPendingQueue().catch(function(e) { console.warn('[v9.6] 离线队列冲刷失败:', e); });
+        }
+
         /* v9.0: 使用 SyncManager 替代直接 subscribeComments */
         if (typeof SyncManager !== 'undefined') {
             document.querySelectorAll('.comment-area').forEach(function(area) {
@@ -1237,6 +1246,10 @@
                     },
                     onDeleteComment: function(oldData) {
                         applyRealtimeCommentEvent(targetId, 'DELETE', { old: oldData });
+                    },
+                    /* R4: 轮询降级时全量对账 */
+                    onBulkComments: function(comments) {
+                        (comments || []).forEach(function(cc) { applyRealtimeCommentEvent(targetId, 'UPDATE', { new: cc }); });
                     }
                 });
             });
@@ -1276,18 +1289,7 @@
             });
         }
 
-        /* Realtime 偶发失效时的兜底轮询（Realtime 正常时不跑） */
-        if (!window.__fxreCommentPoll) {
-            window.__fxreCommentPoll = setInterval(function() {
-                if (typeof SyncManager !== 'undefined' &&
-                    SyncManager.getState() === SyncManager.STATE.REALTIME) {
-                    return;
-                }
-                if (typeof SupabaseAdapter !== 'undefined' && SupabaseAdapter.isAuthenticated()) {
-                    refreshAllCommentsFromCloud();
-                }
-            }, 30000);
-        }
+        /* R6: 移除独立的 __fxreCommentPoll 双轮询——降级轮询已由 SyncManager.startPolling 统一兜底（带状态感知），避免重复流量 */
 
         console.log('[v9.0] Realtime 同步已启用' + (typeof SyncManager !== 'undefined' ? ' (SyncManager)' : ' (legacy)'));
     }
@@ -1378,7 +1380,10 @@
             ? '<button class="comment-delete-btn" title="删除此评论" data-comment-id="' + (c.id || '') + '" data-comment-name="' + escapeHTML(c.name) + '" data-comment-text="' + escapeHTML(c.text) + '" data-comment-time="' + (c.time || 0) + '" data-comment-author="' + (c.authorId || '') + '"' + communityAttr + '>×</button>'
             : '';
         var hideBtn = (canModerate && !showDelete)
-            ? '<button class="comment-hide-btn" title="隐藏此评论（版主操作）" data-comment-id="' + (c.id || '') + '"' + communityAttr + '>👁</button>'
+            ? '<button class="comment-hide-btn" title="隐藏此评论（版主操作）" data-comment-id="' + (c.id || '') + '"' + communityAttr + '>' +
+              '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+              '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>' +
+              '<line x1="1" y1="1" x2="23" y2="23"/></svg></button>'
             : '';
         var replyBtn = (c.id && !isReply)
             ? '<button type="button" class="comment-reply-btn" data-comment-id="' + c.id + '" data-comment-name="' + escapeHTML(c.name) + '" data-target-id="' + escapeHTML(opts.targetId || '') + '">回复</button>'
@@ -2232,6 +2237,12 @@
         if (rawText.length > 500) { showSubmitToast('评论限500字以内'); return; }
         if (rawText.length < 2) { showSubmitToast('评论至少2个字～'); return; }
 
+        /* R8: 封禁用户禁止评论（封禁须实际生效，而非仅存储标记） */
+        if (typeof AuthManager !== 'undefined' && AuthManager.isBanned && AuthManager.isBanned()) {
+            showSubmitToast('账号已被封禁，无法评论', 4000);
+            return;
+        }
+
         if (typeof SecurityShield !== 'undefined') {
             var nameGuard = SecurityShield.guardUserInput(rawName, 'comment_name');
             var textGuard = SecurityShield.guardUserInput(rawText, 'comment_text');
@@ -2331,12 +2342,22 @@
                             for (var i = comments.length - 1; i >= 0; i--) {
                                 if (comments[i].time === newComment.time &&
                                     comments[i].text === newComment.text &&
-                                    comments[i].name === newComment.name) {
+                                    comments[i].name === newComment.name &&
+                                    !comments[i].id) {   /* R5: 只补未赋 id 的乐观项 */
                                     comments[i].id = cloudRow.id;
                                     comments[i].authorId = cloudRow.authorId || '';
                                     break;
                                 }
                             }
+                            /* R5: 乐观插入与实时回显竞态——按 id 去重，移除实时副本，防重复评论 */
+                            var seenIds = {};
+                            comments = comments.filter(function(c) {
+                                if (c.id == null) return true;      /* 其他未同步的乐观项保留 */
+                                var k = String(c.id);
+                                if (seenIds[k]) return false;
+                                seenIds[k] = true;
+                                return true;
+                            });
                             saveComments(targetId, comments);
                         }
                         if (stored && typeof stored.then === 'function') {
@@ -2551,6 +2572,12 @@
             if (rawTitle.length > 100)  { showSubmitToast('标题限100字以内'); return; }
             if (rawContent.length > 2000) { showSubmitToast('内容限2000字以内'); return; }
             if (rawContent.length < 10)   { showSubmitToast('内容至少10个字～'); return; }
+
+            /* R8: 封禁用户禁止投稿 */
+            if (typeof AuthManager !== 'undefined' && AuthManager.isBanned && AuthManager.isBanned()) {
+                showSubmitToast('账号已被封禁，无法投稿', 4000);
+                return;
+            }
 
             if (typeof SecurityShield !== 'undefined') {
                 var sgName = SecurityShield.guardUserInput(rawName, 'submission_name');

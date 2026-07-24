@@ -16,8 +16,11 @@ var SecurityShield = (function() {
     var ENABLED = true;
     var MAX_ACTIONS_PER_MINUTE = 150;
     var MAX_SYNC_PER_MINUTE = 8;
+    var MAX_INPUTS_PER_MINUTE = 30;
     var actionTimestamps = [];
     var syncTimestamps = [];
+    /* R9: 提交类输入独立计数，避免与普通点击共用计数导致正常浏览被误锁 */
+    var inputTimestamps = [];
     var violationCount = 0;
     var observer = null;
 
@@ -59,6 +62,13 @@ var SecurityShield = (function() {
         actionTimestamps.push(now());
         trimActions(actionTimestamps, 60000);
         return actionTimestamps.length <= MAX_ACTIONS_PER_MINUTE;
+    }
+
+    /* R9: 提交/输入频率独立计数，阈值贴合真实提交行为，与点击洪泛检测分离 */
+    function recordInput() {
+        inputTimestamps.push(now());
+        trimActions(inputTimestamps, 60000);
+        return inputTimestamps.length <= MAX_INPUTS_PER_MINUTE;
     }
 
     function canSync() {
@@ -126,7 +136,7 @@ var SecurityShield = (function() {
 
     function guardUserInput(text, context) {
         if (!ENABLED) return { ok: true, text: text };
-        if (!recordAction()) {
+        if (!recordInput()) {
             return { ok: false, reason: '操作过于频繁，请稍后再试', text: '' };
         }
         text = sanitizeText(text);
@@ -186,6 +196,9 @@ var SecurityShield = (function() {
         logViolation('csp', (e.blockedURI || '') + ' ' + (e.violatedDirective || ''));
     }
 
+    /* R10: 本防线为"纵深防御、尽力而为"——内联 <script> 在 MutationObserver 回调（微任务）
+     * 触发前已同步执行，无法被可靠拦截。真正的 XSS 主防线是渲染路径的 escapeHTML 转义 +
+     * CSP。此监控仅用于告警与清除可观测的持久化注入节点，不应作为唯一依赖。 */
     function watchDOM() {
         if (!window.MutationObserver) return;
         observer = new MutationObserver(function(mutations) {

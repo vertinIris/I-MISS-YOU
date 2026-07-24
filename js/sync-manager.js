@@ -24,8 +24,11 @@ var SyncManager = (function() {
     var maxReconnect = 5;
     var pollInterval = null;
     var pollIntervalMs = 15000;
-    var lastSyncTime = new Date(0).toISOString();
+    /* R1: 按评论区分别维护最近同步时间，避免跨 target 共享导致轮询去重错乱 */
+    var lastSyncByTarget = {};
+    var statusCallbacks = {};
     var subscriptions = {};
+    function _ls(targetId) { return lastSyncByTarget[targetId] || new Date(0).toISOString(); }
     /** @type {Object.<string, {onNewComment, onUpdateComment, onDeleteComment}>} */
     var targetCallbacks = {};
     var submissionCallbacks = {};
@@ -83,7 +86,7 @@ var SyncManager = (function() {
                 filter: 'target_id=eq.' + targetId
             }, function(payload) {
                 invokeHandler(targetId, 'onNewComment', payload.new);
-                lastSyncTime = new Date().toISOString();
+                lastSyncByTarget[targetId] = new Date().toISOString();
             })
             .on('postgres_changes', {
                 event: 'UPDATE',
@@ -92,7 +95,7 @@ var SyncManager = (function() {
                 filter: 'target_id=eq.' + targetId
             }, function(payload) {
                 invokeHandler(targetId, 'onUpdateComment', payload.new, payload.old);
-                lastSyncTime = new Date().toISOString();
+                lastSyncByTarget[targetId] = new Date().toISOString();
             })
             .on('postgres_changes', {
                 event: 'DELETE',
@@ -102,19 +105,21 @@ var SyncManager = (function() {
             }, function(payload) {
                 invokeHandler(targetId, 'onDeleteComment', payload.old);
             })
-            .subscribe(function(status) {
-                if (status === 'SUBSCRIBED') {
-                    setState(STATE.REALTIME);
-                    reconnectAttempts = 0;
-                    stopPolling();
-                } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-                    setState(STATE.POLLING);
-                    startPolling();
-                } else if (status === 'CLOSED') {
-                    setState(STATE.RECONNECTING);
-                    attemptReconnect(targetId);
-                }
-            });
+        var onStatus = function(status) {
+            if (status === 'SUBSCRIBED') {
+                setState(STATE.REALTIME);
+                reconnectAttempts = 0;
+                stopPolling();
+            } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+                setState(STATE.POLLING);
+                startPolling();
+            } else if (status === 'CLOSED') {
+                setState(STATE.RECONNECTING);
+                attemptReconnect(targetId);
+            }
+        };
+        statusCallbacks[targetId] = onStatus;
+        channel.subscribe(onStatus);
 
         subscriptions[targetId] = channel;
     }
@@ -152,7 +157,7 @@ var SyncManager = (function() {
 
         setTimeout(function() {
             if (subscriptions[targetId]) {
-                subscriptions[targetId].subscribe();
+                subscriptions[targetId].subscribe(statusCallbacks[targetId]);
             }
         }, delay);
     }
@@ -165,16 +170,32 @@ var SyncManager = (function() {
 
             getCommentTargetIds().forEach(function(targetId) {
                 SupabaseAdapter.fetchComments(targetId).then(function(comments) {
-                    if (!comments || comments.length === 0) return;
-                    var maxTime = lastSyncTime;
+                    if (!comments) return;
+                    var since = _ls(targetId);
+
+                    /* R4: 若提供批量回调，则全量对账（新增/编辑/删除一并处理） */
+                    var h = targetCallbacks[targetId];
+                    if (h && typeof h.onBulkComments === 'function') {
+                        h.onBulkComments(comments);
+                        var bulkMax = since;
+                        comments.forEach(function(c) {
+                            var ct = c.created_at || new Date(0).toISOString();
+                            if (ct > bulkMax) bulkMax = ct;
+                        });
+                        lastSyncByTarget[targetId] = bulkMax;
+                        return;
+                    }
+
+                    /* 兼容旧契约：仅检测新增 */
+                    var maxTime = since;
                     comments.forEach(function(c) {
                         var cTime = c.created_at || new Date(0).toISOString();
-                        if (new Date(cTime) > new Date(lastSyncTime)) {
+                        if (new Date(cTime) > new Date(since)) {
                             invokeHandler(targetId, 'onNewComment', c);
                         }
                         if (cTime > maxTime) maxTime = cTime;
                     });
-                    lastSyncTime = maxTime;
+                    lastSyncByTarget[targetId] = maxTime;
                 }).catch(function(err) {
                     console.warn('[SyncManager] Polling error:', err);
                 });
@@ -194,7 +215,7 @@ var SyncManager = (function() {
             return Promise.resolve([]);
         }
         return SupabaseAdapter.fetchComments(targetId).then(function(comments) {
-            lastSyncTime = new Date().toISOString();
+            lastSyncByTarget[targetId] = new Date().toISOString();
             return comments || [];
         });
     }
@@ -232,7 +253,31 @@ var SyncManager = (function() {
                     submissionCallbacks.onUpdateSubmission(payload.new, payload.old);
                 }
             })
-            .subscribe();
+            .on('postgres_changes', {
+                event: 'DELETE',
+                schema: 'public',
+                table: 'submissions'
+            }, function(payload) {
+                if (typeof submissionCallbacks.onDeleteSubmission === 'function') {
+                    submissionCallbacks.onDeleteSubmission(payload.old);
+                }
+            });
+
+        /* R3: 投稿通道同样需要状态回调——断连时降级轮询/重连，与评论通道一致 */
+        var onStatus = function(status) {
+            if (status === 'SUBSCRIBED') {
+                setState(STATE.REALTIME);
+                reconnectAttempts = 0;
+            } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+                setState(STATE.POLLING);
+                startPolling();
+            } else if (status === 'CLOSED') {
+                setState(STATE.RECONNECTING);
+                attemptReconnect('submissions');
+            }
+        };
+        statusCallbacks['submissions'] = onStatus;
+        channel.subscribe(onStatus);
 
         subscriptions['submissions'] = channel;
     }
@@ -261,7 +306,7 @@ var SyncManager = (function() {
         };
         parts.push(stateLabels[s] || '未知状态');
         if (pending > 0) {
-            parts.push('待同步 ' + pending + ' 条（点击 🔄 重试）');
+            parts.push('待同步 ' + pending + ' 条（点击同步按钮重试）');
         }
         if (lastSyncResult) {
             if (lastSyncResult.failed > 0) {
@@ -289,11 +334,11 @@ var SyncManager = (function() {
             ? SupabaseAdapter.getStatus().pending : 0;
 
         var config = {
-            syncing:     { icon: '\uD83D\uDD04', text: '\u540c\u6b65\u4e2d\u2026', class: 'sync-syncing' },
-            realtime:    { icon: '\uD83D\uDFE2', text: '\u5b9e\u65f6\u540c\u6b65', class: 'sync-live' },
-            polling:     { icon: '\uD83D\uDFE1', text: '\u8f6e\u8be2\u540c\u6b65', class: 'sync-poll' },
-            offline:     { icon: '\uD83D\uDD34', text: '\u672a\u8fde\u63a5', class: 'sync-off' },
-            reconnecting:{ icon: '\uD83D\uDD04', text: '\u91cd\u8fde\u4e2d', class: 'sync-conn' }
+            syncing:     { dot: 'sync-dot-syncing', text: '\u540c\u6b65\u4e2d\u2026', class: 'sync-syncing' },
+            realtime:    { dot: 'sync-dot-live', text: '\u5b9e\u65f6\u540c\u6b65', class: 'sync-live' },
+            polling:     { dot: 'sync-dot-poll', text: '\u8f6e\u8be2\u540c\u6b65', class: 'sync-poll' },
+            offline:     { dot: 'sync-dot-off', text: '\u672a\u8fde\u63a5', class: 'sync-off' },
+            reconnecting:{ dot: 'sync-dot-syncing', text: '\u91cd\u8fde\u4e2d', class: 'sync-conn' }
         };
 
         var c = config[s] || config.offline;
@@ -303,7 +348,7 @@ var SyncManager = (function() {
             if (lastSyncResult.failed > 0) {
                 resultHint = ' · 失败' + lastSyncResult.failed;
             } else if (lastSyncResult.uploaded > 0 || lastSyncResult.pulled) {
-                resultHint = ' · ✓';
+                resultHint = ' · 已同步';
             }
         }
 
@@ -311,7 +356,7 @@ var SyncManager = (function() {
         indicator.title = buildSyncTitle(s, pending);
         var statusEl = indicator.querySelector('.sync-status-text');
         if (statusEl) {
-            statusEl.innerHTML = '<span class="sync-dot">' + c.icon + '</span>' +
+            statusEl.innerHTML = '<span class="sync-dot ' + c.dot + '" aria-hidden="true"></span>' +
                 '<span class="sync-text">' + c.text + pendingHint + resultHint + '</span>';
         }
     }
@@ -324,10 +369,10 @@ var SyncManager = (function() {
         div.className = 'sync-indicator sync-off';
         div.innerHTML =
             '<div class="sync-status-text">' +
-                '<span class="sync-dot">\uD83D\uDD34</span>' +
+                '<span class="sync-dot sync-dot-off" aria-hidden="true"></span>' +
                 '<span class="sync-text">\u672a\u8fde\u63a5</span>' +
             '</div>' +
-            '<button type="button" class="sync-indicator-btn" id="sync-indicator-btn" title="立即同步：上传待发送 + 拉取云端最新" aria-label="立即同步">\uD83D\uDD04</button>';
+            '<button type="button" class="sync-indicator-btn" id="sync-indicator-btn" title="立即同步：上传待发送 + 拉取云端最新" aria-label="立即同步"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>';
 
         var btn = div.querySelector('#sync-indicator-btn');
         btn.addEventListener('click', function(e) {

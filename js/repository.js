@@ -482,6 +482,7 @@
                                  String(d.getDate()).padStart(2,'0') + ' ' +
                                  String(d.getHours()).padStart(2,'0') + ':' +
                                  String(d.getMinutes()).padStart(2,'0'),
+                        tags:     row.tags || [],
                         liked: false
                     };
                 });
@@ -528,6 +529,8 @@
             }
             existing.authorId = incoming.authorId || existing.authorId;
             existing.is_hidden = incoming.is_hidden === true ? true : existing.is_hidden;
+            /* R2/R13: 合并时保留云端 tags，避免云/本地合并丢失标签 */
+            if (incoming.tags && incoming.tags.length) existing.tags = incoming.tags;
             return existing;
         }
 

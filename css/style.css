@@ -61,7 +61,8 @@
 
     --text-primary: #FAF8FF;
     --text-secondary: #D4CCE8;
-    --text-tertiary: #8A84A3;
+    /* R18: 次级文字提亮至 #9B95B8，暗色背景对比度≈4.9:1，达 WCAG AA */
+    --text-tertiary: #9B95B8;
 
     --glass-bg: rgba(255, 255, 255, 0.035);
     --glass-bg-hover: rgba(255, 255, 255, 0.075);
@@ -4220,7 +4221,20 @@ article, section, nav, footer, header {
 .sync-indicator .sync-dot {
     font-size: 12px;
     line-height: 1;
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text-tertiary, #8A84A3);
+    vertical-align: middle;
+    margin-right: 2px;
 }
+
+/* R15: CSS 状态圆点（替代 emoji 图标），统一描边/矢量风格 */
+.sync-dot-live    { background: #3ddc84; box-shadow: 0 0 6px rgba(61, 220, 132, 0.6); }
+.sync-dot-poll    { background: #ffd166; box-shadow: 0 0 6px rgba(255, 209, 102, 0.6); }
+.sync-dot-off     { background: #6b6f85; }
+.sync-dot-syncing { background: #6B8AFF; box-shadow: 0 0 6px rgba(107, 138, 255, 0.6); }
 
 .sync-indicator .sync-text {
     font-size: 12px;
@@ -5452,3 +5466,14 @@ textarea:focus-visible,
 .btn-ghost:active {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
+
+/* ============================================================
+ * R16: 视觉层级收敛——降低非核心装饰背景层存在感，突出主体内容。
+ * 保留美学意图，仅将多层动画背景降为低存在感，避免喧宾夺主；
+ * reduced-motion 已在上方统一关闭各层动画。
+ * ============================================================ */
+.pink-galaxy     { opacity: 0.55; }
+.ult-energy-core { opacity: 0.5; }
+.galaxy-river    { opacity: 0.5; }
+.data-rain       { opacity: 0.45; }
+.hex-shield      { opacity: 0.28; }

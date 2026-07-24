@@ -485,9 +485,10 @@
         if (!isReady) return Promise.resolve([]);
         opts = opts || {};
 
+        /* R2: join submission_tags 以返回 AO3 标签，修复云端投稿标签筛选失效 */
         var query = client
             .from('submissions')
-            .select('*')
+            .select('*, submission_tags(tag_id, tags(id, name, category, color))')
             .order('created_at', { ascending: false });
 
         if (typeFilter && typeFilter !== '全部') {
@@ -514,7 +515,10 @@
                     likes:    s.likes,
                     time:     s.created_at,
                     authorId: s.author_id || '',
-                    is_hidden: s.is_hidden === true
+                    is_hidden: s.is_hidden === true,
+                    tags:     (s.submission_tags || []).map(function(st) {
+                        return st && st.tags ? st.tags.name : null;
+                    }).filter(Boolean)
                 };
             });
         });
