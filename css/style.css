@@ -8,8 +8,30 @@
 
 /* ============ CSS Variables ============ */
 :root {
+    /* ============ v10 色彩角色系统 ============ */
+    /* 主色 Primary — 爱弥斯品牌身份：粉·白·浅蓝 为核心（粉色主导，白/浅蓝承托） */
+    --c-primary: #F4729B;
+    --c-primary-strong: #E84C7E;
+    --c-primary-soft: #FFB6D9;
+    --c-primary-dim: rgba(244, 114, 155, 0.14);
+    --c-core-white: #F0F4FF;
+    --c-core-blue: #6B8AFF;
+    --c-core-blue-light: #A8D8FF;
+    /* 辅助色 Secondary — 中性结构（锌灰，替代紫色调） */
+    --c-neutral-900: #0B0B14;
+    --c-neutral-800: #14141F;
+    --c-neutral-700: #1E1E2C;
+    --c-neutral-600: #2A2A3A;
+    --c-neutral-400: #6B6B82;
+    --c-neutral-200: #C9C9DA;
+    /* 强调色 Accent — 橙金（辅助点缀，仅用于高亮/焦点，不作主色；金色不作为重点） */
+    --c-accent: #E8A23D;
+    --c-accent-strong: #D08A2C;
+    --c-accent-soft: #F4C277;
+    --c-accent-dim: rgba(232, 162, 61, 0.14);
+
     /* Brand Colors - 粉蓝白为主，金色点缀 */
-    --color-pink: #FF6B9D;
+    --color-pink: #F4729B;
     --color-pink-light: #FFB6D9;
     --color-pink-soft: #FF8FB0;
     --color-pink-deep: #E84C7E;
@@ -25,31 +47,28 @@
     --color-snow: #F0F4FF;
     --color-black: #0A0A12;
 
-    /* Dynamic Animated Gradient (replaces static rainbow) */
+    /* v10 — 动态品牌光晕：粉 → 白 → 浅蓝（爱弥斯核心三色，去金/紫霓虹均质化） */
     --gradient-dynamic: linear-gradient(135deg,
-        #FF6B9D 0%,
-        #FF8FB0 15%,
-        #B66BFF 30%,
-        #6B8AFF 50%,
-        #A8D8FF 65%,
-        #FFB6D9 80%,
-        #FF6B9D 100%
+        #F4729B 0%,
+        #FFB6D9 18%,
+        #F0F4FF 40%,
+        #A8D8FF 62%,
+        #6B8AFF 82%,
+        #A8D8FF 100%
     );
     --gradient-dynamic-soft: linear-gradient(135deg,
-        rgba(255, 107, 157, 0.2) 0%,
-        rgba(255, 143, 176, 0.18) 15%,
-        rgba(182, 107, 255, 0.18) 30%,
-        rgba(107, 138, 255, 0.22) 50%,
-        rgba(168, 216, 255, 0.18) 65%,
-        rgba(255, 182, 217, 0.18) 80%,
-        rgba(255, 107, 157, 0.2) 100%
+        rgba(244, 114, 155, 0.16) 0%,
+        rgba(255, 182, 217, 0.12) 22%,
+        rgba(240, 244, 255, 0.14) 50%,
+        rgba(168, 216, 255, 0.16) 100%
     );
 
-    /* Pink-Blue brand gradient (primary) */
-    --gradient-brand: linear-gradient(135deg, #FF6B9D 0%, #B66BFF 50%, #6B8AFF 100%);
-    --gradient-brand-soft: linear-gradient(135deg, rgba(255,107,157,0.15) 0%, rgba(182,107,255,0.15) 50%, rgba(107,138,255,0.15) 100%);
-    --gradient-pink-white: linear-gradient(135deg, #FF6B9D 0%, #FFB6D9 50%, #F0F4FF 100%);
-    --gradient-blue-white: linear-gradient(135deg, #6B8AFF 0%, #A8D8FF 50%, #F0F4FF 100%);
+    /* v10 核心渐变 — 粉 → 浅蓝（爱弥斯主色），白承托；金不作为重点 */
+    --gradient-brand: linear-gradient(135deg, #F4729B 0%, #A8D8FF 100%);
+    --gradient-brand-soft: linear-gradient(135deg, rgba(244,114,155,0.16) 0%, rgba(168,216,255,0.12) 100%);
+    --gradient-pink-white: linear-gradient(135deg, #F4729B 0%, #FFF5F8 100%);
+    /* 角色专属着色(次要用)：漂泊者电蓝，不作为品牌主色 */
+    --gradient-blue-white: linear-gradient(135deg, #5B8DEF 0%, #F0F4FF 100%);
 
     /* Dark Theme (Default) - 漂泊者星空黑，夜间模式适度提亮文字与星光 */
     --bg-primary: #07070E;
@@ -64,17 +83,19 @@
     /* R18: 次级文字提亮至 #9B95B8，暗色背景对比度≈4.9:1，达 WCAG AA */
     --text-tertiary: #9B95B8;
 
-    --glass-bg: rgba(255, 255, 255, 0.035);
-    --glass-bg-hover: rgba(255, 255, 255, 0.075);
-    --glass-border: rgba(255, 255, 255, 0.09);
-    --glass-border-hover: rgba(168, 216, 255, 0.28);
-    --glass-blur: blur(30px) saturate(180%);
+    /* R17 液态玻璃：1px 内折射边 + 内阴影，降饱和 */
+    --glass-bg: rgba(255, 255, 255, 0.04);
+    --glass-bg-hover: rgba(255, 255, 255, 0.07);
+    --glass-border: rgba(255, 255, 255, 0.10);
+    --glass-border-hover: rgba(245, 181, 68, 0.35);
+    --glass-blur: blur(24px) saturate(140%);
 
-    --shadow-glow: 0 0 32px rgba(107, 138, 255, 0.1);
+    --shadow-glow: 0 0 26px rgba(229, 132, 168, 0.10);
     --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.45);
     --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.35);
     --shadow-pink: none;
-    --focus-ring: rgba(168, 216, 255, 0.5);
+    /* R17 Accent 强调色用于焦点环 */
+    --focus-ring: rgba(245, 181, 68, 0.55);
 
     --nav-bg: rgba(7, 7, 14, 0.78);
     --particle-color: 255, 255, 255;
@@ -155,14 +176,15 @@
     --glass-bg: rgba(255, 255, 255, 0.65);
     --glass-bg-hover: rgba(255, 255, 255, 0.85);
     --glass-border: rgba(255, 255, 255, 0.8);
-    --glass-border-hover: rgba(107, 138, 255, 0.22);
-    --glass-blur: blur(20px) saturate(180%);
+    /* R17 浅色主题强调色同步为金 */
+    --glass-border-hover: rgba(245, 181, 68, 0.30);
+    --glass-blur: blur(20px) saturate(150%);
 
-    --shadow-glow: 0 0 32px rgba(107, 138, 255, 0.08);
+    --shadow-glow: 0 0 28px rgba(229, 132, 168, 0.10);
     --shadow-card: 0 8px 32px rgba(45, 27, 78, 0.1);
     --shadow-hover: 0 12px 40px rgba(45, 27, 78, 0.12);
     --shadow-pink: none;
-    --focus-ring: rgba(107, 138, 255, 0.45);
+    --focus-ring: rgba(245, 181, 68, 0.50);
 
     --nav-bg: rgba(250, 245, 255, 0.8);
     --particle-color: 107, 138, 255;
@@ -217,9 +239,9 @@ body {
     transition: background 0.5s ease, color 0.3s ease;
 
     background-image:
-        radial-gradient(ellipse at 20% 0%, rgba(255, 107, 157, 0.10) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 50%, rgba(107, 138, 255, 0.08) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 100%, rgba(182, 107, 255, 0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at 20% 0%, rgba(229, 132, 168, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 50%, rgba(245, 181, 68, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 100%, rgba(107, 138, 255, 0.05) 0%, transparent 50%),
         linear-gradient(180deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 50%, var(--bg-gradient-3) 100%);
     background-attachment: fixed;
     min-height: 100vh;
@@ -737,12 +759,21 @@ button {
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-md);
-    box-shadow: var(--shadow-card);
+    /* R17 液态玻璃：内折射边 + 内阴影模拟物理边缘 */
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.10),
+        inset 0 0 24px rgba(0, 0, 0, 0.22),
+        var(--shadow-card);
     transition: all var(--transition-base);
 }
 
 .glass:hover {
     border-color: var(--glass-border-hover);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.14),
+        inset 0 0 28px rgba(0, 0, 0, 0.20),
+        0 0 22px var(--c-accent-dim),
+        var(--shadow-hover);
 }
 
 .glass-chip {
@@ -769,7 +800,7 @@ button {
 }
 
 .location-selector:hover {
-    border-color: rgba(168, 216, 255, 0.35);
+    border-color: rgba(245, 181, 68, 0.35);
     box-shadow: var(--shadow-card);
 }
 
@@ -969,7 +1000,7 @@ button {
 
 .nav-link:hover,
 .nav-link.active {
-    color: var(--color-pink);
+    color: var(--c-accent);
 }
 
 .nav-link:hover::after,
@@ -1385,17 +1416,17 @@ button {
     border: none;
     cursor: pointer;
     transition: transform var(--btn-transition), box-shadow var(--btn-transition), filter var(--btn-transition);
-    /* 爱弥斯温暖渐变: 粉→白→金 流动 */
+    /* v10 爱弥斯核心渐变：粉 → 白 → 浅蓝 流动（去金/紫，贴合粉·白·浅蓝核心） */
     background: linear-gradient(135deg,
-        #FF6B9D 0%, #FF8FB0 14%, #FFB6D9 25%,
-        #FFF5F8 36%, #FFE066 48%, #FFD700 55%,
-        #FF8FB0 68%, #FF6B9D 82%, #FFB6D9 100%
+        #F4729B 0%, #FFB6D9 14%, #F0F4FF 25%,
+        #FFF5F8 36%, #A8D8FF 48%, #6B8AFF 55%,
+        #F0F4FF 68%, #F4729B 82%, #FFB6D9 100%
     );
     background-size: 300% 300%;
     animation: aimisiFlow 8s ease-in-out infinite;
     box-shadow:
-        0 4px 20px rgba(255, 107, 157, 0.35),
-        0 0 15px rgba(255, 215, 0, 0.15),
+        0 4px 20px rgba(244, 114, 155, 0.30),
+        0 0 15px rgba(168, 216, 255, 0.18),
         inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
@@ -1521,7 +1552,7 @@ button {
 }
 
 .btn-primary:focus-visible {
-    outline: 2px solid var(--aimisi-gold);
+    outline: 2px solid var(--c-accent);
     outline-offset: 3px;
 }
 
@@ -1716,9 +1747,8 @@ button {
     padding: 2px;
     background: conic-gradient(
         from 0deg,
-        #FF6B9D, #FFB6D9, #FFD700,
-        #A8D8FF, #6B8AFF, #B66BFF,
-        #FF6B9D
+        #FF6B9D, #FFB6D9, #F0F4FF,
+        #A8D8FF, #6B8AFF, #FF6B9D
     );
     -webkit-mask:
         linear-gradient(#fff 0 0) content-box,
@@ -1803,7 +1833,7 @@ button {
 }
 
 .btn-music:focus-visible {
-    outline: 2px solid var(--drifter-purple);
+    outline: 2px solid var(--c-accent);
     outline-offset: 3px;
 }
 
@@ -2749,17 +2779,17 @@ button {
 .music-btn-play {
     width: 52px;
     height: 52px;
-    background: linear-gradient(135deg, #FF6B9D 0%, #B66BFF 50%, #6B8AFF 100%);
+    background: linear-gradient(135deg, #F4729B 0%, #A8D8FF 50%, #6B8AFF 100%);
     background-size: 200% 200%;
     animation: gradientShift 6s ease-in-out infinite;
     color: white;
     border: none;
-    box-shadow: 0 4px 16px rgba(255, 107, 157, 0.35), 0 0 20px rgba(107, 138, 255, 0.15);
+    box-shadow: 0 4px 16px rgba(244, 114, 155, 0.32), 0 0 20px rgba(232, 162, 61, 0.15);
 }
 
 .music-btn-play:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 24px rgba(255, 107, 157, 0.5), 0 0 30px rgba(182, 107, 255, 0.25);
+    box-shadow: 0 6px 24px rgba(229, 132, 168, 0.48), 0 0 30px rgba(245, 181, 68, 0.22);
     color: white;
     border: none;
 }
@@ -4045,9 +4075,9 @@ button {
 
 .community-card-badge[data-type="text"] { background: linear-gradient(135deg, #6B8AFF, #A8D8FF); }
 .community-card-badge[data-type="story"] { background: linear-gradient(135deg, #FF6B9D, #FFB6D9); }
-.community-card-badge[data-type="poem"] { background: linear-gradient(135deg, #B66BFF, #FF6B9D); }
-.community-card-badge[data-type="art"] { background: linear-gradient(135deg, #FFD700, #FF8FB0); }
-.community-card-badge[data-type="music"] { background: linear-gradient(135deg, #6B8AFF, #B66BFF); }
+.community-card-badge[data-type="poem"] { background: linear-gradient(135deg, #F4729B, #A8D8FF); }
+.community-card-badge[data-type="art"] { background: linear-gradient(135deg, #6B8AFF, #FFB6D9); }
+.community-card-badge[data-type="music"] { background: linear-gradient(135deg, #5B8DEF, #E584A8); }
 
 .community-card-title {
     /* R18: Title 层级 — 无衬线 + 700 字重 */
@@ -4499,13 +4529,13 @@ article, section, nav, footer, header {
 
 .bookmark-btn:hover {
     border-color: rgba(255, 215, 0, 0.4);
-    color: #FFD700;
+    color: var(--c-accent);
 }
 
 .bookmark-btn.bookmarked {
     background: rgba(255, 215, 0, 0.1);
     border-color: rgba(255, 215, 0, 0.3);
-    color: #FFD700;
+    color: var(--c-accent);
 }
 
 /* ---- 评论删除/编辑按钮 ---- */
@@ -4567,7 +4597,7 @@ article, section, nav, footer, header {
 
 .auth-status-bar.auth-admin {
     background: rgba(255, 215, 0, 0.1);
-    color: #FFD700;
+    color: var(--c-accent);
 }
 
 .auth-upgrade-toggle {
@@ -4697,11 +4727,11 @@ article, section, nav, footer, header {
 }
 
 .community-card-action.bookmark-btn:hover {
-    color: #FFD700;
+    color: var(--c-accent);
 }
 
 .community-card-action.bookmark-btn.bookmarked {
-    color: #FFD700;
+    color: var(--c-accent);
 }
 
 [data-theme="light"] .community-card-action.bookmark-btn {
@@ -5251,7 +5281,7 @@ article, section, nav, footer, header {
     font-size: 0.75rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #FFD700;
+    color: var(--c-accent);
     margin-bottom: 10px;
 }
 
