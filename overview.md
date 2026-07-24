@@ -1,40 +1,34 @@
-# 飞行雪绒 / Snow — 工作概览
+# 飞行雪绒 / Snow — 项目概览
 
-当前版本：v9.6（本地 HEAD `877320d` 已同步 GitHub Pages）
+> 纯前端静态站（HTML/CSS/JS）+ Supabase BaaS，GitHub Pages 部署
+> 当前版本：v9.6
 
-## 本轮改动：账号面板注册 / 登录职责重构
+## 本次对话完成项（2026-07-25）
 
-### 问题（用户审计发现）
-- 游客面板只有「升级账号」+「登录」两个 tab，没有独立「注册」通道
-- 「升级账号」底层是 `updateUser`（匿名→注册），对新用户命名误导
-- 两个 tab 都是邮箱+密码，视觉重复、职责不清
+按优先级 R19 → R18 → R17 顺序，本次完成 **R19** 与 **R18**，**R17 留待下次对话作为首要任务**。
 
-### 优化方案（已落地）
-游客面板改为清晰的 **「注册 / 登录」** 两个 tab：
+### R19：评论/投稿增量 DOM 协调（性能）
+- 问题：任一评论/投稿变更即整列表 `innerHTML` 重绘，长列表卡顿、闪烁。
+- 修复：
+  - 新增 `reconcileCommentThread`（按 `data-comment-id` keyed 协调）+ `buildCommentNode`
+  - `_renderCommentsList` / `_renderCommunityCommentsList` 改走增量协调
+  - 提取 `buildSubmissionCardHTML`，新增 `buildSubmissionCardNode` + `reconcileCommunityGrid`，`_renderCommunityGrid` 实时/筛选/分页均走增量
+  - 投稿卡片协调保护：用户正在输入时不替换，避免草稿丢失
+- 校验：`node --check js/main.js` 通过
 
-| Tab | 职责 | 底层调用 |
-|-----|------|----------|
-| 注册 | 新用户/匿名用户创建或绑定账户 | `AuthManager.registerUser` |
-| 登录 | 已有账户登录 | `AuthManager.signIn` |
+### R18：字体层级四级 Type Scale（UI 美术）
+- 新增令牌：`--font-sans/--font-serif`、四级字阶（`--fs-display/title/subtitle/body/caption` + `--fw-*`）、统一间距 `--space-1..6`
+- 应用：`.section-title`→Display（衬线 900）、`.section-desc`→Caption（300+tertiary）、`.community-card-title` 及弹窗/面板/合集标题→Title（无衬线 700）
+- `index.html` 为 Noto Serif SC 增加 900 字重导入
+- 校验：CSS 大括号平衡通过
 
-`registerUser` 内部智能路由：
-- 当前为匿名会话 → 复用 `upgradeToRegistered`（`updateUser`，保留 UID，匿名期间评论/投稿仍归你）
-- 非匿名会话 → `supabaseClient.auth.signUp` 全新注册
+## 文件改动
+- `js/main.js`：R19 增量协调逻辑
+- `css/style.css`：R18 字阶令牌 + 应用
+- `index.html`：字体导入增加 Serif 900
 
-### 改动文件
-- `js/auth-manager.js`：新增 `registerUser` 方法 + 导出；`upgradeToRegistered` 保留为底层能力
-- `index.html`：游客面板「升级账号」→「注册」，相关 id 全部改为 `account-register-*`
-- `js/main.js`：`switchAccountTab` 与提交绑定同步到 `register` / `account-register-*`
+## 待办（下次对话首要任务）
+- **R17**：玻璃拟态 + 粉蓝多停渐变同质化，需建立三级色彩角色（主色/辅助色/强调色），属视觉大改，需先确认设计方向再逐页回归
 
-### 验证
-- `node --check js/auth-manager.js` 通过
-- `node --check js/main.js` 通过
-- 已确认无遗留 `account-upgrade-*` 引用
-
-### 待办
-- 用户需在 GitHub Desktop 执行 Commit + Push（沙箱无 TTY，无法自动推送）
-- 推送后 `Ctrl + F5` 强刷可见新「注册」tab
-
-## 历史遗留（仍可选）
-- R17 色彩系统重构 / R18 完整 type scale / R19 增量渲染 —— 需设计确认后处理
-- R20 `db/migration-016-replica-identity.sql` —— 去 Supabase SQL Editor 跑一次（可选加固）
+## 部署提醒
+所有改动在本地，**需用户在 GitHub Desktop 提交并 push** 后，GitHub Pages 约 1–2 分钟生效（记得 Ctrl+F5 强刷）。

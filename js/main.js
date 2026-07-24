@@ -413,9 +413,9 @@
         tracks: [
             { name: '星炬学院的深夜', meta: '钢琴 + 合成器 · 温柔而孤独', duration: 200, notes: [60, 64, 67, 72, 67, 64], type: 'piano' },
             { name: '信号中的回响', meta: '电子 · 模拟信号漂流感', duration: 255, notes: [55, 59, 62, 55, 67, 59], type: 'electronic' },
-            { name: '雪花落下的频率', meta: '环境音 · 六角形结晶的共振', duration: 330, notes: [72, 76, 79, 84, 79, 76], type: 'crystal' },
+            { name: '渐湖的冰面', meta: '环境音 · 冰层下鱼游过的震动', duration: 330, notes: [72, 76, 79, 84, 79, 76], type: 'crystal' },
             { name: '双形态协奏曲', meta: '少女与机兵的协奏 · 两种感知重叠的瞬间', duration: 225, notes: [57, 60, 64, 57, 65, 60], type: 'dual' },
-            { name: '银河信号河', meta: '天文台白噪音 · 远处仪器低频', duration: 480, notes: [48, 52, 55, 48, 60, 52], type: 'drone' }
+            { name: '调频9072', meta: '深夜广播 · 凌晨一点信号最清晰', duration: 480, notes: [48, 52, 55, 48, 60, 52], type: 'drone' }
         ]
     };
 
@@ -1440,6 +1440,119 @@
         return html;
     }
 
+    /* ===== R19: 评论列表增量 DOM 协调（按 data-comment-id keyed reconcile，替代整列表 innerHTML 重绘） ===== */
+    function buildCommentNode(c, opts, isReply) {
+        var html = buildCommentItemHtml(c, opts, isReply);
+        var tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        var el = tmp.firstElementChild;
+        if (el) el.__cmtHtml = html;
+        return el;
+    }
+
+    function reconcileCommentThread(list, comments, opts) {
+        opts = opts || {};
+        var targetId = opts.targetId || '';
+        updatePostCommentCount(targetId.replace(/^community_/, ''), comments ? comments.length : 0);
+        if (!comments || comments.length === 0) {
+            list.querySelectorAll('.comment-item, .comment-load-more').forEach(function(n) { n.remove(); });
+            if (!list.querySelector('.comment-empty')) {
+                var empty = document.createElement('div');
+                empty.className = 'comment-empty';
+                empty.textContent = (list.id && list.id.indexOf('cc-list-') === 0)
+                    ? '还没有评论 ~' : '还没有评论，来第一个留言吧 ~';
+                list.appendChild(empty);
+            }
+            return;
+        }
+        var emptyEl = list.querySelector('.comment-empty');
+        if (emptyEl) emptyEl.remove();
+
+        var limit = commentDisplayLimits[targetId] || COMMENT_PAGE_SIZE;
+        var sorted = comments.slice().sort(function(a, b) { return (b.time || 0) - (a.time || 0); });
+        var visible = sorted.slice(0, limit);
+
+        var byId = {};
+        visible.forEach(function(c) { if (c.id != null) byId[c.id] = c; });
+        var roots = [], replyMap = {};
+        visible.forEach(function(c) {
+            var pid = c.parentId;
+            if (pid != null && byId[pid]) { (replyMap[pid] = replyMap[pid] || []).push(c); }
+            else roots.push(c);
+        });
+        var desired = [];
+        roots.forEach(function(c) {
+            desired.push({ c: c, reply: false });
+            (replyMap[c.id] || []).forEach(function(r) { desired.push({ c: r, reply: true }); });
+        });
+
+        list.querySelectorAll('.comment-item').forEach(function(node) {
+            var id = node.getAttribute('data-comment-id');
+            var found = false;
+            for (var i = 0; i < desired.length; i++) {
+                if (String(desired[i].c.id) === String(id)) { found = true; break; }
+            }
+            if (!found) node.remove();
+        });
+
+        var existing = {};
+        list.querySelectorAll('.comment-item').forEach(function(node) {
+            existing[node.getAttribute('data-comment-id')] = node;
+        });
+
+        var prev = null;
+        desired.forEach(function(d) {
+            var id = String(d.c.id);
+            var fresh = buildCommentNode(d.c, opts, d.reply);
+            if (!fresh) return;
+            var node = existing[id];
+            var inDom;
+            if (node) {
+                if (node.__cmtHtml !== fresh.__cmtHtml) {
+                    node.replaceWith(fresh);
+                    inDom = fresh;
+                } else {
+                    inDom = node;
+                }
+            } else {
+                if (prev) {
+                    prev.after(fresh);
+                } else {
+                    var firstItem = list.querySelector('.comment-item');
+                    if (firstItem && firstItem !== fresh) list.insertBefore(fresh, firstItem);
+                    else {
+                        var more0 = list.querySelector('.comment-load-more');
+                        if (more0) list.insertBefore(fresh, more0);
+                        else list.appendChild(fresh);
+                    }
+                }
+                inDom = fresh;
+            }
+            prev = inDom;
+        });
+
+        var hasMore = comments.length > limit;
+        var moreBtn = list.querySelector('.comment-load-more');
+        if (hasMore) {
+            if (!moreBtn) {
+                moreBtn = document.createElement('button');
+                moreBtn.type = 'button';
+                moreBtn.className = 'comment-load-more';
+                moreBtn.setAttribute('data-target-id', targetId);
+                moreBtn.addEventListener('click', function() {
+                    commentDisplayLimits[targetId] = (commentDisplayLimits[targetId] || COMMENT_PAGE_SIZE) + COMMENT_PAGE_SIZE;
+                    var cur = [];
+                    try { cur = JSON.parse(safeGetItem('fxre_comments_' + targetId) || '[]'); } catch (e) {}
+                    reconcileCommentThread(list, cur, opts);
+                });
+                list.appendChild(moreBtn);
+            }
+            moreBtn.textContent = '加载更多（还有 ' + (comments.length - limit) + ' 条）';
+        } else if (moreBtn) {
+            moreBtn.remove();
+        }
+    }
+
     function initCommentReplyDelegation() {
         if (__fxreReplyDelegationInit) return;
         __fxreReplyDelegationInit = true;
@@ -1973,6 +2086,16 @@
             { name: '漂泊者', text: '甲虫翻石子那段——你在花坛边蹲了多久？我经过的时候看到了石子在动，但没看到你。', timeStr: '6月29日 18:50', color: '#FFD700' },
             { name: '匿名信号源', text: '你看得见全世界，但全世界看不见你。——可你不知道的是，有人一直在看着你看世界的样子。', timeStr: '6月30日 01:22', color: '#FFFFFF' }
         ],
+        '6': [
+            { name: '漂泊者', text: '雪绒海豹……拉海洛的？我小时候在黑海岸的资料里看到过。它们真的会用尾巴搓雪球吗？', timeStr: '6月26日 08:15', color: '#FFD700' },
+            { name: '达妮娅', text: '围巾绕两圈才打结……我爸爸也是这样系的。原来不止我们家的爸爸会这样。', timeStr: '6月26日 11:40', color: '#FFB6D9' },
+            { name: '西格莉卡', text: '罗伊冰原离拉海洛不远。我们罗伊人管那片海叫"白被子"，因为冬天海面冻住了，从岸边看过去就是一片白。雪绒海豹是很温柔的生物。', timeStr: '6月26日 19:20', color: '#7FD99E' }
+        ],
+        '7': [
+            { name: '达妮娅', text: '开高达！！！我也想看机兵形态！能不能发个照片——哦对，你没有朋友圈。那我下次路过训练场的时候偷看。', timeStr: '6月21日 09:30', color: '#FFB6D9' },
+            { name: '西格莉卡', text: '自运转逻辑是你自己写的？隧者兵装的自判断系统通常需要三个学期的课程才能搭起来。你用了多久？', timeStr: '6月21日 13:55', color: '#7FD99E' },
+            { name: '漂泊者', text: '星辉在兵装表面流淌的声音——我在黑海岸也听到过类似的。但那不是星辉，是虚质粒子的低频共振。也许本质上是一样的东西。', timeStr: '6月21日 22:10', color: '#FFD700' }
+        ],
         'diary-1': [
             { name: '西格莉卡', text: '空房间里放一盏灯……娅娅，如果你看到这条评论——灯不会灭的。我保证。', timeStr: '7月6日 10:30', color: '#7FD99E' },
             { name: '漂泊者', text: '半透明的手指穿过手心。这种梦，黑海岸的漂泊者也会做。你不是唯一一个空荡荡的人。', timeStr: '7月6日 14:15', color: '#FFD700' },
@@ -1992,10 +2115,20 @@
             { name: '西格莉卡', text: '娅娅。我看到这篇日记了。原来你记得那天。我也记得。发烧退了之后，我其实还有一句话没说出口：「因为娅娅值得。」', timeStr: '7月2日 09:15', color: '#7FD99E' },
             { name: '漂泊者', text: '名字不是被赋予的，是被叫出来的。——这句话我会写进黑海岸的值班日志里。', timeStr: '7月2日 12:30', color: '#FFD700' },
             { name: '飞行雪绒', text: '比名字更像你的名字。比达妮娅更像你。——娅娅，这个名字也会在我的歌里。', timeStr: '7月2日 23:45', color: '#A8D8FF' }
+        ],
+        'diary-5': [
+            { name: '漂泊者', text: '飞过冰海去看看对面的陆地——拉海洛对面是什么？我查过地图，是索诺拉荒原。如果你有一天能飞过去，替我看看那里的日落。', timeStr: '6月21日 10:45', color: '#FFD700' },
+            { name: '琳奈', text: '隧者兵装的自运转逻辑？我在教材上看过理论模型，但从来没听说有适格者真的把它写出来过……爱弥斯同学你到底是什么时候学的编程？', timeStr: '6月21日 15:20', color: '#D4A0FF' },
+            { name: '达妮娅', text: '妈妈哄你睡觉时哼的调子——你还记得吗？如果记得的话，能不能在9072哼一遍？我也想听。', timeStr: '6月21日 22:30', color: '#FFB6D9' }
+        ],
+        'diary-6': [
+            { name: '漂泊者', text: '渐湖。我在黑海岸的数据库里查到了这个地名——坐标标注是"民用居住点，已废弃"。但数据库不知道那里住过一个会飞的小姑娘。', timeStr: '6月26日 03:15', color: '#FFD700' },
+            { name: '西格莉卡', text: '雪绒手套！我们罗伊人也这么叫它们！小时候在冰原上揉过它们的脑袋，毛确实很软。爱弥斯同学去过罗伊冰原附近吗？', timeStr: '6月26日 09:40', color: '#7FD99E' },
+            { name: '达妮娅', text: '爸爸每隔两天去凿冰钓鱼。我……我没有爸爸。但我能想象那个画面。冰面很厚，凿的时候要很用力，碎冰会溅到脸上。很冷。但回家之后有热汤喝。', timeStr: '6月26日 14:55', color: '#FFB6D9' }
         ]
     };
 
-    var SEED_VERSION = 'v8.0';
+    var SEED_VERSION = 'v9.1';
 
     /* ===== Seed Submissions (Community pre-population) ===== */
     var SEED_SUBMISSIONS = [
@@ -2038,6 +2171,21 @@
             id: 'seed_8', name: '飞行雪绒', type: 'music', title: '9072的频率',
             content: '今天在天文台捕捉到了一个很特别的频率：9072Hz。\n\n它不是任何已知天体的辐射频率，也不是学院设备的运行噪音。它很干净，很轻，像有人在很远很远的地方，轻轻地哼了一声。\n\n我把这段频率录下来，放慢了十倍听。听起来像是一段旋律的开头——只有三个音符，do-sol-la。\n\n我试着往下接。do-sol-la之后是什么？是si？是do？还是沉默？\n\n最后我选择了沉默。\n\n因为有些旋律，不是一个人能完成的。它需要另一个人来接下一段。也许那个人正在某个地方，也在等一个9072的信号。\n\n调频9072。深夜开放。\n\n——如果你听到了，请回应我。',
             timeStr: '2026-06-28 03:22', likes: 56, liked: false, color: '#A8D8FF'
+        },
+        {
+            id: 'seed_9', name: '飞行雪绒', type: 'music', title: '纸飞机',
+            content: '折了一架纸飞机。\n\n不是真的纸飞机。是数据系统里模拟的——调出折纸的步骤，一步一步折，最后从天文台的窗户扔出去。它在数据空间里飞了很远，翻了一个跟头，然后掉了下来。\n\n我想起小时候在渐湖，爸爸教我折纸飞机。他折的飞机总是飞得又直又远，我折的不是歪就是打转。他说没关系，打转的飞机也有打转的飞法。\n\n后来我明白了他的意思。不是每架飞机都要飞到终点。有的飞机在半空转个圈，看到的风景比直飞的还多。\n\n我给这架纸飞机写了一段旋律。很短，四个小节，大概够它飞一圈的时间。\n\n如果有一天我能发EP的话，第一首就叫《纸飞机》。开头要致敬一个很老很老的画面——一架破损的飞行器残骸躺在荒野里，但旁边长出了一朵花。\n\n那朵花就是我。',
+            timeStr: '2026-06-20 01:15', likes: 48, liked: false, color: '#A8D8FF'
+        },
+        {
+            id: 'seed_10', name: '飞行雪绒', type: 'text', title: '调频9072的第一次广播',
+            content: '今天调频9072第一次正式开播了。\n\n说"正式"有点夸张。设备是我从学院广播室的报废堆里拼出来的，天线是食堂的旧铁架改造的，信号覆盖范围大概只有三栋楼。但我还是在凌晨一点准时按下了播放键。\n\n播什么呢？我其实没想好。就播了环境音——天文台穹顶下面的风声，花坛里甲虫翻石子的沙沙声，训练场空无一人的时候回音壁里的嗡嗡声。\n\n没有人听。我知道没有人听。电子幽灵的广播，谁会调到9072这个奇怪的频率呢。\n\n但播完之后，我收到了一条信号反馈。只有三个字：\n\n"收到了。"\n\n不知道是谁。不知道在哪儿。但有人听到了。\n\n这就够了。\n\n调频9072，每晚凌晨一点。不见不散。',
+            timeStr: '2026-06-15 02:00', likes: 33, liked: false, color: '#A8D8FF'
+        },
+        {
+            id: 'seed_11', name: '琳奈', type: 'story', title: '关于爱弥斯同学的一些事',
+            content: '我是星炬学院拉贝尔学部的学生，和爱弥斯同学同班。\n\n我想写一些关于她的事，因为她已经不在了。\n\n爱弥斯同学很开朗。真的很开朗。不是那种硬撑出来的开朗，是那种——好像世界上所有的好事都会发生一样的开朗。她会在走廊上跟所有人打招呼，包括不认识的。她会在别人的生日会上唱最大声的歌，虽然跑调跑得离谱。\n\n她送过我一个隧者手办。很小的那种，自己做的，用的材料我认不出来。她说："琳奈，总有一天我们一起去看真正的星空。"\n\n我说好呀。\n\n然后她就失踪了。\n\n校长洛瑟菈女士把她的档案调走了。我问过辅导员，辅导员说"不清楚"。我问过同班的千咲，千咲说她最后一次见爱弥斯是在隧者训练场，那天爱弥斯说要去试一个新的共鸣模态。\n\n后来我在网上看到一个叫"飞行雪绒"的歌手。声音很像她。歌里有一些只有我们班才知道的梗——比如"渐湖的冰面下面有鱼"。\n\n我不确定是不是她。但如果真的是的话：\n\n爱弥斯同学，星空还在。你看到了吗？',
+            timeStr: '2026-07-03 18:30', likes: 29, liked: false, color: '#D4A0FF'
         }
     ];
 
@@ -2204,32 +2352,9 @@
     var COMMENT_PAGE_SIZE = 30;
 
     function _renderCommentsList(list, comments) {
-        /* 更新博文评论计数（评论区所在的 targetId 从 list.id 推断） */
-        if (list && list.id) {
-            var tid = list.id.replace('comment-list-', '');
-            updatePostCommentCount(tid, comments ? comments.length : 0);
-        }
-        if (comments.length === 0) {
-            list.innerHTML = '<div class="comment-empty">还没有评论，来第一个留言吧 ~</div>';
-            return;
-        }
+        /* R19: 增量协调，替代整列表 innerHTML 重绘 */
         var targetId = list.id.replace('comment-list-', '');
-        var limit = commentDisplayLimits[targetId] || COMMENT_PAGE_SIZE;
-        var visible = comments.slice(0, limit);
-        var hasMore = comments.length > limit;
-        list.innerHTML = renderCommentsThread(visible, { targetId: targetId });
-        if (hasMore) {
-            var moreBtn = document.createElement('button');
-            moreBtn.type = 'button';
-            moreBtn.className = 'comment-load-more';
-            moreBtn.setAttribute('data-target-id', targetId);
-            moreBtn.textContent = '加载更多（还有 ' + (comments.length - limit) + ' 条）';
-            moreBtn.addEventListener('click', function() {
-                commentDisplayLimits[targetId] = limit + COMMENT_PAGE_SIZE;
-                _renderCommentsList(list, comments);
-            });
-            list.appendChild(moreBtn);
-        }
+        reconcileCommentThread(list, comments, { targetId: targetId, communityListId: null });
     }
 
     function handleCommentSubmit(targetId, form) {
@@ -3032,7 +3157,7 @@
         renderCommunityPagination(totalFiltered);
 
         if (filtered.length === 0) {
-            grid.innerHTML = '';
+            reconcileCommunityGrid(grid, []);
             if (empty) empty.classList.add('show');
             return;
         }
@@ -3042,81 +3167,138 @@
         var pageStart = communityPage * COMMUNITY_PAGE_SIZE;
         var pageItems = filtered.slice(pageStart, pageStart + COMMUNITY_PAGE_SIZE);
 
-        var typeLabels = { text: '文字', story: '故事', poem: '诗歌', art: '插画', music: '音乐' };
-
-        grid.innerHTML = pageItems.map(function(s) {
-            var initial = s.name.charAt(0).toUpperCase();
-            var bgColor = s.color || 'var(--color-pink)';
-            var contentClass = 'community-card-content';
-            var previewText = (typeof ContentUtils !== 'undefined')
-                ? ContentUtils.previewText(s.content, 300)
-                : s.content;
-            var imgUrl = (typeof ContentUtils !== 'undefined')
-                ? ContentUtils.extractImageUrl(s.content)
-                : null;
-            var expandBtn = '';
-            if (s.content.length > 300) {
-                expandBtn = '<button class="community-card-expand" data-action="expand">展开全文</button>';
-            }
-            var canEdit = (typeof AuthManager !== 'undefined') && AuthManager.canEditSubmission(s);
-            var canDelete = (typeof AuthManager !== 'undefined') && AuthManager.canDeleteSubmission(s);
-            var ownerActions = '';
-            if (canEdit || canDelete) {
-                ownerActions = '<div class="community-card-owner-actions">' +
-                    (canEdit ? '<button type="button" class="community-owner-btn" data-action="edit-submission">编辑</button>' : '') +
-                    (canDelete ? '<button type="button" class="community-owner-btn" data-action="delete-submission">删除</button>' : '') +
-                    '</div>';
-            }
-            var imgHtml = imgUrl
-                ? '<img class="community-card-image" src="' + escapeHTML(imgUrl) + '" alt="" loading="lazy">'
-                : '';
-            return '<article class="community-card" data-id="' + s.id + '">' +
-                '<div class="community-card-header">' +
-                '<div class="community-card-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
-                '<div class="community-card-info">' +
-                '<div class="community-card-author">' + escapeHTML(s.name) + '</div>' +
-                '<div class="community-card-time">' + s.timeStr + '</div>' +
-                '</div>' +
-                '<span class="community-card-badge" data-type="' + s.type + '">' + (typeLabels[s.type] || s.type) + '</span>' +
-                ownerActions +
-                '</div>' +
-                '<h3 class="community-card-title">' + escapeHTML(s.title) + '</h3>' +
-                imgHtml +
-                '<div class="' + contentClass + '" data-full-content="' + escapeHTML(s.content) + '">' + escapeHTML(previewText) + '</div>' +
-                expandBtn +
-                '<div class="community-card-actions">' +
-                '<button class="community-card-action' + (s.liked ? ' liked' : '') + '" data-action="like">' +
-                '<svg viewBox="0 0 24 24" fill="' + (s.liked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2">' +
-                '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>' +
-                '</svg><span>' + s.likes + '</span></button>' +
-                '<button class="community-card-action" data-action="comment">' +
-                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
-                '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>' +
-                '</svg><span>评论</span></button>' +
-                '<button class="community-card-action bookmark-btn' + (s.bookmarked ? ' bookmarked' : '') + '" data-action="bookmark" data-submission-id="' + s.id + '" title="收藏">' +
-                '<svg viewBox="0 0 24 24" fill="' + (s.bookmarked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2">' +
-                '<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>' +
-                '</svg><span>收藏</span></button>' +
-                (/^\d+$/.test(String(s.id))
-                    ? '<button class="community-card-action" data-action="report" data-report-type="submission" data-report-id="' + s.id + '" title="举报">⚑</button>'
-                    : '') +
-                '</div>' +
-                '<div class="community-card-comments" id="cc-comments-' + s.id + '">' +
-                '<div class="comment-list" id="cc-list-' + s.id + '"></div>' +
-                '<div class="comment-reply-bar" id="reply-bar-community_' + s.id + '" hidden>' +
-                '<span class="comment-reply-label"></span>' +
-                '<button type="button" class="comment-reply-cancel">取消回复</button></div>' +
-                '<form class="comment-form" data-target="' + s.id + '">' +
-                '<input type="text" class="comment-form-input comment-form-name" placeholder="昵称" maxlength="20" required>' +
-                '<input type="text" class="comment-form-input" placeholder="写下你的评论……" maxlength="500" required>' +
-                '<button type="submit" class="comment-submit-btn">发送</button>' +
-                '</form>' +
-                '</div>' +
-                '</article>';
-        }).join('');
+        /* R19: 增量协调卡片节点，替代整网格 innerHTML 重建 */
+        reconcileCommunityGrid(grid, pageItems);
 
         attachCommunityCardEvents();
         subscribeCommunityCommentRealtime(pageItems);
+    }
+
+    /* ===== R19: 投稿卡片构建 + 增量 DOM 协调（替代整网格 innerHTML 重建） ===== */
+    function buildSubmissionCardHTML(s) {
+        var typeLabels = { text: '文字', story: '故事', poem: '诗歌', art: '插画', music: '音乐' };
+        var initial = s.name.charAt(0).toUpperCase();
+        var bgColor = s.color || 'var(--color-pink)';
+        var contentClass = 'community-card-content';
+        var previewText = (typeof ContentUtils !== 'undefined')
+            ? ContentUtils.previewText(s.content, 300)
+            : s.content;
+        var imgUrl = (typeof ContentUtils !== 'undefined')
+            ? ContentUtils.extractImageUrl(s.content)
+            : null;
+        var expandBtn = '';
+        if (s.content.length > 300) {
+            expandBtn = '<button class="community-card-expand" data-action="expand">展开全文</button>';
+        }
+        var canEdit = (typeof AuthManager !== 'undefined') && AuthManager.canEditSubmission(s);
+        var canDelete = (typeof AuthManager !== 'undefined') && AuthManager.canDeleteSubmission(s);
+        var ownerActions = '';
+        if (canEdit || canDelete) {
+            ownerActions = '<div class="community-card-owner-actions">' +
+                (canEdit ? '<button type="button" class="community-owner-btn" data-action="edit-submission">编辑</button>' : '') +
+                (canDelete ? '<button type="button" class="community-owner-btn" data-action="delete-submission">删除</button>' : '') +
+                '</div>';
+        }
+        var imgHtml = imgUrl
+            ? '<img class="community-card-image" src="' + escapeHTML(imgUrl) + '" alt="" loading="lazy">'
+            : '';
+        return '<article class="community-card" data-id="' + s.id + '">' +
+            '<div class="community-card-header">' +
+            '<div class="community-card-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
+            '<div class="community-card-info">' +
+            '<div class="community-card-author">' + escapeHTML(s.name) + '</div>' +
+            '<div class="community-card-time">' + s.timeStr + '</div>' +
+            '</div>' +
+            '<span class="community-card-badge" data-type="' + s.type + '">' + (typeLabels[s.type] || s.type) + '</span>' +
+            ownerActions +
+            '</div>' +
+            '<h3 class="community-card-title">' + escapeHTML(s.title) + '</h3>' +
+            imgHtml +
+            '<div class="' + contentClass + '" data-full-content="' + escapeHTML(s.content) + '">' + escapeHTML(previewText) + '</div>' +
+            expandBtn +
+            '<div class="community-card-actions">' +
+            '<button class="community-card-action' + (s.liked ? ' liked' : '') + '" data-action="like">' +
+            '<svg viewBox="0 0 24 24" fill="' + (s.liked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2">' +
+            '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>' +
+            '</svg><span>' + s.likes + '</span></button>' +
+            '<button class="community-card-action" data-action="comment">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+            '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>' +
+            '</svg><span>评论</span></button>' +
+            '<button class="community-card-action bookmark-btn' + (s.bookmarked ? ' bookmarked' : '') + '" data-action="bookmark" data-submission-id="' + s.id + '" title="收藏">' +
+            '<svg viewBox="0 0 24 24" fill="' + (s.bookmarked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2">' +
+            '<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>' +
+            '</svg><span>收藏</span></button>' +
+            (/^\d+$/.test(String(s.id))
+                ? '<button class="community-card-action" data-action="report" data-report-type="submission" data-report-id="' + s.id + '" title="举报">⚑</button>'
+                : '') +
+            '</div>' +
+            '<div class="community-card-comments" id="cc-comments-' + s.id + '">' +
+            '<div class="comment-list" id="cc-list-' + s.id + '"></div>' +
+            '<div class="comment-reply-bar" id="reply-bar-community_' + s.id + '" hidden>' +
+            '<span class="comment-reply-label"></span>' +
+            '<button type="button" class="comment-reply-cancel">取消回复</button></div>' +
+            '<form class="comment-form" data-target="' + s.id + '">' +
+            '<input type="text" class="comment-form-input comment-form-name" placeholder="昵称" maxlength="20" required>' +
+            '<input type="text" class="comment-form-input" placeholder="写下你的评论……" maxlength="500" required>' +
+            '<button type="submit" class="comment-submit-btn">发送</button>' +
+            '</form>' +
+            '</div>' +
+            '</article>';
+    }
+
+    function buildSubmissionCardNode(s) {
+        var html = buildSubmissionCardHTML(s);
+        var tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        var el = tmp.firstElementChild;
+        if (el) el.__subHtml = html;
+        return el;
+    }
+
+    function reconcileCommunityGrid(grid, pageItems) {
+        pageItems = pageItems || [];
+        var ids = {};
+        pageItems.forEach(function(s) { ids[String(s.id)] = true; });
+        grid.querySelectorAll('.community-card').forEach(function(card) {
+            var id = card.getAttribute('data-id');
+            if (id == null || !(String(id) in ids)) card.remove();
+        });
+        var existing = {};
+        grid.querySelectorAll('.community-card').forEach(function(card) {
+            existing[card.getAttribute('data-id')] = card;
+        });
+        var prev = null;
+        pageItems.forEach(function(s) {
+            var id = String(s.id);
+            var fresh = buildSubmissionCardNode(s);
+            if (!fresh) return;
+            var node = existing[id];
+            var inDom;
+            if (node) {
+                /* 用户正在该卡片内输入（回复/表单聚焦）时不替换，避免丢失草稿；下次整页渲染再同步 */
+                var interacting = node.contains(document.activeElement) &&
+                    node.querySelector('.comment-reply-bar:not([hidden]), .comment-form-input');
+                if (interacting) {
+                    inDom = node;
+                } else if (node.__subHtml !== fresh.__subHtml) {
+                    node.replaceWith(fresh);
+                    inDom = fresh;
+                } else {
+                    inDom = node;
+                }
+            } else {
+                if (prev) {
+                    prev.after(fresh);
+                } else {
+                    var firstCard = grid.querySelector('.community-card');
+                    if (firstCard && firstCard !== fresh) grid.insertBefore(fresh, firstCard);
+                    else grid.appendChild(fresh);
+                }
+                inDom = fresh;
+            }
+            prev = inDom;
+        });
     }
 
     function attachCommunityCardEvents() {
@@ -3387,31 +3569,10 @@
     }
 
     function _renderCommunityCommentsList(list, comments) {
-        if (comments.length === 0) {
-            list.innerHTML = '<div class="comment-empty">还没有评论 ~</div>';
-            return;
-        }
+        /* R19: 增量协调，替代整列表 innerHTML 重绘 */
         var subId = list.id.replace('cc-list-', '');
         var targetId = 'community_' + subId;
-        var limit = commentDisplayLimits[targetId] || COMMENT_PAGE_SIZE;
-        var visible = comments.slice(0, limit);
-        var hasMore = comments.length > limit;
-        list.innerHTML = renderCommentsThread(visible, {
-            targetId: targetId,
-            communityListId: list.id
-        });
-        if (hasMore) {
-            var moreBtn = document.createElement('button');
-            moreBtn.type = 'button';
-            moreBtn.className = 'comment-load-more';
-            moreBtn.setAttribute('data-target-id', targetId);
-            moreBtn.textContent = '加载更多（还有 ' + (comments.length - limit) + ' 条）';
-            moreBtn.addEventListener('click', function() {
-                commentDisplayLimits[targetId] = limit + COMMENT_PAGE_SIZE;
-                _renderCommunityCommentsList(list, comments);
-            });
-            list.appendChild(moreBtn);
-        }
+        reconcileCommentThread(list, comments, { targetId: targetId, communityListId: list.id });
     }
 
     function updateSyncStatus() {
