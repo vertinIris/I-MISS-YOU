@@ -1385,11 +1385,17 @@
               '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>' +
               '<line x1="1" y1="1" x2="23" y2="23"/></svg></button>'
             : '';
+        var modActions = (deleteBtn || hideBtn)
+            ? '<div class="comment-mod-actions">' + hideBtn + deleteBtn + '</div>'
+            : '';
         var replyBtn = (c.id && !isReply)
             ? '<button type="button" class="comment-reply-btn" data-comment-id="' + c.id + '" data-comment-name="' + escapeHTML(c.name) + '" data-target-id="' + escapeHTML(opts.targetId || '') + '">回复</button>'
             : '';
         var reportBtn = c.id
             ? '<button type="button" class="comment-report-btn" data-report-type="comment" data-report-id="' + c.id + '">举报</button>'
+            : '';
+        var footerActions = (replyBtn || reportBtn)
+            ? '<div class="comment-footer-actions">' + replyBtn + reportBtn + '</div>'
             : '';
         var replyPrefix = isReply ? '<span class="comment-reply-tag">回复</span> ' : '';
         return '<div class="comment-item' + (isReply ? ' comment-item-reply' : '') + '" data-comment-id="' + (c.id || '') + '">' +
@@ -1401,8 +1407,9 @@
             '<span class="comment-time">' + c.timeStr + '</span>' +
             '</div>' +
             '<div class="comment-text">' + escapeHTML(c.text) + '</div>' +
+            footerActions +
             '</div>' +
-            replyBtn + deleteBtn + hideBtn + reportBtn +
+            modActions +
             '</div>';
     }
 
@@ -3823,6 +3830,16 @@
                 : !(user.email_confirmed_at || user.confirmed_at);
             if (confirmHint) confirmHint.hidden = !pending;
             if (navLabel) navLabel.textContent = '已登录';
+
+            /* 管理员按钮状态 */
+            var adminLoginBtn = document.getElementById('account-admin-login-btn');
+            var adminLogoutBtn = document.getElementById('account-admin-logout-btn');
+            var adminPanelBtn = document.getElementById('account-admin-panel-btn');
+            var isDbStaff = role === 'moderator' || role === 'admin';
+            var isTmpAdmin = typeof AdminAuth !== 'undefined' && AdminAuth.isAdmin();
+            if (adminLoginBtn) adminLoginBtn.hidden = isDbStaff || isTmpAdmin;
+            if (adminLogoutBtn) adminLogoutBtn.hidden = !isTmpAdmin || isDbStaff;
+            if (adminPanelBtn) adminPanelBtn.hidden = !(isDbStaff || isTmpAdmin);
         } else {
             if (guest) guest.hidden = false;
             if (userPane) userPane.hidden = true;
@@ -4084,6 +4101,55 @@
                     forgotBtn.disabled = false;
                     setAccountPanelError((err && err.message) || '发送失败');
                 });
+            });
+        }
+
+        /* 账号面板：管理员登录 / 退出 / 管理后台 */
+        var adminLoginBtn = document.getElementById('account-admin-login-btn');
+        if (adminLoginBtn) {
+            adminLoginBtn.addEventListener('click', function() {
+                if (typeof AdminAuth === 'undefined') {
+                    setAccountPanelError('管理员模块未加载');
+                    return;
+                }
+                AdminAuth.login(function(ok) {
+                    if (!ok) return;
+                    var user = (typeof AuthManager !== 'undefined' && AuthManager.session)
+                        ? { email: AuthManager.session.email || '' }
+                        : { email: '' };
+                    var role = (typeof AuthManager !== 'undefined' && AuthManager.session)
+                        ? AuthManager.session.role : 'user';
+                    refreshAccountPanel(user, role);
+                    if (typeof AdminPanel !== 'undefined') AdminPanel.updateNavButton();
+                    showSubmitToast('管理员模式已开启', 3000);
+                });
+            });
+        }
+
+        var adminLogoutBtn = document.getElementById('account-admin-logout-btn');
+        if (adminLogoutBtn) {
+            adminLogoutBtn.addEventListener('click', function() {
+                if (typeof AdminAuth !== 'undefined') AdminAuth.logout();
+                var user = (typeof AuthManager !== 'undefined' && AuthManager.session)
+                    ? { email: AuthManager.session.email || '' }
+                    : { email: '' };
+                var role = (typeof AuthManager !== 'undefined' && AuthManager.session)
+                    ? AuthManager.session.role : 'user';
+                refreshAccountPanel(user, role);
+                if (typeof AdminPanel !== 'undefined') AdminPanel.updateNavButton();
+                showSubmitToast('已退出管理员模式', 3000);
+            });
+        }
+
+        var adminPanelBtn = document.getElementById('account-admin-panel-btn');
+        if (adminPanelBtn) {
+            adminPanelBtn.addEventListener('click', function() {
+                if (typeof AdminPanel === 'undefined') {
+                    setAccountPanelError('管理面板未加载');
+                    return;
+                }
+                AdminPanel.openPanel();
+                closeAccountPanel();
             });
         }
     }
