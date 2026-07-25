@@ -97,6 +97,14 @@
     /* R17 Accent 强调色用于焦点环 */
     --focus-ring: rgba(245, 181, 68, 0.55);
 
+    /* R17 三级色彩角色 — 表面层级（去玻璃同质化） */
+    --surface-card: rgba(255, 255, 255, 0.05);          /* 内容卡：实色低透明底 */
+    --surface-card-border: rgba(255, 255, 255, 0.10);
+    --surface-inset: rgba(255, 255, 255, 0.03);         /* 嵌套项 / 评论 / 表单 */
+    --surface-inset-border: rgba(255, 255, 255, 0.06);
+    --surface-accent: var(--c-primary-dim);             /* 交互/选中态：品牌粉低透明 */
+    --surface-accent-border: rgba(244, 114, 155, 0.35);
+
     --nav-bg: rgba(7, 7, 14, 0.78);
     --particle-color: 255, 255, 255;
     --particle-alpha: 0.8;
@@ -862,9 +870,8 @@ button {
 }
 
 .location-option.active {
-    background: var(--gradient-dynamic-soft);
-    background-size: 200% 200%;
-    animation: gradientShift 6s ease-in-out infinite;
+    background: var(--surface-accent);
+    border-color: var(--surface-accent-border);
 }
 
 .location-option.active::after {
@@ -991,9 +998,7 @@ button {
     left: 0;
     width: 0;
     height: 2px;
-    background: var(--gradient-dynamic);
-    background-size: 200% 200%;
-    animation: gradientShift 6s ease-in-out infinite;
+    background: var(--c-primary);
     border-radius: 2px;
     transition: width var(--transition-base);
 }
@@ -1956,7 +1961,7 @@ button {
 .banner-gradient {
     position: absolute;
     inset: 0;
-    background: var(--gradient-dynamic);
+    background: var(--gradient-brand-soft);
     background-size: 200% 200%;
     animation: gradientShift 6s ease-in-out infinite;
     opacity: 0.6;
@@ -2195,9 +2200,7 @@ button {
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: var(--gradient-dynamic);
-    background-size: 200% 200%;
-    animation: gradientShift 6s ease-in-out infinite;
+    background: var(--c-primary);
     border: 3px solid var(--bg-primary);
     box-shadow: 0 0 12px rgba(255, 107, 157, 0.4);
     z-index: 1;
@@ -2221,8 +2224,7 @@ button {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: var(--gradient-dynamic-soft);
-    background-size: 200% 200%;
+    background: var(--c-primary-dim);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2431,10 +2433,9 @@ button {
 .music-wave span {
     width: 4px;
     height: 100%;
-    background: var(--gradient-dynamic);
-    background-size: 200% 200%;
-    animation: gradientShift 6s ease-in-out infinite, musicWave 1s ease-in-out infinite;
-    animation-delay: 0s, calc(var(--i) * 0.08s);
+    background: var(--c-primary);
+    animation: musicWave 1s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 0.08s);
     border-radius: 2px;
     opacity: 0.7;
 }
@@ -2539,9 +2540,7 @@ button {
     content: '';
     width: 60px;
     height: 1px;
-    background: var(--gradient-dynamic);
-    background-size: 200% 200%;
-    animation: gradientShift 6s ease-in-out infinite;
+    background: var(--c-core-blue-light);
     opacity: 0.5;
 }
 
@@ -2578,6 +2577,9 @@ button {
     display: flex;
     gap: 24px;
     padding: 28px;
+    background: var(--surface-inset);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--surface-inset-border);
     transition: all var(--transition-base);
 }
 
@@ -2592,9 +2594,8 @@ button {
     text-align: center;
     min-width: 60px;
     padding: 12px;
-    background: var(--gradient-dynamic-soft);
-    background-size: 200% 200%;
-    animation: gradientShift 6s ease-in-out infinite;
+    background: var(--surface-card);
+    border: 1px solid var(--surface-card-border);
     border-radius: var(--radius-sm);
     display: flex;
     flex-direction: column;
@@ -2826,9 +2827,7 @@ button {
 .music-progress-fill {
     height: 100%;
     width: 0%;
-    background: var(--gradient-dynamic);
-    background-size: 200% 200%;
-    animation: gradientShift 6s ease-in-out infinite;
+    background: var(--c-primary);
     border-radius: 2px;
     transition: width 0.3s ease;
 }
@@ -2874,9 +2873,8 @@ button {
 }
 
 .track-item.active {
-    background: var(--gradient-dynamic-soft);
-    background-size: 200% 200%;
-    animation: gradientShift 6s ease-in-out infinite;
+    background: var(--surface-accent);
+    border-color: var(--surface-accent-border);
 }
 
 .track-item.active .track-title {
@@ -3646,14 +3644,14 @@ button {
     display: flex;
     gap: 10px;
     padding: 10px 12px;
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--surface-inset);
     border-radius: var(--radius-sm);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--surface-inset-border);
     transition: all var(--transition-fast);
 }
 
 .comment-item:hover {
-    background: rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.055);
     border-color: rgba(255, 107, 157, 0.15);
 }
 
@@ -3997,10 +3995,8 @@ button {
 .community-card {
     padding: 24px;
     border-radius: var(--radius-md);
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    background: var(--surface-card);
+    border: 1px solid var(--surface-card-border);
     transition: all var(--transition-base);
     display: flex;
     flex-direction: column;
@@ -4022,6 +4018,7 @@ button {
 .community-card:hover {
     transform: translateY(-3px);
     border-color: rgba(168, 216, 255, 0.22);
+    background: rgba(255, 255, 255, 0.07);
     box-shadow: var(--shadow-hover);
 }
 
