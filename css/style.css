@@ -5909,3 +5909,353 @@ textarea:focus-visible,
         padding: 20px;
     }
 }
+
+/* =========================================================
+   v10 · 角色入口卡 + 专区页样式
+   ========================================================= */
+
+/* 补充角色着色令牌（专区与入口卡共用） */
+:root {
+    --denia-lavender: #B89CD9;
+    --sigrica-green: #4EC89A;
+}
+
+/* ---- 首页角色入口卡 ---- */
+.character-entry {
+    --char: var(--c-primary, #F4729B);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.6rem 1.6rem 1.3rem;
+    text-decoration: none;
+    color: #fff;
+    border: 1px solid color-mix(in srgb, var(--char) 38%, transparent);
+    border-radius: 18px;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--char) 15%, var(--surface-card)) 0%, var(--surface-card) 72%);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    overflow: hidden;
+}
+.character-entry:hover {
+    transform: translateY(-4px);
+    border-color: var(--char);
+    box-shadow: 0 14px 32px -14px color-mix(in srgb, var(--char) 60%, transparent);
+}
+.character-entry-badge {
+    width: 56px;
+    height: 56px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--char);
+    color: #fff;
+    box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--char) 70%, transparent);
+    margin-bottom: 0.3rem;
+}
+.entry-badge-icon {
+    width: 30px;
+    height: 30px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.character-entry-name {
+    font-family: var(--font-serif, "Noto Serif SC");
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+.character-entry-alias {
+    font-size: 0.85rem;
+    color: color-mix(in srgb, var(--char) 78%, #fff);
+    font-weight: 500;
+}
+.character-entry-tagline {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.6;
+}
+.character-entry-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.3rem;
+}
+.char-tag {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--char) 16%, transparent);
+    color: color-mix(in srgb, var(--char) 72%, #fff);
+    border: 1px solid color-mix(in srgb, var(--char) 30%, transparent);
+}
+.character-entry-cta {
+    margin-top: 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--char);
+}
+.character-entry-cta .icon {
+    width: 1em;
+    height: 1em;
+    transition: transform 0.2s ease;
+}
+.character-entry:hover .character-entry-cta .icon {
+    transform: translateX(3px);
+}
+.character-entry--locked {
+    opacity: 0.55;
+    filter: grayscale(0.3);
+    cursor: not-allowed;
+    border-style: dashed;
+}
+.character-entry--locked .character-entry-cta {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ---- 替换 emoji 的内联 SVG 图标统一尺寸 ---- */
+.icon,
+.loc-icon,
+.nav-account-icon {
+    width: 1.15em;
+    height: 1.15em;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vertical-align: -0.18em;
+}
+.archive-card-title .icon {
+    margin-right: 0.45em;
+}
+.loc-icon {
+    width: 1.4rem;
+    height: 1.4rem;
+}
+
+/* ---- 专区页（characters/*.html） ---- */
+.zone-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 1.2rem;
+    background: rgba(10, 12, 24, 0.82);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.zone-topbar .zone-home {
+    font-family: var(--font-serif, "Noto Serif SC");
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.zone-switch {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.zone-switch a,
+.zone-switch span {
+    font-size: 0.82rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.zone-switch a:hover {
+    color: #fff;
+    border-color: var(--char, #F4729B);
+}
+.zone-switch .is-active {
+    color: #fff;
+    background: color-mix(in srgb, var(--char, #F4729B) 22%, transparent);
+    border-color: var(--char, #F4729B);
+}
+.zone-switch .is-locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.zone-hero {
+    --char: var(--c-primary, #F4729B);
+    text-align: center;
+    padding: 3.5rem 1.2rem 2.5rem;
+    background: radial-gradient(120% 100% at 50% 0%, color-mix(in srgb, var(--char) 22%, transparent), transparent 60%);
+}
+.zone-hero-badge {
+    width: 84px;
+    height: 84px;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--char);
+    color: #fff;
+    box-shadow: 0 10px 30px -10px color-mix(in srgb, var(--char) 70%, transparent);
+}
+.zone-hero-badge svg {
+    width: 44px;
+    height: 44px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.zone-hero-name {
+    font-family: var(--font-serif, "Noto Serif SC");
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900;
+    color: #fff;
+}
+.zone-hero-alias {
+    font-size: 1rem;
+    color: color-mix(in srgb, var(--char) 75%, #fff);
+    margin-top: 0.3rem;
+}
+.zone-hero-tagline {
+    max-width: 640px;
+    margin: 0.8rem auto 0;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.7;
+}
+
+.zone-breadcrumb {
+    max-width: 880px;
+    margin: 1.5rem auto 0;
+    padding: 0 1.2rem;
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+.zone-breadcrumb a {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+}
+.zone-breadcrumb a:hover {
+    color: #fff;
+}
+.zone-breadcrumb .sep {
+    margin: 0 0.4rem;
+    opacity: 0.5;
+}
+
+.zone-stats {
+    max-width: 880px;
+    margin: 1.5rem auto;
+    padding: 0 1.2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.8rem;
+}
+.zone-stat {
+    background: var(--surface-card);
+    border: 1px solid var(--surface-card-border);
+    border-radius: 14px;
+    padding: 0.9rem 1rem;
+}
+.zone-stat-label {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.05em;
+}
+.zone-stat-value {
+    font-size: 0.92rem;
+    color: #fff;
+    margin-top: 0.3rem;
+    line-height: 1.5;
+}
+
+.zone-modules {
+    max-width: 880px;
+    margin: 2rem auto 4rem;
+    padding: 0 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.module {
+    background: var(--surface-card);
+    border: 1px solid var(--surface-card-border);
+    border-radius: 16px;
+    overflow: hidden;
+}
+.module > summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 1.1rem 1.3rem;
+    font-family: var(--font-serif, "Noto Serif SC");
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+}
+.module > summary::-webkit-details-marker {
+    display: none;
+}
+.module > summary .module-icon {
+    width: 1.3rem;
+    height: 1.3rem;
+    fill: none;
+    stroke: var(--char, #F4729B);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex: none;
+}
+.module > summary .module-chevron {
+    margin-left: auto;
+    width: 1.2rem;
+    height: 1.2rem;
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.5);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.25s ease;
+}
+.module[open] > summary .module-chevron {
+    transform: rotate(90deg);
+}
+.module-body {
+    padding: 0 1.3rem 1.3rem;
+}
+.module-body .archive-timeline,
+.module-body .archive-trait-list,
+.module-body .archive-ability,
+.module-body .archive-relation,
+.module-body .archive-music-list,
+.module-body .archive-quote {
+    margin-top: 0;
+}
+
+.zone-source {
+    max-width: 880px;
+    margin: 0 auto 3rem;
+    padding: 1.2rem 1.2rem 0;
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.7;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-char="aimisi"]  { --char: var(--aimisi-pink); }
+[data-char="denia"]   { --char: var(--denia-lavender); }
+[data-char="sigrica"] { --char: var(--sigrica-green); }
+[data-char="drifter"] { --char: var(--drifter-blue); }
