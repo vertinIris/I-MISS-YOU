@@ -73,6 +73,7 @@
                 if (!settled) {
                     settled = true;
                     console.warn('[Repository] 云端初始化超时 (' + CLOUD_TIMEOUT/1000 + 's)，回退纯本地模式');
+                    dedupeLocalComments();
                     resolve();
                 }
             }, CLOUD_TIMEOUT);
@@ -90,10 +91,13 @@
                     seedCloudIfEmpty()
                         .then(function() { return syncLocalOnlyComments(); })
                         .then(function() {
+                            /* 清理历史遗留的重复评论（修复前版本反复拉取产生的本地副本） */
+                            dedupeLocalComments();
                             emit('cloudReady', { provider: provider });
                             resolve();
                         });
                 } else {
+                    dedupeLocalComments();
                     resolve();
                 }
             }).catch(function(err) {
@@ -101,6 +105,7 @@
                 settled = true;
                 clearTimeout(timer);
                 console.warn('[Repository] 云端初始化异常:', err.message);
+                dedupeLocalComments();
                 resolve();
             });
         });
@@ -183,43 +188,127 @@
     }
 
     /**
-     * 合并评论列表并去重（云端条目优先保留 id/authorId）
+     * 评论内容签名（用于去重 / 近似判定）
+     * 归一化：去掉姓名首尾空白、去掉正文所有空白与末尾标点，
+     * 使 "text" / "text。" / "text " / "text，" 视为同一条（满足"高度相似即去重"）。
      */
-    function mergeComments(localComments, cloudComments) {
-        localComments = Array.isArray(localComments) ? localComments : [];
-        cloudComments = Array.isArray(cloudComments) ? cloudComments : [];
-        var byKey = {};
+    function commentSig(c) {
+        var name = (c.name || '').trim();
+        var text = (c.text || '')
+            .replace(/\s+/g, '')
+            .replace(/[。.，,！!?？、~～\.]+$/g, '');
+        return name + '|' + text;
+    }
 
-        function commentKey(c) {
-            if (c.id) return 'id:' + c.id;
-            return (c.name || '') + '::' + c.text + '::' + (c.time || 0);
+    /**
+     * 评论去重核心：跨 id / 无 id 的内容签名去重
+     * 同 (name + text) 的两条评论，若存在一条带云端 id，则无 id 的那条视为重复并丢弃。
+     * @param {Array} list
+     * @returns {Array} 去重后的列表
+     */
+    function dedupeCommentList(list) {
+        list = Array.isArray(list) ? list : [];
+        var byId = {}, sigToId = {}, sigSeen = {}, out = [];
+        function sigOf(c) {
+            return commentSig(c);
         }
-
-        function upsert(c) {
-            if (!c || !c.text) return;
-            var key = commentKey(c);
-            var existing = byKey[key];
-            if (!existing) {
-                byKey[key] = c;
+        /* Pass 1: 登记所有带 id 的评论，建立 内容签名 -> id 映射 */
+        list.forEach(function(c) {
+            if (c && c.text && c.id != null) {
+                byId['id:' + c.id] = c;
+                sigToId[sigOf(c)] = c.id;
+            }
+        });
+        /* Pass 2: 决定保留/丢弃 */
+        list.forEach(function(c) {
+            if (!c || !c.text) { out.push(c); return; }
+            if (c.id != null) {
+                if (!sigSeen['id:' + c.id]) { sigSeen['id:' + c.id] = 1; out.push(c); }
                 return;
             }
-            /* 同内容时优先保留带云端 id 的版本 */
-            if (c.id && !existing.id) {
-                byKey[key] = Object.assign({}, existing, c);
-            } else if (c.id && existing.id && c.authorId && !existing.authorId) {
-                byKey[key] = Object.assign({}, existing, c);
-            }
+            var sig = sigOf(c);
+            if (sigToId[sig] != null) return;          /* 与某条带 id 评论内容相同 → 丢弃 */
+            var sk = 'sig:' + sig;
+            if (sigSeen[sk]) return;
+            sigSeen[sk] = 1; out.push(c);
+        });
+        return out;
+    }
+
+    /**
+     * 合并评论列表并去重（云端条目优先保留 id/authorId）
+     *
+     * 修复（重复入库根因）：
+     *   旧逻辑对云端评论用 `id:NNN`、对无 id 的本地种子评论用 `name::text::0` 作为去重键，
+     *   二者永远不相等 → 同一条种子评论（本地无 id + 云端点 id）被当作两条，
+     *   经 pullCommentsAndPersist 反复写回 localStorage，造成"反复拉取导致重复入库"。
+     *   现改为：先登记云端（带 id）锚点，本地无 id 且与某条带 id 评论内容相同的项直接丢弃，
+     *   并把本地的 timeStr/time 回写进云端锚点，避免种子时间戳丢失。
+     */
+    function mergeComments(localComments, cloudComments) {
+        localComments  = Array.isArray(localComments)  ? localComments  : [];
+        cloudComments  = Array.isArray(cloudComments)  ? cloudComments  : [];
+
+        function isSeedLabel(s) {
+            /* 仅把种子自带的"X月X日"式标签视为优先；自动生成的时间戳(含 '-')不算 */
+            return s && s.indexOf('月') >= 0;
+        }
+        function contentSig(c) {
+            return commentSig(c);
         }
 
-        localComments.forEach(upsert);
-        cloudComments.forEach(upsert);
+        var byId    = {};   /* id -> 评论 */
+        var sigToId = {};   /* 内容签名 -> id（用于识别无 id 重复） */
 
-        var merged = Object.keys(byKey).map(function(k) { return byKey[k]; });
+        function mergeFields(base, incoming) {
+            base = base || {}; incoming = incoming || {};
+            function pick(a, b) {
+                return (a !== undefined && a !== null && a !== '') ? a : b;
+            }
+            return {
+                id:       pick(incoming.id, base.id),
+                authorId: pick(incoming.authorId, base.authorId),
+                name:     pick(incoming.name, base.name),
+                color:    pick(incoming.color, base.color),
+                text:     pick(incoming.text, base.text),
+                parentId: pick(incoming.parentId, base.parentId),
+                time:     pick(incoming.time, base.time),
+                timeStr:  isSeedLabel(base.timeStr) ? base.timeStr
+                          : (isSeedLabel(incoming.timeStr) ? incoming.timeStr
+                          : pick(incoming.timeStr, base.timeStr)),
+                is_hidden: incoming.is_hidden === true ? true : (base.is_hidden === true)
+            };
+        }
 
-        /* v10.1: 云端权威剔除——本地带云端 id 但本次云端结果缺失的条目，
-           说明已在远端被删除/隐藏（Realtime DELETE 漏收或软删时代残留），本地同步剔除。
-           无 id 的乐观项/种子评论一律保留（种子无 id 字段，不受影响）。
-           安全性：仅在云端读取成功时才走到本函数（出错时上层已回退 localData）。 */
+        function register(c) {
+            if (!c || !c.text) return;
+            var sig = contentSig(c);
+            if (c.id != null) {
+                sigToId[sig] = c.id;
+                byId['id:' + c.id] = byId['id:' + c.id]
+                    ? mergeFields(byId['id:' + c.id], c)
+                    : c;
+                return;
+            }
+            /* 无 id：若已有同内容 id 版本，则把本地美观 timeStr/time 回写后丢弃自身 */
+            if (sigToId[sig] != null) {
+                var anchor = byId['id:' + sigToId[sig]];
+                if (anchor) {
+                    if (isSeedLabel(c.timeStr) && !isSeedLabel(anchor.timeStr)) anchor.timeStr = c.timeStr;
+                    if (c.time && !anchor.time) anchor.time = c.time;
+                }
+                return;
+            }
+            if (!byId['sig:' + sig]) byId['sig:' + sig] = c;
+        }
+
+        /* 关键：先处理云端（带 id），本地无 id 同内容项随后被识别为重复丢弃 */
+        cloudComments.forEach(register);
+        localComments.forEach(register);
+
+        var merged = Object.keys(byId).map(function(k) { return byId[k]; });
+
+        /* 云端权威剔除——本地带云端 id 但本次云端结果缺失的条目，说明已在远端被删除/隐藏 */
         var cloudIds = {};
         cloudComments.forEach(function(c) { if (c.id != null) cloudIds[String(c.id)] = 1; });
         merged = merged.filter(function(c) {
@@ -231,6 +320,63 @@
         merged = merged.filter(function(c) { return c.is_hidden !== true; });
         merged.sort(function(a, b) { return (a.time || 0) - (b.time || 0); });
         return merged;
+    }
+
+    /**
+     * 清理 localStorage 中已存在的重复评论（一次性修复 + 每次云端就绪后执行）
+     * 使用与 mergeComments 一致的跨 id/内容签名去重，确保本地持久层不再残留重复。
+     * @returns {number} 移除的重复条数
+     */
+    function dedupeLocalComments() {
+        var removed = 0;
+        try {
+            for (var i = 0; i < localStorage.length; i++) {
+                var key = localStorage.key(i);
+                if (!key || key.indexOf('fxre_comments_') !== 0) continue;
+                if (key === 'fxre_comments_seed_version') continue;
+                var list;
+                try { list = JSON.parse(safeGetItem(key) || '[]'); } catch(e) { continue; }
+                if (!Array.isArray(list)) continue;
+                var deduped = dedupeCommentList(list);
+                if (deduped.length !== list.length) {
+                    removed += (list.length - deduped.length);
+                    safeSetItem(key, JSON.stringify(deduped));
+                }
+            }
+        } catch(e) {}
+        if (removed > 0) console.log('[Repository] 已清理本地重复评论 ' + removed + ' 条');
+        return removed;
+    }
+
+    /**
+     * 云端重复清理（best-effort）：按 (target_id, author_name, content) 分组，
+     * 保留 id 最小的一条，其余删除。
+     * 注意：受 RLS 限制，匿名用户只能删除 author_id 为自己的评论；
+     * 种子评论 author_id 为 NULL，前端无法删除——需在 Supabase SQL 编辑器
+     * 以服务角色执行 db/migration-018-dedupe-comments.sql 完成清理。
+     * @returns {Promise<number>} 删除的重复条数
+     */
+    function dedupeCloudComments() {
+        if (!isCloudReady() || !window.SupabaseAdapter || !window.SupabaseAdapter.getAllComments) {
+            return Promise.resolve(0);
+        }
+        return window.SupabaseAdapter.getAllComments().then(function(grouped) {
+            var deleteTasks = [];
+            Object.keys(grouped).forEach(function(targetId) {
+                var rows = grouped[targetId] || [];
+                var seen = {};
+                rows.forEach(function(r) {
+                    if (!r || !r.text) return;
+                    var sig = ((r.author || '').trim()) + '|' + (r.text || '').trim();
+                    if (seen[sig]) {
+                        if (r.id != null) deleteTasks.push(window.SupabaseAdapter.deleteComment(r.id));
+                    } else {
+                        seen[sig] = 1;
+                    }
+                });
+            });
+            return Promise.all(deleteTasks).then(function() { return deleteTasks.length; });
+        }).catch(function() { return 0; });
     }
 
     /**
@@ -771,6 +917,8 @@
         pullCommentsAndPersist: pullCommentsAndPersist,
         syncLocalOnlyComments: syncLocalOnlyComments,
         fullCloudSync:         fullCloudSync,
+        dedupeLocalComments:   dedupeLocalComments,
+        dedupeCloudComments:   dedupeCloudComments,
 
         /* 投稿 */
         getSubmissions: getSubmissions,
