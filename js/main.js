@@ -3720,7 +3720,7 @@
                     });
                 }
             } else {
-                AdminAuth.login(function(success) {
+                AdminAuth.openLoginModal(function(success) {
                     if (success) {
                         updateSyncStatus();
                         if (typeof AdminPanel !== 'undefined') AdminPanel.updateNavButton();
@@ -3734,6 +3734,36 @@
                 });
             }
         });
+
+        /* 长按 800ms 触发管理员登录（移动端友好，替代不可靠的双击） */
+        var __adminPressTimer = null;
+        function __startAdminPress() {
+            if (__adminPressTimer) return;
+            __adminPressTimer = setTimeout(function() {
+                __adminPressTimer = null;
+                if (typeof AdminAuth === 'undefined') { alert('管理员模块未加载'); return; }
+                AdminAuth.openLoginModal(function(success) {
+                    if (success) {
+                        updateSyncStatus();
+                        if (typeof AdminPanel !== 'undefined') AdminPanel.updateNavButton();
+                        showSubmitToast('✅ 管理员模式已开启，可删除任意评论');
+                        document.querySelectorAll('.comment-area').forEach(function(area) {
+                            var id = area.id.replace('comments-', '');
+                            renderComments(id);
+                        });
+                    }
+                });
+            }, 800);
+        }
+        function __cancelAdminPress() {
+            if (__adminPressTimer) { clearTimeout(__adminPressTimer); __adminPressTimer = null; }
+        }
+        el.addEventListener('touchstart', __startAdminPress, { passive: true });
+        el.addEventListener('touchend', __cancelAdminPress);
+        el.addEventListener('touchcancel', __cancelAdminPress);
+        el.addEventListener('mousedown', __startAdminPress);
+        el.addEventListener('mouseup', __cancelAdminPress);
+        el.addEventListener('mouseleave', __cancelAdminPress);
 
         /* 页脚同步按钮已移至右下角 SyncManager 指示器 */
         updateSyncStatus();
@@ -4305,7 +4335,7 @@
                     setAccountPanelError('管理员模块未加载');
                     return;
                 }
-                AdminAuth.login(function(ok) {
+                AdminAuth.openLoginModal(function(ok) {
                     if (!ok) return;
                     var user = (typeof AuthManager !== 'undefined' && AuthManager.session)
                         ? { email: AuthManager.session.email || '' }

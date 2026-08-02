@@ -249,11 +249,60 @@
      * ================================================================ */
     window.AdminAuth = {
         login:    showLoginPrompt,
+        openLoginModal: openLoginModal,
         logout:   logout,
         isAdmin:  isAdmin,
         canDelete: canDelete,
         verify:   verify
     };
+
+    /* ================================================================
+     * UI: 页内登录 Modal（替代原生 prompt，移动端友好）
+     * ================================================================ */
+    function openLoginModal(onSuccess) {
+        if (cooldownUntil > Date.now()) {
+            var remaining = Math.ceil((cooldownUntil - Date.now()) / 1000);
+            alert('口令验证已锁定，请 ' + remaining + ' 秒后再试');
+            if (onSuccess) onSuccess(false);
+            return;
+        }
+        var overlay  = document.getElementById('admin-login-modal');
+        var input    = document.getElementById('admin-modal-input');
+        var errEl    = document.getElementById('admin-modal-error');
+        var submitBtn= document.getElementById('admin-modal-submit');
+        var cancelBtn= document.getElementById('admin-modal-cancel');
+        if (!overlay || !input) {
+            /* 降级到原生 prompt */
+            showLoginPrompt(onSuccess);
+            return;
+        }
+        function close() {
+            overlay.hidden = true;
+            input.value = '';
+            if (errEl) errEl.hidden = true;
+            document.removeEventListener('keydown', onKey, true);
+        }
+        function onKey(e) { if (e.key === 'Escape') close(); }
+        function submit() {
+            var result = verify(input.value);
+            if (result.success) {
+                close();
+                if (onSuccess) onSuccess(true);
+            } else {
+                if (errEl) { errEl.textContent = result.reason; errEl.hidden = false; }
+                input.focus();
+            }
+        }
+        overlay.hidden = false;
+        if (errEl) errEl.hidden = true;
+        input.value = '';
+        setTimeout(function() { try { input.focus(); } catch(e) {} }, 50);
+        submitBtn.onclick = submit;
+        cancelBtn.onclick = close;
+        overlay.onclick = function(e) { if (e.target === overlay) close(); };
+        document.addEventListener('keydown', onKey, true);
+        input.onkeydown = function(e) { if (e.key === 'Enter') { e.preventDefault(); submit(); } };
+    }
 
     /* 也挂到全局调试接口下 */
     if (!window.__FXRE) window.__FXRE = {};

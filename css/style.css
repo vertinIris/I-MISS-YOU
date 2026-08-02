@@ -6281,3 +6281,61 @@ textarea:focus-visible,
 [data-char="denia"]   { --char: var(--denia-lavender); }
 [data-char="sigrica"] { --char: var(--sigrica-green); }
 [data-char="drifter"] { --char: var(--drifter-blue); }
+
+/* ============ 角色档案：状态徽标与注记（达妮娅等） ============ */
+.archive-status-badge {
+    display: inline-block;
+    padding: 0.12em 0.7em;
+    border-radius: 999px;
+    font-size: 0.82em;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #E8ECFF;
+    background: linear-gradient(135deg, rgba(107,138,255,0.35), rgba(184,156,217,0.35));
+    border: 1px solid rgba(168,216,255,0.5);
+    box-shadow: 0 0 12px rgba(107,138,255,0.25);
+}
+.archive-note {
+    margin: 1.4rem 0 0;
+    padding: 0.9rem 1.1rem;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: rgba(232,236,255,0.78);
+    background: rgba(107,138,255,0.08);
+    border-left: 3px solid rgba(168,216,255,0.55);
+    border-radius: 0 10px 10px 0;
+}
+
+/* ============ 管理员登录 Modal（替代原生 prompt，移动端友好） ============ */
+.admin-modal-overlay {
+    position: fixed; inset: 0;
+    z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.2rem;
+    background: rgba(8, 8, 18, 0.66);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+.admin-modal-overlay[hidden] { display: none; }
+.admin-modal {
+    width: 100%; max-width: 380px;
+    background: rgba(18, 18, 32, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    padding: 1.6rem 1.5rem 1.4rem;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+}
+.admin-modal h3 { margin: 0 0 0.3rem; color: #F0F4FF; font-size: 1.15rem; }
+.admin-modal-hint { margin: 0 0 1rem; font-size: 0.82rem; color: rgba(255,255,255,0.6); }
+.admin-modal-input {
+    width: 100%; box-sizing: border-box;
+    padding: 0.7rem 0.9rem; margin-bottom: 0.6rem;
+    font-size: 1rem;
+    color: #F0F4FF; background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.18); border-radius: 10px;
+    outline: none;
+}
+.admin-modal-input:focus { border-color: rgba(168,216,255,0.7); }
+.admin-modal-error { margin: 0 0 0.6rem; font-size: 0.8rem; color: #FF9BB5; }
+.admin-modal-error[hidden] { display: none; }
+.admin-modal-actions { display: flex; gap: 0.7rem; justify-content: flex-end; margin-top: 0.4rem; }

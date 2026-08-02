@@ -136,7 +136,7 @@
                 <a href="#diary" class="nav-link">日志</a>
                 <a href="#submit" class="nav-link">投稿</a>
                 <a href="#community" class="nav-link">社区</a>
-                <a href="#character-hub" class="nav-link">角色</a>
+                <a href="#character-hub" class="nav-link">角色档案</a>
                 <button type="button" class="nav-link nav-link-btn" id="admin-panel-open-btn" hidden title="版主/管理后台">管理</button>
             </div>
 
@@ -492,7 +492,7 @@
                 </span>
                 <span class="character-entry-name">达妮娅</span>
                 <span class="character-entry-alias">泡泡与虚质</span>
-                <span class="character-entry-tagline">拉海洛的「无害好学生」 · 残星会与星炬学院的双重身份</span>
+                <span class="character-entry-tagline">星炬学院学生 · 已确认失踪 · 未对学院构成威胁</span>
                 <span class="character-entry-tags">
                     <span class="char-tag">热熔</span>
                     <span class="char-tag">音感仪</span>
@@ -630,7 +630,7 @@
     </section>
 
     <!-- ============ Character Hub ============ -->
-    <section class="section" id="characters">
+    <section class="section" id="fanwork">
         <div class="container">
             <div class="section-header reveal">
                 <span class="section-label">FANWORK</span>
@@ -1837,5 +1837,19 @@
     <script defer src="js/admin-panel.js"></script>
     <script defer src="js/particles.js"></script>
     <script defer src="js/main.js"></script>
+    <!-- 管理员登录 Modal（替代原生 prompt，移动端友好） -->
+    <div class="admin-modal-overlay" id="admin-login-modal" hidden>
+        <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
+            <h3 id="admin-modal-title">管理员登录</h3>
+            <p class="admin-modal-hint">请输入管理员口令</p>
+            <input type="password" id="admin-modal-input" class="admin-modal-input" autocomplete="off" placeholder="口令" aria-label="管理员口令" />
+            <p class="admin-modal-error" id="admin-modal-error" hidden></p>
+            <div class="admin-modal-actions">
+                <button type="button" class="btn-ghost" id="admin-modal-cancel">取消</button>
+                <button type="button" class="btn-primary" id="admin-modal-submit">登录</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
