@@ -1,0 +1,70 @@
+/* ============================================================
+   社区 / 创作板块 UI 极高水准打磨（#123 子集）
+   纯增强层：复用既有 .community-card 等结构，仅在加载顺序靠后
+   时补充「角色色描边 + 顺滑微交互 + 空状态/分页/页脚链接」细节。
+   仅用 transform / opacity / box-shadow，保 60fps。
+   ============================================================ */
+
+/* 卡片：角色色顶边 + 顺滑悬浮（不覆盖既有 border，仅补顶部色条） */
+.community-card {
+    border-top: 3px solid var(--char, var(--aimisi-pink));
+    transition: transform .38s cubic-bezier(.16,1,.3,1),
+                box-shadow .38s ease,
+                background .38s ease;
+}
+.community-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 46px rgba(0,0,0,.38),
+                0 0 28px color-mix(in srgb, var(--char, #FF6B9D) 30%, transparent);
+}
+
+/* 筛选 / 标签：激活态顺滑浮起 + 柔光，过渡更细腻 */
+.community-filter-btn,
+.tag-chip {
+    transition: background .3s ease, color .3s ease,
+                transform .25s cubic-bezier(.16,1,.3,1), box-shadow .3s ease;
+}
+.community-filter-btn.active,
+.tag-chip.active {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(255,107,157,.22);
+}
+
+/* 空状态：入场轻弹 */
+.community-empty.show {
+    animation: ce-pop .42s cubic-bezier(.16,1,.3,1);
+}
+@keyframes ce-pop {
+    from { opacity: 0; transform: translateY(12px) scale(.98); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* 分页：圆角 + 悬浮浮起 */
+.community-pagination { gap: 8px; margin-top: 28px; }
+.community-pagination button {
+    border-radius: 10px;
+    transition: transform .2s ease, background .2s ease, color .2s ease;
+}
+.community-pagination button:hover { transform: translateY(-2px); }
+
+/* 页脚： discreet 论坛入口（不破坏飞行雪绒沉浸感） */
+.footer-forum-link {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--drifter-blue-light, #A8D8FF);
+    opacity: .82;
+    font-size: 13px;
+    text-decoration: none;
+    transition: opacity .25s ease, color .25s ease;
+}
+.footer-forum-link:hover { opacity: 1; color: var(--aimisi-pink); }
+
+@media (prefers-reduced-motion: reduce) {
+    .community-card,
+    .community-filter-btn,
+    .tag-chip,
+    .community-pagination button,
+    .footer-forum-link,
+    .community-empty.show { animation: none !important; transition: opacity .2s ease !important; }
+    .community-card:hover { transform: none !important; }
+}

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鸣潮同人论坛 · 飞行雪绒</title>
+    <meta name="description" content="鸣潮同人创作聚合站 —— 飞行雪绒沉浸站、角色档案、世界观考据、同人创作与社区讨论。">
+    <meta property="og:title" content="鸣潮同人论坛 · 飞行雪绒">
+    <meta property="og:description" content="星炬学院的创作集合：飞行雪绒沉浸站、角色档案、世界观考据、同人创作与社区讨论。">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="forum.css">
+    <script>
+        /* 沿用主站主题偏好（snowfluff-theme: dark/light/auto），避免跨页跳变 */
+        (function () {
+            try {
+                var t = localStorage.getItem('snowfluff-theme') || 'dark';
+                var eff = t;
+                if (t === 'auto') eff = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', eff);
+            } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
+        })();
+    </script>
+</head>
+<body id="top">
+
+    <nav class="nav-glass" id="navbar">
+        <div class="nav-container">
+            <a href="#top" class="nav-logo">
+                <svg class="nav-logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <g stroke="#A8D8FF" stroke-width="2" stroke-linecap="round" opacity="0.9">
+                        <line x1="20" y1="4" x2="20" y2="36"/><line x1="4" y1="12" x2="36" y2="28"/><line x1="4" y1="28" x2="36" y2="12"/>
+                    </g>
+                    <circle cx="20" cy="20" r="4" fill="#FFFFFF" opacity="0.9"/>
+                </svg>
+                <span>鸣潮同人论坛</span>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="#top" class="nav-link">首页</a>
+                <a href="../index.html" class="nav-link">飞行雪绒</a>
+                <a href="../index.html#character-hub" class="nav-link">角色档案</a>
+                <a href="#worldview" class="nav-link">世界观</a>
+                <a href="../index.html#submit" class="nav-link">创作</a>
+                <a href="../index.html#community" class="nav-link">讨论</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="forum-hero">
+        <div class="forum-hero-content">
+            <span class="forum-hero-label">STARTORCH · FAN FORUM</span>
+            <h1 class="forum-hero-title">鸣潮同人论坛</h1>
+            <p class="forum-hero-sub">
+                星炬学院的创作集合 —— 这里是飞行雪绒的故乡，也是所有鸣潮同好的聚集地。<br>
+                进入沉浸站、翻阅角色档案、考据世界观、投稿你的同人、加入讨论。
+            </p>
+            <div class="forum-hero-actions">
+                <a href="../index.html" class="btn-primary magnetic"><span>进入飞行雪绒</span></a>
+                <a href="../index.html#submit" class="btn-ghost magnetic"><span>去投稿</span></a>
+            </div>
+        </div>
+    </header>
+
+    <section class="forum-section">
+        <div class="forum-section-inner">
+            <div class="section-header reveal">
+                <span class="section-label">SECTIONS</span>
+                <h2 class="section-title">板块入口</h2>
+                <p class="section-desc">从一个入口，走到鸣潮的每一个角落</p>
+            </div>
+            <div class="forum-grid">
+
+                <a class="forum-entry glass" href="../index.html" style="--char: var(--aimisi-pink);">
+                    <span class="forum-entry-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                    </span>
+                    <span class="forum-entry-title">飞行雪绒</span>
+                    <span class="forum-entry-desc">爱弥斯的秘密歌手账号，第一人称沉浸式社交体验 —— 动态、音乐、日志与彩蛋。</span>
+                    <span class="forum-entry-cta">进入沉浸站 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                </a>
+
+                <a class="forum-entry glass" href="../index.html#character-hub" style="--char: var(--drifter-blue);">
+                    <span class="forum-entry-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    </span>
+                    <span class="forum-entry-title">角色档案</span>
+                    <span class="forum-entry-desc">星炬学院的他们：爱弥斯、达妮娅、西格莉卡、琳奈、莫宁、洛瑟菈 —— 官方设定考据。</span>
+                    <span class="forum-entry-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                </a>
+
+                <a class="forum-entry glass" href="../index.html#submit" style="--char: var(--drifter-purple);">
+                    <span class="forum-entry-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+                    </span>
+                    <span class="forum-entry-title">同人创作</span>
+                    <span class="forum-entry-desc">文字 / 故事 / 诗歌 / 插画 / 音乐 —— 投稿你的鸣潮同人，让世界更丰富。</span>
+                    <span class="forum-entry-cta">开始创作 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                </a>
+
+                <a class="forum-entry glass" href="../index.html#community" style="--char: var(--sigrica-green);">
+                    <span class="forum-entry-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </span>
+                    <span class="forum-entry-title">社区讨论</span>
+                    <span class="forum-entry-desc">来自星炬学院的创作集合与话题讨论 —— 收藏、点赞、评论，与同好相遇。</span>
+                    <span class="forum-entry-cta">进入社区 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="forum-section" id="worldview">
+        <div class="forum-section-inner">
+            <div class="section-header reveal">
+                <span class="section-label">LORE</span>
+                <h2 class="section-title">世界观考据</h2>
+                <p class="section-desc">读懂鸣潮，才懂飞行雪绒为何而唱</p>
+            </div>
+            <div class="lore-grid">
+
+                <article class="lore-card" style="--char: var(--drifter-blue);">
+                    <h3>星炬学院</h3>
+                    <p>拉海洛的学园都市，下设隧者工学、拉贝尔开发、光矩能源、虚质科学四学部。爱弥斯曾是最高的隧者适格者，也是全校的英雄。</p>
+                </article>
+
+                <article class="lore-card" style="--char: var(--denia-lavender);">
+                    <h3>残星会</h3>
+                    <p>对立阵营的隐秘势力。部分角色身负双重身份，立场复杂 —— 考据时请以官方剧情为准，不轻易下定论。</p>
+                </article>
+
+                <article class="lore-card" style="--char: var(--drifter-blue-light);">
+                    <h3>拉海洛</h3>
+                    <p>罗伊冰原之下的故乡，冰雪与极光之地。这里有雪原小屋，也有与家人共度的冬天 —— 飞行雪绒最深的眷恋。</p>
+                </article>
+
+                <article class="lore-card" style="--char: var(--lucilla-gold);">
+                    <h3>深空联合</h3>
+                    <p>无国界科研同盟，星炬学院的母体。在前沿研究与「换日仪式」的阴影下，串联起整个鸣潮的宏大叙事。</p>
+                </article>
+
+            </div>
+        </div>
+    </section>
+
+    <p class="forum-foot-note">
+        飞行雪绒是《鸣潮》角色爱弥斯的同人创作账号，本论坛为粉丝向非官方二创聚合站。<br>
+        回到 <a href="../index.html" style="color: var(--aimisi-pink);">飞行雪绒沉浸站</a> · Made with 星辉与微光
+    </p>
+
+</body>
+</html>

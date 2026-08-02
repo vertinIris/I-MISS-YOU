@@ -3206,6 +3206,22 @@
     }
 
     /* ===== R19: 投稿卡片构建 + 增量 DOM 协调（替代整网格 innerHTML 重建） ===== */
+    var CHAR_COLOR_MAP = {
+        '爱弥斯': 'var(--aimisi-pink)',
+        '达妮娅': 'var(--denia-lavender)',
+        '西格莉卡': 'var(--sigrica-green)',
+        '琳奈': 'var(--linne-purple)',
+        '莫宁': 'var(--mornye-red)',
+        '洛瑟菈': 'var(--lucilla-gold)',
+        '漂泊者': 'var(--drifter-blue)'
+    };
+    function charColorForSubmission(s) {
+        if (!s || !s.tags || !Array.isArray(s.tags)) return '';
+        for (var i = 0; i < s.tags.length; i++) {
+            if (CHAR_COLOR_MAP[s.tags[i]]) return CHAR_COLOR_MAP[s.tags[i]];
+        }
+        return '';
+    }
     function buildSubmissionCardHTML(s) {
         var typeLabels = { text: '文字', story: '故事', poem: '诗歌', art: '插画', music: '音乐' };
         var initial = s.name.charAt(0).toUpperCase();
@@ -3233,7 +3249,9 @@
         var imgHtml = imgUrl
             ? '<img class="community-card-image" src="' + escapeHTML(imgUrl) + '" alt="" loading="lazy">'
             : '';
-        return '<article class="community-card" data-id="' + s.id + '">' +
+        var cardCharColor = charColorForSubmission(s);
+        var cardCharStyle = cardCharColor ? ' style="--char:' + cardCharColor + '"' : '';
+        return '<article class="community-card" data-id="' + s.id + '"' + cardCharStyle + '>' +
             '<div class="community-card-header">' +
             '<div class="community-card-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
             '<div class="community-card-info">' +

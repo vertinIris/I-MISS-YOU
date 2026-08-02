@@ -41,6 +41,8 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/secret-portal.css">
+    <link rel="stylesheet" href="css/community-polish.css">
 </head>
 <body>
 
@@ -502,11 +504,75 @@
                 <span class="character-entry-cta">深入了解 <svg class="icon"><use href="#ic-chevron-right"/></svg></span>
             </a>
 
+            <a class="character-entry glass" href="characters/sigrica/index.html" style="--char: var(--sigrica-green);">
+                <span class="character-entry-badge" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" class="entry-badge-icon"><use href="#ic-sparkles"/></svg>
+                </span>
+                <span class="character-entry-name">西格莉卡</span>
+                <span class="character-entry-alias">昭日者</span>
+                <span class="character-entry-tagline">星炬学院学生 · 罗伊符文的共鸣者</span>
+                <span class="character-entry-tags">
+                    <span class="char-tag">气动</span>
+                    <span class="char-tag">臂铠</span>
+                    <span class="char-tag">昭日者</span>
+                    <span class="char-tag">西西</span>
+                </span>
+                <span class="character-entry-cta">深入了解 <svg class="icon"><use href="#ic-chevron-right"/></svg></span>
+            </a>
+
+            <a class="character-entry glass" href="characters/linne/index.html" style="--char: var(--linne-purple);">
+                <span class="character-entry-badge" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" class="entry-badge-icon"><use href="#ic-bolt"/></svg>
+                </span>
+                <span class="character-entry-name">琳奈</span>
+                <span class="character-entry-alias">预科生</span>
+                <span class="character-entry-tagline">星炬学院预科学生 · 光学迷彩与辅助机</span>
+                <span class="character-entry-tags">
+                    <span class="char-tag">衍射</span>
+                    <span class="char-tag">佩枪</span>
+                    <span class="char-tag">光学迷彩</span>
+                    <span class="char-tag">莫宁的学生</span>
+                </span>
+                <span class="character-entry-cta">深入了解 <svg class="icon"><use href="#ic-chevron-right"/></svg></span>
+            </a>
+
+            <a class="character-entry glass" href="characters/mornye/index.html" style="--char: var(--mornye-red);">
+                <span class="character-entry-badge" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" class="entry-badge-icon"><use href="#ic-sparkles"/></svg>
+                </span>
+                <span class="character-entry-name">莫宁</span>
+                <span class="character-entry-alias">星枢演构</span>
+                <span class="character-entry-tagline">深空联合学者 · 星炬学院隧者工学部教授</span>
+                <span class="character-entry-tags">
+                    <span class="char-tag">热熔</span>
+                    <span class="char-tag">长刃</span>
+                    <span class="char-tag">星枢演构</span>
+                    <span class="char-tag">白发红瞳</span>
+                </span>
+                <span class="character-entry-cta">深入了解 <svg class="icon"><use href="#ic-chevron-right"/></svg></span>
+            </a>
+
+            <a class="character-entry glass" href="characters/lucilla/index.html" style="--char: var(--lucilla-gold);">
+                <span class="character-entry-badge" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" class="entry-badge-icon"><use href="#ic-book"/></svg>
+                </span>
+                <span class="character-entry-name">洛瑟菈</span>
+                <span class="character-entry-alias">校长</span>
+                <span class="character-entry-tagline">星炬学院校长 · 记忆宫殿的守望者</span>
+                <span class="character-entry-tags">
+                    <span class="char-tag">冷凝</span>
+                    <span class="char-tag">音感仪</span>
+                    <span class="char-tag">记忆宫殿</span>
+                    <span class="char-tag">守望者</span>
+                </span>
+                <span class="character-entry-cta">深入了解 <svg class="icon"><use href="#ic-chevron-right"/></svg></span>
+            </a>
+
             <div class="character-entry character-entry--locked" aria-disabled="true">
                 <span class="character-entry-badge" aria-hidden="true">
                     <svg viewBox="0 0 24 24" class="entry-badge-icon"><use href="#ic-star"/></svg>
                 </span>
-                <span class="character-entry-name">西格莉卡 / 漂泊者</span>
+                <span class="character-entry-name">漂泊者</span>
                 <span class="character-entry-alias">即将上线</span>
                 <span class="character-entry-tagline">专区内容编写中</span>
                 <span class="character-entry-cta">敬请期待</span>
@@ -1801,6 +1867,7 @@
             <div class="footer-bottom">
                 <p>© 2026 飞行雪绒 · 同人创作 · 非商业用途</p>
                 <p class="footer-meta">v10.0 · R18 字阶系统 · R20 Realtime 硬删 · 版主批量审核 · profiles · Made with 星辉与微光</p>
+                <a href="forum/index.html" class="footer-forum-link">鸣潮同人论坛 →</a>
                 <p class="footer-sync" id="sync-status" title="点击复制诊断信息 · 同步请用右下角 🔄 按钮">☁ 本地模式</p>
             </div>
         </div>
@@ -1836,6 +1903,8 @@
     <script defer src="js/rate-limiter-client.js"></script>
     <script defer src="js/admin-panel.js"></script>
     <script defer src="js/particles.js"></script>
+    <div id="secret-portal-root"></div>
+    <script defer src="js/secret-portal.js"></script>
     <script defer src="js/main.js"></script>
     <!-- 管理员登录 Modal（替代原生 prompt，移动端友好） -->
     <div class="admin-modal-overlay" id="admin-login-modal" hidden>

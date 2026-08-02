@@ -5940,6 +5940,9 @@ textarea:focus-visible,
 :root {
     --denia-lavender: #B89CD9;
     --sigrica-green: #4EC89A;
+    --linne-purple: #B98CFF;
+    --mornye-red: #FF6B5B;
+    --lucilla-gold: #E8C56A;
 }
 
 /* ---- 首页角色入口卡 ---- */
@@ -6281,6 +6284,9 @@ textarea:focus-visible,
 [data-char="denia"]   { --char: var(--denia-lavender); }
 [data-char="sigrica"] { --char: var(--sigrica-green); }
 [data-char="drifter"] { --char: var(--drifter-blue); }
+[data-char="linne"]   { --char: var(--linne-purple); }
+[data-char="mornye"]  { --char: var(--mornye-red); }
+[data-char="lucilla"] { --char: var(--lucilla-gold); }
 
 /* ============ 角色档案：状态徽标与注记（达妮娅等） ============ */
 .archive-status-badge {

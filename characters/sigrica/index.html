@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="西格莉卡 · 昭日者 · 星炬学院的角色专区 — 背景、性格、能力、关系与演绎。">
+    <title>西格莉卡 · 昭日者 | 角色专区</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body data-char="sigrica">
+
+    <!-- SVG Icon Sprite (inline linear icons, currentColor) -->
+    <svg class="icon-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <defs>
+            <symbol id="ic-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+            <symbol id="ic-sparkles" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8z"/></symbol>
+            <symbol id="ic-bolt" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+            <symbol id="ic-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+            <symbol id="ic-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
+            <symbol id="ic-mic" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></symbol>
+            <symbol id="ic-broadcast" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M4.9 4.9a10 10 0 0 0 0 14.2M19.1 4.9a10 10 0 0 1 0 14.2"/></symbol>
+            <symbol id="ic-disc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></symbol>
+            <symbol id="ic-paper-plane" viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></symbol>
+            <symbol id="ic-star" viewBox="0 0 24 24"><path d="M12 2l3 6.5 7 .9-5 5 1.3 7L12 17.8 5.4 21l1.3-7-5-5 7-.9z"/></symbol>
+            <symbol id="ic-quote" viewBox="0 0 24 24"><path d="M3 21c3 0 7-1 7-8V5H3v8h4c0 3-1 4-4 4zM14 21c3 0 7-1 7-8V5h-7v8h4c0 3-1 4-4 4z"/></symbol>
+            <symbol id="ic-chevron-right" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></symbol>
+            <symbol id="ic-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+            <symbol id="ic-bubble" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="9.5" cy="10" r="1.6" fill="currentColor" stroke="none"/><circle cx="15" cy="14.5" r="1.1" fill="currentColor" stroke="none"/></symbol>
+            <symbol id="ic-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></symbol>
+        </defs>
+    </svg>
+
+    <!-- Top bar -->
+    <header class="zone-topbar">
+        <a class="zone-home" href="../index.html#character-hub">
+            <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use href="#ic-arrow-left"/></svg>
+            星炬学院档案
+        </a>
+        <nav class="zone-switch" aria-label="角色切换">
+            <a href="../aimisi/index.html">爱弥斯</a>
+            <a href="../denia/index.html">达妮娅</a>
+            <span class="is-active">西格莉卡</span>
+            <span class="is-locked">琳奈</span>
+            <span class="is-locked">莫宁</span>
+            <span class="is-locked">洛瑟菈</span>
+            <span class="is-locked">漂泊者</span>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="zone-hero">
+        <div class="zone-hero-badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-sparkles"/></svg>
+        </div>
+        <h1 class="zone-hero-name">西格莉卡</h1>
+        <p class="zone-hero-alias">昭日者</p>
+        <p class="zone-hero-tagline">星炬学院学生 · 罗伊符文的共鸣者 · 为了成为合格的昭日者，总是用尽全力</p>
+    </section>
+
+    <!-- Breadcrumb -->
+    <nav class="zone-breadcrumb" aria-label="面包屑">
+        <a href="../index.html">首页</a><span class="sep">/</span><a href="../index.html#character-hub">角色</a><span class="sep">/</span>西格莉卡
+    </nav>
+
+    <!-- Stats -->
+    <section class="zone-stats">
+        <div class="zone-stat"><div class="zone-stat-label">共鸣属性</div><div class="zone-stat-value">气动</div></div>
+        <div class="zone-stat"><div class="zone-stat-label">武器</div><div class="zone-stat-value">臂铠（昭日译注）</div></div>
+        <div class="zone-stat"><div class="zone-stat-label">符文</div><div class="zone-stat-value">罗伊符文</div></div>
+        <div class="zone-stat"><div class="zone-stat-label">所属</div><div class="zone-stat-value">星炬学院</div></div>
+        <div class="zone-stat"><div class="zone-stat-label">称号</div><div class="zone-stat-value">昭日者</div></div>
+        <div class="zone-stat"><div class="zone-stat-label">战斗定位</div><div class="zone-stat-value">主力输出 · 牵引 · 声骸技能伤害</div></div>
+        <div class="zone-stat"><div class="zone-stat-label">获取方式</div><div class="zone-stat-value">符文烁醒之刻</div></div>
+        <div class="zone-stat"><div class="zone-stat-label">别号</div><div class="zone-stat-value">西西（达妮娅专称）</div></div>
+    </section>
+
+    <!-- Modules -->
+    <main class="zone-modules">
+
+        <details class="module" open>
+            <summary><svg class="module-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-book"/></svg>背景故事<span class="module-chevron" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+            <div class="module-body">
+                <div class="archive-timeline">
+                    <div class="archive-timeline-item">
+                        <div class="archive-timeline-era">星炬学院的学生</div>
+                        <p class="archive-timeline-text">西格莉卡是星炬学院的学生，罗伊符文的共鸣者。她总是带着一种「想被大家需要」的认真，把每一次训练、每一次任务都当作成为合格昭日者的阶梯。</p>
+                    </div>
+                    <div class="archive-timeline-item">
+                        <div class="archive-timeline-era">昭日者之路</div>
+                        <p class="archive-timeline-text">「为了满足大家的期待，为了成为一位合格的昭日者，她总是用尽全力。」淳朴又真诚，努力像大人一样背负使命的样子，连校长洛瑟菈都忍不住心疼。</p>
+                    </div>
+                    <div class="archive-timeline-item">
+                        <div class="archive-timeline-era">换日庆典的暗面</div>
+                        <p class="archive-timeline-text">3.2版本「于影中启明的决心」。换日庆典期间，校长洛瑟菈于「学院暗面」发现了一丝不属于学院的频率，怀疑与残星会会长预告的「游戏」有关。西格莉卡与漂泊者于暗面偶遇，一同挖掘谜题背后的真相。</p>
+                    </div>
+                    <div class="archive-timeline-item">
+                        <div class="archive-timeline-era">与达妮娅</div>
+                        <p class="archive-timeline-text">西格莉卡是达妮娅的挚友，互称「西西」「娅娅」。在达妮娅晦暗矛盾的一生里，西格莉卡是「能给她带来生命光芒的存在」。</p>
+                    </div>
+                </div>
+                <p class="archive-note">本档案标注（项目侧口径）：西格莉卡为官方 3.2 版本实装角色，设定信息来自官方版本说明与角色资料。同人创作部分均基于官方设定的二次演绎，不代表游戏官方立场。</p>
+            </div>
+        </details>
+
+        <details class="module">
+            <summary><svg class="module-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-sparkles"/></svg>性格特征<span class="module-chevron" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+            <div class="module-body">
+                <ul class="archive-trait-list">
+                    <li class="archive-trait-item"><strong>淳朴真诚</strong>：洛瑟菈评价她「多可爱的小姑娘啊，淳朴又真诚」。</li>
+                    <li class="archive-trait-item"><strong>认真负责</strong>：努力像大人一样背负使命，哪怕力有不逮也要用尽全力。</li>
+                    <li class="archive-trait-item"><strong>坚韧努力</strong>：总是用尽全力去满足大家的期待，从不敷衍。</li>
+                    <li class="archive-trait-item"><strong>惹人疼</strong>：认真到笨拙的模样，让身边所有人都想护着她。</li>
+                    <li class="archive-trait-item"><strong>珍视羁绊</strong>：把达妮娅视作生命里的光， friendship 是她最柔软也最坚定的部分。</li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="module">
+            <summary><svg class="module-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-bolt"/></svg>能力体系<span class="module-chevron" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+            <div class="module-body">
+                <div class="archive-ability">
+                    <div class="archive-ability-row"><span class="archive-ability-label">共鸣属性</span><span class="archive-ability-value">气动</span></div>
+                    <div class="archive-ability-row"><span class="archive-ability-label">武器</span><span class="archive-ability-value">臂铠（专属武器「昭日译注」）</span></div>
+                    <div class="archive-ability-row"><span class="archive-ability-label">符文</span><span class="archive-ability-value">罗伊符文</span></div>
+                    <div class="archive-ability-row"><span class="archive-ability-label">战斗风格</span><span class="archive-ability-value">主力输出 · 牵引 · 声骸技能伤害</span></div>
+                    <div class="archive-ability-row"><span class="archive-ability-label">共鸣解放</span><span class="archive-ability-value">以昭日之力倾泻气动伤害，呼应「近日的端点」</span></div>
+                </div>
+            </div>
+        </details>
+
+        <details class="module">
+            <summary><svg class="module-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-link"/></svg>人物关系<span class="module-chevron" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+            <div class="module-body">
+                <div class="archive-relation">
+                    <span class="archive-relation-name">达妮娅（娅娅）</span>
+                    <span class="archive-relation-desc">星炬学院同学、挚友。互称西西/娅娅。是达妮娅生命里「带来光芒」的人。</span>
+                </div>
+                <div class="archive-relation">
+                    <span class="archive-relation-name">洛瑟菈</span>
+                    <span class="archive-relation-desc">星炬学院校长。在暗面异变中发来飞讯，是守护她与全体学生的守望者。</span>
+                </div>
+                <div class="archive-relation">
+                    <span class="archive-relation-name">爱弥斯</span>
+                    <span class="archive-relation-desc">同校前辈，星炬学院英雄。以「飞行雪绒」之名在深夜轻歌。</span>
+                </div>
+                <div class="archive-relation">
+                    <span class="archive-relation-name">漂泊者</span>
+                    <span class="archive-relation-desc">3.2主线「影下不落的黄金」中的调查伙伴，于学院暗面一同揭开谜题。</span>
+                </div>
+            </div>
+        </details>
+
+        <details class="module">
+            <summary><svg class="module-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-music"/></svg>演绎与表达<span class="module-chevron" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+            <div class="module-body">
+                <div class="archive-music-list">
+                    <div class="archive-music-item">
+                        <svg class="archive-music-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-star"/></svg>
+                        <div class="archive-music-info"><div class="archive-music-title">3.2版本「于影中启明的决心」</div><div class="archive-music-desc">2026-03-19 版本更新实装。作为全新 5 星共鸣者登场，可在[符文烁醒之刻]角色活动唤取获得。</div></div>
+                    </div>
+                    <div class="archive-music-item">
+                        <svg class="archive-music-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-bolt"/></svg>
+                        <div class="archive-music-info"><div class="archive-music-title">专属武器「昭日译注」</div><div class="archive-music-desc">臂铠。「所有的阳光照耀着你，于是答案呼之欲出。」可在[昭日译注]武器活动唤取获得。</div></div>
+                    </div>
+                    <div class="archive-music-item">
+                        <svg class="archive-music-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-sparkles"/></svg>
+                        <div class="archive-music-info"><div class="archive-music-title">设计核心「昭日者」</div><div class="archive-music-desc">库洛以「用尽全力成为合格昭日者」的纯粹，外化她淳朴真诚、惹人疼的性格弧光。</div></div>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <details class="module">
+            <summary><svg class="module-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#ic-quote"/></svg>经典语录<span class="module-chevron" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+            <div class="module-body">
+                <div class="archive-quote">
+                    <p class="archive-quote-text">「为了满足大家的期待，为了成为一位合格的昭日者，她总是用尽全力。」</p>
+                    <p class="archive-quote-source">（洛瑟菈语音）「多可爱的小姑娘啊，淳朴又真诚，努力像大人一样背负使命的样子真的很惹人疼。」</p>
+                </div>
+            </div>
+        </details>
+
+    </main>
+
+    <!-- Source note -->
+    <footer class="zone-source">
+        <strong>设定考据来源</strong>：本档案中的角色设定信息均来自官方公开资料，包括《鸣潮》3.2版本「于影中启明的决心」官方版本说明、库洛游戏官方站点及游戏内文本。同人创作部分（动态、日志、社区投稿）均为基于官方设定的二次创作，不代表游戏官方立场。游戏数据与信息的著作权属于广州库洛科技有限公司。不添加官方未公开的游戏数据或信息。
+    </footer>
+
+</body>
+</html>

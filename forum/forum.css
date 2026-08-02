@@ -1,0 +1,155 @@
+/* ============================================================
+   鸣潮同人论坛 · 聚合主页（加法式论坛主体）
+   复用全局 style.css 令牌与玻璃拟态语言；本文件仅承载
+   论坛专属布局：hero / 板块入口卡 / 世界观考据卡。
+   入口均指向现有飞行雪绒站（../index.html 及其锚点 / 角色子页），
+   飞行雪绒作为「主题沉浸站」嵌入，不构成结构性改写。
+   ============================================================ */
+
+.forum-hero {
+    position: relative;
+    min-height: 78vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    overflow: hidden;
+}
+.forum-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(255,107,157,.18), transparent 45%),
+        radial-gradient(circle at 80% 30%, rgba(107,138,255,.20), transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(182,107,255,.16), transparent 50%);
+    pointer-events: none;
+}
+.forum-hero-content { position: relative; z-index: 1; max-width: 760px; }
+.forum-hero-label {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: .35em;
+    color: var(--drifter-blue-light, #A8D8FF);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    padding: 6px 16px;
+    border: 1px solid rgba(168,216,255,.25);
+    border-radius: 999px;
+    background: rgba(255,255,255,.04);
+}
+.forum-hero-title {
+    font-family: "Noto Serif SC", serif;
+    font-size: clamp(40px, 8vw, 76px);
+    font-weight: 900;
+    line-height: 1.05;
+    margin: 0 0 18px;
+    background: linear-gradient(100deg, #FF6B9D, #A8D8FF, #B66BFF, #FF6B9D);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: forum-flow 8s linear infinite;
+}
+@keyframes forum-flow { to { background-position: 300% 0; } }
+.forum-hero-sub {
+    font-size: clamp(15px, 2.4vw, 19px);
+    color: rgba(240,244,255,.82);
+    line-height: 1.9;
+    margin: 0 auto 34px;
+    max-width: 620px;
+}
+.forum-hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+/* 板块入口网格 */
+.forum-section { padding: 80px 24px; }
+.forum-section-inner { max-width: 1120px; margin: 0 auto; }
+.forum-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 22px;
+    margin-top: 36px;
+}
+.forum-entry {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 28px 26px 24px;
+    border-radius: 22px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.10);
+    border-top: 3px solid var(--char, var(--aimisi-pink));
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    transition: transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s, border-color .4s;
+}
+.forum-entry::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 80% 0%, color-mix(in srgb, var(--char, #FF6B9D) 22%, transparent), transparent 60%);
+    opacity: 0;
+    transition: opacity .4s;
+    pointer-events: none;
+}
+.forum-entry:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 22px 50px rgba(0,0,0,.4);
+    border-color: color-mix(in srgb, var(--char, #FF6B9D) 55%, transparent);
+}
+.forum-entry:hover::after { opacity: 1; }
+.forum-entry-icon {
+    width: 52px; height: 52px;
+    display: grid; place-items: center;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--char, #FF6B9D) 18%, transparent);
+    color: var(--char, var(--aimisi-pink));
+}
+.forum-entry-icon svg { width: 26px; height: 26px; }
+.forum-entry-title {
+    font-family: "Noto Serif SC", serif;
+    font-size: 21px; font-weight: 700; margin: 4px 0 0;
+}
+.forum-entry-desc { font-size: 14px; color: rgba(240,244,255,.7); line-height: 1.7; margin: 0; }
+.forum-entry-cta {
+    margin-top: 6px; font-size: 13px; font-weight: 500;
+    color: var(--char, var(--aimisi-pink));
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.forum-entry-cta svg { width: 16px; height: 16px; transition: transform .3s; }
+.forum-entry:hover .forum-entry-cta svg { transform: translateX(4px); }
+
+/* 世界观考据 */
+.lore-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-top: 36px;
+}
+.lore-card {
+    padding: 26px 24px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-left: 3px solid var(--char, var(--drifter-blue));
+    transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s;
+}
+.lore-card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(0,0,0,.35); }
+.lore-card h3 { font-family: "Noto Serif SC", serif; font-size: 19px; margin: 0 0 10px; color: var(--char, var(--drifter-blue-light)); }
+.lore-card p { font-size: 14px; color: rgba(240,244,255,.72); line-height: 1.8; margin: 0; }
+
+.forum-foot-note {
+    text-align: center;
+    font-size: 13px;
+    color: rgba(240,244,255,.5);
+    padding: 40px 24px 60px;
+    line-height: 1.9;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .forum-hero-title, .forum-entry, .forum-entry::after, .lore-card { animation: none !important; transition: opacity .2s ease !important; }
+    .forum-entry:hover, .lore-card:hover { transform: none !important; }
+}
