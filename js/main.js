@@ -1195,6 +1195,25 @@
         });
     }
 
+    /**
+     * v10.1: 轮询全量对账——云端权威剔除 + upsert。
+     * 本地带云端 id 但本次云端结果缺失（远端已删除/隐藏）→ 剔除；
+     * 无 id 乐观项保留。随后逐条 upsert 云端条目（复用 applyRealtimeCommentEvent）。
+     * 调用前提：comments 是云端真实返回（出错时为 null，SyncManager 已跳过本轮）。
+     */
+    function reconcileCommentsBulk(targetId, cloudComments) {
+        cloudComments = Array.isArray(cloudComments) ? cloudComments : [];
+        var local = [];
+        try { local = JSON.parse(safeGetItem('fxre_comments_' + targetId) || '[]'); } catch (e) {}
+        var cloudIds = {};
+        cloudComments.forEach(function(cc) { if (cc && cc.id != null) cloudIds[String(cc.id)] = 1; });
+        var kept = local.filter(function(c) { return !c.id || cloudIds[String(c.id)]; });
+        saveComments(targetId, kept);
+        cloudComments.forEach(function(cc) {
+            applyRealtimeCommentEvent(targetId, 'UPDATE', { new: cc });
+        });
+    }
+
     function makeCommunityCommentHandlers(subId) {
         var targetId = 'community_' + subId;
         return {
@@ -1207,9 +1226,9 @@
             onDeleteComment: function(oldData) {
                 applyRealtimeCommentEvent(targetId, 'DELETE', { old: oldData });
             },
-            /* R4: 轮询降级时全量对账（复用 applyRealtimeCommentEvent，覆盖新增/编辑/隐藏） */
+            /* R4/v10.1: 轮询降级时全量对账（含远端删除剔除） */
             onBulkComments: function(comments) {
-                (comments || []).forEach(function(cc) { applyRealtimeCommentEvent(targetId, 'UPDATE', { new: cc }); });
+                reconcileCommentsBulk(targetId, comments);
             }
         };
     }
@@ -1247,9 +1266,9 @@
                     onDeleteComment: function(oldData) {
                         applyRealtimeCommentEvent(targetId, 'DELETE', { old: oldData });
                     },
-                    /* R4: 轮询降级时全量对账 */
+                    /* R4/v10.1: 轮询降级时全量对账（含远端删除剔除） */
                     onBulkComments: function(comments) {
-                        (comments || []).forEach(function(cc) { applyRealtimeCommentEvent(targetId, 'UPDATE', { new: cc }); });
+                        reconcileCommentsBulk(targetId, comments);
                     }
                 });
             });
@@ -1261,6 +1280,14 @@
                     renderCommunity();
                 },
                 onUpdateSubmission: function(newData, oldData) {
+                    renderCommunity();
+                },
+                /* v10.1: 投稿硬删除事件（migration-017 后 DELETE 事件可正常广播） */
+                onDeleteSubmission: function(oldData) {
+                    renderCommunity();
+                },
+                /* v10.1: 轮询降级时的投稿刷新（此前投稿无轮询兜底，断连即停更） */
+                onPollSubmissions: function(subs) {
                     renderCommunity();
                 }
             });

@@ -121,16 +121,26 @@
     --font-sans: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
     --font-serif: 'Noto Serif SC', 'Source Han Serif SC', 'SimSun', serif;
 
-    --fs-display: clamp(2.6rem, 6vw, 3.6rem);
+    /* R18: 完整字阶（Hero / Display / Title / Subtitle / Body / Caption）+ 行高节奏
+       依据 REVIEW-v9.6 R18：建立四级以上 type scale，统一字重/字色/字距/行高节奏 */
+    --fs-hero: clamp(2.8rem, 8vw, 5rem);
+    --fw-hero: 900;
+    --lh-hero: 1.05;
+    --fs-display: clamp(2.2rem, 5vw, 3.2rem);
     --fw-display: 900;
-    --fs-title: clamp(1.5rem, 3vw, 2rem);
+    --lh-display: 1.12;
+    --fs-title: clamp(1.4rem, 3vw, 1.9rem);
     --fw-title: 700;
-    --fs-subtitle: clamp(1.15rem, 2vw, 1.4rem);
+    --lh-title: 1.25;
+    --fs-subtitle: clamp(1.1rem, 2vw, 1.35rem);
     --fw-subtitle: 600;
+    --lh-subtitle: 1.35;
     --fs-body: 1rem;
     --fw-body: 400;
-    --fs-caption: 0.8rem;
+    --lh-body: 1.7;
+    --fs-caption: 0.8125rem;
     --fw-caption: 300;
+    --lh-caption: 1.5;
 
     /* R18: 统一间距刻度 */
     --space-1: 4px;
@@ -1371,25 +1381,32 @@ button {
     50% { opacity: 0.6; box-shadow: 0 0 0 8px rgba(255, 107, 157, 0); }
 }
 
+/* R18: hero 接入系统化衬线 Display 语言，与 .section-title 统一字号/字重/行高节奏 */
 .hero-title {
-    font-size: clamp(3rem, 10vw, 6rem);
-    font-weight: 900;
+    font-family: var(--font-serif);
+    font-size: var(--fs-hero);
+    font-weight: var(--fw-hero);
     letter-spacing: -0.02em;
-    margin-bottom: 16px;
-    line-height: 1.1;
+    line-height: var(--lh-hero);
+    margin-bottom: var(--space-3);
 }
 
 .hero-tagline {
-    font-size: clamp(1.2rem, 3vw, 1.6rem);
+    font-family: var(--font-sans);
+    font-size: var(--fs-subtitle);
+    font-weight: var(--fw-subtitle);
     color: var(--text-secondary);
-    margin-bottom: 12px;
-    font-weight: 500;
+    margin-bottom: var(--space-2);
+    line-height: var(--lh-subtitle);
 }
 
 .hero-subtitle {
-    font-size: 0.95rem;
+    font-family: var(--font-sans);
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-caption);
     color: var(--text-tertiary);
-    margin-bottom: 40px;
+    margin-bottom: var(--space-5);
+    line-height: var(--lh-caption);
 }
 
 .hero-actions {
@@ -1924,7 +1941,7 @@ button {
     font-size: var(--fs-display);
     font-weight: var(--fw-display);
     letter-spacing: -0.02em;
-    line-height: 1.15;
+    line-height: var(--lh-display);
     margin-bottom: var(--space-3);
 }
 
@@ -1933,6 +1950,7 @@ button {
     color: var(--text-tertiary);
     font-size: var(--fs-caption);
     font-weight: var(--fw-caption);
+    line-height: var(--lh-caption);
     margin-bottom: var(--space-4);
 }
 
@@ -1944,6 +1962,7 @@ button {
     font-size: var(--fs-title);
     font-weight: var(--fw-title);
     letter-spacing: -0.01em;
+    line-height: var(--lh-title);
 }
 
 /* ============ Profile Card ============ */
@@ -3718,7 +3737,7 @@ button {
 .comment-text {
     font-size: 0.85rem;
     color: var(--text-secondary);
-    line-height: 1.5;
+    line-height: var(--lh-body);
     word-break: break-word;
 }
 

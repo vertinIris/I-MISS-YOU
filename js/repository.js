@@ -169,6 +169,9 @@
         /* SDK 就绪即拉云端（不依赖 cloudAvailable，避免初始化竞态） */
         if (isCloudReady()) {
             return window.SupabaseAdapter.getComments(targetId).then(function(cloudData) {
+                /* v10.1: null = 云端读取出错 → 回退本地，
+                   不能把瞬时故障当"云端已清空"去做远端删除剔除 */
+                if (cloudData === null) return localData;
                 var cloudComments = (cloudData || []).map(mapCloudComment);
                 return mergeComments(localData, cloudComments);
             }).catch(function(err) {
@@ -212,6 +215,18 @@
         cloudComments.forEach(upsert);
 
         var merged = Object.keys(byKey).map(function(k) { return byKey[k]; });
+
+        /* v10.1: 云端权威剔除——本地带云端 id 但本次云端结果缺失的条目，
+           说明已在远端被删除/隐藏（Realtime DELETE 漏收或软删时代残留），本地同步剔除。
+           无 id 的乐观项/种子评论一律保留（种子无 id 字段，不受影响）。
+           安全性：仅在云端读取成功时才走到本函数（出错时上层已回退 localData）。 */
+        var cloudIds = {};
+        cloudComments.forEach(function(c) { if (c.id != null) cloudIds[String(c.id)] = 1; });
+        merged = merged.filter(function(c) {
+            if (c.id == null) return true;
+            return !!cloudIds[String(c.id)];
+        });
+
         /* v9.0: 过滤已隐藏评论 */
         merged = merged.filter(function(c) { return c.is_hidden !== true; });
         merged.sort(function(a, b) { return (a.time || 0) - (b.time || 0); });
@@ -465,6 +480,8 @@
 
         if (isCloudReady()) {
             return window.SupabaseAdapter.getSubmissions(typeFilter).then(function(cloudData) {
+                /* v10.1: null = 云端读取出错 → 回退本地，防误剔除 */
+                if (cloudData === null) return localData;
                 var cloudSubs = cloudData.map(function(row) {
                     var d = new Date(row.time);
                     return {
@@ -547,6 +564,17 @@
         });
 
         merged = Object.keys(byKey).map(function(k) { return byKey[k]; });
+
+        /* v10.1: 云端权威剔除——本地带数字（云端）id 但本次云端结果缺失的投稿，
+           说明已在远端被删除，本地剔除。
+           'sub_' 前缀的本地乐观项与 'seed_' 种子均为非数字 id，一律保留。 */
+        var cloudIds = {};
+        cloudSubs.forEach(function(s) { if (isNumericId(s.id)) cloudIds[String(s.id)] = 1; });
+        merged = merged.filter(function(s) {
+            if (!isNumericId(s.id)) return true;
+            return !!cloudIds[String(s.id)];
+        });
+
         merged = merged.filter(function(s) { return s.is_hidden !== true; });
         merged.sort(function(a, b) { return (b.time || 0) - (a.time || 0); });
 

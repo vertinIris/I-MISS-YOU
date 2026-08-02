@@ -321,8 +321,10 @@
 
         return query.then(function(result) {
             if (result.error) {
+                /* v10.1: 出错返回 null（区别于"真的为空"），
+                   使调用方在瞬时故障时不会把本地数据误判为"云端已删"而误剔除 */
                 console.warn('[SupabaseAdapter] getComments 失败:', result.error.message);
-                return [];
+                return null;
             }
             return result.data || [];
         });
@@ -424,6 +426,10 @@
 
     /**
      * 删除一条评论
+     * v10.1: 软删(UPDATE is_hidden)改为物理 DELETE——
+     *   软删后的行不满足 SELECT 策略(is_hidden=FALSE)，Realtime 服务器会丢弃该 UPDATE 事件，
+     *   其他设备永远收不到删除通知；物理 DELETE 的 OLD 记录通过 RLS 校验，事件正常广播。
+     *   RLS comments_auth_delete 仅允许作者删自己的评论，服务端权限不变。
      * @param {number} commentId
      * @returns {Promise<boolean>}
      */
@@ -432,7 +438,7 @@
 
         return client
             .from('comments')
-            .update({ is_hidden: true, hidden_at: new Date().toISOString() })
+            .delete()
             .eq('id', commentId)
             .select('id')
             .then(function(result) {
@@ -501,8 +507,9 @@
 
         return query.then(function(result) {
             if (result.error) {
+                /* v10.1: 出错返回 null（区别于"真的为空"），避免上层误剔除本地数据 */
                 console.warn('[SupabaseAdapter] getSubmissions 失败:', result.error.message);
-                return [];
+                return null;
             }
             return (result.data || []).map(function(s) {
                 return {

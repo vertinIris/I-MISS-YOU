@@ -156,8 +156,21 @@ var SyncManager = (function() {
         reconnectAttempts++;
 
         setTimeout(function() {
+            /* v10.1: supabase-js v2 同一 channel 实例只允许 subscribe 一次
+               （重复调用会抛 "tried to subscribe multiple times"），
+               重连必须移除旧实例并重建 channel，而不是对旧实例二次 subscribe */
             if (subscriptions[targetId]) {
-                subscriptions[targetId].subscribe(statusCallbacks[targetId]);
+                try { supabaseClient.removeChannel(subscriptions[targetId]); } catch (e) {}
+                delete subscriptions[targetId];
+            }
+            if (targetId === 'submissions') {
+                var subHandlers = submissionCallbacks;
+                submissionCallbacks = null;
+                connectSubmissions(subHandlers);
+            } else {
+                var commentHandlers = targetCallbacks[targetId];
+                delete targetCallbacks[targetId];
+                connectComments(targetId, commentHandlers);
             }
         }, delay);
     }
@@ -170,7 +183,7 @@ var SyncManager = (function() {
 
             getCommentTargetIds().forEach(function(targetId) {
                 SupabaseAdapter.fetchComments(targetId).then(function(comments) {
-                    if (!comments) return;
+                    if (!comments) return;  /* null = 读取出错，跳过本轮防误删 */
                     var since = _ls(targetId);
 
                     /* R4: 若提供批量回调，则全量对账（新增/编辑/删除一并处理） */
@@ -200,6 +213,17 @@ var SyncManager = (function() {
                     console.warn('[SyncManager] Polling error:', err);
                 });
             });
+
+            /* v10.1: 投稿轮询降级——此前轮询只覆盖评论区，投稿通道断连后
+               其他设备的新投稿/删除永远不会同步（getCommentTargetIds 排除 submissions） */
+            if (typeof submissionCallbacks.onPollSubmissions === 'function') {
+                SupabaseAdapter.getSubmissions().then(function(subs) {
+                    if (!subs) return;  /* null = 读取出错，跳过本轮 */
+                    submissionCallbacks.onPollSubmissions(subs);
+                }).catch(function(err) {
+                    console.warn('[SyncManager] Submissions polling error:', err);
+                });
+            }
         }, pollIntervalMs);
     }
 
