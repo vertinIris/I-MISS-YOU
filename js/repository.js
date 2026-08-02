@@ -265,14 +265,14 @@
 
                 var uploadTasks = [];
                 list.forEach(function(c, idx) {
-                    if (c.id || !c.text || !c.time) return;
+                    if (!c || c.id || !c.text || !c.time) return;
                     uploadTasks.push(
                         window.SupabaseAdapter.addComment(targetId, {
                             author: c.name || c.author || '匿名信号源',
                             color:  c.color || '#6B8AFF',
                             text:   c.text
                         }).then(function(row) {
-                            if (row && row.id) {
+                            if (row && row.id && list && list[idx]) {
                                 list[idx].id = row.id;
                                 list[idx].authorId = row.author_id || '';
                             }
@@ -534,6 +534,7 @@
 
         function mergeEntry(existing, incoming, fromLocal) {
             if (!existing) return incoming;
+            if (!incoming) return existing;
             if (isNumericId(incoming.id) && !isNumericId(existing.id)) {
                 existing.id = incoming.id;
             } else if (incoming.id && !existing.id) {

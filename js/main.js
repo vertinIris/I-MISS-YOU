@@ -2499,12 +2499,14 @@
                         function patchList(comments) {
                             comments = Array.isArray(comments) ? comments : [];
                             for (var i = comments.length - 1; i >= 0; i--) {
-                                if (comments[i].time === newComment.time &&
-                                    comments[i].text === newComment.text &&
-                                    comments[i].name === newComment.name &&
-                                    !comments[i].id) {   /* R5: 只补未赋 id 的乐观项 */
-                                    comments[i].id = cloudRow.id;
-                                    comments[i].authorId = cloudRow.authorId || '';
+                                var item = comments[i];
+                                if (!item || !newComment) continue;
+                                if (item.time === newComment.time &&
+                                    item.text === newComment.text &&
+                                    item.name === newComment.name &&
+                                    !item.id) {   /* R5: 只补未赋 id 的乐观项 */
+                                    item.id = cloudRow.id;
+                                    item.authorId = cloudRow.authorId || '';
                                     break;
                                 }
                             }
@@ -2845,9 +2847,11 @@
                                 var localId = newSub.id;
                                 var latest = getSubmissionsSync();
                                 for (var pi = 0; pi < latest.length; pi++) {
-                                    if (String(latest[pi].id) === String(localId)) {
-                                        latest[pi].id = cloudRow.id;
-                                        if (cloudRow.time) latest[pi].time = cloudRow.time;
+                                    var pItem = latest[pi];
+                                    if (!pItem) continue;
+                                    if (String(pItem.id) === String(localId)) {
+                                        pItem.id = cloudRow.id;
+                                        if (cloudRow.time) pItem.time = cloudRow.time;
                                         saveSubmissions(latest);
                                         break;
                                     }
@@ -3863,6 +3867,7 @@
         }).catch(function(err) {
             if (err && err.message !== 'not_authenticated') {
                 console.warn('[Sync] \u5168\u91cf\u540c\u6b65\u5931\u8d25:', err);
+                console.error('[Sync] \u5168\u91cf\u540c\u6b65\u9519\u8bef\u5806\u6808:', err && err.stack ? err.stack : '\u65e0\u5806\u6808');
                 showSubmitToast('\u274c \u540c\u6b65\u5931\u8d25\uff1a' + (err.message || '\u672a\u77e5\u9519\u8bef'), 5000);
             }
         }).finally(function() {
