@@ -1632,7 +1632,7 @@
 
             <nav class="community-pagination" id="community-pagination" hidden aria-label="社区分页"></nav>
 
-            <div class="bookmarks-panel" id="bookmarks-panel" hidden>
+            <div class="bookmarks-panel" id="bookmarks-panel" role="dialog" aria-modal="true" aria-label="我的收藏" tabindex="-1" hidden>
                 <div class="bookmarks-panel-inner glass">
                     <div class="bookmarks-panel-header">
                         <h3>我的收藏</h3>
@@ -1671,7 +1671,7 @@
     </section>
 
     <!-- ============ Modals ============ -->
-    <div class="modal-overlay" id="guidelines-modal" hidden>
+    <div class="modal-overlay" id="guidelines-modal" role="dialog" aria-modal="true" aria-label="社区规范" tabindex="-1" hidden>
         <div class="modal-panel glass">
             <div class="modal-header">
                 <h3>社区规范</h3>
@@ -1691,7 +1691,7 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="report-modal" hidden>
+    <div class="modal-overlay" id="report-modal" role="dialog" aria-modal="true" aria-label="举报内容" tabindex="-1" hidden>
         <div class="modal-panel glass">
             <div class="modal-header">
                 <h3>举报内容</h3>
@@ -1709,7 +1709,7 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="admin-panel" hidden>
+    <div class="modal-overlay" id="admin-panel" role="dialog" aria-modal="true" aria-label="版主后台" tabindex="-1" hidden>
         <div class="modal-panel glass admin-panel-wide">
             <div class="modal-header">
                 <h3>版主后台</h3>
@@ -1807,7 +1807,7 @@
     </footer>
 
     <!-- 公开收藏夹浏览 -->
-    <div class="public-collection-panel" id="public-collection-panel" hidden>
+    <div class="public-collection-panel" id="public-collection-panel" role="dialog" aria-modal="true" aria-label="公开收藏夹" tabindex="-1" hidden>
         <div class="public-collection-inner glass">
             <div class="public-collection-header">
                 <h3 id="public-collection-title">公开收藏夹</h3>
@@ -1824,18 +1824,18 @@
     <!-- Supabase SDK: async 加载，不阻塞页面渲染；弱网环境自动降级 -->
     <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
             onerror="console.warn('[Phase3] Supabase SDK CDN 加载失败，回退纯本地模式'); window.__supabaseLoadFailed=true;"></script>
-    <script src="js/security-shield.js"></script>
-    <script src="js/content-utils.js"></script>
-    <script src="js/supabase-adapter.js"></script>
-    <script src="js/repository.js"></script>
-    <script src="js/admin-auth.js"></script>
-    <script src="js/rate-limiter.js"></script>
-    <script src="js/auth-manager.js"></script>
-    <script src="js/sync-manager.js"></script>
-    <script src="js/upload-manager.js"></script>
-    <script src="js/rate-limiter-client.js"></script>
-    <script src="js/admin-panel.js"></script>
-    <script src="js/particles.js"></script>
-    <script src="js/main.js"></script>
+    <script defer src="js/security-shield.js"></script>
+    <script defer src="js/content-utils.js"></script>
+    <script defer src="js/supabase-adapter.js"></script>
+    <script defer src="js/repository.js"></script>
+    <script defer src="js/admin-auth.js"></script>
+    <script defer src="js/rate-limiter.js"></script>
+    <script defer src="js/auth-manager.js"></script>
+    <script defer src="js/sync-manager.js"></script>
+    <script defer src="js/upload-manager.js"></script>
+    <script defer src="js/rate-limiter-client.js"></script>
+    <script defer src="js/admin-panel.js"></script>
+    <script defer src="js/particles.js"></script>
+    <script defer src="js/main.js"></script>
 </body>
 </html>

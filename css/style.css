@@ -141,6 +141,9 @@
     --fs-caption: 0.8125rem;
     --fw-caption: 300;
     --lh-caption: 1.5;
+    /* R18 续(P0-1): 最小字号令牌，承载 legacy 0.75rem 的按钮/标签/小注，保持渲染尺寸不变 */
+    --fs-micro: 0.75rem;
+    --lh-micro: 1.4;
 
     /* R18: 统一间距刻度 */
     --space-1: 4px;
@@ -1135,7 +1138,7 @@ button {
     flex-direction: column;
     gap: 6px;
     margin-bottom: 10px;
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     color: rgba(255, 255, 255, 0.55);
 }
 
@@ -1182,7 +1185,7 @@ button {
     margin-top: 8px;
     width: auto;
     padding: 4px 10px;
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
 }
 
 .account-admin-actions {
@@ -1908,7 +1911,7 @@ button {
 }
 
 .scroll-text {
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     color: var(--text-tertiary);
 }
 
@@ -1928,7 +1931,7 @@ button {
 
 .section-label {
     display: inline-block;
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     letter-spacing: 0.2em;
     color: var(--color-pink);
     font-weight: 600;
@@ -2630,7 +2633,7 @@ button {
 }
 
 .diary-month {
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     color: var(--text-tertiary);
     margin-top: 4px;
 }
@@ -2667,7 +2670,7 @@ button {
 }
 
 .diary-tag {
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     color: var(--text-tertiary);
     padding: 2px 8px;
     border-radius: var(--radius-full);
@@ -2740,7 +2743,7 @@ button {
 }
 
 .music-track-name {
-    font-size: 1rem;
+    font-size: var(--fs-body);
     font-weight: 600;
     color: var(--text-primary);
     white-space: nowrap;
@@ -2826,7 +2829,7 @@ button {
 }
 
 .music-time {
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     color: var(--text-tertiary);
     font-variant-numeric: tabular-nums;
     min-width: 36px;
@@ -3286,7 +3289,7 @@ button {
 }
 
 .footer-disclaimer p {
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     color: var(--text-tertiary);
     line-height: 1.6;
     margin-bottom: 4px;
@@ -3692,7 +3695,7 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     font-weight: 700;
     color: white;
     background: linear-gradient(135deg, var(--color-pink), var(--color-blue));
@@ -3828,7 +3831,7 @@ button {
     border: 1px solid rgba(255, 255, 255, 0.15);
     background: rgba(255, 50, 50, 0.08);
     color: rgba(255, 100, 100, 0.7);
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     line-height: 20px;
     text-align: center;
     cursor: pointer;
@@ -3960,7 +3963,7 @@ button {
     position: absolute;
     bottom: 8px;
     right: 12px;
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     color: var(--text-tertiary);
     pointer-events: none;
 }
@@ -4623,7 +4626,7 @@ article, section, nav, footer, header {
     color: #A8D8FF;
     border-radius: 999px;
     padding: 4px 10px;
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     cursor: pointer;
     font-family: inherit;
 }
@@ -4854,7 +4857,7 @@ article, section, nav, footer, header {
 
 .bookmarks-item-meta {
     display: block;
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     color: rgba(250, 248, 255, 0.55);
 }
 
@@ -4920,7 +4923,7 @@ article, section, nav, footer, header {
     background: none;
     color: rgba(255, 107, 157, 0.9);
     cursor: pointer;
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
 }
 
 .upload-preview {
@@ -4951,7 +4954,7 @@ article, section, nav, footer, header {
 
 .upload-preview-clear {
     padding: 4px 12px;
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.15);
     background: transparent;
@@ -5040,7 +5043,7 @@ article, section, nav, footer, header {
     border: 1px solid rgba(255, 255, 255, 0.15);
     background: rgba(255, 255, 255, 0.04);
     color: rgba(250, 248, 255, 0.8);
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     cursor: pointer;
 }
 
@@ -5056,7 +5059,7 @@ article, section, nav, footer, header {
     border: 1px dashed rgba(107, 138, 255, 0.4);
     background: transparent;
     color: #A8D8FF;
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     cursor: pointer;
 }
 
@@ -5068,7 +5071,7 @@ article, section, nav, footer, header {
     border: 1px solid rgba(255, 255, 255, 0.12);
     background: rgba(0, 0, 0, 0.2);
     color: #FAF8FF;
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
 }
 
 .modal-overlay {
@@ -5205,7 +5208,7 @@ article, section, nav, footer, header {
     border: 1px solid rgba(255, 107, 157, 0.35);
     background: rgba(255, 107, 157, 0.12);
     color: #FFB6D9;
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     cursor: pointer;
 }
 
@@ -5275,7 +5278,7 @@ article, section, nav, footer, header {
     border: 1px solid rgba(168, 216, 255, 0.25);
     background: rgba(107, 138, 255, 0.1);
     color: #A8D8FF;
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     cursor: pointer;
 }
 
@@ -5294,7 +5297,7 @@ article, section, nav, footer, header {
 }
 
 .today-pick-label {
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--c-accent);
@@ -5741,7 +5744,7 @@ textarea:focus-visible,
 }
 
 .archive-timeline-era {
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -5793,7 +5796,7 @@ textarea:focus-visible,
 .archive-ability-label {
     flex-shrink: 0;
     width: 72px;
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     font-weight: 600;
     color: rgba(168,216,255,0.6);
     padding-top: 2px;
@@ -5855,7 +5858,7 @@ textarea:focus-visible,
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
+    font-size: var(--fs-body);
 }
 
 .archive-music-info {
@@ -5870,7 +5873,7 @@ textarea:focus-visible,
 }
 
 .archive-music-desc {
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     color: var(--text-secondary, #9098a8);
     margin-top: 2px;
 }
@@ -5898,7 +5901,7 @@ textarea:focus-visible,
 }
 
 .archive-source-note {
-    font-size: 0.75rem;
+    font-size: var(--fs-micro);
     color: var(--text-tertiary, #707890);
     line-height: 1.6;
     padding: 16px 20px;
@@ -6143,7 +6146,7 @@ textarea:focus-visible,
     color: #fff;
 }
 .zone-hero-alias {
-    font-size: 1rem;
+    font-size: var(--fs-body);
     color: color-mix(in srgb, var(--char) 75%, #fff);
     margin-top: 0.3rem;
 }
