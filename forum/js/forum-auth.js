@@ -3,7 +3,8 @@
  * ----------------------------------------------------
  * 复用飞行雪绒主站同一 Supabase 项目（lmlyfyjffaaddysiliht）：
  *   - 注册/登录走 supabase.auth.signUp / signInWithPassword；
- *   - 用户名经本地映射为合成邮箱（stf_xxx@startorch.local），兼容中文名；
+ *   - 直接用真实邮箱作为账号主键（与飞行雪绒主站同套账号体系，共享 Supabase 项目）；
+ *   - 显示名（nickname）单独存于 user_metadata，支持中文，与邮箱解耦；
  *   - 口令由 Supabase 托管（加盐散列在服务端），前端不再自行散列；
  *   - 会话存于同域 localStorage 键 sb-<ref>-auth，与主站自动互认：
  *     在主站登录后访问论坛，refreshFromCloud() 会读到共享会话并自动识别。
@@ -18,7 +19,7 @@
 window.StarTorchAuth = (function () {
     'use strict';
 
-    var ACCOUNTS_KEY = 'stf_accounts';          // 本地映射：用户名 -> 合成邮箱
+    // 账号直接以真实邮箱为主键，不再使用本地合成邮箱映射
     var SESSION_MIRROR_KEY = 'stf_session';     // 本地镜像：离线时仍可用 UI
 
     // 多管理员：与 db/migration-021 的 forum_admins 表保持一致（前端仅用于 UI 显隐，
@@ -34,12 +35,6 @@ window.StarTorchAuth = (function () {
     function safeSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
     function safeRemove(k) { try { localStorage.removeItem(k); } catch (e) { /* ignore */ } }
 
-    function readAccounts() {
-        try { return JSON.parse(safeGet(ACCOUNTS_KEY)) || {}; } catch (e) { return {}; }
-    }
-    function writeAccounts(map) { safeSet(ACCOUNTS_KEY, JSON.stringify(map)); }
-
-    function normalizeKey(name) { return String(name || '').trim().toLowerCase(); }
     function randomColor() { return AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)]; }
 
     /* ---------- 当前用户视图 ---------- */
@@ -105,22 +100,19 @@ window.StarTorchAuth = (function () {
         }).catch(function () { /* 无会话则保持本地镜像 */ });
     }
 
-    /* ---------- 合成邮箱映射 ---------- */
-    function toEmail(name) {
-        var a = readAccounts();
-        var key = normalizeKey(name);
-        if (a[key] && a[key].email) return a[key].email;
-        var email = 'stf_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6) + '@startorch.example.com';
-        a[key] = { email: email, name: name };
-        writeAccounts(a);
-        return email;
+    /* ---------- 核心：注册 / 登录 / 登出（真实邮箱为主键） ---------- */
+    function isValidEmail(v) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v || '').trim());
     }
 
-    /* ---------- 核心：注册 / 登录 / 登出 ---------- */
-    function register(name, pwd) {
-        var trimmed = String(name || '').trim();
-        if (trimmed.length < 2 || trimmed.length > 20) {
-            return Promise.reject(new Error('用户名需 2–20 个字符'));
+    function register(email, nickname, pwd) {
+        var emailTrimmed = String(email || '').trim();
+        if (!isValidEmail(emailTrimmed)) {
+            return Promise.reject(new Error('请输入有效的邮箱地址'));
+        }
+        var nick = String(nickname || '').trim();
+        if (nick.length < 2 || nick.length > 20) {
+            return Promise.reject(new Error('显示名需 2–20 个字符'));
         }
         if (String(pwd || '').length < 4) {
             return Promise.reject(new Error('口令至少 4 位'));
@@ -128,17 +120,16 @@ window.StarTorchAuth = (function () {
         var client = window.supabaseClient;
         if (!client) return Promise.reject(new Error('云端未连接，暂无法注册（可先用匿名身份发帖）'));
 
-        var email = toEmail(trimmed);
         var color = randomColor();
         return client.auth.signUp({
-            email: email,
+            email: emailTrimmed,
             password: pwd,
-            options: { data: { nickname: trimmed, avatar_color: color } }
+            options: { data: { nickname: nick, avatar_color: color } }
         }).then(function (res) {
             if (res.error) throw new Error(res.error.message || '注册失败');
             if (res.data && res.data.user && res.data.session) {
                 return applyUser(res.data.user, {
-                    nickname: trimmed, avatar_color: color, created_at: new Date().toISOString()
+                    nickname: nick, avatar_color: color, created_at: new Date().toISOString()
                 });
             }
             /* 服务启用了邮箱确认时不会返回 session */
@@ -146,15 +137,15 @@ window.StarTorchAuth = (function () {
         });
     }
 
-    function login(name, pwd) {
-        var a = readAccounts();
-        var key = normalizeKey(name);
-        var acc = a[key];
-        if (!acc) return Promise.reject(new Error('该用户名未在本论坛注册，请先注册'));
+    function login(email, pwd) {
+        var emailTrimmed = String(email || '').trim();
+        if (!isValidEmail(emailTrimmed)) {
+            return Promise.reject(new Error('请输入有效的邮箱地址'));
+        }
         var client = window.supabaseClient;
         if (!client) return Promise.reject(new Error('云端未连接，无法登录'));
 
-        return client.auth.signInWithPassword({ email: acc.email, password: pwd })
+        return client.auth.signInWithPassword({ email: emailTrimmed, password: pwd })
             .then(function (res) {
                 if (res.error) throw new Error(res.error.message || '登录失败');
                 if (res.data && res.data.user) {
@@ -265,7 +256,7 @@ window.StarTorchAuth = (function () {
         requestAnimationFrame(function () { modal.classList.add('open'); });
         var btn = $('stf-account-btn');
         if (btn) btn.setAttribute('aria-expanded', 'true');
-        var focusTarget = current ? $('stf-logout-btn') : $('stf-login-name');
+        var focusTarget = current ? $('stf-logout-btn') : $('stf-login-email');
         if (focusTarget) setTimeout(function () { focusTarget.focus(); }, 120);
     }
 
@@ -321,7 +312,7 @@ window.StarTorchAuth = (function () {
             loginForm.addEventListener('submit', function (e) {
                 e.preventDefault();
                 setError('stf-login-error', '');
-                login($('stf-login-name').value, $('stf-login-pwd').value)
+                login($('stf-login-email').value, $('stf-login-pwd').value)
                     .then(function (u) {
                         loginForm.reset();
                         closePanel();
@@ -339,7 +330,7 @@ window.StarTorchAuth = (function () {
                 var pwd = $('stf-register-pwd').value;
                 var confirmPwd = $('stf-register-pwd2').value;
                 if (pwd !== confirmPwd) { setError('stf-register-error', '两次输入的口令不一致'); return; }
-                register($('stf-register-name').value, pwd)
+                register($('stf-register-email').value, $('stf-register-name').value, pwd)
                     .then(function (u) {
                         regForm.reset();
                         closePanel();
