@@ -402,6 +402,62 @@
         return cb && cb(ok);
     }
 
+    /* ---------- 实时聊天 ---------- */
+    var chatListeners = [];
+    function chatRowToLocal(r) {
+        return {
+            id: r.id,
+            name: r.name,
+            color: sanitizeColor(r.color),
+            content: r.content,
+            time: new Date(r.created_at).getTime(),
+            user_id: r.user_id
+        };
+    }
+    function notifyChatListeners(payload) {
+        chatListeners.forEach(function (cb) { try { cb(payload); } catch (e) {} });
+    }
+    async function pullChat(limit, cb) {
+        if (!client) return cb && cb([]);
+        try {
+            await ensureSession();
+            var res = await client.from('forum_chat')
+                .select('*')
+                .eq('realm', 'startorch')
+                .eq('is_hidden', false)
+                .order('created_at', { ascending: false })
+                .limit(limit || 50);
+            if (res.error) throw res.error;
+            var rows = (res.data || []).map(chatRowToLocal).reverse();
+            return cb && cb(rows);
+        } catch (e) {
+            console.warn('[forum-cloud] 拉取聊天失败', e);
+            return cb && cb([]);
+        }
+    }
+    async function pushChat(msg, cb) {
+        if (!client) return cb && cb(false);
+        try {
+            await ensureSession();
+            var row = {
+                realm: 'startorch',
+                name: msg.name,
+                user_id: msg.user_id || null,
+                color: sanitizeColor(msg.color),
+                content: msg.content
+            };
+            var res = await client.from('forum_chat').insert(row);
+            if (res.error) throw res.error;
+            return cb && cb(true);
+        } catch (e) {
+            console.warn('[forum-cloud] 发送聊天失败', e);
+            return cb && cb(false);
+        }
+    }
+    function onChatRealtime(cb) {
+        if (typeof cb === 'function') chatListeners.push(cb);
+    }
+
     /* 通用 push（文档接口兼容；forum.js 实际调用上面的具名方法） */
     async function push(item, cb) {
         if (!item) return cb && cb(false);
@@ -424,6 +480,12 @@
             client.channel('forum-realtime')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'forum_submissions' }, scheduleRefresh)
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'forum_comments' }, scheduleRefresh)
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'forum_chat' }, function (payload) {
+                    if (payload.new && !payload.new.is_hidden) notifyChatListeners(chatRowToLocal(payload.new));
+                })
+                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'forum_chat' }, function (payload) {
+                    if (payload.new && payload.new.is_hidden) scheduleRefresh();
+                })
                 .subscribe();
         } catch (e) {
             console.warn('[forum-cloud] Realtime 订阅失败（不影响轮询兜底）', e);
@@ -459,7 +521,10 @@
         getPending: getPending,
         getMode: function () { return connected ? 'cloud' : 'local'; },
         isConnected: function () { return connected; },
-        getLastError: function () { return lastPullError; }
+        getLastError: function () { return lastPullError; },
+        pullChat: pullChat,
+        pushChat: pushChat,
+        onChatRealtime: onChatRealtime
     };
 
     /* 自启动 */

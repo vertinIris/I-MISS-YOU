@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="forum.css">
     <link rel="stylesheet" href="forum-easter.css">
     <link rel="stylesheet" href="forum-theme.css">
+    <link rel="stylesheet" href="../css/donation.css">
     <script>
         /* 沿用主站主题偏好，仅做视觉同步；不影响功能独立性 */
         (function () {
@@ -120,6 +121,32 @@
                     <span class="forum-entry-cta">考据世界 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
                 </a>
 
+            </div>
+        </div>
+    </section>
+
+    <!-- 实时公共聊天室 -->
+    <section class="forum-section forum-section--chat" id="stf-chat">
+        <div class="forum-section-inner">
+            <div class="section-header reveal">
+                <span class="section-label">LIVE · CHAT</span>
+                <h2 class="section-title">信号塔实时聊天</h2>
+                <p class="section-desc">在同一频率上，留下你的回声 · 与星域同好即时对话</p>
+            </div>
+
+            <div class="stf-chat-card glass">
+                <div class="stf-chat-header">
+                    <span class="stf-chat-status" role="status" aria-live="polite">
+                        <span class="stf-chat-dot" id="stf-chat-dot"></span>
+                        <span id="stf-chat-status">连接中…</span>
+                    </span>
+                    <span class="stf-chat-online" id="stf-chat-online">星域公共频道</span>
+                </div>
+                <div class="stf-chat-messages" id="stf-chat-messages" role="log" aria-live="polite" aria-atomic="false" aria-label="聊天消息"></div>
+                <form class="stf-chat-form" id="stf-chat-form">
+                    <input type="text" class="stf-chat-input" id="stf-chat-input" placeholder="输入消息，按 Enter 发送…" maxlength="200" autocomplete="off" aria-label="聊天消息">
+                    <button type="submit" class="stf-chat-send" id="stf-chat-send" aria-label="发送">发送</button>
+                </form>
             </div>
         </div>
     </section>
@@ -754,7 +781,40 @@
         <span class="stf-back-home-text">飞行雪绒</span>
     </a>
 
+    <button type="button" class="donate-fab" id="donate-fab" aria-label="支持飞行雪绒">
+        <span class="donate-fab-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+        </span>
+        <span class="donate-fab-text">请我喝杯咖啡</span>
+    </button>
+
+    <div class="donate-modal" id="donate-modal" role="dialog" aria-modal="true" aria-labelledby="donate-title" tabindex="-1" hidden>
+        <div class="donate-panel" tabindex="-1">
+            <button type="button" class="donate-close" aria-label="关闭">×</button>
+            <div class="donate-header">
+                <div class="donate-emoji" aria-hidden="true">☕</div>
+                <h2 class="donate-title" id="donate-title">请飞行雪绒喝杯咖啡</h2>
+                <p class="donate-subtitle">每一份支持，都会变成星空下的一首歌。<br>如果你喜欢这个小小的创作角落，欢迎鼓励一下。</p>
+            </div>
+            <div class="donate-body">
+                <div class="donate-qr" aria-label="收款二维码占位">
+                    <div class="donate-qr-placeholder"></div>
+                    <span class="donate-qr-hint">替换为真实收款二维码</span>
+                </div>
+                <p class="donate-note">扫码支持，或点击下方按钮复制收款账号。<br>你的陪伴，是飞行雪绒继续发光的理由。</p>
+            </div>
+            <div class="donate-actions">
+                <button type="button" class="donate-btn donate-copy-btn">复制账号</button>
+                <button type="button" class="donate-btn donate-btn-primary donate-later-btn">下次再说</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/forum-data.js"></script>
+    <script src="../js/security-shield.js"></script>
+    <script src="../js/rate-limiter-client.js"></script>
     <script src="js/forum-auth.js"></script>
     <script src="js/forum-upload.js"></script>
     <script src="js/forum.js"></script>
@@ -775,6 +835,8 @@
             onerror="window.__loadSupabaseSDK('https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js', function(){ window.__loadSupabaseSDK('js/supabase.min.js', function(){ console.warn('[forum] Supabase SDK 所有来源均加载失败，回退纯本地模式'); }); });"></script>
     <script src="js/forum-supabase.js"></script>
     <script src="js/forum-cloud.js"></script>
+    <script src="js/forum-chat.js"></script>
     <script src="js/forum-easter.js"></script>
+    <script src="../js/donation.js"></script>
 </body>
 </html>
