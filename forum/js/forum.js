@@ -57,6 +57,16 @@
             .replace(/'/g, '&#39;');
     }
 
+    function sanitizeColor(c) {
+        if (!c) return '#6B8AFF';
+        var s = String(c).trim();
+        if (/^#[0-9A-Fa-f]{3,8}$/.test(s)) return s;
+        if (/^var\(--[\w-]+\)$/.test(s)) return s;
+        if (/^rgb(a?)\([\d\s,.%/]+\)$/.test(s)) return s;
+        if (/^hsl(a?)\([\d\s,.%/]+\)$/.test(s)) return s;
+        return '#6B8AFF';
+    }
+
     function charColorForSubmission(s) {
         if (!s || !s.tags || !Array.isArray(s.tags)) return '';
         for (var i = 0; i < s.tags.length; i++) {
@@ -215,7 +225,7 @@
 
     function buildCardHTML(s) {
         var initial = s.name.charAt(0).toUpperCase();
-        var bgColor = s.color || 'var(--drifter-blue)';
+        var bgColor = sanitizeColor(s.color);
         var cardCharColor = charColorForSubmission(s);
         var cardCharStyle = cardCharColor ? ' style="--char:' + cardCharColor + '"' : '';
         var commentCount = (StarTorchData.getComments(s.id) || []).length;
@@ -232,7 +242,7 @@
                 '</div>';
         }
 
-        var previewText = escapeHTML(previewText(s.content, 110));
+        var preview = escapeHTML(previewText(s.content, 110));
         var headerHtml =
             '<div class="stf-card-header">' +
                 '<div class="stf-card-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
@@ -252,7 +262,7 @@
                 '<div class="stf-card-front">' +
                     headerHtml +
                     '<h3 class="stf-card-title">' + escapeHTML(s.title) + '</h3>' +
-                    '<div class="stf-card-preview">' + previewText + '</div>' +
+                    '<div class="stf-card-preview">' + preview + '</div>' +
                     tagsPreviewHtml +
                     '<div class="stf-card-front-actions">' +
                         '<span class="stf-front-stat">❤ ' + (s.likes || 0) + '</span>' +
@@ -308,7 +318,7 @@
         }
         list.innerHTML = comments.filter(function (c) { return !c.is_hidden; }).map(function (c) {
             return '<div class="stf-comment">' +
-                '<span class="stf-comment-name" style="color:' + (c.color || '#A8D8FF') + '">' + escapeHTML(c.name) + '</span>' +
+                '<span class="stf-comment-name" style="color:' + sanitizeColor(c.color) + '">' + escapeHTML(c.name) + '</span>' +
                 '<span class="stf-comment-text">' + escapeHTML(c.text) + '</span>' +
                 '<span class="stf-comment-time">' + escapeHTML(c.timeStr) + '</span>' +
                 (window.StarTorchAuth && window.StarTorchAuth.isForumAdmin() ? '<button type="button" class="stf-comment-hide" data-action="admin-hide-comment" data-hide-sub="' + targetId + '" data-hide-name="' + escapeHTML(c.name) + '" data-hide-text="' + escapeHTML(c.text) + '" title="管理员：隐藏该评论">✕</button>' : '') +
@@ -502,10 +512,10 @@
         }
         return {
             id: 'stf_' + now.getTime(),
-            name: escapeHTML(displayName),
+            name: displayName,
             type: type,
-            title: escapeHTML(title),
-            content: escapeHTML(body),
+            title: title,
+            content: body,
             image: (attachment && attachment.image) ? attachment.image : '',
             realm: 'startorch',
             tags: tags || [],
@@ -518,7 +528,7 @@
             likes: 0,
             liked: false,
             bookmarks: 0,
-            color: user ? user.color : (identity ? identity.color : '#6B8AFF'),
+            color: user ? sanitizeColor(user.color) : (identity ? identity.color : '#6B8AFF'),
             identity: user ? null : (identityId || null),
             author: user ? user.key : null
         };

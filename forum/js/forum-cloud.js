@@ -30,6 +30,16 @@
 
     /* ---------- 工具 ---------- */
     function pad(n) { return String(n).padStart(2, '0'); }
+    function sanitizeColor(c) {
+        if (!c) return '#6B8AFF';
+        var s = String(c).trim();
+        if (/^#[0-9A-Fa-f]{3,8}$/.test(s)) return s;
+        if (/^var\(--[\w-]+\)$/.test(s)) return s;
+        if (/^rgb(a?)\([\d\s,.%/]+\)$/.test(s)) return s;
+        if (/^hsl(a?)\([\d\s,.%/]+\)$/.test(s)) return s;
+        return '#6B8AFF';
+    }
+
     function fmtTimeStr(iso) {
         if (!iso) return '';
         var d = new Date(iso);
@@ -126,7 +136,7 @@
             likes: r.likes || 0,
             liked: false,
             bookmarks: 0,
-            color: r.author_color || '#6B8AFF',
+            color: sanitizeColor(r.author_color),
             identity: r.identity || null,
             is_hidden: !!r.is_hidden,
             author: r.author_id || null

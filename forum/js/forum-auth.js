@@ -53,6 +53,16 @@ window.StarTorchAuth = (function () {
 
     function randomColor() { return AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)]; }
 
+    function sanitizeColor(c) {
+        if (!c) return '#6B8AFF';
+        var s = String(c).trim();
+        if (/^#[0-9A-Fa-f]{3,8}$/.test(s)) return s;
+        if (/^var\(--[\w-]+\)$/.test(s)) return s;
+        if (/^rgb(a?)\([\d\s,.%/]+\)$/.test(s)) return s;
+        if (/^hsl(a?)\([\d\s,.%/]+\)$/.test(s)) return s;
+        return '#6B8AFF';
+    }
+
     /* ==================================================================
      * 身份解析层（Identity Resolver）
      * 把「用户填了什么」统一翻译成「Supabase 认识的 email + 展示昵称」。
@@ -216,7 +226,7 @@ window.StarTorchAuth = (function () {
             || (email && !synthetic ? String(email).split('@')[0] : '')
             || '星炬学院访客';
 
-        var color = (profile && profile.avatar_color) || meta.avatar_color || '#6B8AFF';
+        var color = sanitizeColor((profile && profile.avatar_color) || meta.avatar_color);
 
         var joined = (profile && profile.created_at) ? Date.parse(profile.created_at)
             : (user && user.created_at) ? Date.parse(user.created_at)
