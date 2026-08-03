@@ -659,7 +659,7 @@
 
                 <form class="stf-auth-form" id="stf-login-form">
                     <div class="form-group">
-                        <label class="form-label" for="stf-login-name">用户名</label>
+                        <label class="form-label" for="stf-login-name">用户名 <span class="form-hint">（不是邮箱）</span></label>
                         <input type="text" class="form-input" id="stf-login-name" maxlength="20" autocomplete="username" placeholder="你的通行证名称" required>
                     </div>
                     <div class="form-group">
@@ -674,7 +674,7 @@
 
                 <form class="stf-auth-form" id="stf-register-form" hidden>
                     <div class="form-group">
-                        <label class="form-label" for="stf-register-name">用户名 <span class="form-hint">（2–20 字，发帖时显示）</span></label>
+                        <label class="form-label" for="stf-register-name">用户名 <span class="form-hint">（2–20 字，发帖时显示，不是邮箱）</span></label>
                         <input type="text" class="form-input" id="stf-register-name" maxlength="20" autocomplete="username" placeholder="给自己取个名字" required>
                     </div>
                     <div class="form-row">
@@ -694,7 +694,8 @@
                 </form>
 
                 <p class="stf-auth-note">
-                    通行证只保存在这台设备的浏览器里，用于给你的发帖一个稳定署名 —— 不登录也可以用匿名身份发帖。
+                    通行证只保存在这台设备的浏览器里，用于给你的发帖一个稳定署名 —— 不登录也可以用匿名身份发帖。<br>
+                    <span class="form-hint">管理员请从飞行雪绒主站用真实邮箱登录，论坛会自动识别权限。</span>
                 </p>
             </div>
 

@@ -793,11 +793,31 @@
     outline-offset: 2px;
 }
 .stf-auth-tab.active {
-    background: rgba(168,216,255,.16);
+    background: rgba(168,216,255,.18);
     color: #fff;
-    box-shadow: 0 4px 14px rgba(107,138,255,.22);
+    box-shadow: 0 4px 16px rgba(107,138,255,.28);
+    position: relative;
+}
+/* 登录页签：蓝紫流光 */
+.stf-auth-tab[data-auth-tab="login"].active {
+    background: linear-gradient(135deg, rgba(107,138,255,.22), rgba(107,138,255,.10));
+    box-shadow: 0 4px 18px rgba(107,138,255,.35), inset 0 0 0 1px rgba(168,216,255,.35);
+}
+/* 注册页签：粉金流光 */
+.stf-auth-tab[data-auth-tab="register"].active {
+    background: linear-gradient(135deg, rgba(255,107,157,.22), rgba(232,197,106,.12));
+    box-shadow: 0 4px 18px rgba(255,107,157,.30), inset 0 0 0 1px rgba(255,182,217,.40);
+}
+.stf-auth-tab.active::before {
+    content: '';
+    position: absolute; top: 0; left: 12px; right: 12px; height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    opacity: .75;
 }
 .stf-auth-form { display: flex; flex-direction: column; gap: 14px; }
+#stf-login-form { border-top: 1px solid rgba(107,138,255,.18); padding-top: 18px; }
+#stf-register-form { border-top: 1px solid rgba(255,107,157,.18); padding-top: 18px; }
 .stf-auth-form .form-actions { margin-top: 2px; }
 .stf-auth-error { margin: 0; font-size: 13px; color: #FF8DAA; }
 .stf-auth-note {
