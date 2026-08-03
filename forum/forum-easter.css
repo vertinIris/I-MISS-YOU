@@ -1,0 +1,204 @@
+/* ============================================================
+   星炬学院论坛 · 飞行雪绒隐藏入口与爱弥斯风格入场特效
+   独立样式：不依赖飞行雪绒站 secret-portal.css
+   ============================================================ */
+
+/* 页脚隐藏触发器：一个极小的雪花，默认与页脚文字融为一体 */
+.stf-hidden-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin: 0 4px;
+    color: rgba(240,244,255,.35);
+    cursor: pointer;
+    vertical-align: middle;
+    transition: color .25s, transform .25s;
+}
+.stf-hidden-trigger:hover {
+    color: var(--aimisi-pink, #FF6B9D);
+    transform: rotate(15deg) scale(1.15);
+}
+.stf-hidden-snowflake {
+    width: 14px;
+    height: 14px;
+}
+
+/* 全屏过渡遮罩 */
+.stf-easter-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 24px;
+    background: radial-gradient(circle at 50% 50%, rgba(10,10,18,.92), rgba(5,5,12,.98));
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity .35s ease, visibility .35s;
+}
+.stf-easter-overlay.is-active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 扩散光环 */
+.stf-easter-ring {
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, #FF6B9D, #A8D8FF, #B66BFF, #FF6B9D);
+    opacity: 0;
+    filter: blur(6px);
+    transform: scale(.2);
+}
+.stf-easter-overlay.is-active .stf-easter-ring {
+    animation: stf-easter-ring-burst 1.1s cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes stf-easter-ring-burst {
+    0%   { opacity: 0; transform: scale(.2) rotate(0deg); }
+    20%  { opacity: .9; transform: scale(.6) rotate(45deg); }
+    60%  { opacity: .7; transform: scale(2.2) rotate(180deg); filter: blur(4px); }
+    100% { opacity: 0; transform: scale(4) rotate(360deg); filter: blur(2px); }
+}
+
+/* 粒子层 */
+.stf-easter-particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+.stf-easter-particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--aimisi-pink, #FF6B9D);
+    box-shadow: 0 0 10px 2px var(--aimisi-pink, #FF6B9D);
+    opacity: 0;
+}
+.stf-easter-overlay.is-active .stf-easter-particle {
+    animation: stf-easter-particle-fly .9s cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes stf-easter-particle-fly {
+    0%   { opacity: 1; transform: translate(0,0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(.2); }
+}
+
+/* Aimisi 风格剪影 */
+.stf-easter-silhouette {
+    position: relative;
+    z-index: 2;
+    width: clamp(120px, 30vw, 200px);
+    height: auto;
+    opacity: 0;
+    transform: translateY(20px) scale(.9);
+    filter: drop-shadow(0 0 30px rgba(255,107,157,.45));
+}
+.stf-easter-overlay.is-active .stf-easter-silhouette {
+    animation: stf-easter-silhouette-in .8s cubic-bezier(.16,1,.3,1) .25s forwards;
+}
+@keyframes stf-easter-silhouette-in {
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* 提示文字 */
+.stf-easter-hint {
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    font-size: 14px;
+    letter-spacing: .2em;
+    color: rgba(240,244,255,.7);
+    opacity: 0;
+    transform: translateY(10px);
+}
+.stf-easter-overlay.is-active .stf-easter-hint {
+    animation: stf-easter-hint-in .6s ease .45s forwards;
+}
+@keyframes stf-easter-hint-in {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 角色档案卡片（论坛独立） */
+.character-archive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 22px;
+    margin-top: 36px;
+}
+.character-archive-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 26px 24px 22px;
+    border-radius: 22px;
+    background: rgba(255,255,255,.045);
+    border: 1px solid rgba(255,255,255,.09);
+    border-top: 3px solid var(--char, var(--aimisi-pink));
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    transition: transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s, border-color .4s;
+}
+.character-archive-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 80% 0%, color-mix(in srgb, var(--char, #FF6B9D) 20%, transparent), transparent 60%);
+    opacity: 0;
+    transition: opacity .4s;
+    pointer-events: none;
+}
+.character-archive-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 22px 50px rgba(0,0,0,.4);
+    border-color: color-mix(in srgb, var(--char, #FF6B9D) 55%, transparent);
+}
+.character-archive-card:hover::after { opacity: 1; }
+.character-archive-icon {
+    width: 50px; height: 50px;
+    display: grid; place-items: center;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--char, #FF6B9D) 16%, transparent);
+    color: var(--char, var(--aimisi-pink));
+}
+.character-archive-icon svg { width: 24px; height: 24px; }
+.character-archive-name {
+    font-family: "Noto Serif SC", serif;
+    font-size: 21px; font-weight: 700; margin: 4px 0 0;
+}
+.character-archive-alias {
+    font-size: 13px;
+    color: var(--char, var(--aimisi-pink));
+    opacity: .9;
+}
+.character-archive-line {
+    font-size: 14px;
+    color: rgba(240,244,255,.7);
+    line-height: 1.7;
+    margin: 0;
+}
+.character-archive-cta {
+    margin-top: 6px;
+    font-size: 13px; font-weight: 500;
+    color: var(--char, var(--aimisi-pink));
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.character-archive-cta svg { width: 16px; height: 16px; transition: transform .3s; }
+.character-archive-card:hover .character-archive-cta svg { transform: translateX(4px); }
+
+@media (prefers-reduced-motion: reduce) {
+    .stf-easter-overlay, .stf-easter-ring, .stf-easter-particle,
+    .stf-easter-silhouette, .stf-easter-hint,
+    .character-archive-card, .character-archive-card::after,
+    .stf-hidden-trigger { animation: none !important; transition: opacity .2s ease !important; }
+    .character-archive-card:hover, .stf-hidden-trigger:hover { transform: none !important; }
+}
