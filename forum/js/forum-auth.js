@@ -521,6 +521,10 @@ window.StarTorchAuth = (function () {
             b.classList.toggle('active', on);
             b.setAttribute('aria-selected', on ? 'true' : 'false');
         });
+        document.querySelectorAll('.stf-auth-module').forEach(function (m) {
+            var on = m.getAttribute('data-auth-module') === tab;
+            m.classList.toggle('is-active', on);
+        });
         var loginForm = $('stf-login-form');
         var regForm = $('stf-register-form');
         if (loginForm) loginForm.hidden = tab !== 'login';

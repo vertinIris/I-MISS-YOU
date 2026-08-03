@@ -770,54 +770,67 @@
     box-shadow: 0 0 0 2px rgba(255,255,255,.22), 0 0 14px rgba(255,107,157,.45);
 }
 
-/* 通行证弹窗内部 */
-.stf-auth-tabs {
-    display: flex; gap: 14px;
-    margin-bottom: 28px;
-    padding: 6px;
-    border-radius: 16px;
-    background: rgba(255,255,255,.045);
+/* 通行证弹窗内部：登录 / 注册拆分为两个竖向独立模块 */
+.stf-auth-modules {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 22px;
+}
+.stf-auth-module {
+    border-radius: 18px;
+    background: rgba(255,255,255,.04);
     border: 1px solid rgba(168,216,255,.10);
+    overflow: hidden;
+    transition: background .25s, border-color .25s, box-shadow .25s;
+}
+.stf-auth-module.is-active {
+    background: rgba(255,255,255,.06);
+    border-color: rgba(168,216,255,.22);
+    box-shadow: 0 8px 28px rgba(0,0,0,.18);
+}
+.stf-auth-module[data-auth-module="login"].is-active {
+    border-color: rgba(107,138,255,.35);
+    box-shadow: 0 8px 28px rgba(107,138,255,.12);
+}
+.stf-auth-module[data-auth-module="register"].is-active {
+    border-color: rgba(255,107,157,.35);
+    box-shadow: 0 8px 28px rgba(255,107,157,.10);
 }
 .stf-auth-tab {
-    flex: 1;
-    padding: 11px 0;
-    border: none; border-radius: 12px;
-    background: transparent; color: rgba(240,244,255,.62);
-    font-size: 14px; letter-spacing: .04em; cursor: pointer;
-    transition: background .25s, color .25s, box-shadow .25s;
+    width: 100%;
+    padding: 14px 18px;
+    border: none;
+    background: transparent;
+    color: rgba(240,244,255,.55);
+    font-size: 14px; letter-spacing: .04em;
+    text-align: left;
+    cursor: pointer;
+    transition: background .25s, color .25s;
 }
-.stf-auth-tab:hover { color: rgba(255,255,255,.86); background: rgba(255,255,255,.05); }
+.stf-auth-tab.active { color: #fff; }
+.stf-auth-module:hover .stf-auth-tab:not(.active) { color: rgba(255,255,255,.8); }
+.stf-auth-tab:hover { background: rgba(255,255,255,.04); }
 .stf-auth-tab:focus-visible {
     outline: 2px solid var(--aimisi-pink, #FF6B9D);
-    outline-offset: 2px;
+    outline-offset: -2px;
 }
-.stf-auth-tab.active {
-    background: rgba(168,216,255,.18);
-    color: #fff;
-    box-shadow: 0 4px 16px rgba(107,138,255,.28);
-    position: relative;
-}
-/* 登录页签：蓝紫流光 */
-.stf-auth-tab[data-auth-tab="login"].active {
+/* 登录模块展开：蓝紫流光 */
+.stf-auth-module[data-auth-module="login"] .stf-auth-tab.active {
     background: linear-gradient(135deg, rgba(107,138,255,.22), rgba(107,138,255,.10));
-    box-shadow: 0 4px 18px rgba(107,138,255,.35), inset 0 0 0 1px rgba(168,216,255,.35);
 }
-/* 注册页签：粉金流光 */
-.stf-auth-tab[data-auth-tab="register"].active {
+/* 注册模块展开：粉金流光 */
+.stf-auth-module[data-auth-module="register"] .stf-auth-tab.active {
     background: linear-gradient(135deg, rgba(255,107,157,.22), rgba(232,197,106,.12));
-    box-shadow: 0 4px 18px rgba(255,107,157,.30), inset 0 0 0 1px rgba(255,182,217,.40);
 }
-.stf-auth-tab.active::before {
-    content: '';
-    position: absolute; top: 0; left: 12px; right: 12px; height: 2px;
-    border-radius: 2px;
-    background: currentColor;
-    opacity: .75;
+.stf-auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 0 18px 18px;
 }
-.stf-auth-form { display: flex; flex-direction: column; gap: 14px; }
-#stf-login-form { border-top: 1px solid rgba(107,138,255,.18); padding-top: 18px; }
-#stf-register-form { border-top: 1px solid rgba(255,107,157,.18); padding-top: 18px; }
+/* 修复：form 本身带 hidden 时 flex 会覆盖 UA 默认 display:none */
+.stf-auth-form[hidden] { display: none !important; }
 .stf-auth-form .form-actions { margin-top: 2px; }
 .stf-auth-error { margin: 0; font-size: 13px; color: #FF8DAA; }
 
@@ -860,7 +873,7 @@
     font-size: 12px; line-height: 1.6;
     color: rgba(240,244,255,.48);
 }
-/* form-group 为 flex 布局，hidden 属性需强制生效 */
+/* form-group 等内部字段在 hidden 时强制隐藏 */
 .stf-auth-form [hidden] { display: none !important; }
 .stf-auth-note {
     margin: 18px 0 0;
