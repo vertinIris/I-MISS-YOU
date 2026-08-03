@@ -731,12 +731,299 @@
     .stf-comment-submit { width: 100%; }
 }
 
+/* ============================================================
+   新增组件样式：账号按钮 / 通行证弹窗 / 搜索 / 附件 / 草稿 / 调谐台
+   ============================================================ */
+
+/* 导航栏账号按钮 */
+.stf-account-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    padding: 7px 14px 7px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(168,216,255,.22);
+    background: rgba(255,255,255,.05);
+    color: rgba(240,244,255,.92);
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background .25s, border-color .25s, transform .25s, box-shadow .25s;
+}
+.stf-account-btn:hover {
+    background: rgba(255,255,255,.1);
+    border-color: rgba(168,216,255,.42);
+    transform: translateY(-1px);
+}
+.stf-account-btn.is-signed { border-color: rgba(255,107,157,.5); }
+.stf-account-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 14px; font-weight: 700;
+    background: rgba(255,255,255,.14);
+    color: #fff;
+    flex: none;
+}
+.stf-account-avatar.is-signed {
+    box-shadow: 0 0 0 2px rgba(255,255,255,.22), 0 0 14px rgba(255,107,157,.45);
+}
+
+/* 通行证弹窗内部 */
+.stf-auth-tabs {
+    display: flex; gap: 6px;
+    margin-bottom: 20px;
+    padding: 4px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.04);
+}
+.stf-auth-tab {
+    flex: 1;
+    padding: 9px 0;
+    border: none; border-radius: 11px;
+    background: transparent; color: rgba(240,244,255,.62);
+    font-size: 14px; cursor: pointer;
+    transition: background .25s, color .25s;
+}
+.stf-auth-tab.active {
+    background: rgba(168,216,255,.16);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(107,138,255,.22);
+}
+.stf-auth-form { display: flex; flex-direction: column; gap: 14px; }
+.stf-auth-form .form-actions { margin-top: 2px; }
+.stf-auth-error { margin: 0; font-size: 13px; color: #FF8DAA; }
+.stf-auth-note {
+    margin: 18px 0 0;
+    font-size: 12.5px; line-height: 1.7;
+    color: rgba(240,244,255,.55);
+}
+.stf-account-card {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px;
+    border-radius: 18px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(168,216,255,.18);
+}
+.stf-account-card-avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 22px; font-weight: 700; color: #fff;
+    background: var(--aimisi-pink, #FF6B9D);
+    box-shadow: 0 0 18px rgba(255,107,157,.4);
+    flex: none;
+}
+.stf-account-card-text { display: flex; flex-direction: column; gap: 3px; }
+.stf-account-card-text b { font-size: 17px; font-family: "Noto Serif SC", serif; color: #fff; }
+.stf-account-card-text span { font-size: 12.5px; color: rgba(240,244,255,.6); }
+
+/* 社区搜索 */
+.stf-search {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 14px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    color: rgba(240,244,255,.7);
+    min-width: 240px;
+    transition: border-color .25s, background .25s;
+}
+.stf-search:focus-within { border-color: rgba(168,216,255,.45); background: rgba(255,255,255,.08); }
+.stf-search-icon { width: 18px; height: 18px; flex: none; color: rgba(168,216,255,.8); }
+.stf-search-input {
+    border: none; background: transparent; outline: none;
+    color: #fff; font-size: 14px; width: 100%;
+}
+.stf-search-input::placeholder { color: rgba(240,244,255,.45); }
+.stf-search-clear {
+    border: none; background: transparent; cursor: pointer;
+    color: rgba(240,244,255,.6); font-size: 18px; line-height: 1;
+    padding: 0 2px; flex: none;
+}
+.stf-search-clear:hover { color: #fff; }
+
+/* 附件上传区 */
+.stf-upload-zone {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 18px;
+    border-radius: 16px;
+    border: 1.5px dashed rgba(168,216,255,.35);
+    background: rgba(255,255,255,.03);
+    color: rgba(240,244,255,.7);
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .25s, background .25s, transform .2s;
+}
+.stf-upload-zone:hover, .stf-upload-zone:focus-visible {
+    border-color: rgba(168,216,255,.6);
+    background: rgba(168,216,255,.07);
+    outline: none;
+}
+.stf-upload-zone.is-dragging {
+    border-color: var(--aimisi-pink, #FF6B9D);
+    background: rgba(255,107,157,.1);
+}
+.stf-upload-zone svg { width: 30px; height: 30px; color: rgba(168,216,255,.85); }
+.stf-upload-zone b { font-size: 14px; color: rgba(240,244,255,.92); font-weight: 600; }
+.stf-upload-zone span { font-size: 12px; color: rgba(240,244,255,.5); }
+.stf-upload-status { margin: 8px 0 0; font-size: 12.5px; }
+.stf-upload-status.is-ok { color: #8AE6B0; }
+.stf-upload-status.is-error { color: #FF8DAA; }
+.stf-upload-status.is-warn { color: #E8C56A; }
+.stf-upload-status.is-busy { color: rgba(168,216,255,.85); }
+.stf-upload-preview {
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 10px; padding: 10px 12px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+}
+.stf-upload-thumb {
+    width: 46px; height: 46px; border-radius: 10px;
+    object-fit: cover; flex: none;
+    background: rgba(255,255,255,.08);
+}
+.stf-upload-thumb--icon { display: grid; place-items: center; font-size: 22px; color: var(--aimisi-pink); }
+.stf-upload-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.stf-upload-meta b { font-size: 13.5px; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stf-upload-meta span { font-size: 12px; color: rgba(240,244,255,.55); }
+.stf-upload-remove {
+    margin-left: auto; flex: none;
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.06); color: #fff; cursor: pointer;
+    font-size: 15px; line-height: 1;
+}
+.stf-upload-remove:hover { background: rgba(255,107,157,.2); }
+
+/* 草稿提示 */
+.stf-draft-hint {
+    font-size: 12.5px; color: rgba(168,216,255,.85);
+    margin-left: auto; align-self: center;
+}
+
+/* 调谐台：深夜电台频率入口 */
+.stf-tuner {
+    display: flex; justify-content: center;
+    padding: 56px 24px 12px;
+}
+.stf-tuner-frame {
+    width: min(560px, 100%);
+    padding: 30px 28px 26px;
+    border-radius: 26px;
+    text-align: center;
+    background: rgba(255,255,255,.045);
+    border: 1px solid rgba(168,216,255,.16);
+    border-top: 2px solid var(--stf-brand, #6B8AFF);
+    box-shadow: 0 24px 60px rgba(0,0,0,.4), inset 0 0 60px rgba(107,138,255,.06);
+    backdrop-filter: blur(10px);
+}
+.stf-tuner-head {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    margin-bottom: 18px;
+}
+.stf-tuner-led {
+    width: 11px; height: 11px; border-radius: 50%;
+    background: rgba(255,255,255,.25);
+    box-shadow: 0 0 0 0 transparent;
+    transition: background .3s, box-shadow .3s;
+}
+.stf-tuner-led.is-tuned {
+    background: #A8D8FF;
+    box-shadow: 0 0 12px 2px rgba(168,216,255,.8);
+}
+.stf-tuner-led.is-locked {
+    background: var(--aimisi-pink, #FF6B9D);
+    box-shadow: 0 0 16px 3px rgba(255,107,157,.9);
+    animation: stf-led-pulse 1s ease-in-out infinite;
+}
+@keyframes stf-led-pulse {
+    0%, 100% { box-shadow: 0 0 12px 2px rgba(255,107,157,.7); }
+    50%      { box-shadow: 0 0 20px 5px rgba(255,107,157,1); }
+}
+.stf-tuner-title {
+    margin: 0; font-family: "Noto Serif SC", serif;
+    font-size: 21px; color: #fff; font-weight: 700;
+}
+.stf-tuner-state {
+    font-size: 12px; letter-spacing: .12em;
+    padding: 4px 12px; border-radius: 999px;
+    color: rgba(240,244,255,.7);
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+}
+.stf-tuner-wave {
+    height: 42px; border-radius: 12px; margin-bottom: 22px;
+    background: repeating-linear-gradient(90deg, rgba(168,216,255,.55) 0 2px, transparent 2px 8px);
+    -webkit-mask: linear-gradient(90deg, #000 var(--level,0%), rgba(0,0,0,.12) var(--level,0%));
+            mask: linear-gradient(90deg, #000 var(--level,0%), rgba(0,0,0,.12) var(--level,0%));
+    transition: --level .2s;
+}
+.stf-tuner-dials {
+    display: flex; align-items: flex-end; justify-content: center; gap: 10px;
+}
+.stf-dial {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.stf-dial-step {
+    width: 100%; height: 20px; border: none; cursor: pointer;
+    border-radius: 8px;
+    background: rgba(255,255,255,.06);
+    color: rgba(168,216,255,.9); font-size: 11px; line-height: 1;
+    transition: background .2s, color .2s;
+}
+.stf-dial-step:hover { background: rgba(168,216,255,.18); color: #fff; }
+.stf-dial-input {
+    width: 52px; height: 64px;
+    text-align: center; font-size: 34px; font-weight: 800;
+    font-family: "Noto Serif SC", serif;
+    color: #fff;
+    background: rgba(255,255,255,.05);
+    border: 2px solid rgba(168,216,255,.35);
+    border-radius: 14px;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s, background .2s;
+}
+.stf-dial-input:focus {
+    border-color: var(--aimisi-pink, #FF6B9D);
+    box-shadow: 0 0 0 4px rgba(255,107,157,.18);
+    background: rgba(255,107,157,.06);
+}
+.stf-dial-dot {
+    align-self: center; font-size: 28px; color: rgba(240,244,255,.4);
+    padding: 0 2px 18px;
+}
+.stf-tuner-foot { margin-top: 22px; }
+.stf-tuner-signal {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12.5px; color: rgba(240,244,255,.6);
+    margin-bottom: 12px;
+}
+.stf-tuner-signal-label { letter-spacing: .1em; }
+.stf-tuner-signal-bar {
+    flex: 1; height: 8px; border-radius: 999px;
+    background: rgba(255,255,255,.08);
+    overflow: hidden;
+}
+.stf-tuner-signal-bar i {
+    display: block; height: 100%; width: 0%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #6B8AFF, #B66BFF, #FF6B9D);
+    transition: width .25s ease;
+}
+.stf-tuner-signal-num { font-variant-numeric: tabular-nums; color: #fff; min-width: 38px; text-align: right; }
+.stf-tuner-hint { margin: 0; font-size: 13px; line-height: 1.7; color: rgba(240,244,255,.6); }
+
 @media (prefers-reduced-motion: reduce) {
     .forum-hero-title, .forum-entry, .forum-entry::after, .lore-card,
     .stf-card, .stf-filter-btn, .stf-tag-chip, .stf-page-btn,
     .stf-modal, .stf-modal-panel, .stf-toast,
     .hero-pill, .archive-float, .character-archive-card,
-    .stf-stat, .stf-sort-btn { animation: none !important; transition: opacity .2s ease !important; }
+    .stf-stat, .stf-sort-btn, .stf-account-btn, .stf-tuner-led,
+    .stf-dial-step, .stf-upload-zone, .stf-search { animation: none !important; transition: opacity .2s ease !important; }
     .forum-entry:hover, .lore-card:hover, .stf-card:hover,
-    .hero-pill:hover, .archive-float:hover .character-archive-card { transform: none !important; }
+    .hero-pill:hover, .archive-float:hover .character-archive-card,
+    .stf-account-btn:hover, .stf-upload-zone:hover { transform: none !important; }
 }

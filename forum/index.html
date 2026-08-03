@@ -46,6 +46,10 @@
                 <a href="#characters-archive" class="nav-link">角色档案</a>
                 <a href="#worldview" class="nav-link">世界观</a>
             </div>
+            <button type="button" class="stf-account-btn" id="stf-account-btn" aria-haspopup="dialog" aria-expanded="false" aria-label="登录或注册星炬学院通行证">
+                <span class="stf-account-avatar" id="stf-account-avatar" aria-hidden="true">＋</span>
+                <span class="stf-account-name" id="stf-account-name">登录</span>
+            </button>
             <button type="button" class="nav-toggle" id="nav-toggle" aria-label="展开菜单" aria-expanded="false">
                 <span></span><span></span><span></span>
             </button>
@@ -148,6 +152,13 @@
                     <button class="stf-sort-btn active" data-sort="new">最新</button>
                     <button class="stf-sort-btn" data-sort="hot">热门</button>
                 </div>
+                <div class="stf-search">
+                    <svg class="stf-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/>
+                    </svg>
+                    <input type="search" class="stf-search-input" id="stf-search" placeholder="搜索标题 / 正文 / 作者" aria-label="搜索社区作品">
+                    <button type="button" class="stf-search-clear" id="stf-search-clear" aria-label="清空搜索" hidden>×</button>
+                </div>
                 <button type="button" class="btn-ghost magnetic" data-action="open-submit"><span>投稿</span></button>
             </div>
 
@@ -172,7 +183,7 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label" for="stf-composer-nickname">昵称</label>
-                            <input type="text" class="form-input" id="stf-composer-nickname" placeholder="你的名字" maxlength="20" required>
+                            <input type="text" class="form-input" id="stf-composer-nickname" placeholder="你的名字" maxlength="60" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="stf-composer-type">类型</label>
@@ -200,7 +211,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="stf-composer-title">标题</label>
-                        <input type="text" class="form-input" id="stf-composer-title" placeholder="给作品起个名字" maxlength="100" required>
+                        <input type="text" class="form-input" id="stf-composer-title" placeholder="给作品起个名字" maxlength="300" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">标签 <span class="form-hint">（可选，最多5个）</span></label>
@@ -222,11 +233,26 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="stf-composer-content">内容</label>
-                        <textarea class="form-input form-textarea" id="stf-composer-content" placeholder="在这里写下你的创作……" rows="4" maxlength="2000" required></textarea>
+                        <textarea class="form-input form-textarea" id="stf-composer-content" placeholder="在这里写下你的创作……" rows="4" maxlength="6000" required></textarea>
+                        <span class="form-counter" id="stf-composer-counter">0 / 6000</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">附件 <span class="form-hint">（可选 · 文本自动入正文 / 图片作封面 / 音频登记信息）</span></label>
+                        <div class="stf-upload-zone" id="stf-composer-upload-zone" tabindex="0" role="button" aria-label="上传附件：点击选择，或拖拽文件到此处">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                                <path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+                            </svg>
+                            <b>拖拽或点击上传</b>
+                            <span>文本 30MB · 图片 15MB · 音频 30MB</span>
+                        </div>
+                        <input type="file" id="stf-composer-upload-input" class="stf-upload-input" hidden>
+                        <p class="stf-upload-status" id="stf-composer-upload-status" role="status" hidden></p>
+                        <div class="stf-upload-preview" id="stf-composer-upload-preview" hidden></div>
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn-primary magnetic"><span>发布</span></button>
                         <button type="button" class="btn-ghost magnetic" id="stf-composer-cancel"><span>取消</span></button>
+                        <span class="stf-draft-hint" id="stf-composer-draft" aria-live="polite"></span>
                     </div>
                 </form>
             </div>
@@ -373,14 +399,54 @@
         </div>
     </section>
 
+    <!-- 深夜电台调谐台：隐藏入口的显性化设计 -->
+    <section class="stf-tuner" id="stf-tuner" aria-labelledby="stf-tuner-title">
+        <div class="stf-tuner-frame">
+            <div class="stf-tuner-head">
+                <span class="stf-tuner-led" id="stf-tuner-led" aria-hidden="true"></span>
+                <h2 class="stf-tuner-title" id="stf-tuner-title">深夜电台 · 频率调谐台</h2>
+                <span class="stf-tuner-state" id="stf-tuner-state">待机</span>
+            </div>
+
+            <div class="stf-tuner-wave" id="stf-tuner-wave" aria-hidden="true"></div>
+
+            <div class="stf-tuner-dials" id="stf-tuner-dials" role="group" aria-label="输入四位频率，可用上下方向键或直接键入数字">
+                <div class="stf-dial">
+                    <button type="button" class="stf-dial-step" data-dial-step="up" data-index="0" aria-label="第 1 位加一" tabindex="-1">▲</button>
+                    <input class="stf-dial-input" id="stf-dial-0" type="text" inputmode="numeric" maxlength="1" value="0" autocomplete="off" aria-label="频率第 1 位">
+                    <button type="button" class="stf-dial-step" data-dial-step="down" data-index="0" aria-label="第 1 位减一" tabindex="-1">▼</button>
+                </div>
+                <div class="stf-dial">
+                    <button type="button" class="stf-dial-step" data-dial-step="up" data-index="1" aria-label="第 2 位加一" tabindex="-1">▲</button>
+                    <input class="stf-dial-input" id="stf-dial-1" type="text" inputmode="numeric" maxlength="1" value="0" autocomplete="off" aria-label="频率第 2 位">
+                    <button type="button" class="stf-dial-step" data-dial-step="down" data-index="1" aria-label="第 2 位减一" tabindex="-1">▼</button>
+                </div>
+                <span class="stf-dial-dot" aria-hidden="true">·</span>
+                <div class="stf-dial">
+                    <button type="button" class="stf-dial-step" data-dial-step="up" data-index="2" aria-label="第 3 位加一" tabindex="-1">▲</button>
+                    <input class="stf-dial-input" id="stf-dial-2" type="text" inputmode="numeric" maxlength="1" value="0" autocomplete="off" aria-label="频率第 3 位">
+                    <button type="button" class="stf-dial-step" data-dial-step="down" data-index="2" aria-label="第 3 位减一" tabindex="-1">▼</button>
+                </div>
+                <div class="stf-dial">
+                    <button type="button" class="stf-dial-step" data-dial-step="up" data-index="3" aria-label="第 4 位加一" tabindex="-1">▲</button>
+                    <input class="stf-dial-input" id="stf-dial-3" type="text" inputmode="numeric" maxlength="1" value="0" autocomplete="off" aria-label="频率第 4 位">
+                    <button type="button" class="stf-dial-step" data-dial-step="down" data-index="3" aria-label="第 4 位减一" tabindex="-1">▼</button>
+                </div>
+            </div>
+
+            <div class="stf-tuner-foot">
+                <div class="stf-tuner-signal">
+                    <span class="stf-tuner-signal-label">信噪比</span>
+                    <span class="stf-tuner-signal-bar" aria-hidden="true"><i id="stf-tuner-signal-fill"></i></span>
+                    <span class="stf-tuner-signal-num" id="stf-tuner-signal-num">0%</span>
+                </div>
+                <p class="stf-tuner-hint" id="stf-tuner-hint" role="status">拨动数字轮，或直接键入四位频率 —— 深夜里，总有人在某个频率上唱歌。</p>
+            </div>
+        </div>
+    </section>
+
     <p class="forum-foot-note">
-        飞行雪绒是《鸣潮》角色爱弥斯的同人创作账号，本论坛为粉丝向非官方二创聚合站。<br>
-        <span class="stf-hidden-trigger" id="stf-hidden-trigger" title="调频 9072 · 隐藏入口" aria-label="隐藏入口：连续点击 5 次或输入 9072">
-            <svg class="stf-hidden-snowflake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="8" x2="22" y2="16"/><line x1="2" y1="16" x2="22" y2="8"/>
-                <circle cx="12" cy="12" r="2"/>
-            </svg>
-        </span>
+        飞行雪绒是《鸣潮》角色爱弥斯的同人创作账号，本论坛为粉丝向非官方二创聚合站。
     </p>
 
     <!-- 投稿弹窗 -->
@@ -395,7 +461,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label" for="stf-submit-nickname">昵称</label>
-                        <input type="text" class="form-input" id="stf-submit-nickname" placeholder="你的名字" maxlength="20" required>
+                        <input type="text" class="form-input" id="stf-submit-nickname" placeholder="你的名字" maxlength="60" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="stf-submit-type">类型</label>
@@ -423,7 +489,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="stf-submit-title">标题</label>
-                    <input type="text" class="form-input" id="stf-submit-title" placeholder="给作品起个名字" maxlength="100" required>
+                    <input type="text" class="form-input" id="stf-submit-title" placeholder="给作品起个名字" maxlength="300" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">标签 <span class="form-hint">（可选，最多5个）</span></label>
@@ -445,68 +511,105 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="stf-submit-content">内容</label>
-                    <textarea class="form-input form-textarea" id="stf-submit-content" placeholder="在这里写下你的创作……" rows="6" maxlength="2000" required></textarea>
+                    <textarea class="form-input form-textarea" id="stf-submit-content" placeholder="在这里写下你的创作……" rows="6" maxlength="6000" required></textarea>
+                    <span class="form-counter" id="stf-submit-counter">0 / 6000</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">附件 <span class="form-hint">（可选 · 文本自动入正文 / 图片作封面 / 音频登记信息）</span></label>
+                    <div class="stf-upload-zone" id="stf-submit-upload-zone" tabindex="0" role="button" aria-label="上传附件：点击选择，或拖拽文件到此处">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                            <path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+                        </svg>
+                        <b>拖拽或点击上传</b>
+                        <span>支持 txt / md / json / csv / srt · jpg / png / gif / webp / avif / svg · mp3 / wav / ogg / m4a / flac</span>
+                    </div>
+                    <input type="file" id="stf-submit-upload-input" class="stf-upload-input" hidden>
+                    <p class="stf-upload-status" id="stf-submit-upload-status" role="status" hidden></p>
+                    <div class="stf-upload-preview" id="stf-submit-upload-preview" hidden></div>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn-primary magnetic"><span>提交作品</span></button>
                     <button type="button" class="btn-ghost magnetic" data-close><span>取消</span></button>
+                    <span class="stf-draft-hint" id="stf-submit-draft" aria-live="polite"></span>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- 隐藏入口：爱弥斯像素形象飞出入场 -->
+    <!-- 隐藏入口：爱弥斯「共鸣雪绒」信号接通特效 -->
     <div class="stf-easter-overlay" id="stf-easter-overlay" aria-hidden="true">
         <div class="stf-easter-ring"></div>
         <div class="stf-easter-particles" id="stf-easter-particles"></div>
-        <div class="stf-easter-pixel" id="stf-easter-pixel" aria-hidden="true">
-            <svg viewBox="0 0 64 64" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+
+        <!-- 共鸣核心：声波环 + 雪绒花 -->
+        <div class="stf-resonance" aria-hidden="true">
+            <span class="stf-resonance-wave"></span>
+            <span class="stf-resonance-wave stf-resonance-wave--2"></span>
+            <span class="stf-resonance-wave stf-resonance-wave--3"></span>
+            <span class="stf-resonance-halo"></span>
+            <svg class="stf-resonance-flake" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
                 <defs>
-                    <clipPath id="stf-pixel-clip">
-                        <circle cx="32" cy="32" r="30"/>
-                    </clipPath>
+                    <radialGradient id="stf-flake-core" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#FFFFFF"/>
+                        <stop offset="45%" stop-color="#FFD9EC"/>
+                        <stop offset="100%" stop-color="#FF6B9D" stop-opacity="0.25"/>
+                    </radialGradient>
+                    <linearGradient id="stf-flake-arm" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#FFFFFF"/>
+                        <stop offset="55%" stop-color="#FFB6D9"/>
+                        <stop offset="100%" stop-color="#A8D8FF"/>
+                    </linearGradient>
+                    <filter id="stf-flake-glow" x="-60%" y="-60%" width="220%" height="220%">
+                        <feGaussianBlur stdDeviation="3" result="b"/>
+                        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
                 </defs>
-                <!-- 圆形暗底 -->
-                <circle cx="32" cy="32" r="30" fill="#1A0E1C"/>
-                <!-- 像素头像（被圆形裁切） -->
-                <g clip-path="url(#stf-pixel-clip)">
-                    <!-- 后发 -->
-                    <rect x="14" y="8" width="36" height="28" fill="#FF6B9D"/>
-                    <!-- 左发团 -->
-                    <rect x="8" y="6" width="14" height="14" fill="#FF6B9D"/>
-                    <rect x="10" y="8" width="10" height="10" fill="#FFB6D9"/>
-                    <!-- 右发团 -->
-                    <rect x="42" y="6" width="14" height="14" fill="#FF6B9D"/>
-                    <rect x="44" y="8" width="10" height="10" fill="#FFB6D9"/>
-                    <!-- 脸 -->
-                    <rect x="20" y="16" width="24" height="22" fill="#FFE0CC"/>
-                    <!-- 刘海 -->
-                    <rect x="20" y="16" width="24" height="6" fill="#FF6B9D"/>
-                    <rect x="22" y="18" width="6" height="4" fill="#FFB6D9"/>
-                    <rect x="36" y="18" width="6" height="4" fill="#FFB6D9"/>
-                    <!-- 眼睛 -->
-                    <rect x="25" y="24" width="5" height="6" fill="#6B8AFF"/>
-                    <rect x="34" y="24" width="5" height="6" fill="#6B8AFF"/>
-                    <rect x="26" y="25" width="2" height="2" fill="#FFFFFF"/>
-                    <rect x="35" y="25" width="2" height="2" fill="#FFFFFF"/>
-                    <!-- 腮红 -->
-                    <rect x="22" y="30" width="5" height="3" fill="#FF9EC4"/>
-                    <rect x="37" y="30" width="5" height="3" fill="#FF9EC4"/>
-                    <!-- 嘴 -->
-                    <rect x="29" y="34" width="6" height="2" fill="#C25B7A"/>
-                    <!-- 身体 / 蓝白领子 -->
-                    <rect x="18" y="38" width="28" height="18" fill="#6B8AFF"/>
-                    <rect x="20" y="40" width="24" height="6" fill="#FFFFFF"/>
-                    <rect x="24" y="42" width="16" height="4" fill="#A8D8FF"/>
+                <g filter="url(#stf-flake-glow)" stroke="url(#stf-flake-arm)" stroke-width="3" stroke-linecap="round" fill="none">
+                    <g class="stf-flake-arms">
+                        <path d="M60 60 V10"/>
+                        <path d="M60 22 l-9 -9 M60 22 l9 -9"/>
+                        <path d="M60 36 l-7 -7 M60 36 l7 -7"/>
+                    </g>
+                    <g class="stf-flake-arms" transform="rotate(60 60 60)">
+                        <path d="M60 60 V10"/>
+                        <path d="M60 22 l-9 -9 M60 22 l9 -9"/>
+                        <path d="M60 36 l-7 -7 M60 36 l7 -7"/>
+                    </g>
+                    <g class="stf-flake-arms" transform="rotate(120 60 60)">
+                        <path d="M60 60 V10"/>
+                        <path d="M60 22 l-9 -9 M60 22 l9 -9"/>
+                        <path d="M60 36 l-7 -7 M60 36 l7 -7"/>
+                    </g>
+                    <g class="stf-flake-arms" transform="rotate(180 60 60)">
+                        <path d="M60 60 V10"/>
+                        <path d="M60 22 l-9 -9 M60 22 l9 -9"/>
+                        <path d="M60 36 l-7 -7 M60 36 l7 -7"/>
+                    </g>
+                    <g class="stf-flake-arms" transform="rotate(240 60 60)">
+                        <path d="M60 60 V10"/>
+                        <path d="M60 22 l-9 -9 M60 22 l9 -9"/>
+                        <path d="M60 36 l-7 -7 M60 36 l7 -7"/>
+                    </g>
+                    <g class="stf-flake-arms" transform="rotate(300 60 60)">
+                        <path d="M60 60 V10"/>
+                        <path d="M60 22 l-9 -9 M60 22 l9 -9"/>
+                        <path d="M60 36 l-7 -7 M60 36 l7 -7"/>
+                    </g>
                 </g>
-                <!-- 圆形描边 -->
-                <circle cx="32" cy="32" r="30" fill="none" stroke="#FF6B9D" stroke-width="2" stroke-opacity="0.55"/>
-                <!-- 右下角通知点 -->
-                <circle cx="54" cy="54" r="7" fill="#FF6B9D"/>
-                <circle cx="54" cy="54" r="4" fill="#FFB6D9"/>
+                <circle cx="60" cy="60" r="13" fill="url(#stf-flake-core)"/>
+                <circle cx="60" cy="60" r="13" fill="none" stroke="#FFFFFF" stroke-opacity="0.7" stroke-width="1.2"/>
             </svg>
         </div>
-        <p class="stf-easter-hint">调频 9072 · 像素信号同步中</p>
+
+        <!-- 精致频率牌 -->
+        <div class="stf-freq-display" aria-hidden="true">
+            <span class="stf-freq-label">FREQUENCY · 调频</span>
+            <span class="stf-freq-digits">
+                <b class="stf-freq-digit">9</b><b class="stf-freq-digit">0</b><b class="stf-freq-digit">7</b><b class="stf-freq-digit">2</b>
+            </span>
+            <span class="stf-freq-line"><i></i></span>
+            <span class="stf-freq-sub">信号已接通 · 飞行雪绒正在播出</span>
+        </div>
     </div>
 
     <!-- 开场沉浸提示：仅首次访问延迟出现 -->
@@ -526,7 +629,81 @@
         </div>
     </div>
 
+    <!-- 星炬学院通行证 -->
+    <div class="stf-modal stf-account-modal" id="stf-account-modal" role="dialog" aria-modal="true" aria-labelledby="stf-account-title" hidden>
+        <div class="stf-modal-backdrop" data-account-close></div>
+        <div class="stf-modal-panel glass">
+            <div class="stf-modal-header">
+                <h3 id="stf-account-title">星炬学院通行证</h3>
+                <button type="button" class="stf-modal-close" data-account-close aria-label="关闭">×</button>
+            </div>
+
+            <div id="stf-account-guest">
+                <div class="stf-auth-tabs" role="tablist" aria-label="登录或注册">
+                    <button type="button" class="stf-auth-tab active" data-auth-tab="login" role="tab" aria-selected="true">登录</button>
+                    <button type="button" class="stf-auth-tab" data-auth-tab="register" role="tab" aria-selected="false">注册</button>
+                </div>
+
+                <form class="stf-auth-form" id="stf-login-form">
+                    <div class="form-group">
+                        <label class="form-label" for="stf-login-name">用户名</label>
+                        <input type="text" class="form-input" id="stf-login-name" maxlength="20" autocomplete="username" placeholder="你的通行证名称" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="stf-login-pwd">口令</label>
+                        <input type="password" class="form-input" id="stf-login-pwd" maxlength="64" autocomplete="current-password" placeholder="至少 4 位" required>
+                    </div>
+                    <p class="stf-auth-error" id="stf-login-error" role="alert" hidden></p>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary magnetic"><span>登录</span></button>
+                    </div>
+                </form>
+
+                <form class="stf-auth-form" id="stf-register-form" hidden>
+                    <div class="form-group">
+                        <label class="form-label" for="stf-register-name">用户名 <span class="form-hint">（2–20 字，发帖时显示）</span></label>
+                        <input type="text" class="form-input" id="stf-register-name" maxlength="20" autocomplete="username" placeholder="给自己取个名字" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="stf-register-pwd">口令</label>
+                            <input type="password" class="form-input" id="stf-register-pwd" maxlength="64" autocomplete="new-password" placeholder="至少 4 位" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="stf-register-pwd2">确认口令</label>
+                            <input type="password" class="form-input" id="stf-register-pwd2" maxlength="64" autocomplete="new-password" placeholder="再输入一次" required>
+                        </div>
+                    </div>
+                    <p class="stf-auth-error" id="stf-register-error" role="alert" hidden></p>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary magnetic"><span>签发通行证</span></button>
+                    </div>
+                </form>
+
+                <p class="stf-auth-note">
+                    通行证只保存在这台设备的浏览器里，用于给你的发帖一个稳定署名 —— 不登录也可以用匿名身份发帖。
+                </p>
+            </div>
+
+            <div id="stf-account-user" hidden>
+                <div class="stf-account-card">
+                    <span class="stf-account-card-avatar" id="stf-account-card-avatar" aria-hidden="true">?</span>
+                    <span class="stf-account-card-text">
+                        <b id="stf-account-card-name">—</b>
+                        <span id="stf-account-card-meta">—</span>
+                    </span>
+                </div>
+                <p class="stf-auth-note">已登录状态下发帖将使用通行证署名，匿名身份选择器会自动停用。</p>
+                <div class="form-actions">
+                    <button type="button" class="btn-ghost magnetic" id="stf-logout-btn"><span>退出登录</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="js/forum-data.js"></script>
+    <script src="js/forum-auth.js"></script>
+    <script src="js/forum-upload.js"></script>
     <script src="js/forum.js"></script>
     <script src="js/forum-easter.js"></script>
 </body>

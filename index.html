@@ -1454,7 +1454,7 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label" for="submit-nickname">昵称</label>
-                            <input type="text" class="form-input" id="submit-nickname" placeholder="你的名字" maxlength="20" required>
+                            <input type="text" class="form-input" id="submit-nickname" placeholder="你的名字" maxlength="60" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="submit-type">类型</label>
@@ -1493,16 +1493,16 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="submit-content">内容</label>
-                        <textarea class="form-input form-textarea" id="submit-content" placeholder="在这里写下你的创作……" rows="6" maxlength="2000" required></textarea>
-                        <span class="form-counter" id="submit-counter">0 / 2000</span>
+                        <textarea class="form-input form-textarea" id="submit-content" placeholder="在这里写下你的创作……" rows="6" maxlength="6000" required></textarea>
+                        <span class="form-counter" id="submit-counter">0 / 6000</span>
                     </div>
                     <!-- v9.0: 拖拽上传区 -->
                     <div class="upload-drop-zone" id="upload-drop-zone">
                         <div class="upload-icon">📂</div>
                         <div class="upload-hint">拖拽文件到此处，或点击选择文件</div>
-                        <div class="upload-formats">支持: .txt .md .jpg .png .gif | 限制: 文本 10MB / 图片 5MB</div>
+                        <div class="upload-formats">支持: .txt .md .json .csv · .jpg .png .gif .webp .avif .bmp .svg | 限制: 文本 30MB / 图片 15MB</div>
                     </div>
-                    <input type="file" id="upload-file-input" style="display:none;" accept=".txt,.md,.jpg,.jpeg,.png,.gif">
+                    <input type="file" id="upload-file-input" style="display:none;" accept=".txt,.md,.json,.csv,.jpg,.jpeg,.png,.gif,.webp,.avif,.bmp,.svg">
                     <div class="upload-progress" id="upload-progress" style="display:none;">
                         <div class="progress-fill" id="upload-progress-fill"></div>
                         <span class="progress-text" id="upload-progress-text">0%</span>

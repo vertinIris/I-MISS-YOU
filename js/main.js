@@ -2409,7 +2409,7 @@
 
         /* --- 输入校验 --- */
         if (!rawName || !rawText) return;
-        if (rawName.length > 20) { showSubmitToast('昵称限20字以内'); return; }
+        if (rawName.length > 60) { showSubmitToast('昵称限60字以内'); return; }
         if (rawText.length > 500) { showSubmitToast('评论限500字以内'); return; }
         if (rawText.length < 2) { showSubmitToast('评论至少2个字～'); return; }
 
@@ -2746,9 +2746,9 @@
 
             /* --- 输入校验 --- */
             if (!rawName || !rawTitle || !rawContent) return;
-            if (rawName.length > 20)    { showSubmitToast('昵称限20字以内'); return; }
-            if (rawTitle.length > 100)  { showSubmitToast('标题限100字以内'); return; }
-            if (rawContent.length > 2000) { showSubmitToast('内容限2000字以内'); return; }
+            if (rawName.length > 60)    { showSubmitToast('昵称限60字以内'); return; }
+            if (rawTitle.length > 300)  { showSubmitToast('标题限300字以内'); return; }
+            if (rawContent.length > 6000) { showSubmitToast('内容限6000字以内'); return; }
             if (rawContent.length < 10)   { showSubmitToast('内容至少10个字～'); return; }
 
             /* R8: 封禁用户禁止投稿 */
@@ -3537,7 +3537,7 @@
 
                     /* --- 输入校验 --- */
                     if (!rawName || !rawText) return;
-                    if (rawName.length > 20) { showSubmitToast('昵称限20字以内'); return; }
+                    if (rawName.length > 60) { showSubmitToast('昵称限60字以内'); return; }
                     if (rawText.length > 500) { showSubmitToast('评论限500字以内'); return; }
                     if (rawText.length < 2) { showSubmitToast('评论至少2个字～'); return; }
 
@@ -4482,12 +4482,12 @@
                     var contentEl = document.getElementById('submit-content');
                     var titleEl = document.getElementById('submit-title');
                     if (contentEl && fileData.content) {
-                        contentEl.value = fileData.content.substring(0, 2000);
+                        contentEl.value = fileData.content.substring(0, 6000);
                         var counter = document.getElementById('submit-counter');
-                        if (counter) counter.textContent = contentEl.value.length + ' / 2000';
+                        if (counter) counter.textContent = contentEl.value.length + ' / 6000';
                     }
                     if (titleEl && !titleEl.value && fileData.name) {
-                        titleEl.value = fileData.name.replace(/\.(txt|md)$/i, '').substring(0, 100);
+                        titleEl.value = fileData.name.replace(/\.(txt|md)$/i, '').substring(0, 300);
                     }
                     showUploadPreview(fileData);
                     showSubmitToast('文件内容已填入', 2000);

@@ -174,4 +174,7 @@
         if (trigger) trigger.addEventListener('click', onTriggerClick);
         initWelcome();
     });
+
+    /* 供论坛主逻辑（调谐台）调用 */
+    window.playTransition = playTransition;
 })();

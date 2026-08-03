@@ -5,11 +5,23 @@
 (function () {
     'use strict';
 
+    /* 暴露 toast 给 forum-auth.js / forum-upload.js 复用（showToast 为函数声明，已 hoist） */
+    window.StarTorchForum = window.StarTorchForum || {};
+    window.StarTorchForum.toast = showToast;
+
     var COMMUNITY_PAGE_SIZE = 6;
     var communityFilter = 'all';
     var communitySort = 'new';
     var communityPage = 0;
     var activeTags = [];
+    var searchQuery = '';
+    var searchTimer = null;
+
+    /* 内容上限：较改版前统一提升 3 倍 */
+    var LIMIT_NAME = 60;
+    var LIMIT_TITLE = 300;
+    var LIMIT_CONTENT = 6000;
+    var DRAFT_KEY = 'stf_draft';
 
     var typeLabels = { text: '文字', story: '故事', poem: '诗歌', art: '插画', music: '音乐' };
 
@@ -60,10 +72,32 @@
         return '';
     }
 
+    function currentUser() {
+        return (window.StarTorchAuth && window.StarTorchAuth.getUser) ? window.StarTorchAuth.getUser() : null;
+    }
+
     function syncIdentityControls(prefix, identityId) {
         var nameInput = document.getElementById(prefix + '-nickname');
         var identitySelect = document.getElementById(prefix + '-identity');
         if (!nameInput || !identitySelect) return;
+
+        var user = currentUser();
+        if (user) {
+            /* 已登录：署名锁定为通行证名称，匿名身份停用 */
+            nameInput.value = user.name;
+            nameInput.disabled = true;
+            nameInput.classList.add('is-signed');
+            nameInput.classList.remove('is-anonymous');
+            identitySelect.value = '';
+            identitySelect.disabled = true;
+            identitySelect.classList.remove('is-anonymous');
+            identitySelect.classList.add('is-signed');
+            return;
+        }
+
+        identitySelect.disabled = false;
+        identitySelect.classList.remove('is-signed');
+        nameInput.classList.remove('is-signed');
         identitySelect.value = identityId || '';
         var info = ANONYMOUS_IDENTITIES[identityId];
         if (info) {
@@ -80,6 +114,9 @@
 
     function restoreNickname(prefix) {
         var nameInput = document.getElementById(prefix + '-nickname');
+        var user = currentUser();
+        if (user) { syncIdentityControls(prefix, ''); return; }
+
         var saved = StarTorchData.getNickname();
         var identityId = detectIdentityFromName(saved);
         if (identityId) {
@@ -87,6 +124,20 @@
         } else {
             syncIdentityControls(prefix, '');
             if (nameInput) nameInput.value = saved || '';
+        }
+    }
+
+    /* 登录态变化时，实时刷新两个表单的署名控件 */
+    function syncAuthUI() {
+        ['stf-composer', 'stf-submit'].forEach(function (prefix) {
+            if (document.getElementById(prefix + '-nickname')) restoreNickname(prefix);
+        });
+        var trigger = document.querySelector('.stf-composer-placeholder');
+        if (trigger) {
+            var user = currentUser();
+            trigger.textContent = user
+                ? (user.name + '，分享你的鸣潮同人…')
+                : '分享你的鸣潮同人…';
         }
     }
 
@@ -126,6 +177,14 @@
             filtered = filtered.filter(function (s) {
                 if (!s.tags || !Array.isArray(s.tags)) return false;
                 return activeTags.every(function (tag) { return s.tags.indexOf(tag) !== -1; });
+            });
+        }
+
+        if (searchQuery) {
+            var q = searchQuery.toLowerCase();
+            filtered = filtered.filter(function (s) {
+                var hay = [s.title, s.content, s.name].concat(s.tags || []).join(' ').toLowerCase();
+                return hay.indexOf(q) !== -1;
             });
         }
 
@@ -381,6 +440,8 @@
             modal.hidden = false;
             requestAnimationFrame(function () { modal.classList.add('open'); });
             restoreNickname('stf-submit');
+            loadDraft('stf-submit');
+            updateCounter('stf-submit');
         }
     }
 
@@ -393,16 +454,22 @@
     }
 
     /* 构建投稿对象（投稿弹窗 / 快捷发布框共用） */
-    function buildSubmission(name, type, title, content, tags, identityId) {
+    function buildSubmission(name, type, title, content, tags, identityId, attachment) {
         var now = new Date();
-        var identity = ANONYMOUS_IDENTITIES[identityId];
-        var displayName = identity ? identity.name : name;
+        var user = currentUser();
+        var identity = user ? null : ANONYMOUS_IDENTITIES[identityId];
+        var displayName = user ? user.name : (identity ? identity.name : name);
+        var body = content;
+        if (attachment && attachment.kind === 'audio') {
+            body += '\n\n♪ 附件音频：' + attachment.name;
+        }
         return {
             id: 'stf_' + now.getTime(),
             name: escapeHTML(displayName),
             type: type,
             title: escapeHTML(title),
-            content: escapeHTML(content),
+            content: escapeHTML(body),
+            image: (attachment && attachment.image) ? attachment.image : '',
             realm: 'startorch',
             tags: tags || [],
             time: now.getTime(),
@@ -414,8 +481,9 @@
             likes: 0,
             liked: false,
             bookmarks: 0,
-            color: identity ? identity.color : '#6B8AFF',
-            identity: identityId || null
+            color: user ? user.color : (identity ? identity.color : '#6B8AFF'),
+            identity: user ? null : (identityId || null),
+            author: user ? user.key : null
         };
     }
 
@@ -423,13 +491,24 @@
     function persistNewSubmission(newSub) {
         var list = getAllSubmissions();
         list.unshift(newSub);
-        StarTorchData.saveSubmissions(list);
+        try {
+            StarTorchData.saveSubmissions(list);
+        } catch (e) {
+            showToast('本地存储空间不足，请移除附件后重试');
+            return false;
+        }
         StarTorchData.setNickname(newSub.name);
+        if (newSub.author && window.StarTorchAuth) window.StarTorchAuth.bumpPostCount();
+        clearDraft();
+        searchQuery = '';
+        var searchEl = document.getElementById('stf-search');
+        if (searchEl) searchEl.value = '';
         communityFilter = 'all';
         communityPage = 0;
         updateFilterUI();
         renderCommunity();
         pulseNewCard(newSub.id);
+        return true;
     }
 
     function pulseNewCard(id) {
@@ -460,21 +539,30 @@
         var rawTitle = modal.querySelector('#stf-submit-title').value.trim();
         var rawContent = modal.querySelector('#stf-submit-content').value.trim();
 
-        if (!rawName || !rawTitle || !rawContent) { showToast('请填写完整信息'); return; }
-        if (rawName.length > 20) { showToast('昵称限20字'); return; }
-        if (rawTitle.length > 100) { showToast('标题限100字'); return; }
-        if (rawContent.length > 2000) { showToast('内容限2000字'); return; }
+        if (!validateFields(rawName, rawTitle, rawContent)) return;
 
         var selectedTags = readTagsFrom(modal.querySelector('#stf-submit-tag-selector'));
+        var attachment = window.StarTorchUpload ? window.StarTorchUpload.getAttachment('stf-submit') : null;
+        var newSub = buildSubmission(rawName, type, rawTitle, rawContent, selectedTags, identityId, attachment);
 
-        var newSub = buildSubmission(rawName, type, rawTitle, rawContent, selectedTags, identityId);
+        if (!persistNewSubmission(newSub)) return;
 
         modal.querySelector('form').reset();
         modal.querySelectorAll('.select-tag.active').forEach(function (c) { c.classList.remove('active'); });
+        if (window.StarTorchUpload) window.StarTorchUpload.clear('stf-submit');
         syncIdentityControls('stf-submit', '');
+        updateCounter('stf-submit');
         closeSubmitModal();
-        persistNewSubmission(newSub);
         showToast('投稿成功，已发布到星炬学院论坛 ✨');
+    }
+
+    /* 统一字段校验，上限已提升 3 倍 */
+    function validateFields(name, title, content) {
+        if (!name || !title || !content) { showToast('请填写完整信息'); return false; }
+        if (name.length > LIMIT_NAME) { showToast('昵称限 ' + LIMIT_NAME + ' 字'); return false; }
+        if (title.length > LIMIT_TITLE) { showToast('标题限 ' + LIMIT_TITLE + ' 字'); return false; }
+        if (content.length > LIMIT_CONTENT) { showToast('内容限 ' + LIMIT_CONTENT + ' 字'); return false; }
+        return true;
     }
 
     /* 快捷发布框（feed 内常驻）提交 */
@@ -489,20 +577,69 @@
         var rawTitle = form.querySelector('#stf-composer-title').value.trim();
         var rawContent = form.querySelector('#stf-composer-content').value.trim();
 
-        if (!rawName || !rawTitle || !rawContent) { showToast('请填写完整信息'); return; }
-        if (rawName.length > 20) { showToast('昵称限20字'); return; }
-        if (rawTitle.length > 100) { showToast('标题限100字'); return; }
-        if (rawContent.length > 2000) { showToast('内容限2000字'); return; }
+        if (!validateFields(rawName, rawTitle, rawContent)) return;
 
         var selectedTags = readTagsFrom(form.querySelector('#stf-composer-tag-selector'));
-        var newSub = buildSubmission(rawName, type, rawTitle, rawContent, selectedTags, identityId);
+        var attachment = window.StarTorchUpload ? window.StarTorchUpload.getAttachment('stf-composer') : null;
+        var newSub = buildSubmission(rawName, type, rawTitle, rawContent, selectedTags, identityId, attachment);
+
+        if (!persistNewSubmission(newSub)) return;
 
         form.reset();
         form.querySelectorAll('.select-tag.active').forEach(function (c) { c.classList.remove('active'); });
+        if (window.StarTorchUpload) window.StarTorchUpload.clear('stf-composer');
         syncIdentityControls('stf-composer', '');
+        updateCounter('stf-composer');
         closeComposer();
-        persistNewSubmission(newSub);
         showToast('已发布到星炬学院论坛 ✨');
+    }
+
+    /* ============ 字数计数 / 草稿 ============ */
+    function updateCounter(prefix) {
+        var textarea = document.getElementById(prefix + '-content');
+        var counter = document.getElementById(prefix + '-counter');
+        if (!textarea || !counter) return;
+        var len = textarea.value.length;
+        counter.textContent = len + ' / ' + LIMIT_CONTENT;
+        counter.classList.toggle('is-warn', len > LIMIT_CONTENT * 0.9);
+    }
+
+    function saveDraft(prefix) {
+        var title = document.getElementById(prefix + '-title');
+        var content = document.getElementById(prefix + '-content');
+        if (!title || !content) return;
+        if (!title.value.trim() && !content.value.trim()) { clearDraft(); return; }
+        try {
+            localStorage.setItem(DRAFT_KEY, JSON.stringify({
+                title: title.value, content: content.value, at: Date.now()
+            }));
+        } catch (e) { /* 配额不足时静默 */ }
+        var hint = document.getElementById(prefix + '-draft');
+        if (hint) {
+            hint.textContent = '草稿已保存';
+            clearTimeout(hint._t);
+            hint._t = setTimeout(function () { hint.textContent = ''; }, 1800);
+        }
+    }
+
+    function clearDraft() {
+        try { localStorage.removeItem(DRAFT_KEY); } catch (e) { /* ignore */ }
+    }
+
+    function loadDraft(prefix) {
+        var raw;
+        try { raw = localStorage.getItem(DRAFT_KEY); } catch (e) { return; }
+        if (!raw) return;
+        var draft;
+        try { draft = JSON.parse(raw); } catch (e) { return; }
+        if (!draft) return;
+        var title = document.getElementById(prefix + '-title');
+        var content = document.getElementById(prefix + '-content');
+        if (title && !title.value) title.value = draft.title || '';
+        if (content && !content.value) content.value = draft.content || '';
+        updateCounter(prefix);
+        var hint = document.getElementById(prefix + '-draft');
+        if (hint && (draft.title || draft.content)) hint.textContent = '已恢复上次草稿';
     }
 
     function openComposer() {
@@ -513,6 +650,8 @@
         form.hidden = false;
         if (trigger) trigger.setAttribute('aria-expanded', 'true');
         restoreNickname('stf-composer');
+        loadDraft('stf-composer');
+        updateCounter('stf-composer');
         var first = form.querySelector('#stf-composer-title');
         if (first) first.focus();
     }
@@ -702,6 +841,48 @@
                 });
             }
         }
+
+        /* 社区搜索（防抖） */
+        var searchInput = document.getElementById('stf-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                searchQuery = searchInput.value.trim();
+                var clearBtn = document.getElementById('stf-search-clear');
+                if (clearBtn) clearBtn.hidden = !searchQuery;
+                if (searchTimer) clearTimeout(searchTimer);
+                searchTimer = setTimeout(function () {
+                    communityPage = 0;
+                    renderCommunity();
+                }, 220);
+            });
+        }
+        var searchClear = document.getElementById('stf-search-clear');
+        if (searchClear) {
+            searchClear.addEventListener('click', function () {
+                searchQuery = '';
+                if (searchInput) searchInput.value = '';
+                searchClear.hidden = true;
+                communityPage = 0;
+                renderCommunity();
+            });
+        }
+
+        /* 快捷发布框 / 投稿弹窗：正文输入即计数 + 存草稿 */
+        ['stf-composer', 'stf-submit'].forEach(function (prefix) {
+            var contentEl = document.getElementById(prefix + '-content');
+            if (contentEl) {
+                contentEl.addEventListener('input', function () {
+                    updateCounter(prefix);
+                    saveDraft(prefix);
+                });
+            }
+        });
+
+        /* 登录态变化 → 刷新两个表单的署名控件 */
+        if (window.StarTorchAuth) window.StarTorchAuth.onChange(syncAuthUI);
+
+        /* 调谐台彩蛋入口 */
+        initTuner();
     }
 
     /* ============ Nav enhancements: mobile toggle + scrollspy ============ */
@@ -741,6 +922,100 @@
         onScroll();
     }
 
+    /* ============ Tuner：深夜电台调谐台（彩蛋入口） ============ */
+    function initTuner() {
+        var wrap = document.getElementById('stf-tuner-dials');
+        if (!wrap) return;
+
+        var inputs = ['0', '1', '2', '3'].map(function (i) {
+            return document.getElementById('stf-dial-' + i);
+        });
+        var stateEl = document.getElementById('stf-tuner-state');
+        var ledEl = document.getElementById('stf-tuner-led');
+        var fillEl = document.getElementById('stf-tuner-signal-fill');
+        var numEl = document.getElementById('stf-tuner-signal-num');
+        var hintEl = document.getElementById('stf-tuner-hint');
+        var waveEl = document.getElementById('stf-tuner-wave');
+
+        var TARGET_CODE = '9072';
+        var locked = false;
+
+        function cur(idx) { return parseInt((inputs[idx] && inputs[idx].value) || '0', 10) || 0; }
+
+        function setDigit(idx, val) {
+            var v = ((val % 10) + 10) % 10;
+            if (inputs[idx]) inputs[idx].value = String(v);
+        }
+
+        function readCode() {
+            return inputs.map(function (inp) { return (inp && inp.value) ? inp.value.charAt(0) : '0'; }).join('');
+        }
+
+        function updateSignal() {
+            var code = readCode();
+            var match = 0;
+            for (var i = 0; i < 4; i++) {
+                if (code.charAt(i) === TARGET_CODE.charAt(i)) match += 1;
+                else if (TARGET_CODE.indexOf(code.charAt(i)) !== -1) match += 0.4;
+            }
+            var pct = Math.max(0, Math.min(100, Math.round((match / 4) * 100)));
+            if (fillEl) fillEl.style.width = pct + '%';
+            if (numEl) numEl.textContent = pct + '%';
+            if (ledEl) {
+                ledEl.classList.toggle('is-locked', locked);
+                ledEl.classList.toggle('is-tuned', !locked && pct >= 50);
+            }
+            if (waveEl) waveEl.style.setProperty('--level', pct + '%');
+            if (stateEl && !locked) {
+                stateEl.textContent = pct >= 90 ? '频率接近…' : (pct > 0 ? '接收中' : '待机');
+            }
+        }
+
+        function checkLock() {
+            if (locked) return;
+            updateSignal();
+            if (readCode() === TARGET_CODE) {
+                locked = true;
+                if (stateEl) stateEl.textContent = '已锁定 · 9072';
+                if (ledEl) { ledEl.classList.add('is-locked'); ledEl.classList.remove('is-tuned'); }
+                if (hintEl) hintEl.textContent = '信号锁定 —— 正在接通深夜电台…';
+                if (window.playTransition) setTimeout(window.playTransition, 480);
+            }
+        }
+
+        /* 步进按钮 */
+        wrap.addEventListener('click', function (e) {
+            var btn = e.target.closest('.stf-dial-step');
+            if (!btn) return;
+            var idx = parseInt(btn.getAttribute('data-index'), 10);
+            var dir = btn.getAttribute('data-dial-step') === 'up' ? 1 : -1;
+            setDigit(idx, cur(idx) + dir);
+            checkLock();
+        });
+
+        inputs.forEach(function (inp, idx) {
+            if (!inp) return;
+            inp.addEventListener('keydown', function (e) {
+                if (e.key === 'ArrowUp') { e.preventDefault(); setDigit(idx, cur(idx) + 1); checkLock(); return; }
+                if (e.key === 'ArrowDown') { e.preventDefault(); setDigit(idx, cur(idx) - 1); checkLock(); return; }
+                if (/^\d$/.test(e.key)) {
+                    e.preventDefault();
+                    setDigit(idx, parseInt(e.key, 10));
+                    if (idx < 3 && inputs[idx + 1]) inputs[idx + 1].focus();
+                    checkLock();
+                }
+            });
+            inp.addEventListener('input', function () {
+                var d = (inp.value.replace(/\D/g, '') || '0').charAt(0);
+                inp.value = d;
+                if (idx < 3 && inputs[idx + 1]) inputs[idx + 1].focus();
+                checkLock();
+            });
+        });
+
+        updateSignal();
+    }
+
     /* ============ Init ============ */
     function init() {
         if (!window.StarTorchData) {
@@ -752,6 +1027,12 @@
         updateFilterUI();
         renderCommunity();
         initNavEnhancements();
+
+        /* 投稿附件上传（独立模块，不依赖飞行雪绒站 UploadManager） */
+        if (window.StarTorchUpload) {
+            StarTorchUpload.attach('stf-composer');
+            StarTorchUpload.attach('stf-submit');
+        }
     }
 
     if (document.readyState !== 'loading') init();

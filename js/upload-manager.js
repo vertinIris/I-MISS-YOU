@@ -13,12 +13,19 @@
 
 var UploadManager = (function() {
 
+    /* 容量上限较改版前提升 3 倍：文本 10MB→30MB，图片 5MB→15MB；并丰富格式 */
     var ALLOWED_TYPES = {
-        'text/plain':     { ext: '.txt',  maxSize: 10 * 1024 * 1024, label: '\u6587\u672C' },
-        'text/markdown':  { ext: '.md',   maxSize: 10 * 1024 * 1024, label: 'Markdown' },
-        'image/jpeg':     { ext: '.jpg',  maxSize: 5 * 1024 * 1024,  label: '\u56FE\u7247' },
-        'image/png':      { ext: '.png',  maxSize: 5 * 1024 * 1024,  label: '\u56FE\u7247' },
-        'image/gif':      { ext: '.gif',  maxSize: 5 * 1024 * 1024,  label: '\u56FE\u7247' }
+        'text/plain':      { ext: '.txt',  maxSize: 30 * 1024 * 1024, label: '\u6587\u672C' },
+        'text/markdown':   { ext: '.md',   maxSize: 30 * 1024 * 1024, label: 'Markdown' },
+        'application/json':{ ext: '.json', maxSize: 30 * 1024 * 1024, label: 'JSON' },
+        'text/csv':        { ext: '.csv',  maxSize: 30 * 1024 * 1024, label: 'CSV' },
+        'image/jpeg':      { ext: '.jpg',  maxSize: 15 * 1024 * 1024, label: '\u56FE\u7247' },
+        'image/png':       { ext: '.png',  maxSize: 15 * 1024 * 1024, label: '\u56FE\u7247' },
+        'image/gif':       { ext: '.gif',  maxSize: 15 * 1024 * 1024, label: '\u56FE\u7247' },
+        'image/webp':      { ext: '.webp', maxSize: 15 * 1024 * 1024, label: '\u56FE\u7247' },
+        'image/avif':      { ext: '.avif', maxSize: 15 * 1024 * 1024, label: '\u56FE\u7247' },
+        'image/bmp':       { ext: '.bmp',  maxSize: 15 * 1024 * 1024, label: '\u56FE\u7247' },
+        'image/svg+xml':   { ext: '.svg',  maxSize: 15 * 1024 * 1024, label: '\u56FE\u7247' }
     };
 
     var dropZone = null;
@@ -94,10 +101,16 @@ var UploadManager = (function() {
             var extMap = {
                 'txt': 'text/plain',
                 'md': 'text/markdown',
+                'json': 'application/json',
+                'csv': 'text/csv',
                 'jpg': 'image/jpeg',
                 'jpeg': 'image/jpeg',
                 'png': 'image/png',
-                'gif': 'image/gif'
+                'gif': 'image/gif',
+                'webp': 'image/webp',
+                'avif': 'image/avif',
+                'bmp': 'image/bmp',
+                'svg': 'image/svg+xml'
             };
             if (extMap[ext]) {
                 file = new File([file], file.name, { type: extMap[ext] });
@@ -106,7 +119,7 @@ var UploadManager = (function() {
         }
 
         if (!typeInfo) {
-            showError('\u4E0D\u652F\u6301\u7684\u6587\u4EF6\u7C7B\u578B\u3002\u652F\u6301 .txt .md .jpg .png .gif');
+            showError('\u4E0D\u652F\u6301\u7684\u6587\u4EF6\u7C7B\u578B\u3002\u652F\u6301 .txt .md .json .csv \u00B7 .jpg .png .gif .webp .avif .bmp .svg');
             return;
         }
 
@@ -135,11 +148,17 @@ var UploadManager = (function() {
         }
     }
 
-    /* R11: 读取文件头 8 字节校验图片魔数（JPEG/PNG/GIF 签名） */
+    /* R11: 读取文件头校验图片魔数（JPEG/PNG/GIF/WebP/AVIF/BMP/SVG 签名） */
     function verifyImageSignature(file, done) {
         var reader = new FileReader();
         reader.onload = function(e) {
             var b = new Uint8Array(e.target.result);
+            var sig = function(s) {
+                for (var i = 0; i < s.length; i++) {
+                    if (b[i] !== s.charCodeAt(i)) return false;
+                }
+                return true;
+            };
             var ok = true;
             if (file.type === 'image/jpeg') {
                 ok = b.length > 2 && b[0] === 0xFF && b[1] === 0xD8 && b[2] === 0xFF;
@@ -147,11 +166,23 @@ var UploadManager = (function() {
                 ok = b.length > 3 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4E && b[3] === 0x47;
             } else if (file.type === 'image/gif') {
                 ok = b.length > 3 && b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x38;
+            } else if (file.type === 'image/webp') {
+                ok = b.length > 11 && sig('RIFF') &&
+                    (function(){ for (var i=8;i<12;i++) if (b[i] !== 'WEBP'.charCodeAt(i-8)) return false; return true; })();
+            } else if (file.type === 'image/avif') {
+                ok = b.length > 11 && sig('ftyp') &&
+                    (function(){ for (var i=8;i<12;i++) if (b[i] !== 'avif'.charCodeAt(i-8) && b[i] !== 'avis'.charCodeAt(i-8)) return false; return true; })();
+            } else if (file.type === 'image/bmp') {
+                ok = b.length > 1 && b[0] === 0x42 && b[1] === 0x4D;
+            } else if (file.type === 'image/svg+xml') {
+                ok = b.length > 4 && (sig('<?xml') || sig('<svg') || sig('<SVG'));
+            } else {
+                ok = true; /* 未知图片类型：放宽校验，避免误拦 */
             }
             done(ok);
         };
         reader.onerror = function() { done(false); };
-        reader.readAsArrayBuffer(file.slice(0, 8));
+        reader.readAsArrayBuffer(file.slice(0, 16));
     }
 
     function readTextFile(file, callback) {

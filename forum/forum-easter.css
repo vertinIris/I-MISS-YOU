@@ -91,28 +91,117 @@
     100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(.2); }
 }
 
-/* 爱弥斯像素形象（飞出） */
-.stf-easter-pixel {
+/* 爱弥斯「共鸣雪绒」：声波环 + 六臂雪绒花（替代原像素小人） */
+.stf-resonance {
     position: relative;
     z-index: 2;
-    width: clamp(120px, 32vw, 210px);
-    height: auto;
+    width: clamp(160px, 36vw, 240px);
+    height: clamp(160px, 36vw, 240px);
+    display: grid;
+    place-items: center;
     opacity: 0;
-    transform: translateY(60px) scale(.4) rotate(-6deg);
-    transform-origin: 50% 100%;
-    filter: drop-shadow(0 0 26px rgba(255,107,157,.5));
+    transform: scale(.6);
 }
-.stf-easter-pixel svg { width: 100%; height: auto; display: block; }
-.stf-easter-overlay.is-active .stf-easter-pixel {
-    animation: stf-pixel-flyout 2s cubic-bezier(.16,1,.3,1) forwards;
+.stf-easter-overlay.is-active .stf-resonance {
+    animation: stf-resonance-in 1.4s cubic-bezier(.16,1,.3,1) forwards;
 }
-/* 放慢、加大、加入旋转 ±8° 与向上飞出尾迹 */
-@keyframes stf-pixel-flyout {
-    0%   { opacity: 0; transform: translateY(40px) scale(.7) rotate(-6deg); }
-    35%  { opacity: 1; transform: translateY(-12px) scale(1.05) rotate(3deg); }
-    55%  { transform: translateY(0) scale(1) rotate(0deg); }
-    78%  { transform: translateY(-40px) scale(.92) rotate(-4deg); }
-    100% { opacity: 0; transform: translateY(-120vh) scale(.4) rotate(-6deg); }
+@keyframes stf-resonance-in {
+    0%   { opacity: 0; transform: scale(.55) rotate(-12deg); }
+    45%  { opacity: 1; transform: scale(1.06) rotate(4deg); }
+    70%  { transform: scale(.98) rotate(-2deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+.stf-resonance-wave {
+    position: absolute;
+    inset: 18%;
+    border-radius: 50%;
+    border: 2px solid rgba(168,216,255,.5);
+    opacity: 0;
+}
+.stf-easter-overlay.is-active .stf-resonance-wave {
+    animation: stf-resonance-ring 2.6s ease-out infinite;
+}
+.stf-easter-overlay.is-active .stf-resonance-wave--2 {
+    border-color: rgba(182,107,255,.5);
+    animation-delay: .5s;
+}
+.stf-easter-overlay.is-active .stf-resonance-wave--3 {
+    border-color: rgba(255,107,157,.55);
+    animation-delay: 1s;
+}
+@keyframes stf-resonance-ring {
+    0%   { opacity: 0; transform: scale(.4); }
+    25%  { opacity: .9; }
+    100% { opacity: 0; transform: scale(1.7); }
+}
+.stf-resonance-halo {
+    position: absolute;
+    inset: 24%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,182,217,.55), rgba(168,216,255,.2) 45%, transparent 70%);
+    filter: blur(8px);
+    opacity: 0;
+}
+.stf-easter-overlay.is-active .stf-resonance-halo {
+    animation: stf-halo-breathe 3s ease-in-out infinite;
+}
+@keyframes stf-halo-breathe {
+    0%, 100% { opacity: .5; transform: scale(.95); }
+    50%      { opacity: .9; transform: scale(1.08); }
+}
+.stf-resonance-flake {
+    position: relative;
+    width: 62%;
+    height: 62%;
+    filter: drop-shadow(0 0 18px rgba(255,107,157,.6));
+    animation: stf-flake-spin 14s linear infinite;
+}
+@keyframes stf-flake-spin { to { transform: rotate(360deg); } }
+
+/* 精致频率牌 */
+.stf-freq-display {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 18px 30px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(168,216,255,.22);
+    box-shadow: 0 18px 48px rgba(0,0,0,.4), inset 0 0 30px rgba(107,138,255,.08);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transform: translateY(14px);
+}
+.stf-easter-overlay.is-active .stf-freq-display {
+    animation: stf-freq-in .7s ease .5s forwards;
+}
+@keyframes stf-freq-in { to { opacity: 1; transform: translateY(0); } }
+.stf-freq-label {
+    font-size: 11px; letter-spacing: .34em;
+    color: rgba(168,216,255,.8); text-transform: uppercase;
+}
+.stf-freq-digits {
+    display: flex; gap: 10px;
+    font-family: "Noto Serif SC", serif;
+    font-size: clamp(38px, 9vw, 60px);
+    font-weight: 800; line-height: 1;
+}
+.stf-freq-digit {
+    background: linear-gradient(180deg, #FFFFFF, #FFB6D9 60%, #FF6B9D);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    text-shadow: 0 0 26px rgba(255,107,157,.35);
+}
+.stf-freq-line {
+    width: 70%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(168,216,255,.7), transparent);
+}
+.stf-freq-line i { display: block; }
+.stf-freq-sub {
+    font-size: 13px; letter-spacing: .12em;
+    color: rgba(240,244,255,.72);
 }
 
 /* 屏幕轻微粉闪（进入另一世界） */
@@ -296,7 +385,8 @@
 
 @media (prefers-reduced-motion: reduce) {
     .stf-easter-overlay, .stf-easter-ring, .stf-easter-particle,
-    .stf-easter-pixel, .stf-easter-hint,
+    .stf-resonance, .stf-resonance-wave, .stf-resonance-halo, .stf-resonance-flake,
+    .stf-freq-display, .stf-easter-hint,
     .character-archive-card, .character-archive-card::after,
     .archive-float, .stf-hidden-trigger,
     .stf-welcome, .stf-welcome-panel, .stf-welcome-dot { animation: none !important; transition: opacity .2s ease !important; }
