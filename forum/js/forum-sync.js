@@ -30,11 +30,20 @@
         lastSync: 0,
         hasRemoteUpdate: false,
         healthy: true,
+        syncing: false,
+        cloudDegraded: false,   // 云端连接失败但本地数据可用（软降级，非致命）
         auto: true,
-        adapter: null
+        adapter: null,
+        _adapterRef: null       // 云端适配器引用备份，用于降级后手动/退避重连
     };
     var timer = null;
     var listeners = [];
+
+    /* 云端重连退避 */
+    var REPROBE_BASE = 30000;   // 首次退避 30s
+    var REPROBE_MAX = 180000;   // 封顶 3min
+    var reprobeTimer = null;
+    var reprobeDelay = REPROBE_BASE;
 
     /* ---------- 工具 ---------- */
     function nowTs() { return Date.now(); }
@@ -78,6 +87,7 @@
     /* ---------- 渲染 ---------- */
     function statusText() {
         if (!state.healthy) return '同步异常 · 请点击重试';
+        if (state.cloudDegraded) return '云端未连接 · 本地数据正常 · 点击重试';
         if (state.hasRemoteUpdate) return '检测到新内容 · 同步中…';
         if (state.mode === 'cloud') {
             var p = getPending();
@@ -92,6 +102,7 @@
         if (dot) {
             var cls = 'stf-sync-dot';
             if (!state.healthy) cls += ' is-error';
+            else if (state.cloudDegraded) cls += ' is-offline';
             else if (state.hasRemoteUpdate) cls += ' is-syncing';
             else cls += ' is-ok';
             dot.className = cls;
@@ -112,16 +123,32 @@
     }
 
     function doSync() {
+        state.syncing = true;
+        paint();
         if (state.adapter && typeof state.adapter.pull === 'function') {
             state.mode = 'cloud';
             try {
                 state.adapter.pull(function (ok) {
-                    afterSync(!!ok);
-                    if (ok && window.StarTorchForum && window.StarTorchForum.refreshCommunity) {
-                        window.StarTorchForum.refreshCommunity();
+                    state.syncing = false;
+                    if (ok) {
+                        state.lastSync = nowTs();
+                        state.hasRemoteUpdate = false;
+                        state.healthy = true;
+                        state.cloudDegraded = false;
+                        stopReprobe();
+                        reprobeDelay = REPROBE_BASE;
+                        paint();
+                        if (window.StarTorchForum && window.StarTorchForum.refreshCommunity) {
+                            window.StarTorchForum.refreshCommunity();
+                        }
+                    } else {
+                        handleCloudFailure();
                     }
                 });
-            } catch (e) { afterSync(false); }
+            } catch (e) {
+                state.syncing = false;
+                handleCloudFailure();
+            }
             return;
         }
 
@@ -132,7 +159,39 @@
         if (window.StarTorchForum && window.StarTorchForum.refreshCommunity) {
             window.StarTorchForum.refreshCommunity();
         }
+        state.syncing = false;
         afterSync(true);
+    }
+
+    /* ---------- 云端降级与退避重连 ---------- */
+    function handleCloudFailure() {
+        state.cloudDegraded = true;
+        state.healthy = true;            // 本地数据仍可用，非致命错误
+        state.mode = 'local';
+        if (!state._adapterRef) state._adapterRef = state.adapter;
+        state.adapter = null;            // 摘除云端，避免每轮轮询重复报错
+        startReprobe();                  // 退避后自动重连
+        paint();
+    }
+
+    function reprobeCloud() {
+        var adapter = state._adapterRef || window.StarTorchCloud || null;
+        if (!adapter) { startReprobe(); return; }
+        state.adapter = adapter;
+        state.mode = 'cloud';
+        doSync();
+    }
+
+    function startReprobe() {
+        stopReprobe();
+        reprobeTimer = setTimeout(function () {
+            reprobeDelay = Math.min(reprobeDelay * 1.5, REPROBE_MAX);
+            reprobeCloud();
+        }, reprobeDelay);
+    }
+
+    function stopReprobe() {
+        if (reprobeTimer) { clearTimeout(reprobeTimer); reprobeTimer = null; }
     }
 
     /* ---------- 实时监测（跨标签页） ---------- */
@@ -170,13 +229,22 @@
             lastSync: state.lastSync,
             lastSyncText: fmtTime(state.lastSync),
             hasRemoteUpdate: state.hasRemoteUpdate,
+            syncing: state.syncing,
             healthy: state.healthy,
+            cloudDegraded: state.cloudDegraded,
             auto: state.auto,
             pending: getPending()
         };
     }
 
     function syncNow() {
+        /* 降级态下手动重试：恢复云端适配器引用并重置退避，立即重连 */
+        if (state.cloudDegraded && (state._adapterRef || window.StarTorchCloud)) {
+            state.adapter = state._adapterRef || window.StarTorchCloud;
+            state.mode = 'cloud';
+            stopReprobe();
+            reprobeDelay = REPROBE_BASE;
+        }
         doSync();
         if (window.StarTorchForum && window.StarTorchForum.toast) {
             window.StarTorchForum.toast('已触发同步 · ' + (state.mode === 'cloud' ? '云端' : '本地'));
@@ -215,6 +283,8 @@
         state.adapter = window.StarTorchCloud || null;
         state.mode = state.adapter ? 'cloud' : 'local';
 
+        createEdgeIndicator();
+
         var btn = document.getElementById('stf-sync-now');
         if (btn && !btn.__bound) {
             btn.__bound = true;
@@ -231,6 +301,71 @@
 
         /* 初始同步一次 */
         doSync();
+    }
+
+    /* ---------- 右下角悬浮边缘同步指示器（与飞行雪绒主站一致） ---------- */
+    function createEdgeIndicator() {
+        if (document.getElementById('stf-edge-indicator')) return;
+        var wrap = document.createElement('div');
+        wrap.id = 'stf-edge-indicator';
+        wrap.className = 'stf-edge-indicator';
+        wrap.setAttribute('role', 'status');
+        wrap.setAttribute('aria-live', 'polite');
+
+        var status = document.createElement('div');
+        status.className = 'stf-edge-status';
+
+        var dot = document.createElement('span');
+        dot.className = 'stf-edge-dot is-ok';
+        dot.id = 'stf-edge-dot';
+
+        var text = document.createElement('span');
+        text.className = 'stf-edge-text';
+        text.id = 'stf-edge-text';
+        text.textContent = statusText();
+
+        status.appendChild(dot);
+        status.appendChild(text);
+
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.id = 'stf-edge-btn';
+        btn.className = 'stf-edge-btn';
+        btn.setAttribute('aria-label', '立即同步数据');
+        btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>';
+        btn.addEventListener('click', function () { syncNow(); });
+
+        wrap.appendChild(status);
+        wrap.appendChild(btn);
+        document.body.appendChild(wrap);
+
+        onStatus(updateEdgeIndicator);
+        updateEdgeIndicator(getStatus());
+    }
+
+    function updateEdgeIndicator(s) {
+        var dot = document.getElementById('stf-edge-dot');
+        var txt = document.getElementById('stf-edge-text');
+        var btn = document.getElementById('stf-edge-btn');
+        if (!s) s = getStatus();
+        if (dot) {
+            var cls = 'stf-edge-dot';
+            if (!s.healthy) cls += ' is-error';
+            else if (s.cloudDegraded) cls += ' is-offline';
+            else if (s.syncing || s.hasRemoteUpdate) cls += ' is-syncing';
+            else cls += ' is-ok';
+            dot.className = cls;
+        }
+        if (txt) {
+            if (!s.healthy) txt.textContent = '同步异常 · 点击重试';
+            else if (s.cloudDegraded) txt.textContent = '云端未连接 · 本地正常 · 点击重试';
+            else if (s.syncing || s.hasRemoteUpdate) txt.textContent = '同步中…';
+            else if (s.mode === 'cloud') txt.textContent = '云端已连接 · 上次 ' + (s.lastSyncText || '—');
+            else txt.textContent = '本地模式 · 上次 ' + (s.lastSyncText || '—');
+        }
+        if (btn) {
+            btn.classList.toggle('syncing', !!(s.syncing || s.hasRemoteUpdate));
+        }
     }
 
     window.StarTorchSync = {
