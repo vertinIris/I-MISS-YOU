@@ -77,7 +77,7 @@
 
         setTimeout(function () {
             window.location.href = TARGET;
-        }, 1100);
+        }, 1250);
     }
 
     function onKey(e) {

@@ -7,6 +7,7 @@
 
     var COMMUNITY_PAGE_SIZE = 6;
     var communityFilter = 'all';
+    var communitySort = 'new';
     var communityPage = 0;
     var activeTags = [];
 
@@ -79,7 +80,28 @@
             });
         }
 
+        if (communitySort === 'hot') {
+            return filtered.sort(function (a, b) {
+                var la = a.likes || 0, lb = b.likes || 0;
+                if (lb !== la) return lb - la;
+                return (b.time || 0) - (a.time || 0);
+            });
+        }
         return filtered.sort(function (a, b) { return (b.time || 0) - (a.time || 0); });
+    }
+
+    /* ============ Stats ============ */
+    function renderStats() {
+        var subs = StarTorchData.getSubmissions();
+        var works = subs.length;
+        var members = new Set(subs.map(function (s) { return s.name; })).size + 24;
+        var online = 8 + Math.floor(Math.random() * 13);
+        var w = document.getElementById('stf-stat-works');
+        var m = document.getElementById('stf-stat-members');
+        var o = document.getElementById('stf-stat-online');
+        if (w) w.textContent = works;
+        if (m) m.textContent = members;
+        if (o) o.textContent = online;
     }
 
     function buildCardHTML(s) {
@@ -177,6 +199,7 @@
         var filtered = getFilteredSubmissions();
         if (countEl) countEl.textContent = filtered.length;
 
+        renderStats();
         renderPagination(filtered.length);
 
         if (filtered.length === 0) {
@@ -393,6 +416,18 @@
             });
         }
 
+        // sort toggle (最新 / 热门)
+        document.querySelectorAll('.stf-sort-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                communitySort = btn.getAttribute('data-sort');
+                document.querySelectorAll('.stf-sort-btn').forEach(function (b) {
+                    b.classList.toggle('active', b === btn);
+                });
+                communityPage = 0;
+                renderCommunity();
+            });
+        });
+
         // grid actions
         var grid = document.getElementById('stf-community-grid');
         if (grid) {
@@ -454,6 +489,43 @@
         }
     }
 
+    /* ============ Nav enhancements: mobile toggle + scrollspy ============ */
+    function initNavEnhancements() {
+        var toggle = document.getElementById('nav-toggle');
+        var links = document.getElementById('nav-links');
+        if (toggle && links) {
+            toggle.addEventListener('click', function () {
+                var open = links.classList.toggle('open');
+                toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+            links.querySelectorAll('a').forEach(function (a) {
+                a.addEventListener('click', function () {
+                    links.classList.remove('open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                });
+            });
+        }
+
+        var navLinks = Array.prototype.slice.call(document.querySelectorAll('#nav-links .nav-link'));
+        var map = navLinks.map(function (l) {
+            var id = l.getAttribute('href');
+            return (id && id.charAt(0) === '#') ? document.querySelector(id) : null;
+        }).filter(Boolean);
+
+        function onScroll() {
+            if (!map.length) return;
+            var pos = window.scrollY + 130;
+            var current = map[0];
+            map.forEach(function (sec) { if (sec.offsetTop <= pos) current = sec; });
+            var currentId = current ? current.id : '';
+            navLinks.forEach(function (l) {
+                l.classList.toggle('active', l.getAttribute('href') === '#' + currentId);
+            });
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+    }
+
     /* ============ Init ============ */
     function init() {
         if (!window.StarTorchData) {
@@ -464,6 +536,7 @@
         bindEvents();
         updateFilterUI();
         renderCommunity();
+        initNavEnhancements();
     }
 
     if (document.readyState !== 'loading') init();

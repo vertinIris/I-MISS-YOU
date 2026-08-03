@@ -41,112 +41,64 @@
             </a>
             <div class="nav-links" id="nav-links">
                 <a href="#top" class="nav-link">首页</a>
+                <a href="#stf-community" class="nav-link">讨论</a>
                 <a href="#characters-archive" class="nav-link">角色档案</a>
                 <a href="#worldview" class="nav-link">世界观</a>
-                <a href="#stf-community" class="nav-link">讨论</a>
                 <button type="button" class="nav-link nav-link-btn" data-action="open-submit">投稿</button>
             </div>
+            <button type="button" class="nav-toggle" id="nav-toggle" aria-label="展开菜单" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
         </div>
     </nav>
 
     <header class="forum-hero">
         <div class="forum-hero-content">
-            <span class="forum-hero-label">STARTORCH · FAN FORUM</span>
+            <span class="forum-hero-label">STARTORCH · 主论坛</span>
             <h1 class="forum-hero-title">鸣潮同人论坛</h1>
             <p class="forum-hero-sub">
-                星炬学院的创作集合 —— 这里是所有鸣潮同好的聚集地。<br>
+                星炬学院的创作集合 —— 所有鸣潮同好的核心聚集地。<br>
                 翻阅角色档案、考据世界观、投稿你的同人、加入讨论。
             </p>
+            <div class="forum-hero-quicknav" role="navigation" aria-label="核心入口">
+                <a class="hero-pill" href="#stf-community">
+                    <b>讨论</b><span>同人创作 · 互动</span>
+                </a>
+                <a class="hero-pill" href="#characters-archive">
+                    <b>档案</b><span>官方角色考据</span>
+                </a>
+                <a class="hero-pill" href="#worldview">
+                    <b>世界观</b><span>星炬学院考据</span>
+                </a>
+            </div>
             <div class="forum-hero-actions">
                 <button type="button" class="btn-primary magnetic" data-action="open-submit"><span>去投稿</span></button>
-                <a href="#characters-archive" class="btn-ghost magnetic"><span>浏览档案</span></a>
+                <a href="#stf-community" class="btn-ghost magnetic"><span>进入社区</span></a>
             </div>
         </div>
     </header>
 
-    <section class="forum-section" id="characters-archive">
-        <div class="forum-section-inner">
-            <div class="section-header reveal">
-                <span class="section-label">ARCHIVE</span>
-                <h2 class="section-title">星炬学院档案库</h2>
-                <p class="section-desc">鸣潮官方角色设定考据 · 点击进入完整档案</p>
-            </div>
-            <div class="character-archive-grid">
-
-                <a class="character-archive-card glass" href="../characters/aimisi/index.html" style="--char: var(--aimisi-pink);">
-                    <span class="character-archive-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                    </span>
-                    <span class="character-archive-name">爱弥斯</span>
-                    <span class="character-archive-alias">飞行雪绒 · 电子幽灵</span>
-                    <span class="character-archive-line">星炬学院拉贝尔学部隧者共鸣者，秘密歌手，调频 9072 的主人。</span>
-                    <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
-                </a>
-
-                <a class="character-archive-card glass" href="../characters/denia/index.html" style="--char: var(--denia-lavender);">
-                    <span class="character-archive-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12a4 4 0 0 1 8 0"/></svg>
-                    </span>
-                    <span class="character-archive-name">达妮娅</span>
-                    <span class="character-archive-alias">泡泡与虚质</span>
-                    <span class="character-archive-line">星炬学院学生，热熔音感仪共鸣者，已确认失踪，未对学院构成威胁。</span>
-                    <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
-                </a>
-
-                <a class="character-archive-card glass" href="../characters/sigrica/index.html" style="--char: var(--sigrica-green);">
-                    <span class="character-archive-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                    </span>
-                    <span class="character-archive-name">西格莉卡</span>
-                    <span class="character-archive-alias">昭日者 · 西西</span>
-                    <span class="character-archive-line">星炬学院学生，罗伊符文的共鸣者，气动臂铠战斗者。</span>
-                    <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
-                </a>
-
-                <a class="character-archive-card glass" href="../characters/linne/index.html" style="--char: var(--linne-purple);">
-                    <span class="character-archive-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                    </span>
-                    <span class="character-archive-name">琳奈</span>
-                    <span class="character-archive-alias">预科生 · 莫宁的学生</span>
-                    <span class="character-archive-line">星炬学院预科学生，衍射佩枪共鸣者，擅长光学迷彩与辅助机协同。</span>
-                    <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
-                </a>
-
-                <a class="character-archive-card glass" href="../characters/mornye/index.html" style="--char: var(--mornye-red);">
-                    <span class="character-archive-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
-                    </span>
-                    <span class="character-archive-name">莫宁</span>
-                    <span class="character-archive-alias">星枢演构 · 白发红瞳</span>
-                    <span class="character-archive-line">深空联合学者，星炬学院隧者工学部教授，热熔长刃共鸣者。</span>
-                    <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
-                </a>
-
-                <a class="character-archive-card glass" href="../characters/lucilla/index.html" style="--char: var(--lucilla-gold);">
-                    <span class="character-archive-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                    </span>
-                    <span class="character-archive-name">洛瑟菈</span>
-                    <span class="character-archive-alias">校长 · 记忆宫殿守望者</span>
-                    <span class="character-archive-line">星炬学院校长，冷凝音感仪共鸣者，泛音社指导老师。</span>
-                    <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
-                </a>
-
-            </div>
-        </div>
-    </section>
-
-    <section class="forum-section">
+    <!-- 功能分区导览：明确主次，社区为核心 -->
+    <section class="forum-section forum-section--overview">
         <div class="forum-section-inner">
             <div class="section-header reveal">
                 <span class="section-label">SECTIONS</span>
-                <h2 class="section-title">板块入口</h2>
+                <h2 class="section-title">功能区导览</h2>
                 <p class="section-desc">从一个入口，走到鸣潮的每一个角落</p>
             </div>
             <div class="forum-grid">
 
-                <a class="forum-entry glass" href="#characters-archive" style="--char: var(--drifter-blue);">
+                <a class="forum-entry forum-entry--primary" href="#stf-community" style="--char: var(--aimisi-pink);">
+                    <span class="forum-entry-ribbon">核心</span>
+                    <span class="forum-entry-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </span>
+                    <span class="forum-entry-title">社区讨论</span>
+                    <span class="forum-entry-desc">星炬学院的核心互动区 —— 同人创作、话题讨论、点赞评论收藏，与同好相遇。</span>
+                    <span class="forum-entry-cta">进入社区 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                </a>
+
+                <a class="forum-entry" href="#characters-archive" style="--char: var(--drifter-blue);">
                     <span class="forum-entry-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
                     </span>
@@ -155,16 +107,7 @@
                     <span class="forum-entry-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
                 </a>
 
-                <a class="forum-entry glass" href="#stf-community" style="--char: var(--drifter-purple);">
-                    <span class="forum-entry-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    </span>
-                    <span class="forum-entry-title">社区讨论</span>
-                    <span class="forum-entry-desc">来自星炬学院的创作集合与话题讨论 —— 点赞、评论、收藏，与同好相遇。</span>
-                    <span class="forum-entry-cta">进入社区 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
-                </a>
-
-                <a class="forum-entry glass" href="#worldview" style="--char: var(--sigrica-green);">
+                <a class="forum-entry" href="#worldview" style="--char: var(--sigrica-green);">
                     <span class="forum-entry-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                     </span>
@@ -177,12 +120,19 @@
         </div>
     </section>
 
-    <section class="forum-section" id="stf-community">
+    <!-- 核心互动区 -->
+    <section class="forum-section forum-section--core" id="stf-community">
         <div class="forum-section-inner">
             <div class="section-header reveal">
-                <span class="section-label">COMMUNITY</span>
+                <span class="section-label">CORE · COMMUNITY</span>
                 <h2 class="section-title">星炬学院社区</h2>
-                <p class="section-desc">鸣潮角色与世界观的同人创作 · 共 <span id="stf-community-count">0</span> 份作品</p>
+                <p class="section-desc">鸣潮角色与世界观的同人创作与讨论 · 核心互动区</p>
+            </div>
+
+            <div class="stf-stats" aria-label="社区数据">
+                <div class="stf-stat"><b id="stf-stat-works">0</b><span>作品</span></div>
+                <div class="stf-stat"><b id="stf-stat-members">0</b><span>同好</span></div>
+                <div class="stf-stat"><b id="stf-stat-online">0</b><span>在线</span></div>
             </div>
 
             <div class="stf-toolbar">
@@ -193,6 +143,10 @@
                     <button class="stf-filter-btn" data-filter="poem">诗歌</button>
                     <button class="stf-filter-btn" data-filter="art">插画</button>
                     <button class="stf-filter-btn" data-filter="music">音乐</button>
+                </div>
+                <div class="stf-sort" role="group" aria-label="排序">
+                    <button class="stf-sort-btn active" data-sort="new">最新</button>
+                    <button class="stf-sort-btn" data-sort="hot">热门</button>
                 </div>
                 <button type="button" class="btn-primary magnetic" data-action="open-submit"><span>投稿</span></button>
             </div>
@@ -220,6 +174,99 @@
                 </svg>
                 <p>还没有人投稿呢，来成为第一个创作者吧！</p>
                 <button type="button" class="btn-ghost magnetic" data-action="open-submit"><span>去投稿</span></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 角色档案：收纳册浮动卡片 -->
+    <section class="forum-section" id="characters-archive">
+        <div class="forum-section-inner">
+            <div class="section-header reveal">
+                <span class="section-label">ARCHIVE</span>
+                <h2 class="section-title">星炬学院档案库</h2>
+                <p class="section-desc">鸣潮官方角色设定考据 · 收纳册中的每一张卡片都独立浮动</p>
+            </div>
+
+            <div class="archive-album">
+                <div class="archive-album-shelf" aria-hidden="true"></div>
+
+                <!-- 主角：爱弥斯（主卡 / 最高优先级） -->
+                <div class="archive-float archive-float--featured">
+                    <a class="character-archive-card is-featured glass" href="../characters/aimisi/index.html" style="--char: var(--aimisi-pink);">
+                        <span class="card-featured-ribbon">主角</span>
+                        <span class="character-archive-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        </span>
+                        <span class="character-archive-name">爱弥斯</span>
+                        <span class="character-archive-alias">飞行雪绒 · 电子幽灵</span>
+                        <span class="character-archive-line">星炬学院拉贝尔学部隧者共鸣者，秘密歌手，调频 9072 的主人。失踪之后，以「飞行雪绒」的身份在深夜电波里唱歌 —— 只要抬头，那颗星总能找到你。</span>
+                        <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                    </a>
+                </div>
+
+                <div class="archive-album-grid">
+
+                    <div class="archive-float">
+                        <a class="character-archive-card glass" href="../characters/denia/index.html" style="--char: var(--denia-lavender);">
+                            <span class="character-archive-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12a4 4 0 0 1 8 0"/></svg>
+                            </span>
+                            <span class="character-archive-name">达妮娅</span>
+                            <span class="character-archive-alias">泡泡与虚质</span>
+                            <span class="character-archive-line">星炬学院学生，热熔音感仪共鸣者，已确认失踪，未对学院构成威胁。</span>
+                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                        </a>
+                    </div>
+
+                    <div class="archive-float">
+                        <a class="character-archive-card glass" href="../characters/sigrica/index.html" style="--char: var(--sigrica-green);">
+                            <span class="character-archive-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                            </span>
+                            <span class="character-archive-name">西格莉卡</span>
+                            <span class="character-archive-alias">昭日者 · 西西</span>
+                            <span class="character-archive-line">星炬学院学生，罗伊符文的共鸣者，气动臂铠战斗者。</span>
+                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                        </a>
+                    </div>
+
+                    <div class="archive-float">
+                        <a class="character-archive-card glass" href="../characters/linne/index.html" style="--char: var(--linne-purple);">
+                            <span class="character-archive-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                            </span>
+                            <span class="character-archive-name">琳奈</span>
+                            <span class="character-archive-alias">预科生 · 莫宁的学生</span>
+                            <span class="character-archive-line">星炬学院预科学生，衍射佩枪共鸣者，擅长光学迷彩与辅助机协同。</span>
+                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                        </a>
+                    </div>
+
+                    <div class="archive-float">
+                        <a class="character-archive-card glass" href="../characters/mornye/index.html" style="--char: var(--mornye-red);">
+                            <span class="character-archive-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
+                            </span>
+                            <span class="character-archive-name">莫宁</span>
+                            <span class="character-archive-alias">星枢演构 · 白发红瞳</span>
+                            <span class="character-archive-line">深空联合学者，星炬学院隧者工学部教授，热熔长刃共鸣者。</span>
+                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                        </a>
+                    </div>
+
+                    <div class="archive-float">
+                        <a class="character-archive-card glass" href="../characters/lucilla/index.html" style="--char: var(--lucilla-gold);">
+                            <span class="character-archive-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                            </span>
+                            <span class="character-archive-name">洛瑟菈</span>
+                            <span class="character-archive-alias">校长 · 记忆宫殿守望者</span>
+                            <span class="character-archive-line">星炬学院校长，冷凝音感仪共鸣者，泛音社指导老师。</span>
+                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                        </a>
+                    </div>
+
+                </div>
             </div>
         </div>
     </section>
@@ -266,6 +313,12 @@
             </svg>
         </span>
     </p>
+
+    <!-- 悬浮投稿按钮（提升社区参与度） -->
+    <button type="button" class="stf-fab" data-action="open-submit" aria-label="投稿创作">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span class="stf-fab-label">投稿</span>
+    </button>
 
     <!-- 投稿弹窗 -->
     <div class="stf-modal" id="stf-submit-modal" role="dialog" aria-modal="true" aria-label="向星炬学院论坛投稿" hidden>
@@ -326,32 +379,47 @@
         </div>
     </div>
 
-    <!-- 隐藏入口：爱弥斯风格全屏过渡 -->
+    <!-- 隐藏入口：爱弥斯像素形象飞出入场 -->
     <div class="stf-easter-overlay" id="stf-easter-overlay" aria-hidden="true">
         <div class="stf-easter-ring"></div>
         <div class="stf-easter-particles" id="stf-easter-particles"></div>
-        <div class="stf-easter-silhouette" aria-hidden="true">
-            <svg viewBox="0 0 120 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <ellipse cx="60" cy="150" rx="26" ry="6" fill="rgba(255,107,157,.25)"/>
-                <path d="M60 20c16 0 29 13 29 29 0 10-5 19-13 24 8 5 14 16 14 28 0 18-11 33-26 37-3 1-6 1-8 1s-5 0-8-1c-15-4-26-19-26-37 0-12 6-23 14-28-8-5-13-14-13-24 0-16 13-29 29-29z" fill="url(#aimisiGrad)"/>
-                <circle cx="50" cy="55" r="5" fill="#fff" opacity=".9"/>
-                <circle cx="70" cy="55" r="5" fill="#fff" opacity=".9"/>
-                <path d="M54 68c4 3 10 3 14 0" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linecap="round"/>
-                <path d="M38 38c-8 6-12 16-10 26M84 36c8 6 12 16 10 26" stroke="url(#aimisiGrad2)" stroke-width="5" stroke-linecap="round"/>
-                <defs>
-                    <linearGradient id="aimisiGrad" x1="0" y1="0" x2="120" y2="160" gradientUnits="userSpaceOnUse">
-                        <stop offset="0" stop-color="#FFB6D9"/>
-                        <stop offset=".5" stop-color="#FF6B9D"/>
-                        <stop offset="1" stop-color="#A8D8FF"/>
-                    </linearGradient>
-                    <linearGradient id="aimisiGrad2" x1="0" y1="0" x2="120" y2="0" gradientUnits="userSpaceOnUse">
-                        <stop offset="0" stop-color="#FF6B9D"/>
-                        <stop offset="1" stop-color="#B66BFF"/>
-                    </linearGradient>
-                </defs>
+        <div class="stf-easter-pixel" id="stf-easter-pixel" aria-hidden="true">
+            <svg viewBox="0 0 64 64" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+                <!-- 头发后层 -->
+                <rect x="18" y="8" width="28" height="10" fill="#FF6B9D"/>
+                <rect x="14" y="14" width="6" height="18" fill="#FF6B9D"/>
+                <rect x="44" y="14" width="6" height="18" fill="#FF6B9D"/>
+                <!-- 双马尾发团 -->
+                <rect x="10" y="10" width="10" height="10" fill="#FFB6D9"/>
+                <rect x="44" y="10" width="10" height="10" fill="#FFB6D9"/>
+                <!-- 脸 -->
+                <rect x="20" y="16" width="24" height="22" fill="#FFE0CC"/>
+                <!-- 眼睛 -->
+                <rect x="26" y="24" width="4" height="6" fill="#3A2A4A"/>
+                <rect x="34" y="24" width="4" height="6" fill="#3A2A4A"/>
+                <!-- 腮红 -->
+                <rect x="23" y="30" width="4" height="3" fill="#FF9EC4"/>
+                <rect x="37" y="30" width="4" height="3" fill="#FF9EC4"/>
+                <!-- 微笑 -->
+                <rect x="29" y="32" width="6" height="2" fill="#C25B7A"/>
+                <!-- 金色星点（脸颊） -->
+                <rect x="40" y="22" width="4" height="4" fill="#FFD700"/>
+                <!-- 脖颈 -->
+                <rect x="29" y="38" width="6" height="4" fill="#FFD9C2"/>
+                <!-- 裙子 -->
+                <rect x="22" y="42" width="20" height="18" fill="#FFF0F7"/>
+                <rect x="22" y="42" width="20" height="4" fill="#FFB6D9"/>
+                <!-- 裙上金星 -->
+                <rect x="30" y="48" width="5" height="5" fill="#FFD700"/>
+                <!-- 手臂 -->
+                <rect x="16" y="44" width="6" height="10" fill="#FFE0CC"/>
+                <rect x="42" y="44" width="6" height="10" fill="#FFE0CC"/>
+                <!-- 音符 -->
+                <rect x="46" y="46" width="4" height="4" fill="#A8D8FF"/>
+                <rect x="49" y="42" width="2" height="8" fill="#A8D8FF"/>
             </svg>
         </div>
-        <p class="stf-easter-hint">调频 9072 · 信号同步中</p>
+        <p class="stf-easter-hint">调频 9072 · 像素信号同步中</p>
     </div>
 
     <script src="js/forum-data.js"></script>
