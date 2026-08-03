@@ -5,3 +5,5 @@ Thumbs.db
 *.log
 node_modules/
 .workbuddy/
+.supabase_dump/
+聊天记录/

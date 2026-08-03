@@ -110,7 +110,7 @@ window.StarTorchAuth = (function () {
         var a = readAccounts();
         var key = normalizeKey(name);
         if (a[key] && a[key].email) return a[key].email;
-        var email = 'stf_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6) + '@startorch.local';
+        var email = 'stf_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6) + '@startorch.example.com';
         a[key] = { email: email, name: name };
         writeAccounts(a);
         return email;
