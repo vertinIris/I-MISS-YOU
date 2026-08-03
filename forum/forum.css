@@ -772,19 +772,25 @@
 
 /* 通行证弹窗内部 */
 .stf-auth-tabs {
-    display: flex; gap: 6px;
-    margin-bottom: 20px;
-    padding: 4px;
-    border-radius: 14px;
-    background: rgba(255,255,255,.04);
+    display: flex; gap: 14px;
+    margin-bottom: 28px;
+    padding: 6px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.045);
+    border: 1px solid rgba(168,216,255,.10);
 }
 .stf-auth-tab {
     flex: 1;
-    padding: 9px 0;
-    border: none; border-radius: 11px;
+    padding: 11px 0;
+    border: none; border-radius: 12px;
     background: transparent; color: rgba(240,244,255,.62);
-    font-size: 14px; cursor: pointer;
-    transition: background .25s, color .25s;
+    font-size: 14px; letter-spacing: .04em; cursor: pointer;
+    transition: background .25s, color .25s, box-shadow .25s;
+}
+.stf-auth-tab:hover { color: rgba(255,255,255,.86); background: rgba(255,255,255,.05); }
+.stf-auth-tab:focus-visible {
+    outline: 2px solid var(--aimisi-pink, #FF6B9D);
+    outline-offset: 2px;
 }
 .stf-auth-tab.active {
     background: rgba(168,216,255,.16);
@@ -991,6 +997,27 @@
     box-shadow: 0 0 0 4px rgba(255,107,157,.18);
     background: rgba(255,107,157,.06);
 }
+/* 逐位即时反馈：这一位拨对了 */
+.stf-dial-input.is-hit {
+    border-color: rgba(127, 217, 158, .75);
+    background: rgba(127, 217, 158, .10);
+    box-shadow: 0 0 14px rgba(127, 217, 158, .28) inset;
+}
+.stf-dial-input.is-hit:focus {
+    box-shadow: 0 0 0 4px rgba(127, 217, 158, .20), 0 0 14px rgba(127, 217, 158, .28) inset;
+}
+/* 四位全中：锁定态 */
+.stf-dial-input.is-locked {
+    border-color: rgba(255, 215, 0, .8);
+    background: rgba(255, 215, 0, .10);
+    box-shadow: 0 0 18px rgba(255, 215, 0, .3) inset, 0 0 20px rgba(255, 215, 0, .18);
+    animation: stfDialLock .55s ease;
+}
+@keyframes stfDialLock {
+    0%   { transform: scale(1); }
+    45%  { transform: scale(1.07); }
+    100% { transform: scale(1); }
+}
 .stf-dial-dot {
     align-self: center; font-size: 28px; color: rgba(240,244,255,.4);
     padding: 0 2px 18px;
@@ -1011,9 +1038,13 @@
     display: block; height: 100%; width: 0%;
     border-radius: 999px;
     background: linear-gradient(90deg, #6B8AFF, #B66BFF, #FF6B9D);
-    transition: width .25s ease;
+    /* 表针要跟手：JS 已做平滑，这里只留极短的插值，避免拖影 */
+    transition: width .08s linear;
 }
-.stf-tuner-signal-num { font-variant-numeric: tabular-nums; color: #fff; min-width: 38px; text-align: right; }
+.stf-tuner-signal-num {
+    font-variant-numeric: tabular-nums;
+    color: #fff; min-width: 52px; text-align: right;
+}
 .stf-tuner-hint { margin: 0; font-size: 13px; line-height: 1.7; color: rgba(240,244,255,.6); }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1022,8 +1053,108 @@
     .stf-modal, .stf-modal-panel, .stf-toast,
     .hero-pill, .archive-float, .character-archive-card,
     .stf-stat, .stf-sort-btn, .stf-account-btn, .stf-tuner-led,
-    .stf-dial-step, .stf-upload-zone, .stf-search { animation: none !important; transition: opacity .2s ease !important; }
+    .stf-dial-step, .stf-upload-zone, .stf-search,
+    .stf-dial-input.is-locked { animation: none !important; transition: opacity .2s ease !important; }
+    .stf-tuner-signal-bar i { transition: width .2s ease !important; }
+    .stf-sync-dot.is-syncing { animation: none !important; }
+    .stf-sync-btn, .stf-sync-btn:hover { transform: none !important; transition: opacity .2s ease !important; }
     .forum-entry:hover, .lore-card:hover, .stf-card:hover,
     .hero-pill:hover, .archive-float:hover .character-archive-card,
     .stf-account-btn:hover, .stf-upload-zone:hover { transform: none !important; }
+}
+
+/* ============ 同步状态栏（实时监测 / 主动同步 / 自动同步） ============ */
+.stf-sync-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 14px 0 6px;
+    padding: 9px 14px;
+    border-radius: 14px;
+    background: rgba(20, 24, 42, 0.55);
+    border: 1px solid rgba(168, 216, 255, 0.10);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+.stf-sync-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+    font-size: 13px;
+    color: rgba(240, 244, 255, 0.82);
+}
+.stf-sync-dot {
+    flex: 0 0 auto;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #7FD99E;
+    box-shadow: 0 0 0 0 rgba(127, 217, 158, 0.6);
+}
+.stf-sync-dot.is-ok { background: #7FD99E; }
+.stf-sync-dot.is-syncing {
+    background: #FFD700;
+    animation: stfSyncPulse 1.1s ease-out infinite;
+}
+.stf-sync-dot.is-error { background: #FF6B9D; }
+@keyframes stfSyncPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.55); }
+    70%  { box-shadow: 0 0 0 7px rgba(255, 215, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+}
+.stf-sync-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.stf-sync-btn {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(168, 216, 255, 0.22);
+    background: linear-gradient(135deg, rgba(107, 138, 255, 0.22), rgba(182, 107, 255, 0.22));
+    color: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.stf-sync-btn svg { width: 15px; height: 15px; }
+.stf-sync-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(107, 138, 255, 0.28);
+    background: linear-gradient(135deg, rgba(107, 138, 255, 0.34), rgba(182, 107, 255, 0.34));
+}
+.stf-sync-btn:focus-visible {
+    outline: 2px solid #A8D8FF;
+    outline-offset: 2px;
+}
+.stf-sync-btn:active { transform: translateY(0) scale(0.97); }
+
+/* ===== 管理员操作（多管理员，权限平等） ===== */
+.stf-admin-hide {
+    color: #ff8a8a;
+}
+.stf-admin-hide:hover {
+    background: rgba(255, 90, 90, 0.15);
+    color: #ff6b6b;
+}
+.stf-comment-hide {
+    margin-left: 6px;
+    border: none;
+    background: transparent;
+    color: #ff8a8a;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+.stf-comment-hide:hover {
+    background: rgba(255, 90, 90, 0.15);
+    color: #ff6b6b;
 }

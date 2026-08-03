@@ -8,6 +8,7 @@
     /* 暴露 toast 给 forum-auth.js / forum-upload.js 复用（showToast 为函数声明，已 hoist） */
     window.StarTorchForum = window.StarTorchForum || {};
     window.StarTorchForum.toast = showToast;
+    window.StarTorchForum.refreshCommunity = function () { renderCommunity(); };
 
     var COMMUNITY_PAGE_SIZE = 6;
     var communityFilter = 'all';
@@ -168,7 +169,7 @@
 
     /* ============ Rendering ============ */
     function getFilteredSubmissions() {
-        var submissions = StarTorchData.getSubmissions();
+        var submissions = StarTorchData.getSubmissions().filter(function (s) { return !s.is_hidden; });
         var filtered = communityFilter === 'all'
             ? submissions
             : submissions.filter(function (s) { return s.type === communityFilter; });
@@ -200,7 +201,7 @@
 
     /* ============ Stats ============ */
     function renderStats() {
-        var subs = StarTorchData.getSubmissions();
+        var subs = StarTorchData.getSubmissions().filter(function (s) { return !s.is_hidden; });
         var works = subs.length;
         var members = new Set(subs.map(function (s) { return s.name; })).size + 24;
         var online = 8 + Math.floor(Math.random() * 13);
@@ -278,6 +279,10 @@
                             '<svg viewBox="0 0 24 24" fill="' + (s.bookmarked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>' +
                             '<span>收藏</span>' +
                         '</button>' +
+                        (window.StarTorchAuth && window.StarTorchAuth.isForumAdmin() ? '<button type="button" class="stf-card-action stf-admin-hide" data-action="admin-hide" title="管理员：隐藏该帖">' +
+                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>' +
+                            '<span>隐藏</span>' +
+                        '</button>' : '') +
                         '<button type="button" class="stf-card-flip-back">返回 ↺</button>' +
                     '</div>' +
                     '<div class="stf-card-comments" id="stf-comments-' + s.id + '">' +
@@ -301,11 +306,12 @@
             list.innerHTML = '<p class="stf-comments-empty">还没有评论</p>';
             return;
         }
-        list.innerHTML = comments.map(function (c) {
+        list.innerHTML = comments.filter(function (c) { return !c.is_hidden; }).map(function (c) {
             return '<div class="stf-comment">' +
                 '<span class="stf-comment-name" style="color:' + (c.color || '#A8D8FF') + '">' + escapeHTML(c.name) + '</span>' +
                 '<span class="stf-comment-text">' + escapeHTML(c.text) + '</span>' +
                 '<span class="stf-comment-time">' + escapeHTML(c.timeStr) + '</span>' +
+                (window.StarTorchAuth && window.StarTorchAuth.isForumAdmin() ? '<button type="button" class="stf-comment-hide" data-action="admin-hide-comment" data-hide-sub="' + targetId + '" data-hide-name="' + escapeHTML(c.name) + '" data-hide-text="' + escapeHTML(c.text) + '" title="管理员：隐藏该评论">✕</button>' : '') +
             '</div>';
         }).join('');
     }
@@ -384,6 +390,7 @@
             item.likes = (item.likes || 0) + (item.liked ? 1 : -1);
         });
         if (s) {
+            if (window.StarTorchCloud) window.StarTorchCloud.updateSubmission(s, function () {});
             renderCommunity();
             showToast(s.liked ? '已点赞 ❤' : '已取消点赞');
         }
@@ -395,9 +402,34 @@
             item.bookmarks = (item.bookmarks || 0) + (item.bookmarked ? 1 : -1);
         });
         if (s) {
+            if (window.StarTorchCloud) window.StarTorchCloud.updateSubmission(s, function () {});
             renderCommunity();
             showToast(s.bookmarked ? '已收藏 ★' : '已取消收藏');
         }
+    }
+
+    /* 管理员操作（多管理员，权限平等；UI 显隐由 isForumAdmin 控制，实际删除由 RLS 裁定） */
+    function hideSubmission(id) {
+        if (!window.StarTorchAuth || !window.StarTorchAuth.isForumAdmin()) return;
+        var s = updateSubmission(id, function (item) { item.is_hidden = true; });
+        if (s) {
+            if (window.StarTorchCloud) window.StarTorchCloud.updateSubmission(s, function () {});
+            renderCommunity();
+            showToast('已隐藏该帖（管理员操作）');
+        }
+    }
+
+    function hideComment(targetId, name, text) {
+        if (!window.StarTorchAuth || !window.StarTorchAuth.isForumAdmin()) return;
+        var list = StarTorchData.getComments(targetId);
+        var updated = (list || []).map(function (c) {
+            if (c.name === name && c.text === text) c.is_hidden = true;
+            return c;
+        });
+        StarTorchData.saveComments(targetId, updated);
+        if (window.StarTorchCloud) window.StarTorchCloud.hideComment(targetId, name, text, function () {});
+        renderComments(targetId);
+        showToast('已隐藏该评论（管理员操作）');
     }
 
     function toggleComments(id) {
@@ -428,6 +460,11 @@
                 String(now.getMinutes()).padStart(2, '0')
         });
         StarTorchData.saveComments(targetId, comments);
+        if (window.StarTorchCloud) {
+            window.StarTorchCloud.pushComment(targetId, comments[comments.length - 1], function (ok) {
+                if (!ok) console.warn('[forum] 评论上云失败，已转入离线队列');
+            });
+        }
         StarTorchData.setNickname(name);
         renderComments(targetId);
         showToast('评论已发送 ✨');
@@ -499,6 +536,13 @@
         }
         StarTorchData.setNickname(newSub.name);
         if (newSub.author && window.StarTorchAuth) window.StarTorchAuth.bumpPostCount();
+        /* 上云（乐观更新本地已完成，云端后台同步；失败自动入队） */
+        if (window.StarTorchCloud) {
+            window.StarTorchCloud.pushSubmission(newSub, function (ok) {
+                if (!ok) console.warn('[forum] 发帖上云失败，已转入离线队列');
+            });
+        }
+        if (window.StarTorchSync) window.StarTorchSync.noteLocalWrite();
         clearDraft();
         searchQuery = '';
         var searchEl = document.getElementById('stf-search');
@@ -736,6 +780,7 @@
                 if (e.target.closest('[data-action="like"]')) { toggleLike(id); return; }
                 if (e.target.closest('[data-action="comment"]')) { toggleComments(id); return; }
                 if (e.target.closest('[data-action="bookmark"]')) { toggleBookmark(id); return; }
+                if (e.target.closest('[data-action="admin-hide"]')) { hideSubmission(id); return; }
 
                 // 翻转触发：正面/背面空白区域或显式翻转按钮
                 toggleCard(card);
@@ -761,6 +806,14 @@
                 if (!name || !text) { showToast('请填写昵称和评论'); return; }
                 addComment(targetId, name, text);
                 form.querySelector('.stf-comment-input').value = '';
+            });
+
+            /* 管理员：隐藏评论（评论区在 grid 主点击处理器中被 early-return，这里单独代理） */
+            grid.addEventListener('click', function (e) {
+                var btn = e.target.closest('[data-action="admin-hide-comment"]');
+                if (!btn) return;
+                e.stopPropagation();
+                hideComment(btn.getAttribute('data-hide-sub'), btn.getAttribute('data-hide-name'), btn.getAttribute('data-hide-text'));
             });
         }
 
@@ -938,7 +991,25 @@
         var waveEl = document.getElementById('stf-tuner-wave');
 
         var TARGET_CODE = '9072';
+        var TARGET_FREQ = 9072;
         var locked = false;
+
+        /* —— 信号模型参数 ——
+         * 真实接收机的响应不是「对了几位」，而是与目标频率的距离决定的。
+         * 用双洛伦兹（宽捕获 + 窄锁定）叠加：远处给方向感，近处才陡峭上升。
+         */
+        var CAPTURE_WIDTH = 900;   /* 宽频段半高宽：负责"大方向对不对" */
+        var LOCK_WIDTH    = 6;     /* 窄锁定半高宽：负责"临门一脚"      */
+        var NOISE_FLOOR   = 1.5;   /* 本底噪声：永远不会真的是 0%       */
+
+        var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+        var trueSnr = NOISE_FLOOR;   /* 真实信噪比（无噪声）   */
+        var shownSnr = NOISE_FLOOR;  /* 屏幕上平滑后的显示值   */
+        var rafId = null;
+        var lastFrame = 0;
+        var lastHint = '';
+        var visible = true;
+        var DEFAULT_HINT = '拨动数字轮，或直接键入四位频率 —— 深夜里，总有人在某个频率上唱歌。';
 
         function cur(idx) { return parseInt((inputs[idx] && inputs[idx].value) || '0', 10) || 0; }
 
@@ -951,24 +1022,106 @@
             return inputs.map(function (inp) { return (inp && inp.value) ? inp.value.charAt(0) : '0'; }).join('');
         }
 
-        function updateSignal() {
+        function readFreq() { return parseInt(readCode(), 10) || 0; }
+
+        /* 谐振响应曲线 */
+        function computeSnr() {
+            var delta = Math.abs(readFreq() - TARGET_FREQ);
+            if (delta === 0) return 100;
+            var coarse = 100 / (1 + Math.pow(delta / CAPTURE_WIDTH, 2));
+            var fine   = 100 / (1 + Math.pow(delta / LOCK_WIDTH, 2));
+            return Math.max(NOISE_FLOOR, 0.35 * coarse + 0.65 * fine);
+        }
+
+        function tierText(snr) {
+            if (snr >= 85) return '频率接近…';
+            if (snr >= 40) return '捕获中';
+            if (snr >= 8)  return '有信号';
+            if (snr >= 3)  return '噪声';
+            return '待机';
+        }
+
+        function directionHint(snr) {
+            if (snr < 8) return DEFAULT_HINT;
+            var freq = readFreq();
+            if (freq === TARGET_FREQ) return DEFAULT_HINT;
+            return freq < TARGET_FREQ
+                ? '载波在更高的频率上 —— 往上拨 ▲'
+                : '载波在更低的频率上 —— 往下拨 ▼';
+        }
+
+        /* 逐位反馈：拨对一位就立刻点亮那一位 */
+        function paintDigits() {
             var code = readCode();
-            var match = 0;
             for (var i = 0; i < 4; i++) {
-                if (code.charAt(i) === TARGET_CODE.charAt(i)) match += 1;
-                else if (TARGET_CODE.indexOf(code.charAt(i)) !== -1) match += 0.4;
+                if (!inputs[i]) continue;
+                inputs[i].classList.toggle('is-hit', !locked && code.charAt(i) === TARGET_CODE.charAt(i));
+                inputs[i].classList.toggle('is-locked', locked);
             }
-            var pct = Math.max(0, Math.min(100, Math.round((match / 4) * 100)));
-            if (fillEl) fillEl.style.width = pct + '%';
-            if (numEl) numEl.textContent = pct + '%';
+        }
+
+        /* 把当前显示值刷到 DOM */
+        function paint(snr) {
+            var pct = Math.max(0, Math.min(100, snr));
+            var shown = pct >= 99.5 ? 100 : Math.round(pct * 10) / 10;
+            if (fillEl) fillEl.style.width = pct.toFixed(1) + '%';
+            if (numEl) numEl.textContent = (pct >= 10 ? shown.toFixed(0) : shown.toFixed(1)) + '%';
+            if (waveEl) waveEl.style.setProperty('--level', pct.toFixed(1) + '%');
             if (ledEl) {
                 ledEl.classList.toggle('is-locked', locked);
-                ledEl.classList.toggle('is-tuned', !locked && pct >= 50);
+                ledEl.classList.toggle('is-tuned', !locked && pct >= 40);
             }
-            if (waveEl) waveEl.style.setProperty('--level', pct + '%');
-            if (stateEl && !locked) {
-                stateEl.textContent = pct >= 90 ? '频率接近…' : (pct > 0 ? '接收中' : '待机');
+        }
+
+        /* 输入变化 → 立刻重算真实值并给出即时反馈（不等动画） */
+        function updateSignal() {
+            trueSnr = computeSnr();
+            paintDigits();
+            if (!locked) {
+                if (stateEl) stateEl.textContent = tierText(trueSnr);
+                var h = directionHint(trueSnr);
+                if (hintEl && h !== lastHint) { hintEl.textContent = h; lastHint = h; }
             }
+            if (reduceMotion || locked) {
+                shownSnr = trueSnr;
+                paint(shownSnr);
+            } else {
+                /* 立即给一次响应，避免"按了没反应"的迟滞感 */
+                shownSnr += (trueSnr - shownSnr) * 0.55;
+                paint(shownSnr);
+                startLoop();
+            }
+        }
+
+        /* 接收机噪声：信号越弱抖得越厉害，锁定后完全稳定 */
+        function frame(ts) {
+            rafId = null;
+            if (!visible) return;
+            if (ts - lastFrame < 60) { startLoop(); return; }   /* ~16fps，够真实也不烧 CPU */
+            lastFrame = ts;
+
+            shownSnr += (trueSnr - shownSnr) * 0.22;
+
+            var display = shownSnr;
+            if (!locked) {
+                var q = Math.max(0, Math.min(1, trueSnr / 100));
+                var amp = (1 - q) * 5.5 + 0.35;              /* 弱信号抖动大 */
+                display = shownSnr + (Math.random() - 0.5) * 2 * amp;
+                display = Math.max(0.2, Math.min(100, display));
+            }
+            paint(display);
+
+            if (locked && Math.abs(trueSnr - shownSnr) < 0.05) { paint(trueSnr); return; }
+            startLoop();
+        }
+
+        function startLoop() {
+            if (rafId !== null || reduceMotion || !visible) return;
+            rafId = requestAnimationFrame(frame);
+        }
+
+        function stopLoop() {
+            if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
         }
 
         function checkLock() {
@@ -976,9 +1129,14 @@
             updateSignal();
             if (readCode() === TARGET_CODE) {
                 locked = true;
+                trueSnr = 100;
+                shownSnr = 100;
+                paint(100);
+                paintDigits();
                 if (stateEl) stateEl.textContent = '已锁定 · 9072';
                 if (ledEl) { ledEl.classList.add('is-locked'); ledEl.classList.remove('is-tuned'); }
-                if (hintEl) hintEl.textContent = '信号锁定 —— 正在接通深夜电台…';
+                if (hintEl) { hintEl.textContent = '信号锁定 —— 正在接通深夜电台…'; lastHint = hintEl.textContent; }
+                stopLoop();
                 if (window.playTransition) setTimeout(window.playTransition, 480);
             }
         }
@@ -998,6 +1156,8 @@
             inp.addEventListener('keydown', function (e) {
                 if (e.key === 'ArrowUp') { e.preventDefault(); setDigit(idx, cur(idx) + 1); checkLock(); return; }
                 if (e.key === 'ArrowDown') { e.preventDefault(); setDigit(idx, cur(idx) - 1); checkLock(); return; }
+                if (e.key === 'ArrowLeft' && idx > 0 && inputs[idx - 1]) { e.preventDefault(); inputs[idx - 1].focus(); return; }
+                if (e.key === 'ArrowRight' && idx < 3 && inputs[idx + 1]) { e.preventDefault(); inputs[idx + 1].focus(); return; }
                 if (/^\d$/.test(e.key)) {
                     e.preventDefault();
                     setDigit(idx, parseInt(e.key, 10));
@@ -1011,6 +1171,24 @@
                 if (idx < 3 && inputs[idx + 1]) inputs[idx + 1].focus();
                 checkLock();
             });
+            /* 滚轮微调：真实调谐台的手感 */
+            inp.addEventListener('wheel', function (e) {
+                if (locked) return;
+                e.preventDefault();
+                setDigit(idx, cur(idx) + (e.deltaY < 0 ? 1 : -1));
+                checkLock();
+            }, { passive: false });
+        });
+
+        /* 离开视口时停掉噪声循环，避免无谓耗电 */
+        if (typeof IntersectionObserver !== 'undefined') {
+            new IntersectionObserver(function (entries) {
+                visible = entries[0].isIntersecting;
+                if (visible) startLoop(); else stopLoop();
+            }, { threshold: 0.05 }).observe(wrap);
+        }
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden) stopLoop(); else startLoop();
         });
 
         updateSignal();

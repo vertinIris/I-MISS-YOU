@@ -162,6 +162,19 @@
                 <button type="button" class="btn-ghost magnetic" data-action="open-submit"><span>投稿</span></button>
             </div>
 
+            <div class="stf-sync-bar" id="stf-sync-bar" aria-label="数据同步状态">
+                <div class="stf-sync-status" id="stf-sync-status" role="status" aria-live="polite">
+                    <span class="stf-sync-dot" id="stf-sync-dot" aria-hidden="true"></span>
+                    <span class="stf-sync-text" id="stf-sync-text">本地模式 · 同步就绪</span>
+                </div>
+                <button type="button" class="stf-sync-btn" id="stf-sync-now" aria-label="立即同步数据">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/>
+                    </svg>
+                    <span>立即同步</span>
+                </button>
+            </div>
+
             <div class="stf-tag-bar">
                 <span class="tag-category-label">角色</span>
                 <button class="stf-tag-chip" data-tag="爱弥斯">爱弥斯</button>
@@ -705,6 +718,12 @@
     <script src="js/forum-auth.js"></script>
     <script src="js/forum-upload.js"></script>
     <script src="js/forum.js"></script>
+    <script src="js/forum-sync.js"></script>
+    <!-- 论坛上云：Supabase 客户端 + 云端适配器（与主站共用同一项目，账号自动打通） -->
+    <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
+            onerror="console.warn('[forum] Supabase SDK CDN 加载失败，回退纯本地模式');"></script>
+    <script src="js/forum-supabase.js"></script>
+    <script src="js/forum-cloud.js"></script>
     <script src="js/forum-easter.js"></script>
 </body>
 </html>

@@ -1,22 +1,35 @@
 /**
- * 星炬学院主论坛 · 本地通行证系统
- * 完全独立于飞行雪绒站 AuthManager，存储前缀 stf_*
+ * 星炬学院主论坛 · 通行证系统（统一账号版）
+ * ----------------------------------------------------
+ * 复用飞行雪绒主站同一 Supabase 项目（lmlyfyjffaaddysiliht）：
+ *   - 注册/登录走 supabase.auth.signUp / signInWithPassword；
+ *   - 用户名经本地映射为合成邮箱（stf_xxx@startorch.local），兼容中文名；
+ *   - 口令由 Supabase 托管（加盐散列在服务端），前端不再自行散列；
+ *   - 会话存于同域 localStorage 键 sb-<ref>-auth，与主站自动互认：
+ *     在主站登录后访问论坛，refreshFromCloud() 会读到共享会话并自动识别。
  *
- * 设计取舍：
- *   同人站无后端，账号仅落在本机 localStorage，用于「稳定的发帖身份」而非安全鉴权。
- *   口令仍做加盐散列（Web Crypto SHA-256，降级 FNV-1a），避免明文落盘。
+ * 公开 API 与 current 对象形状保持兼容（forum.js 零改动）：
+ *   getUser() -> { key:uid, name, color, joined, posts }
+ *   register / login / logout / onChange / bumpPostCount / openPanel
+ *
+ * 降级：若 supabaseClient 未就绪（CDN 失败/离线），register/login 明确报错，
+ *      但「匿名身份发帖」路径（forum.js 中 user 为 null 时）仍可用。
  */
 window.StarTorchAuth = (function () {
     'use strict';
 
-    var ACCOUNTS_KEY = 'stf_accounts';
-    var SESSION_KEY = 'stf_session';
+    var ACCOUNTS_KEY = 'stf_accounts';          // 本地映射：用户名 -> 合成邮箱
+    var SESSION_MIRROR_KEY = 'stf_session';     // 本地镜像：离线时仍可用 UI
+
+    // 多管理员：与 db/migration-021 的 forum_admins 表保持一致（前端仅用于 UI 显隐，
+    // 真正权限由 Supabase RLS 的 is_forum_admin() 裁定）。增删管理员请改 SQL 表。
+    var FORUM_ADMIN_EMAILS = ['2473609011@qq.com', '3604893605@qq.com'];
 
     var AVATAR_COLORS = ['#FF6B9D', '#6B8AFF', '#B66BFF', '#7FD99E', '#E8C56A', '#A8D8FF', '#FF9E7A'];
     var listeners = [];
     var current = null;
 
-    /* ---------- storage ---------- */
+    /* ---------- storage（本地映射 / 镜像，非口令） ---------- */
     function safeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
     function safeSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
     function safeRemove(k) { try { localStorage.removeItem(k); } catch (e) { /* ignore */ } }
@@ -26,65 +39,84 @@ window.StarTorchAuth = (function () {
     }
     function writeAccounts(map) { safeSet(ACCOUNTS_KEY, JSON.stringify(map)); }
 
-    /* ---------- hashing ---------- */
-    function fallbackHash(text) {
-        var h1 = 0x811c9dc5, h2 = 0x01000193, i;
-        for (i = 0; i < text.length; i++) {
-            h1 ^= text.charCodeAt(i);
-            h1 = (h1 * 16777619) >>> 0;
-            h2 = ((h2 << 5) + h2 + text.charCodeAt(i)) >>> 0;
-        }
-        return ('00000000' + h1.toString(16)).slice(-8) + ('00000000' + h2.toString(16)).slice(-8);
-    }
-
-    function hashPassword(pwd, salt) {
-        var text = salt + '::' + pwd + '::startorch';
-        if (window.crypto && window.crypto.subtle && window.TextEncoder) {
-            try {
-                return window.crypto.subtle
-                    .digest('SHA-256', new TextEncoder().encode(text))
-                    .then(function (buf) {
-                        return Array.prototype.map.call(new Uint8Array(buf), function (b) {
-                            return ('00' + b.toString(16)).slice(-2);
-                        }).join('');
-                    })
-                    .catch(function () { return fallbackHash(text); });
-            } catch (e) { /* fall through */ }
-        }
-        return Promise.resolve(fallbackHash(text));
-    }
-
-    function randomSalt() {
-        if (window.crypto && window.crypto.getRandomValues) {
-            var arr = new Uint8Array(8);
-            window.crypto.getRandomValues(arr);
-            return Array.prototype.map.call(arr, function (b) {
-                return ('00' + b.toString(16)).slice(-2);
-            }).join('');
-        }
-        return String(Date.now()) + Math.random().toString(16).slice(2, 10);
-    }
-
-    /* ---------- core ---------- */
     function normalizeKey(name) { return String(name || '').trim().toLowerCase(); }
+    function randomColor() { return AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)]; }
 
+    /* ---------- 当前用户视图 ---------- */
     function emit() {
         listeners.forEach(function (fn) {
-            try { fn(current); } catch (e) { /* ignore */ } });
+            try { fn(current); } catch (e) { /* ignore */ }
+        });
+    }
+
+    function publicView(uid, name, color, joined, posts, email) {
+        return { key: uid, name: name, color: color, joined: joined || Date.now(), posts: posts || 0, email: email || null };
+    }
+
+    function saveMirror(v) { safeSet(SESSION_MIRROR_KEY, JSON.stringify(v)); }
+    function loadMirror() { try { return JSON.parse(safeGet(SESSION_MIRROR_KEY)); } catch (e) { return null; } }
+    function clearMirror() { safeRemove(SESSION_MIRROR_KEY); }
+
+    function applyUser(user, profile) {
+        var name = (profile && profile.nickname) || (user && user.email ? String(user.email).split('@')[0] : '星炬学院访客');
+        var color = (profile && profile.avatar_color) || '#6B8AFF';
+        var joined = (profile && profile.created_at) ? Date.parse(profile.created_at) : (current ? current.joined : Date.now());
+        var v = publicView(user.id, name, color, joined, current ? current.posts : 0, (user && user.email) ? user.email : null);
+        current = v;
+        saveMirror(v);
+        emit();
+        return v;
     }
 
     function loadSession() {
-        var key = safeGet(SESSION_KEY);
-        if (!key) { current = null; return; }
-        var accounts = readAccounts();
-        current = accounts[key] ? publicView(accounts[key]) : null;
-        if (!current) safeRemove(SESSION_KEY);
+        var mirror = loadMirror();
+        if (mirror && mirror.key) {
+            current = publicView(mirror.key, mirror.name, mirror.color, mirror.joined, mirror.posts);
+        } else {
+            current = null;
+        }
+        /* 异步用云端共享会话刷新（识别主站登录态）。
+           supabaseClient 可能尚未就绪（CDN async），先轮询再刷新。 */
+        refreshFromCloudDeferred();
     }
 
-    function publicView(acc) {
-        return { key: acc.key, name: acc.name, color: acc.color, joined: acc.joined, posts: acc.posts || 0 };
+    function refreshFromCloudDeferred() {
+        var tries = 0;
+        (function tick() {
+            if (window.supabaseClient) { refreshFromCloud(); return; }
+            if (tries++ > 60) return; /* ~3s 超时则保持本地镜像 */
+            setTimeout(tick, 50);
+        })();
     }
 
+    function refreshFromCloud() {
+        var client = window.supabaseClient;
+        if (!client) return;
+        if (!client.auth || !client.auth.getSession) return;
+        client.auth.getSession().then(function (res) {
+            if (res && res.data && res.data.session && res.data.session.user) {
+                var user = res.data.session.user;
+                client.from('profiles')
+                    .select('nickname, avatar_color, created_at')
+                    .eq('id', user.id).single()
+                    .then(function (p) { applyUser(user, (p && p.data) ? p.data : null); })
+                    .catch(function () { applyUser(user, null); });
+            }
+        }).catch(function () { /* 无会话则保持本地镜像 */ });
+    }
+
+    /* ---------- 合成邮箱映射 ---------- */
+    function toEmail(name) {
+        var a = readAccounts();
+        var key = normalizeKey(name);
+        if (a[key] && a[key].email) return a[key].email;
+        var email = 'stf_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6) + '@startorch.local';
+        a[key] = { email: email, name: name };
+        writeAccounts(a);
+        return email;
+    }
+
+    /* ---------- 核心：注册 / 登录 / 登出 ---------- */
     function register(name, pwd) {
         var trimmed = String(name || '').trim();
         if (trimmed.length < 2 || trimmed.length > 20) {
@@ -93,64 +125,75 @@ window.StarTorchAuth = (function () {
         if (String(pwd || '').length < 4) {
             return Promise.reject(new Error('口令至少 4 位'));
         }
-        var accounts = readAccounts();
-        var key = normalizeKey(trimmed);
-        if (accounts[key]) return Promise.reject(new Error('该用户名已被占用'));
+        var client = window.supabaseClient;
+        if (!client) return Promise.reject(new Error('云端未连接，暂无法注册（可先用匿名身份发帖）'));
 
-        var salt = randomSalt();
-        return hashPassword(pwd, salt).then(function (hash) {
-            accounts[key] = {
-                key: key,
-                name: trimmed,
-                salt: salt,
-                hash: hash,
-                color: AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)],
-                joined: Date.now(),
-                posts: 0
-            };
-            writeAccounts(accounts);
-            safeSet(SESSION_KEY, key);
-            current = publicView(accounts[key]);
-            emit();
-            return current;
+        var email = toEmail(trimmed);
+        var color = randomColor();
+        return client.auth.signUp({
+            email: email,
+            password: pwd,
+            options: { data: { nickname: trimmed, avatar_color: color } }
+        }).then(function (res) {
+            if (res.error) throw new Error(res.error.message || '注册失败');
+            if (res.data && res.data.user && res.data.session) {
+                return applyUser(res.data.user, {
+                    nickname: trimmed, avatar_color: color, created_at: new Date().toISOString()
+                });
+            }
+            /* 服务启用了邮箱确认时不会返回 session */
+            throw new Error('注册成功，但账户待确认；请在 Supabase 关闭「邮箱确认」后再登录');
         });
     }
 
     function login(name, pwd) {
-        var accounts = readAccounts();
+        var a = readAccounts();
         var key = normalizeKey(name);
-        var acc = accounts[key];
-        if (!acc) return Promise.reject(new Error('账号不存在，请先注册'));
-        return hashPassword(pwd, acc.salt).then(function (hash) {
-            if (hash !== acc.hash) throw new Error('口令不正确');
-            safeSet(SESSION_KEY, key);
-            current = publicView(acc);
-            emit();
-            return current;
-        });
+        var acc = a[key];
+        if (!acc) return Promise.reject(new Error('该用户名未在本论坛注册，请先注册'));
+        var client = window.supabaseClient;
+        if (!client) return Promise.reject(new Error('云端未连接，无法登录'));
+
+        return client.auth.signInWithPassword({ email: acc.email, password: pwd })
+            .then(function (res) {
+                if (res.error) throw new Error(res.error.message || '登录失败');
+                if (res.data && res.data.user) {
+                    return client.from('profiles')
+                        .select('nickname, avatar_color, created_at')
+                        .eq('id', res.data.user.id).single()
+                        .then(function (p) { return applyUser(res.data.user, (p && p.data) ? p.data : null); })
+                        .catch(function () { return applyUser(res.data.user, null); });
+                }
+                throw new Error('登录失败');
+            });
     }
 
     function logout() {
-        safeRemove(SESSION_KEY);
+        var client = window.supabaseClient;
+        if (client && client.auth && client.auth.signOut) {
+            try { client.auth.signOut(); } catch (e) { /* ignore */ }
+        }
+        clearMirror();
         current = null;
         emit();
     }
 
     function bumpPostCount() {
         if (!current) return;
-        var accounts = readAccounts();
-        var acc = accounts[current.key];
-        if (!acc) return;
-        acc.posts = (acc.posts || 0) + 1;
-        writeAccounts(accounts);
-        current.posts = acc.posts;
+        current.posts = (current.posts || 0) + 1;
+        saveMirror(current);
         emit();
     }
 
     function getUser() { return current; }
     function onChange(fn) { if (typeof fn === 'function') listeners.push(fn); }
 
-    /* ---------- UI ---------- */
+    /* 多管理员：当前登录用户邮箱是否在管理员列表中（UI 显隐用，权限由 RLS 裁定） */
+    function isForumAdmin() {
+        return !!(current && current.email && FORUM_ADMIN_EMAILS.indexOf(current.email) !== -1);
+    }
+
+    /* ---------- UI（以下逻辑保持不变） ---------- */
     function $(id) { return document.getElementById(id); }
 
     function initials(name) {
@@ -265,7 +308,7 @@ window.StarTorchAuth = (function () {
                 el.addEventListener('click', closePanel);
             });
             document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape' && !modal.hidden) closePanel();
+                if (root_close_on_escape(e, modal)) closePanel();
             });
         }
 
@@ -318,6 +361,10 @@ window.StarTorchAuth = (function () {
         onChange(function () { renderEntry(); renderPanel(); });
     }
 
+    function root_close_on_escape(e, modal) {
+        return e.key === 'Escape' && !modal.hidden;
+    }
+
     function init() {
         loadSession();
         bindUI();
@@ -334,6 +381,7 @@ window.StarTorchAuth = (function () {
         login: login,
         logout: logout,
         onChange: onChange,
+        isForumAdmin: isForumAdmin,
         bumpPostCount: bumpPostCount,
         openPanel: openPanel
     };

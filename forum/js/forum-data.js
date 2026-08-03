@@ -5,7 +5,7 @@
 (function () {
     'use strict';
 
-    var SEED_VERSION = 'v1.0';
+    var SEED_VERSION = 'v1.1';
 
     var SEED_SUBMISSIONS = [
         {
@@ -49,6 +49,25 @@
             realm: 'startorch', tags: ['洛瑟菈', '星炬学院'],
             content: '下午三点十七分，阳光从百叶窗的缝隙里照进来，落在办公桌上那盆干掉的薄荷上。\n\n我给它浇了一点水。\n\n凯尔梅尔以前总说，养植物和养学生一样——不能浇太多，也不能太少。要让它自己学会往下扎根。\n\n我有时会在深夜打开学生档案，看看那些已经不在的人。不是怀念，是确认。确认自己曾经记得他们，确认自己没有因为他们的离开而变得麻木。\n\n今天翻到的是一张 smiling face。照片里的女孩扎着歪马尾，眼睛很亮，像是随时会说出什么让人接不住的话。\n\n我把档案合上，起身拉开窗帘。\n\n星炬学院的钟楼还在。学生们还在走廊上跑。\n\n这就够了。\n\n只要学院还在，他们就还在某个地方。',
             timeStr: '2026-07-02 16:00', likes: 26, liked: false, color: '#E8C56A'
+        },
+        /* —— v1.1：自飞行雪绒站迁入（该站收敛为爱弥斯本人频道）—— */
+        {
+            id: 'stf_10', name: '漂泊者', type: 'text', title: '来自黑海岸的信号',
+            realm: 'startorch', tags: ['漂泊者', '爱弥斯'],
+            content: '在黑海岸值夜的时候，收到了一段不明信号。\n\n频率：9072Hz\n持续时间：0.3秒\n间隔：不规律\n\n信号内容被噪音覆盖了大半，但有一段能勉强辨识——像是一个人唱歌的声音。不是完整的旋律，只有几个音符，反复出现。\n\n我把那几个音符记了下来。如果你在星炬学院听到有人哼同样的调子，请告诉我。\n\n我在找一个声音的主人。也许她不知道自己被听见了。',
+            timeStr: '2026-07-01 02:40', likes: 19, liked: false, color: '#A8D8FF'
+        },
+        {
+            id: 'stf_11', name: '漂泊者信使', type: 'story', title: '信号塔守望者',
+            realm: 'startorch', tags: ['漂泊者', '爱弥斯'],
+            content: '我在信号塔上等了三个小时。\n\n不是因为职责。是因为她说「今晚的星星会很亮」。后来信号塔的灯真的亮了，但那不是星星，是有人在模拟舱里偷偷调的天文台投影。\n\n我知道是谁。只有她会把星星的频率调到9072。\n\n我没有上去找她。有些歌，只有在没有人听的时候才唱得出来。有些星星，只有在没有人看的时候才亮得起来。\n\n我只是在塔下站了一会儿，抬头看了看那片假星空。\n\n——虽然不是真的，但很美。\n\n谢谢你让我看到了。',
+            timeStr: '2026-06-28 23:15', likes: 27, liked: false, color: '#FFD700'
+        },
+        {
+            id: 'stf_12', name: '琳奈', type: 'story', title: '关于爱弥斯同学的一些事',
+            realm: 'startorch', tags: ['琳奈', '爱弥斯', '星炬学院'],
+            content: '我是星炬学院拉贝尔学部的学生，和爱弥斯同学同班。\n\n我想写一些关于她的事，因为她已经不在了。\n\n爱弥斯同学很开朗。真的很开朗。不是那种硬撑出来的开朗，是那种——好像世界上所有的好事都会发生一样的开朗。她会在走廊上跟所有人打招呼，包括不认识的。她会在别人的生日会上唱最大声的歌，虽然跑调跑得离谱。\n\n她送过我一个隧者手办。很小的那种，自己做的，用的材料我认不出来。她说："琳奈，总有一天我们一起去看真正的星空。"\n\n我说好呀。\n\n然后她就失踪了。\n\n校长洛瑟菈女士把她的档案调走了。我问过辅导员，辅导员说"不清楚"。我问过同班的千咲，千咲说她最后一次见爱弥斯是在隧者训练场，那天爱弥斯说要去试一个新的共鸣模态。\n\n后来我在网上看到一个叫"飞行雪绒"的歌手。声音很像她。歌里有一些只有我们班才知道的梗——比如"渐湖的冰面下面有鱼"。\n\n我不确定是不是她。但如果真的是的话：\n\n爱弥斯同学，星空还在。你看到了吗？',
+            timeStr: '2026-07-03 18:30', likes: 29, liked: false, color: '#B98CFF'
         }
     ];
 
@@ -72,6 +91,22 @@
         try { localStorage.setItem(key, value); return true; } catch (e) { return false; }
     }
 
+    /**
+     * v1.1: 改为「增量合并」播种
+     * 旧实现是 all-or-nothing —— 只要 stf_submissions 已存在就整体跳过，
+     * 导致 bump SEED_VERSION 后新增的官方帖永远不会出现在老用户浏览器里。
+     * 现在按 id 逐条补齐缺失的种子，既不覆盖用户数据，也不会漏掉新内容。
+     * 用户/版主删除过的种子 id 会记入 stf_seed_removed 墓碑表，不再复活。
+     */
+    function readJSON(key, fallback) {
+        try {
+            var raw = safeGet(key);
+            if (!raw) return fallback;
+            var parsed = JSON.parse(raw);
+            return parsed == null ? fallback : parsed;
+        } catch (e) { return fallback; }
+    }
+
     function ensureSeedData() {
         var key = 'stf_seed_version';
         if (safeGet(key) === SEED_VERSION) return;
@@ -82,11 +117,45 @@
             }
         }
 
-        if (!safeGet('stf_submissions') && SEED_SUBMISSIONS) {
-            safeSet('stf_submissions', JSON.stringify(SEED_SUBMISSIONS));
+        var existing = readJSON('stf_submissions', []);
+        if (!Array.isArray(existing)) existing = [];
+
+        var known = {};
+        existing.forEach(function (s) { if (s && s.id) known[s.id] = true; });
+
+        var tombstones = readJSON('stf_seed_removed', []);
+        var removed = {};
+        if (Array.isArray(tombstones)) {
+            tombstones.forEach(function (id) { removed[id] = true; });
+        }
+
+        var added = 0;
+        SEED_SUBMISSIONS.forEach(function (s) {
+            if (known[s.id] || removed[s.id]) return;
+            existing.push(s);
+            added++;
+        });
+
+        if (added > 0 || existing.length === 0) {
+            /* 按时间倒序，保证新并入的帖子落到正确位置 */
+            existing.sort(function (a, b) {
+                return String((b && b.timeStr) || '').localeCompare(String((a && a.timeStr) || ''));
+            });
+            safeSet('stf_submissions', JSON.stringify(existing));
         }
 
         safeSet(key, SEED_VERSION);
+    }
+
+    /** 记录被删除的种子帖，避免下次播种复活 */
+    function markSeedRemoved(id) {
+        if (!id) return;
+        var list = readJSON('stf_seed_removed', []);
+        if (!Array.isArray(list)) list = [];
+        if (list.indexOf(id) === -1) {
+            list.push(id);
+            safeSet('stf_seed_removed', JSON.stringify(list));
+        }
     }
 
     function getSubmissions() {
@@ -122,8 +191,10 @@
 
     window.StarTorchData = {
         ensureSeedData: ensureSeedData,
+        getSeedSubmissions: function () { return SEED_SUBMISSIONS; },
         getSubmissions: getSubmissions,
         saveSubmissions: saveSubmissions,
+        markSeedRemoved: markSeedRemoved,
         getComments: getComments,
         saveComments: saveComments,
         getNickname: getNickname,
