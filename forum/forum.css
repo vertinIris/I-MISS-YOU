@@ -111,7 +111,7 @@
     background: linear-gradient(100deg, var(--aimisi-pink, #FF6B9D), var(--drifter-purple, #B66BFF));
     box-shadow: 0 6px 16px rgba(255,107,157,.3);
 }
-.forum-section--overview { padding-top: 30px; }
+.forum-section--overview { padding-top: 50px; }
 
 /* 核心互动区标识 */
 .forum-section--core { position: relative; }
@@ -690,6 +690,18 @@
 .stf-modal-close:hover { background: rgba(255,255,255,.14); transform: rotate(90deg); }
 
 .stf-submit-form .form-actions { margin-top: 8px; }
+
+/* 匿名身份选择器状态 */
+.form-select.is-anonymous {
+    background: rgba(107,138,255,.08);
+    border-color: rgba(168,216,255,.35);
+}
+.form-input.is-anonymous {
+    background: rgba(107,138,255,.06);
+    border-color: rgba(168,216,255,.25);
+    color: rgba(240,244,255,.8);
+}
+.form-input.is-anonymous::placeholder { color: rgba(240,244,255,.45); }
 
 /* Toast */
 .stf-toast {

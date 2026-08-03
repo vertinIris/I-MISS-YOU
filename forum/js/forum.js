@@ -13,6 +13,17 @@
 
     var typeLabels = { text: '文字', story: '故事', poem: '诗歌', art: '插画', music: '音乐' };
 
+    /* 未登录用户可选的匿名身份，贴合鸣潮「普通人」世界观 */
+    var ANONYMOUS_IDENTITIES = {
+        student:  { name: '星炬学院学生', color: '#6B8AFF' },
+        resident: { name: '拉海洛居民', color: '#A8D8FF' },
+        observer: { name: '残星会观察员', color: '#B66BFF' },
+        intern:   { name: '深空联合实习生', color: '#7FD99E' },
+        club:     { name: '泛音社社员', color: '#FF6B9D' },
+        rover:    { name: '路过漂泊者', color: '#E8C56A' },
+        listener: { name: '匿名听众', color: '#FFB6D9' }
+    };
+
     var CHAR_COLOR_MAP = {
         '爱弥斯': 'var(--aimisi-pink)',
         '达妮娅': 'var(--denia-lavender)',
@@ -39,6 +50,44 @@
             if (CHAR_COLOR_MAP[s.tags[i]]) return CHAR_COLOR_MAP[s.tags[i]];
         }
         return '';
+    }
+
+    function detectIdentityFromName(name) {
+        if (!name) return '';
+        for (var id in ANONYMOUS_IDENTITIES) {
+            if (ANONYMOUS_IDENTITIES[id].name === name) return id;
+        }
+        return '';
+    }
+
+    function syncIdentityControls(prefix, identityId) {
+        var nameInput = document.getElementById(prefix + '-nickname');
+        var identitySelect = document.getElementById(prefix + '-identity');
+        if (!nameInput || !identitySelect) return;
+        identitySelect.value = identityId || '';
+        var info = ANONYMOUS_IDENTITIES[identityId];
+        if (info) {
+            nameInput.value = info.name;
+            nameInput.disabled = true;
+            nameInput.classList.add('is-anonymous');
+            identitySelect.classList.add('is-anonymous');
+        } else {
+            nameInput.disabled = false;
+            nameInput.classList.remove('is-anonymous');
+            identitySelect.classList.remove('is-anonymous');
+        }
+    }
+
+    function restoreNickname(prefix) {
+        var nameInput = document.getElementById(prefix + '-nickname');
+        var saved = StarTorchData.getNickname();
+        var identityId = detectIdentityFromName(saved);
+        if (identityId) {
+            syncIdentityControls(prefix, identityId);
+        } else {
+            syncIdentityControls(prefix, '');
+            if (nameInput) nameInput.value = saved || '';
+        }
     }
 
     function previewText(text, maxLen) {
@@ -331,8 +380,7 @@
         if (modal) {
             modal.hidden = false;
             requestAnimationFrame(function () { modal.classList.add('open'); });
-            var nameInput = modal.querySelector('#stf-submit-nickname');
-            if (nameInput && StarTorchData.getNickname()) nameInput.value = StarTorchData.getNickname();
+            restoreNickname('stf-submit');
         }
     }
 
@@ -345,11 +393,13 @@
     }
 
     /* 构建投稿对象（投稿弹窗 / 快捷发布框共用） */
-    function buildSubmission(name, type, title, content, tags) {
+    function buildSubmission(name, type, title, content, tags, identityId) {
         var now = new Date();
+        var identity = ANONYMOUS_IDENTITIES[identityId];
+        var displayName = identity ? identity.name : name;
         return {
             id: 'stf_' + now.getTime(),
-            name: escapeHTML(name),
+            name: escapeHTML(displayName),
             type: type,
             title: escapeHTML(title),
             content: escapeHTML(content),
@@ -364,7 +414,8 @@
             likes: 0,
             liked: false,
             bookmarks: 0,
-            color: '#6B8AFF'
+            color: identity ? identity.color : '#6B8AFF',
+            identity: identityId || null
         };
     }
 
@@ -403,6 +454,7 @@
         var modal = document.getElementById('stf-submit-modal');
         if (!modal) return;
 
+        var identityId = modal.querySelector('#stf-submit-identity').value;
         var rawName = modal.querySelector('#stf-submit-nickname').value.trim();
         var type = modal.querySelector('#stf-submit-type').value;
         var rawTitle = modal.querySelector('#stf-submit-title').value.trim();
@@ -415,10 +467,11 @@
 
         var selectedTags = readTagsFrom(modal.querySelector('#stf-submit-tag-selector'));
 
-        var newSub = buildSubmission(rawName, type, rawTitle, rawContent, selectedTags);
+        var newSub = buildSubmission(rawName, type, rawTitle, rawContent, selectedTags, identityId);
 
         modal.querySelector('form').reset();
         modal.querySelectorAll('.select-tag.active').forEach(function (c) { c.classList.remove('active'); });
+        syncIdentityControls('stf-submit', '');
         closeSubmitModal();
         persistNewSubmission(newSub);
         showToast('投稿成功，已发布到星炬学院论坛 ✨');
@@ -430,6 +483,7 @@
         var form = document.getElementById('stf-composer-form');
         if (!form) return;
 
+        var identityId = form.querySelector('#stf-composer-identity').value;
         var rawName = form.querySelector('#stf-composer-nickname').value.trim();
         var type = form.querySelector('#stf-composer-type').value;
         var rawTitle = form.querySelector('#stf-composer-title').value.trim();
@@ -441,10 +495,11 @@
         if (rawContent.length > 2000) { showToast('内容限2000字'); return; }
 
         var selectedTags = readTagsFrom(form.querySelector('#stf-composer-tag-selector'));
-        var newSub = buildSubmission(rawName, type, rawTitle, rawContent, selectedTags);
+        var newSub = buildSubmission(rawName, type, rawTitle, rawContent, selectedTags, identityId);
 
         form.reset();
         form.querySelectorAll('.select-tag.active').forEach(function (c) { c.classList.remove('active'); });
+        syncIdentityControls('stf-composer', '');
         closeComposer();
         persistNewSubmission(newSub);
         showToast('已发布到星炬学院论坛 ✨');
@@ -457,9 +512,7 @@
         if (!composer || !form) return;
         form.hidden = false;
         if (trigger) trigger.setAttribute('aria-expanded', 'true');
-        var nickname = StarTorchData.getNickname();
-        var nameInput = form.querySelector('#stf-composer-nickname');
-        if (nameInput && nickname) nameInput.value = nickname;
+        restoreNickname('stf-composer');
         var first = form.querySelector('#stf-composer-title');
         if (first) first.focus();
     }
@@ -585,6 +638,14 @@
         var composerForm = document.getElementById('stf-composer-form');
         if (composerForm) composerForm.addEventListener('submit', handleQuickSubmit);
 
+        // 快捷发布框匿名身份
+        var composerIdentity = document.getElementById('stf-composer-identity');
+        if (composerIdentity) {
+            composerIdentity.addEventListener('change', function () {
+                syncIdentityControls('stf-composer', composerIdentity.value);
+            });
+        }
+
         // 快捷发布框标签选择器
         var composerSelector = document.getElementById('stf-composer-tag-selector');
         if (composerSelector) {
@@ -616,6 +677,14 @@
             });
             var form = submitModal.querySelector('form');
             if (form) form.addEventListener('submit', handleSubmit);
+
+            // identity selector in modal
+            var identitySelect = submitModal.querySelector('#stf-submit-identity');
+            if (identitySelect) {
+                identitySelect.addEventListener('change', function () {
+                    syncIdentityControls('stf-submit', identitySelect.value);
+                });
+            }
 
             // tag selector in modal
             var selector = submitModal.querySelector('#stf-submit-tag-selector');
