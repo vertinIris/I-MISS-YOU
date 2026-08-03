@@ -223,6 +223,13 @@
     }
 
     /* ---------- 公开 API ---------- */
+    function getCloudLastError() {
+        if (state.adapter && typeof state.adapter.getLastError === 'function') {
+            try { return state.adapter.getLastError(); } catch (e) { return null; }
+        }
+        return null;
+    }
+
     function getStatus() {
         return {
             mode: state.mode,
@@ -233,7 +240,8 @@
             healthy: state.healthy,
             cloudDegraded: state.cloudDegraded,
             auto: state.auto,
-            pending: getPending()
+            pending: getPending(),
+            lastError: getCloudLastError()
         };
     }
 
@@ -358,7 +366,10 @@
         }
         if (txt) {
             if (!s.healthy) txt.textContent = '同步异常 · 点击重试';
-            else if (s.cloudDegraded) txt.textContent = '云端未连接 · 本地正常 · 点击重试';
+            else if (s.cloudDegraded) {
+                var hint = s.lastError && s.lastError.stage ? (' · ' + s.lastError.stage + ' 失败') : '';
+                txt.textContent = '云端未连接 · 本地正常 · 点击重试' + hint;
+            }
             else if (s.syncing || s.hasRemoteUpdate) txt.textContent = '同步中…';
             else if (s.mode === 'cloud') txt.textContent = '云端已连接 · 上次 ' + (s.lastSyncText || '—');
             else txt.textContent = '本地模式 · 上次 ' + (s.lastSyncText || '—');

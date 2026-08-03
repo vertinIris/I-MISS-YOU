@@ -225,31 +225,93 @@
         }
     }
 
+    var lastPullError = null;
+    function setPullError(e, stage) {
+        lastPullError = {
+            stage: stage || 'unknown',
+            message: (e && (e.message || e.msg || String(e))) || '未知错误',
+            code: e && (e.code || e.statusCode || e.status),
+            time: Date.now()
+        };
+        console.warn('[forum-cloud] pull 阶段失败: ' + stage, e);
+    }
+    function clearPullError() { lastPullError = null; }
+
+    function isAuthError(e) {
+        if (!e) return false;
+        var code = e.code || e.statusCode || e.status;
+        if (code === 401 || code === '401') return true;
+        var msg = String(e.message || e.msg || e);
+        return /jwt|invalid token|not authenticated|401/i.test(msg);
+    }
+
+    async function clearStaleSession() {
+        try {
+            await client.auth.signOut({ scope: 'local' });
+        } catch (e) { /* ignore */ }
+        /* 同时清理旧版 localStorage key */
+        try {
+            localStorage.removeItem('sb-' + 'lmlyfyjffaaddysiliht' + '-auth-token');
+        } catch (e) { /* ignore */ }
+    }
+
+    async function pullSubmissionsOnce() {
+        var res = await client.from('forum_submissions')
+            .select('*').eq('realm', 'startorch').order('created_at', { ascending: false });
+        if (res.error) throw res.error;
+        return res.data || [];
+    }
+
     async function pull(cb) {
         if (!client) {
             /* 离线：本地兜底，标记未连接 */
+            setPullError({ message: 'Supabase 客户端未初始化（SDK 可能加载失败）' }, 'init');
             try { if (window.StarTorchData) StarTorchData.ensureSeedData(); } catch (e) { /* ignore */ }
             if (window.StarTorchForum && window.StarTorchForum.refreshCommunity) window.StarTorchForum.refreshCommunity();
             return cb && cb(false);
         }
         try {
+            /* 1. 拉取主表 —— 这是判断「云端可达」的核心 */
+            var rows = await pullSubmissionsOnce();
+
+            var cloudIds = rows.map(function (r) { return r.id; });
+            mergeIntoLocal(rows);
             connected = true;
-            var res = await client.from('forum_submissions')
-                .select('*').eq('realm', 'startorch').order('created_at', { ascending: false });
-            if (res.error) throw res.error;
+            clearPullError();
 
-            var cloudIds = (res.data || []).map(function (r) { return r.id; });
-            mergeIntoLocal(res.data || []);
-            await pullComments(cloudIds);
+            /* 2. 评论与种子上云属于「增强同步」，失败不应导致整体降级 */
+            try { await pullComments(cloudIds); } catch (e) { setPullError(e, 'comments'); }
 
-            var seeds = (window.StarTorchData && StarTorchData.getSeedSubmissions) ? StarTorchData.getSeedSubmissions() : [];
-            await ensureCloudSeed(seeds, cloudIds);
+            try {
+                var seeds = (window.StarTorchData && StarTorchData.getSeedSubmissions) ? StarTorchData.getSeedSubmissions() : [];
+                await ensureCloudSeed(seeds, cloudIds);
+            } catch (e) { setPullError(e, 'seed'); }
 
-            drainQueue();
+            /* 3. 离线队列同样不应阻塞主流程 */
+            drainQueue().catch(function (e) { setPullError(e, 'queue'); });
+
             if (window.StarTorchForum && window.StarTorchForum.refreshCommunity) window.StarTorchForum.refreshCommunity();
             return cb && cb(true);
         } catch (e) {
-            console.warn('[forum-cloud] pull 失败（保留上次本地数据）', e);
+            /* 主站过期/无效 session 会导致 401；清掉本地 session 用 anon key 重试一次 */
+            if (isAuthError(e)) {
+                try {
+                    await clearStaleSession();
+                    var rows2 = await pullSubmissionsOnce();
+                    var cloudIds2 = rows2.map(function (r) { return r.id; });
+                    mergeIntoLocal(rows2);
+                    connected = true;
+                    clearPullError();
+                    try { await pullComments(cloudIds2); } catch (ee) { setPullError(ee, 'comments'); }
+                    if (window.StarTorchForum && window.StarTorchForum.refreshCommunity) window.StarTorchForum.refreshCommunity();
+                    return cb && cb(true);
+                } catch (e2) {
+                    setPullError(e2, 'submissions');
+                    connected = false;
+                    return cb && cb(false);
+                }
+            }
+            setPullError(e, 'submissions');
             connected = false;
             return cb && cb(false);
         }
@@ -386,7 +448,8 @@
         hideComment: hideComment,
         getPending: getPending,
         getMode: function () { return connected ? 'cloud' : 'local'; },
-        isConnected: function () { return connected; }
+        isConnected: function () { return connected; },
+        getLastError: function () { return lastPullError; }
     };
 
     /* 自启动 */
