@@ -139,6 +139,12 @@
                 <a href="#diary" class="nav-link">日志</a>
                 <a href="#submit" class="nav-link">投稿</a>
                 <a href="#community" class="nav-link">社区</a>
+                <a href="forum/index.html" class="nav-link nav-link-forum" title="前往星炬学院主论坛">
+                    <svg class="nav-link-forum-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                    </svg>
+                    <span>论坛</span>
+                </a>
                 <button type="button" class="nav-link nav-link-btn" id="admin-panel-open-btn" hidden title="版主/管理后台">管理</button>
             </div>
 
@@ -588,10 +594,6 @@
                 <button type="button" class="character-card glass" data-character-tag="爱弥斯" data-character-color="#FF6B9D">
                     <span class="character-card-name">爱弥斯</span>
                     <span class="character-card-alias">飞行雪绒</span>
-                </button>
-                <button type="button" class="character-card glass" data-character-tag="琳奈" data-character-color="#B98CFF">
-                    <span class="character-card-name">琳奈</span>
-                    <span class="character-card-alias">星炬学院的同学</span>
                 </button>
                 <button type="button" class="character-card glass" data-character-tag="漂泊者" data-character-color="#6B8AFF">
                     <span class="character-card-name">漂泊者</span>
@@ -1552,7 +1554,6 @@
             <div class="tag-filter-bar" id="tag-filter-bar">
                 <span class="tag-category-label">角色</span>
                 <button class="tag-chip" data-tag-type="character" data-tag="爱弥斯">爱弥斯</button>
-                <button class="tag-chip" data-tag-type="character" data-tag="琳奈">琳奈</button>
                 <button class="tag-chip" data-tag-type="character" data-tag="漂泊者">漂泊者</button>
                 <span class="tag-category-label">类型</span>
                 <button class="tag-chip" data-tag-type="category" data-tag="日常">日常</button>
@@ -1743,7 +1744,6 @@
             <div class="footer-bottom">
                 <p>© 2026 飞行雪绒 · 同人创作 · 非商业用途</p>
                 <p class="footer-meta">v10.0 · R18 字阶系统 · R20 Realtime 硬删 · 版主批量审核 · profiles · Made with 星辉与微光</p>
-                <a href="forum/index.html" class="footer-forum-link">鸣潮同人论坛 →</a>
                 <p class="footer-sync" id="sync-status" title="点击复制诊断信息 · 同步请用右下角 🔄 按钮">☁ 本地模式</p>
             </div>
         </div>
@@ -1795,6 +1795,16 @@
             </div>
         </div>
     </div>
+
+    <!-- 右下角悬浮进入论坛入口（与同步按钮同款风格 · 蓝金学院配色） -->
+    <a href="forum/index.html" class="forum-entry-fab" id="forum-entry-fab" aria-label="进入星炬学院论坛">
+        <span class="forum-entry-fab-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+        </span>
+        <span class="forum-entry-fab-text">星炬论坛</span>
+    </a>
 
 </body>
 </html>

@@ -1309,6 +1309,76 @@
     .stf-edge-btn { transition: none !important; }
 }
 
+/* ===== 左下角悬浮返回主站按钮（与右下角同步按钮同款 · 蓝金学院配色） ===== */
+.stf-back-home {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px 8px 10px;
+    border-radius: 999px;
+    background: rgba(11, 14, 26, 0.78);
+    border: 1px solid rgba(107, 138, 255, 0.35);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(232, 197, 106, 0.08);
+    color: var(--stf-text, #F0F4FF);
+    font-size: 13px;
+    text-decoration: none;
+    opacity: 0.92;
+    user-select: none;
+    transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    max-width: calc(100vw - 32px);
+}
+.stf-back-home:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55), 0 0 18px rgba(107, 138, 255, 0.18);
+}
+.stf-back-home:active { transform: translateY(0) scale(0.98); }
+.stf-back-home:focus-visible {
+    outline: 2px solid var(--stf-brand-light, #A8D8FF);
+    outline-offset: 2px;
+}
+.stf-back-home-icon {
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(107, 138, 255, 0.45);
+    background: rgba(107, 138, 255, 0.18);
+    color: var(--stf-text, #F0F4FF);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+.stf-back-home:hover .stf-back-home-icon {
+    background: rgba(107, 138, 255, 0.34);
+    transform: scale(1.08);
+    box-shadow: 0 0 16px rgba(107, 138, 255, 0.4);
+}
+.stf-back-home-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--stf-text-muted, rgba(240, 244, 255, 0.65));
+    transition: color 0.2s ease;
+}
+.stf-back-home:hover .stf-back-home-text { color: var(--stf-text, #F0F4FF); }
+
+@media (max-width: 520px) {
+    .stf-back-home { padding: 7px 8px 7px 8px; gap: 8px; }
+    .stf-back-home-text { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stf-back-home { transition: none !important; }
+}
+
 /* ===== 管理员操作（多管理员，权限平等） ===== */
 .stf-admin-hide {
     color: #ff8a8a;
