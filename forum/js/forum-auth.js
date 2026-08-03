@@ -1,17 +1,30 @@
 /**
- * 星炬学院主论坛 · 通行证系统（统一账号版）
+ * 星炬学院主论坛 · 通行证系统（双轨身份版）
  * ----------------------------------------------------
- * 复用飞行雪绒主站同一 Supabase 项目（lmlyfyjffaaddysiliht）：
- *   - 注册/登录走 supabase.auth.signUp / signInWithPassword；
- *   - 直接用真实邮箱作为账号主键（与飞行雪绒主站同套账号体系，共享 Supabase 项目）；
- *   - 显示名（nickname）单独存于 user_metadata，支持中文，与邮箱解耦；
- *   - 口令由 Supabase 托管（加盐散列在服务端），前端不再自行散列；
- *   - 会话存于同域 localStorage 键 sb-<ref>-auth，与主站自动互认：
- *     在主站登录后访问论坛，refreshFromCloud() 会读到共享会话并自动识别。
+ * 复用飞行雪绒主站同一 Supabase 项目（lmlyfyjffaaddysiliht）。
  *
- * 公开 API 与 current 对象形状保持兼容（forum.js 零改动）：
- *   getUser() -> { key:uid, name, color, joined, posts }
- *   register / login / logout / onChange / bumpPostCount / openPanel
+ * 【两种身份路径，共用同一套账号存储与数据出口】
+ *   A. 真实邮箱（authMode='email'）
+ *      - 注册/登录直接用用户填写的邮箱；
+ *      - 与飞行雪绒主站同套账号体系，同域会话自动互认；
+ *      - 可被 forum_admins 命中 → 获得管理员权限；
+ *      - 支持口令找回（Supabase 原生邮件流程）。
+ *   B. 昵称 / 匿名口令（authMode='nickname'）
+ *      - 用户只填「昵称 + 口令」，不暴露任何真实邮箱；
+ *      - 昵称经 **确定性哈希** 映射为保留域合成邮箱
+ *        stf_<hash>@startorch.example.com（RFC 2606 保留域，不会投递到真人）；
+ *      - 哈希纯函数、不依赖 localStorage → 换设备 / 换浏览器仍可用同一昵称登录；
+ *      - 昵称唯一性由 Supabase 邮箱唯一约束天然保证；
+ *      - 合成邮箱永远不可能命中 forum_admins → 天然无法提权。
+ *
+ * 两条路径最终都汇入 applyUser()，产出形状完全一致的 current 对象，
+ * 因此 forum.js / forum-cloud.js 无需区分身份来源（数据一致性保证）。
+ *
+ * 公开 API（对 forum.js 保持向后兼容）：
+ *   getUser() -> { key:uid, name, color, joined, posts, email, authMode }
+ *   register(payload) / login(payload) —— payload 为对象；
+ *     亦兼容旧式位置参数 register(email, nickname, pwd) / login(email, pwd)
+ *   logout / onChange / isForumAdmin / bumpPostCount / openPanel
  *
  * 降级：若 supabaseClient 未就绪（CDN 失败/离线），register/login 明确报错，
  *      但「匿名身份发帖」路径（forum.js 中 user 为 null 时）仍可用。
@@ -19,8 +32,11 @@
 window.StarTorchAuth = (function () {
     'use strict';
 
-    // 账号直接以真实邮箱为主键，不再使用本地合成邮箱映射
     var SESSION_MIRROR_KEY = 'stf_session';     // 本地镜像：离线时仍可用 UI
+
+    // 昵称身份的合成邮箱域：RFC 2606 保留域，不存在真实收件人，且 Supabase 接受其格式
+    var SYNTHETIC_DOMAIN = 'startorch.example.com';
+    var SYNTHETIC_PREFIX = 'stf_';
 
     // 多管理员：与 db/migration-021 的 forum_admins 表保持一致（前端仅用于 UI 显隐，
     // 真正权限由 Supabase RLS 的 is_forum_admin() 裁定）。增删管理员请改 SQL 表。
@@ -37,6 +53,126 @@ window.StarTorchAuth = (function () {
 
     function randomColor() { return AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)]; }
 
+    /* ==================================================================
+     * 身份解析层（Identity Resolver）
+     * 把「用户填了什么」统一翻译成「Supabase 认识的 email + 展示昵称」。
+     * 注册与登录共用同一套解析，保证两条路径落到同一账号上（数据一致性）。
+     * ================================================================== */
+
+    /* UTF-8 字节序列：保证中文昵称在任何浏览器上得到同一组字节 */
+    function utf8Bytes(str) {
+        if (typeof TextEncoder === 'function') return new TextEncoder().encode(str);
+        var esc = unescape(encodeURIComponent(str)); /* 降级路径：等价 UTF-8 */
+        var out = new Array(esc.length);
+        for (var i = 0; i < esc.length; i++) out[i] = esc.charCodeAt(i) & 0xff;
+        return out;
+    }
+
+    function toHex8(n) { return ('00000000' + (n >>> 0).toString(16)).slice(-8); }
+
+    /**
+     * 确定性哈希（FNV-1a ×2 + djb2 三通道 → 24 hex）。
+     * 选用同步纯函数而非 crypto.subtle：后者是异步且在非安全上下文不可用，
+     * 一旦环境差异导致降级，同一昵称会算出两个邮箱 → 账号分裂。
+     * 此实现无环境依赖，任何设备/浏览器结果一致。
+     */
+    function hashHex(str) {
+        var bytes = utf8Bytes(str);
+        var h1 = 0x811c9dc5, h2 = 0x01000193, h3 = 5381;
+        for (var i = 0; i < bytes.length; i++) {
+            var b = bytes[i];
+            h1 = Math.imul(h1 ^ b, 0x01000193) >>> 0;
+            h2 = Math.imul((h2 + b) >>> 0, 0x85ebca6b) >>> 0;
+            h2 = (h2 ^ (h2 >>> 13)) >>> 0;
+            h3 = ((Math.imul(h3, 33) >>> 0) ^ b) >>> 0;
+        }
+        /* 混入长度，进一步降低短昵称碰撞概率 */
+        h1 = Math.imul(h1 ^ bytes.length, 0x27d4eb2d) >>> 0;
+        return toHex8(h1) + toHex8(h2) + toHex8(h3);
+    }
+
+    /* 昵称归一化：去首尾空格 + 折叠内部连续空白 + 小写 + Unicode 规范化 */
+    function normalizeNick(name) {
+        var n = String(name || '').trim().replace(/\s+/g, ' ');
+        if (n.normalize) { try { n = n.normalize('NFKC'); } catch (e) { /* ignore */ } }
+        return n.toLowerCase();
+    }
+
+    /* 昵称 -> 稳定合成邮箱（跨设备一致，无需任何本地映射表） */
+    function nickToEmail(name) {
+        return SYNTHETIC_PREFIX + hashHex(normalizeNick(name)) + '@' + SYNTHETIC_DOMAIN;
+    }
+
+    function isSyntheticEmail(email) {
+        return String(email || '').toLowerCase().indexOf('@' + SYNTHETIC_DOMAIN) !== -1;
+    }
+
+    function isValidEmail(v) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v || '').trim());
+    }
+
+    function normalizeMode(m) { return m === 'nickname' ? 'nickname' : 'email'; }
+
+    /**
+     * 统一凭据解析。
+     * @param {object} opts  { mode, email, nickname, password }
+     * @param {boolean} requireNickname 注册时为 true（邮箱模式也必须有显示名）
+     * @returns {{email:string, nickname:string, authMode:string}}
+     * @throws {Error} 校验不通过
+     */
+    function resolveIdentity(opts, requireNickname) {
+        var authMode = normalizeMode(opts && opts.mode);
+
+        if (authMode === 'nickname') {
+            var nick = String((opts && opts.nickname) || '').trim().replace(/\s+/g, ' ');
+            if (nick.length < 2 || nick.length > 20) throw new Error('昵称需 2–20 个字符');
+            if (isValidEmail(nick)) throw new Error('昵称不能填邮箱地址 —— 如需邮箱登录请切换到「邮箱」方式');
+            return { email: nickToEmail(nick), nickname: nick, authMode: 'nickname' };
+        }
+
+        var email = String((opts && opts.email) || '').trim();
+        if (!isValidEmail(email)) throw new Error('请输入有效的邮箱地址');
+        if (isSyntheticEmail(email)) throw new Error('该域名为系统保留，请换用真实邮箱');
+        var nk = String((opts && opts.nickname) || '').trim().replace(/\s+/g, ' ');
+        if (requireNickname && (nk.length < 2 || nk.length > 20)) {
+            throw new Error('显示名需 2–20 个字符');
+        }
+        return { email: email.toLowerCase(), nickname: nk, authMode: 'email' };
+    }
+
+    /* 兼容旧式位置参数调用：register(email, nickname, pwd) / login(email, pwd) */
+    function normalizePayload(args, kind) {
+        var first = args[0];
+        if (first && typeof first === 'object') return first;
+        if (kind === 'register') {
+            return { mode: 'email', email: first, nickname: args[1], password: args[2] };
+        }
+        return { mode: 'email', email: first, password: args[1] };
+    }
+
+    /* Supabase 原生英文报错 -> 贴合当前身份模式的中文提示 */
+    function friendlyError(rawMsg, authMode, phase) {
+        var m = String(rawMsg || '');
+        if (/already\s*registered|already\s*exists|duplicate/i.test(m)) {
+            return authMode === 'nickname'
+                ? '这个昵称已经被占用了，换一个，或直接用它登录'
+                : '该邮箱已注册，请直接登录（或使用找回口令）';
+        }
+        if (/invalid\s*login\s*credentials/i.test(m)) {
+            return authMode === 'nickname'
+                ? '昵称或口令不正确（没注册过的话请先注册）'
+                : '邮箱或口令不正确';
+        }
+        if (/email.*invalid|invalid.*email/i.test(m)) {
+            return authMode === 'nickname'
+                ? '这个昵称无法用于建立通行证，换一个试试'
+                : '邮箱格式不被服务端接受，请检查后重试';
+        }
+        if (/password/i.test(m) && /short|least|weak/i.test(m)) return '口令太短，请至少 6 位';
+        if (/rate|too many/i.test(m)) return '操作过于频繁，请稍后再试';
+        return m || (phase === 'register' ? '注册失败' : '登录失败');
+    }
+
     /* ---------- 当前用户视图 ---------- */
     function emit() {
         listeners.forEach(function (fn) {
@@ -44,19 +180,50 @@ window.StarTorchAuth = (function () {
         });
     }
 
-    function publicView(uid, name, color, joined, posts, email) {
-        return { key: uid, name: name, color: color, joined: joined || Date.now(), posts: posts || 0, email: email || null };
+    function publicView(uid, name, color, joined, posts, email, authMode) {
+        return {
+            key: uid,
+            name: name,
+            color: color,
+            joined: joined || Date.now(),
+            posts: posts || 0,
+            email: email || null,
+            /* 'email' = 真实邮箱身份；'nickname' = 昵称/匿名口令身份 */
+            authMode: authMode || (isSyntheticEmail(email) ? 'nickname' : (email ? 'email' : null)),
+            /* 合成邮箱不对外展示（避免用户误以为那是自己的邮箱） */
+            displayEmail: (email && !isSyntheticEmail(email)) ? email : null
+        };
     }
 
     function saveMirror(v) { safeSet(SESSION_MIRROR_KEY, JSON.stringify(v)); }
     function loadMirror() { try { return JSON.parse(safeGet(SESSION_MIRROR_KEY)); } catch (e) { return null; } }
     function clearMirror() { safeRemove(SESSION_MIRROR_KEY); }
 
+    /**
+     * 两条身份路径的唯一数据出口。
+     * 昵称账号在 profiles 表里通常没有对应行（触发器只覆盖主站注册），
+     * 因此必须回落到 user_metadata，否则展示名会退化成合成邮箱前缀 stf_xxxx。
+     * 优先级：profiles 表 > user_metadata > 邮箱前缀 > 兜底文案
+     */
     function applyUser(user, profile) {
-        var name = (profile && profile.nickname) || (user && user.email ? String(user.email).split('@')[0] : '星炬学院访客');
-        var color = (profile && profile.avatar_color) || '#6B8AFF';
-        var joined = (profile && profile.created_at) ? Date.parse(profile.created_at) : (current ? current.joined : Date.now());
-        var v = publicView(user.id, name, color, joined, current ? current.posts : 0, (user && user.email) ? user.email : null);
+        var meta = (user && user.user_metadata) || {};
+        var email = (user && user.email) ? user.email : null;
+        var synthetic = isSyntheticEmail(email);
+        var authMode = meta.auth_mode || (synthetic ? 'nickname' : (email ? 'email' : null));
+
+        var name = (profile && profile.nickname)
+            || meta.nickname
+            || (email && !synthetic ? String(email).split('@')[0] : '')
+            || '星炬学院访客';
+
+        var color = (profile && profile.avatar_color) || meta.avatar_color || '#6B8AFF';
+
+        var joined = (profile && profile.created_at) ? Date.parse(profile.created_at)
+            : (user && user.created_at) ? Date.parse(user.created_at)
+            : (current ? current.joined : Date.now());
+
+        var v = publicView(user.id, name, color, joined,
+            current ? current.posts : 0, email, authMode);
         current = v;
         saveMirror(v);
         emit();
@@ -66,7 +233,9 @@ window.StarTorchAuth = (function () {
     function loadSession() {
         var mirror = loadMirror();
         if (mirror && mirror.key) {
-            current = publicView(mirror.key, mirror.name, mirror.color, mirror.joined, mirror.posts);
+            /* 带上 email / authMode，避免刷新瞬间管理员按钮闪断 */
+            current = publicView(mirror.key, mirror.name, mirror.color, mirror.joined,
+                mirror.posts, mirror.email, mirror.authMode);
         } else {
             current = null;
         }
@@ -90,72 +259,86 @@ window.StarTorchAuth = (function () {
         if (!client.auth || !client.auth.getSession) return;
         client.auth.getSession().then(function (res) {
             if (res && res.data && res.data.session && res.data.session.user) {
-                var user = res.data.session.user;
-                client.from('profiles')
-                    .select('nickname, avatar_color, created_at')
-                    .eq('id', user.id).single()
-                    .then(function (p) { applyUser(user, (p && p.data) ? p.data : null); })
-                    .catch(function () { applyUser(user, null); });
+                hydrate(client, res.data.session.user);
             }
         }).catch(function () { /* 无会话则保持本地镜像 */ });
     }
 
-    /* ---------- 核心：注册 / 登录 / 登出（真实邮箱为主键） ---------- */
-    function isValidEmail(v) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v || '').trim());
+    /* ---------- 核心：注册 / 登录 / 登出（双轨身份，共用解析层） ---------- */
+
+    /* 登录成功后统一拉取 profiles 补全资料，失败则回落 user_metadata */
+    function hydrate(client, user) {
+        return client.from('profiles')
+            .select('nickname, avatar_color, created_at')
+            .eq('id', user.id).single()
+            .then(function (p) { return applyUser(user, (p && p.data) ? p.data : null); })
+            .catch(function () { return applyUser(user, null); });
     }
 
-    function register(email, nickname, pwd) {
-        var emailTrimmed = String(email || '').trim();
-        if (!isValidEmail(emailTrimmed)) {
-            return Promise.reject(new Error('请输入有效的邮箱地址'));
-        }
-        var nick = String(nickname || '').trim();
-        if (nick.length < 2 || nick.length > 20) {
-            return Promise.reject(new Error('显示名需 2–20 个字符'));
-        }
-        if (String(pwd || '').length < 4) {
-            return Promise.reject(new Error('口令至少 4 位'));
-        }
+    /**
+     * 注册 —— 同时支持昵称注册与真实邮箱注册。
+     * @param {object} payload { mode:'email'|'nickname', email?, nickname, password }
+     *        亦兼容旧式 register(email, nickname, password)
+     */
+    function register() {
+        var opts = normalizePayload(arguments, 'register');
+        var id;
+        try { id = resolveIdentity(opts, true); }
+        catch (e) { return Promise.reject(e); }
+
+        var pwd = String(opts.password || '');
+        if (pwd.length < 6) return Promise.reject(new Error('口令至少 6 位'));
+
         var client = window.supabaseClient;
         if (!client) return Promise.reject(new Error('云端未连接，暂无法注册（可先用匿名身份发帖）'));
 
         var color = randomColor();
         return client.auth.signUp({
-            email: emailTrimmed,
+            email: id.email,
             password: pwd,
-            options: { data: { nickname: nick, avatar_color: color } }
+            options: {
+                data: {
+                    nickname: id.nickname,
+                    avatar_color: color,
+                    auth_mode: id.authMode,
+                    /* 归一化昵称留档：便于后台辨认昵称账号、也便于将来做昵称改名迁移 */
+                    nick_key: id.authMode === 'nickname' ? normalizeNick(id.nickname) : null
+                }
+            }
         }).then(function (res) {
-            if (res.error) throw new Error(res.error.message || '注册失败');
+            if (res.error) throw new Error(friendlyError(res.error.message, id.authMode, 'register'));
             if (res.data && res.data.user && res.data.session) {
                 return applyUser(res.data.user, {
-                    nickname: nick, avatar_color: color, created_at: new Date().toISOString()
+                    nickname: id.nickname, avatar_color: color, created_at: new Date().toISOString()
                 });
             }
-            /* 服务启用了邮箱确认时不会返回 session */
-            throw new Error('注册成功，但账户待确认；请在 Supabase 关闭「邮箱确认」后再登录');
+            /* 无 session 有两种可能：邮箱确认开着，或该邮箱已存在（Supabase 会做模糊化处理） */
+            if (id.authMode === 'nickname') {
+                throw new Error('这个昵称可能已被占用，换一个，或直接用它登录');
+            }
+            throw new Error('注册已提交但未自动登录：若开启了「邮箱确认」请先去邮箱确认，或该邮箱已注册、请直接登录');
         });
     }
 
-    function login(email, pwd) {
-        var emailTrimmed = String(email || '').trim();
-        if (!isValidEmail(emailTrimmed)) {
-            return Promise.reject(new Error('请输入有效的邮箱地址'));
-        }
+    /**
+     * 登录 —— 同时支持真实邮箱登录与昵称（匿名口令）登录。
+     * @param {object} payload { mode:'email'|'nickname', email?, nickname?, password }
+     *        亦兼容旧式 login(email, password)
+     */
+    function login() {
+        var opts = normalizePayload(arguments, 'login');
+        var id;
+        try { id = resolveIdentity(opts, false); }
+        catch (e) { return Promise.reject(e); }
+
         var client = window.supabaseClient;
         if (!client) return Promise.reject(new Error('云端未连接，无法登录'));
 
-        return client.auth.signInWithPassword({ email: emailTrimmed, password: pwd })
+        return client.auth.signInWithPassword({ email: id.email, password: String(opts.password || '') })
             .then(function (res) {
-                if (res.error) throw new Error(res.error.message || '登录失败');
-                if (res.data && res.data.user) {
-                    return client.from('profiles')
-                        .select('nickname, avatar_color, created_at')
-                        .eq('id', res.data.user.id).single()
-                        .then(function (p) { return applyUser(res.data.user, (p && p.data) ? p.data : null); })
-                        .catch(function () { return applyUser(res.data.user, null); });
-                }
-                throw new Error('登录失败');
+                if (res.error) throw new Error(friendlyError(res.error.message, id.authMode, 'login'));
+                if (res.data && res.data.user) return hydrate(client, res.data.user);
+                throw new Error(id.authMode === 'nickname' ? '昵称或口令不正确' : '邮箱或口令不正确');
             });
     }
 
@@ -179,9 +362,15 @@ window.StarTorchAuth = (function () {
     function getUser() { return current; }
     function onChange(fn) { if (typeof fn === 'function') listeners.push(fn); }
 
-    /* 多管理员：当前登录用户邮箱是否在管理员列表中（UI 显隐用，权限由 RLS 裁定） */
+    /**
+     * 多管理员判定（仅用于 UI 显隐，真正权限由 Supabase RLS 的 is_forum_admin() 裁定）。
+     * 昵称身份走合成邮箱，域名固定为保留域，结构上不可能出现在 forum_admins 中，
+     * 这里再显式拦一道，避免任何伪造 email 字段的尝试影响界面。
+     */
     function isForumAdmin() {
-        return !!(current && current.email && FORUM_ADMIN_EMAILS.indexOf(current.email) !== -1);
+        if (!current || !current.email) return false;
+        if (isSyntheticEmail(current.email)) return false;
+        return FORUM_ADMIN_EMAILS.indexOf(String(current.email).toLowerCase()) !== -1;
     }
 
     /* ---------- UI（以下逻辑保持不变） ---------- */
@@ -234,7 +423,12 @@ window.StarTorchAuth = (function () {
             var nm = $('stf-account-card-name');
             if (nm) nm.textContent = current.name;
             var meta = $('stf-account-card-meta');
-            if (meta) meta.textContent = '加入于 ' + formatDate(current.joined) + ' · 已发布 ' + (current.posts || 0) + ' 篇';
+            if (meta) {
+                var kind = current.authMode === 'nickname' ? '昵称通行证'
+                    : (current.displayEmail ? '邮箱通行证' : '通行证');
+                meta.textContent = kind + ' · 加入于 ' + formatDate(current.joined)
+                    + ' · 已发布 ' + (current.posts || 0) + ' 篇';
+            }
         } else {
             guest.hidden = false;
             user.hidden = true;
@@ -256,7 +450,7 @@ window.StarTorchAuth = (function () {
         requestAnimationFrame(function () { modal.classList.add('open'); });
         var btn = $('stf-account-btn');
         if (btn) btn.setAttribute('aria-expanded', 'true');
-        var focusTarget = current ? $('stf-logout-btn') : $('stf-login-email');
+        var focusTarget = current ? $('stf-logout-btn') : $(firstFieldId('login'));
         if (focusTarget) setTimeout(function () { focusTarget.focus(); }, 120);
     }
 
@@ -269,6 +463,56 @@ window.StarTorchAuth = (function () {
         if (btn) btn.setAttribute('aria-expanded', 'false');
         setError('stf-login-error', '');
         setError('stf-register-error', '');
+    }
+
+    /* ---------- 身份方式切换（登录 / 注册各自独立） ---------- */
+    var authModes = { login: 'email', register: 'email' };
+
+    var MODE_HINTS = {
+        login: {
+            email: '用注册时填写的真实邮箱登录，与飞行雪绒主站共用同一账号。',
+            nickname: '只需昵称 + 口令，不涉及邮箱；换设备也能登录同一个通行证。'
+        },
+        register: {
+            email: '邮箱账号可找回口令，并与飞行雪绒主站共用同一套身份。',
+            nickname: '不填邮箱，昵称即登录名；换设备可用同一昵称 + 口令登录，但口令遗失无法找回。'
+        }
+    };
+
+    function setAuthMode(scope, mode) {
+        mode = normalizeMode(mode);
+        authModes[scope] = mode;
+
+        document.querySelectorAll('[data-mode-scope="' + scope + '"]').forEach(function (b) {
+            var on = b.getAttribute('data-mode') === mode;
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+
+        /* 隐藏字段必须 disabled，否则浏览器会对不可见的 required 输入报验证错、卡住提交 */
+        document.querySelectorAll('[data-mode-field^="' + scope + '-"]').forEach(function (box) {
+            var on = box.getAttribute('data-mode-field') === scope + '-' + mode;
+            box.hidden = !on;
+            box.querySelectorAll('input, select, textarea').forEach(function (f) {
+                f.disabled = !on;
+                if (on) { f.required = true; } else { f.required = false; f.value = ''; }
+            });
+        });
+
+        var hint = $(scope === 'login' ? 'stf-login-mode-hint' : 'stf-register-mode-hint');
+        if (hint) hint.textContent = (MODE_HINTS[scope] || {})[mode] || '';
+        setError(scope === 'login' ? 'stf-login-error' : 'stf-register-error', '');
+    }
+
+    /* 当前模式下应聚焦的第一个输入框 */
+    function firstFieldId(scope) {
+        if (scope === 'login') return authModes.login === 'nickname' ? 'stf-login-nick' : 'stf-login-email';
+        return authModes.register === 'nickname' ? 'stf-register-nick' : 'stf-register-email';
+    }
+
+    function readValue(id) {
+        var el = $(id);
+        return el ? el.value : '';
     }
 
     function switchTab(tab) {
@@ -307,14 +551,30 @@ window.StarTorchAuth = (function () {
             b.addEventListener('click', function () { switchTab(b.getAttribute('data-auth-tab')); });
         });
 
+        document.querySelectorAll('[data-mode-scope]').forEach(function (b) {
+            b.addEventListener('click', function () {
+                var scope = b.getAttribute('data-mode-scope');
+                setAuthMode(scope, b.getAttribute('data-mode'));
+                var f = $(firstFieldId(scope));
+                if (f) f.focus();
+            });
+        });
+
         var loginForm = $('stf-login-form');
         if (loginForm) {
             loginForm.addEventListener('submit', function (e) {
                 e.preventDefault();
                 setError('stf-login-error', '');
-                login($('stf-login-email').value, $('stf-login-pwd').value)
+                var mode = authModes.login;
+                login({
+                    mode: mode,
+                    email: mode === 'email' ? readValue('stf-login-email') : '',
+                    nickname: mode === 'nickname' ? readValue('stf-login-nick') : '',
+                    password: readValue('stf-login-pwd')
+                })
                     .then(function (u) {
                         loginForm.reset();
+                        setAuthMode('login', mode); /* reset() 会清 hidden 状态外的值，重置字段可见性 */
                         closePanel();
                         toast('欢迎回来，' + u.name + ' ✦');
                     })
@@ -327,12 +587,22 @@ window.StarTorchAuth = (function () {
             regForm.addEventListener('submit', function (e) {
                 e.preventDefault();
                 setError('stf-register-error', '');
-                var pwd = $('stf-register-pwd').value;
-                var confirmPwd = $('stf-register-pwd2').value;
-                if (pwd !== confirmPwd) { setError('stf-register-error', '两次输入的口令不一致'); return; }
-                register($('stf-register-email').value, $('stf-register-name').value, pwd)
+                var pwd = readValue('stf-register-pwd');
+                if (pwd !== readValue('stf-register-pwd2')) {
+                    setError('stf-register-error', '两次输入的口令不一致');
+                    return;
+                }
+                var mode = authModes.register;
+                register({
+                    mode: mode,
+                    email: mode === 'email' ? readValue('stf-register-email') : '',
+                    /* 昵称模式下昵称即显示名，两种模式统一交给 nickname 字段 */
+                    nickname: mode === 'nickname' ? readValue('stf-register-nick') : readValue('stf-register-name'),
+                    password: pwd
+                })
                     .then(function (u) {
                         regForm.reset();
+                        setAuthMode('register', mode);
                         closePanel();
                         toast('通行证已签发，欢迎加入星炬学院，' + u.name + ' ✦');
                     })
@@ -359,6 +629,9 @@ window.StarTorchAuth = (function () {
     function init() {
         loadSession();
         bindUI();
+        /* 同步 DOM 的 hidden/disabled 与默认模式，避免隐藏必填项阻塞提交 */
+        setAuthMode('login', authModes.login);
+        setAuthMode('register', authModes.register);
         renderEntry();
         emit();
     }
@@ -374,6 +647,10 @@ window.StarTorchAuth = (function () {
         onChange: onChange,
         isForumAdmin: isForumAdmin,
         bumpPostCount: bumpPostCount,
-        openPanel: openPanel
+        openPanel: openPanel,
+        /* 身份层工具（供调试 / 未来复用；昵称→邮箱为纯函数，可离线推算） */
+        nickToEmail: nickToEmail,
+        isSyntheticEmail: isSyntheticEmail,
+        getAuthMode: function () { return current ? current.authMode : null; }
     };
 })();

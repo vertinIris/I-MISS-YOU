@@ -820,6 +820,48 @@
 #stf-register-form { border-top: 1px solid rgba(255,107,157,.18); padding-top: 18px; }
 .stf-auth-form .form-actions { margin-top: 2px; }
 .stf-auth-error { margin: 0; font-size: 13px; color: #FF8DAA; }
+
+/* 身份方式切换：邮箱 / 昵称（登录与注册各一组） */
+.stf-auth-mode {
+    display: inline-flex;
+    align-self: flex-start;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(168,216,255,.10);
+}
+.stf-auth-mode-btn {
+    padding: 7px 14px;
+    border: none; border-radius: 9px;
+    background: transparent;
+    color: rgba(240,244,255,.55);
+    font-size: 12.5px; letter-spacing: .03em;
+    cursor: pointer;
+    transition: background .22s, color .22s, box-shadow .22s;
+}
+.stf-auth-mode-btn:hover { color: rgba(255,255,255,.85); background: rgba(255,255,255,.05); }
+.stf-auth-mode-btn:focus-visible {
+    outline: 2px solid var(--aimisi-pink, #FF6B9D);
+    outline-offset: 2px;
+}
+.stf-auth-mode-btn.active { color: #fff; }
+/* 登录组沿用蓝紫、注册组沿用粉金，与上方页签配色呼应 */
+[data-mode-scope="login"].stf-auth-mode-btn.active {
+    background: linear-gradient(135deg, rgba(107,138,255,.26), rgba(107,138,255,.12));
+    box-shadow: inset 0 0 0 1px rgba(168,216,255,.32);
+}
+[data-mode-scope="register"].stf-auth-mode-btn.active {
+    background: linear-gradient(135deg, rgba(255,107,157,.26), rgba(232,197,106,.14));
+    box-shadow: inset 0 0 0 1px rgba(255,182,217,.34);
+}
+.stf-auth-mode-hint {
+    margin: -4px 0 0;
+    font-size: 12px; line-height: 1.6;
+    color: rgba(240,244,255,.48);
+}
+/* form-group 为 flex 布局，hidden 属性需强制生效 */
+.stf-auth-form [hidden] { display: none !important; }
 .stf-auth-note {
     margin: 18px 0 0;
     font-size: 12.5px; line-height: 1.7;

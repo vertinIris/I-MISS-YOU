@@ -658,14 +658,25 @@
                 </div>
 
                 <form class="stf-auth-form" id="stf-login-form">
-                    <div class="form-group">
+                    <div class="stf-auth-mode" role="group" aria-label="登录方式">
+                        <button type="button" class="stf-auth-mode-btn active" data-mode-scope="login" data-mode="email" aria-pressed="true">邮箱登录</button>
+                        <button type="button" class="stf-auth-mode-btn" data-mode-scope="login" data-mode="nickname" aria-pressed="false">昵称登录</button>
+                    </div>
+
+                    <div class="form-group" data-mode-field="login-email">
                         <label class="form-label" for="stf-login-email">邮箱</label>
                         <input type="email" class="form-input" id="stf-login-email" maxlength="64" autocomplete="email" placeholder="你的邮箱" required>
                     </div>
+                    <div class="form-group" data-mode-field="login-nickname" hidden>
+                        <label class="form-label" for="stf-login-nick">昵称 <span class="form-hint">（注册时用的那个）</span></label>
+                        <input type="text" class="form-input" id="stf-login-nick" maxlength="20" autocomplete="username" placeholder="例如：砚秋" required disabled>
+                    </div>
+
                     <div class="form-group">
                         <label class="form-label" for="stf-login-pwd">口令</label>
-                        <input type="password" class="form-input" id="stf-login-pwd" maxlength="64" autocomplete="current-password" placeholder="至少 4 位" required>
+                        <input type="password" class="form-input" id="stf-login-pwd" maxlength="64" minlength="6" autocomplete="current-password" placeholder="至少 6 位" required>
                     </div>
+                    <p class="stf-auth-mode-hint" id="stf-login-mode-hint">用注册时填写的真实邮箱登录，与飞行雪绒主站共用同一账号。</p>
                     <p class="stf-auth-error" id="stf-login-error" role="alert" hidden></p>
                     <div class="form-actions">
                         <button type="submit" class="btn-primary magnetic"><span>登录</span></button>
@@ -673,24 +684,35 @@
                 </form>
 
                 <form class="stf-auth-form" id="stf-register-form" hidden>
-                    <div class="form-group">
+                    <div class="stf-auth-mode" role="group" aria-label="注册方式">
+                        <button type="button" class="stf-auth-mode-btn active" data-mode-scope="register" data-mode="email" aria-pressed="true">邮箱注册</button>
+                        <button type="button" class="stf-auth-mode-btn" data-mode-scope="register" data-mode="nickname" aria-pressed="false">昵称注册</button>
+                    </div>
+
+                    <div class="form-group" data-mode-field="register-email">
                         <label class="form-label" for="stf-register-email">邮箱</label>
                         <input type="email" class="form-input" id="stf-register-email" maxlength="64" autocomplete="email" placeholder="用于登录与找回口令" required>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" data-mode-field="register-email">
                         <label class="form-label" for="stf-register-name">显示名 <span class="form-hint">（2–20 字，发帖时显示）</span></label>
                         <input type="text" class="form-input" id="stf-register-name" maxlength="20" autocomplete="nickname" placeholder="给自己取个名字" required>
                     </div>
+                    <div class="form-group" data-mode-field="register-nickname" hidden>
+                        <label class="form-label" for="stf-register-nick">昵称 <span class="form-hint">（2–20 字，既是登录名也是署名）</span></label>
+                        <input type="text" class="form-input" id="stf-register-nick" maxlength="20" autocomplete="username" placeholder="例如：砚秋" required disabled>
+                    </div>
+
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label" for="stf-register-pwd">口令</label>
-                            <input type="password" class="form-input" id="stf-register-pwd" maxlength="64" autocomplete="new-password" placeholder="至少 4 位" required>
+                            <input type="password" class="form-input" id="stf-register-pwd" maxlength="64" minlength="6" autocomplete="new-password" placeholder="至少 6 位" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="stf-register-pwd2">确认口令</label>
-                            <input type="password" class="form-input" id="stf-register-pwd2" maxlength="64" autocomplete="new-password" placeholder="再输入一次" required>
+                            <input type="password" class="form-input" id="stf-register-pwd2" maxlength="64" minlength="6" autocomplete="new-password" placeholder="再输入一次" required>
                         </div>
                     </div>
+                    <p class="stf-auth-mode-hint" id="stf-register-mode-hint">邮箱账号可找回口令，并与飞行雪绒主站共用同一套身份。</p>
                     <p class="stf-auth-error" id="stf-register-error" role="alert" hidden></p>
                     <div class="form-actions">
                         <button type="submit" class="btn-primary magnetic"><span>签发通行证</span></button>
@@ -698,8 +720,8 @@
                 </form>
 
                 <p class="stf-auth-note">
-                    通行证只保存在这台设备的浏览器里，用于给你的发帖一个稳定署名 —— 不登录也可以用匿名身份发帖。<br>
-                    <span class="form-hint">管理员请用真实邮箱登录，论坛会自动识别权限（与主站同套账号）。</span>
+                    通行证用于给你的发帖一个稳定署名 —— 不登录也可以用匿名身份发帖。<br>
+                    <span class="form-hint">昵称通行证不需要邮箱，换设备用同一昵称 + 口令即可登录；管理员请用真实邮箱登录，论坛会自动识别权限。</span>
                 </p>
             </div>
 
