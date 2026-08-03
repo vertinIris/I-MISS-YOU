@@ -107,12 +107,9 @@
     function buildCardHTML(s) {
         var initial = s.name.charAt(0).toUpperCase();
         var bgColor = s.color || 'var(--drifter-blue)';
-        var preview = previewText(s.content, 280);
-        var expandBtn = s.content.length > 280
-            ? '<button class="stf-card-expand" data-action="expand">展开全文</button>'
-            : '';
         var cardCharColor = charColorForSubmission(s);
         var cardCharStyle = cardCharColor ? ' style="--char:' + cardCharColor + '"' : '';
+        var commentCount = (StarTorchData.getComments(s.id) || []).length;
 
         var tagsHtml = '';
         if (s.tags && s.tags.length) {
@@ -121,40 +118,52 @@
                 '</div>';
         }
 
-        return '<article class="stf-card" data-id="' + s.id + '"' + cardCharStyle + '>' +
-            '<div class="stf-card-header">' +
-                '<div class="stf-card-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
-                '<div class="stf-card-info">' +
-                    '<div class="stf-card-author">' + escapeHTML(s.name) + '</div>' +
-                    '<div class="stf-card-time">' + escapeHTML(s.timeStr) + '</div>' +
+        /* 抽屉卡片：外层定位包裹 + 时间节点 + 裁剪内容体
+           默认 is-collapsed；内容完整渲染，由 CSS max-height + mask 控制收起预览 */
+        return '<article class="stf-card is-collapsed" data-id="' + s.id + '"' + cardCharStyle +
+                ' tabindex="0" role="button" aria-expanded="false">' +
+            '<span class="stf-node" aria-hidden="true"></span>' +
+            '<div class="stf-card-body">' +
+                '<div class="stf-card-header">' +
+                    '<div class="stf-card-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
+                    '<div class="stf-card-info">' +
+                        '<div class="stf-card-author">' + escapeHTML(s.name) + '</div>' +
+                        '<div class="stf-card-time">' + escapeHTML(s.timeStr) + '</div>' +
+                    '</div>' +
+                    '<span class="stf-card-badge" data-type="' + s.type + '">' + (typeLabels[s.type] || s.type) + '</span>' +
                 '</div>' +
-                '<span class="stf-card-badge" data-type="' + s.type + '">' + (typeLabels[s.type] || s.type) + '</span>' +
-            '</div>' +
-            '<h3 class="stf-card-title">' + escapeHTML(s.title) + '</h3>' +
-            '<div class="stf-card-content" data-full-content="' + escapeHTML(s.content) + '">' + escapeHTML(preview) + '</div>' +
-            expandBtn +
-            tagsHtml +
-            '<div class="stf-card-actions">' +
-                '<button class="stf-card-action' + (s.liked ? ' liked' : '') + '" data-action="like">' +
-                    '<svg viewBox="0 0 24 24" fill="' + (s.liked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
-                    '<span>' + (s.likes || 0) + '</span>' +
-                '</button>' +
-                '<button class="stf-card-action" data-action="comment">' +
-                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
-                    '<span>评论</span>' +
-                '</button>' +
-                '<button class="stf-card-action' + (s.bookmarked ? ' bookmarked' : '') + '" data-action="bookmark">' +
-                    '<svg viewBox="0 0 24 24" fill="' + (s.bookmarked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>' +
-                    '<span>收藏</span>' +
-                '</button>' +
-            '</div>' +
-            '<div class="stf-card-comments" id="stf-comments-' + s.id + '">' +
-                '<div class="stf-comment-list" id="stf-comment-list-' + s.id + '"></div>' +
-                '<form class="stf-comment-form" data-target="' + s.id + '">' +
-                    '<input type="text" class="stf-comment-name" placeholder="昵称" maxlength="20" required>' +
-                    '<input type="text" class="stf-comment-input" placeholder="写下你的评论……" maxlength="500" required>' +
-                    '<button type="submit" class="stf-comment-submit">发送</button>' +
-                '</form>' +
+                '<h3 class="stf-card-title">' + escapeHTML(s.title) + '</h3>' +
+                '<div class="stf-card-content">' + escapeHTML(s.content) + '</div>' +
+                tagsHtml +
+                '<div class="stf-card-meta">' +
+                    '<span class="stf-meta-item">❤<b>' + (s.likes || 0) + '</b></span>' +
+                    '<span class="stf-meta-item">💬<b>' + commentCount + '</b></span>' +
+                    '<span class="stf-meta-item">⭐<b>' + (s.bookmarks || 0) + '</b></span>' +
+                    '<button type="button" class="stf-card-expand">展开全文 ↓</button>' +
+                '</div>' +
+                '<div class="stf-card-actions">' +
+                    '<button class="stf-card-action' + (s.liked ? ' liked' : '') + '" data-action="like">' +
+                        '<svg viewBox="0 0 24 24" fill="' + (s.liked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
+                        '<span>' + (s.likes || 0) + '</span>' +
+                    '</button>' +
+                    '<button class="stf-card-action" data-action="comment">' +
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
+                        '<span>评论</span>' +
+                    '</button>' +
+                    '<button class="stf-card-action' + (s.bookmarked ? ' bookmarked' : '') + '" data-action="bookmark">' +
+                        '<svg viewBox="0 0 24 24" fill="' + (s.bookmarked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>' +
+                        '<span>收藏</span>' +
+                    '</button>' +
+                    '<button type="button" class="stf-card-collapse">收起 ↑</button>' +
+                '</div>' +
+                '<div class="stf-card-comments" id="stf-comments-' + s.id + '">' +
+                    '<div class="stf-comment-list" id="stf-comment-list-' + s.id + '"></div>' +
+                    '<form class="stf-comment-form" data-target="' + s.id + '">' +
+                        '<input type="text" class="stf-comment-name" placeholder="昵称" maxlength="20" required>' +
+                        '<input type="text" class="stf-comment-input" placeholder="写下你的评论……" maxlength="500" required>' +
+                        '<button type="submit" class="stf-comment-submit">发送</button>' +
+                    '</form>' +
+                '</div>' +
             '</div>' +
         '</article>';
     }
@@ -258,6 +267,7 @@
     function toggleBookmark(id) {
         var s = updateSubmission(id, function (item) {
             item.bookmarked = !item.bookmarked;
+            item.bookmarks = (item.bookmarks || 0) + (item.bookmarked ? 1 : -1);
         });
         if (s) {
             renderCommunity();
@@ -267,15 +277,17 @@
 
     function toggleComments(id) {
         var panel = document.getElementById('stf-comments-' + id);
-        if (panel) panel.classList.toggle('open');
+        if (!panel) return;
+        var card = panel.closest('.stf-card');
+        var open = panel.classList.toggle('open');
+        if (card) card.classList.toggle('comments-open', open);
     }
 
-    function expandCard(card) {
-        var content = card.querySelector('.stf-card-content');
-        var btn = card.querySelector('.stf-card-expand');
-        if (!content || !btn) return;
-        content.textContent = content.getAttribute('data-full-content');
-        btn.remove();
+    /* 抽屉开合：内容始终完整渲染，仅切换 is-collapsed 控制 CSS 裁剪/预览 */
+    function toggleCard(card) {
+        if (!card) return;
+        var collapsed = card.classList.toggle('is-collapsed');
+        card.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
     }
 
     function addComment(targetId, name, text) {
@@ -315,6 +327,60 @@
         }
     }
 
+    /* 构建投稿对象（投稿弹窗 / 快捷发布框共用） */
+    function buildSubmission(name, type, title, content, tags) {
+        var now = new Date();
+        return {
+            id: 'stf_' + now.getTime(),
+            name: escapeHTML(name),
+            type: type,
+            title: escapeHTML(title),
+            content: escapeHTML(content),
+            realm: 'startorch',
+            tags: tags || [],
+            time: now.getTime(),
+            timeStr: now.getFullYear() + '-' +
+                String(now.getMonth() + 1).padStart(2, '0') + '-' +
+                String(now.getDate()).padStart(2, '0') + ' ' +
+                String(now.getHours()).padStart(2, '0') + ':' +
+                String(now.getMinutes()).padStart(2, '0'),
+            likes: 0,
+            liked: false,
+            bookmarks: 0,
+            color: '#6B8AFF'
+        };
+    }
+
+    /* 持久化新投稿并刷新 + 新节点脉冲 */
+    function persistNewSubmission(newSub) {
+        var list = getAllSubmissions();
+        list.unshift(newSub);
+        StarTorchData.saveSubmissions(list);
+        StarTorchData.setNickname(newSub.name);
+        communityFilter = 'all';
+        communityPage = 0;
+        updateFilterUI();
+        renderCommunity();
+        pulseNewCard(newSub.id);
+    }
+
+    function pulseNewCard(id) {
+        var card = document.querySelector('.stf-card[data-id="' + id + '"]');
+        if (!card) return;
+        card.classList.add('is-new');
+        setTimeout(function () { card.classList.remove('is-new'); }, 1100);
+    }
+
+    function readTagsFrom(selectorEl) {
+        var tags = [];
+        if (selectorEl) {
+            selectorEl.querySelectorAll('.select-tag.active').forEach(function (chip) {
+                tags.push(chip.getAttribute('data-tag'));
+            });
+        }
+        return tags;
+    }
+
     function handleSubmit(e) {
         e.preventDefault();
         var modal = document.getElementById('stf-submit-modal');
@@ -330,44 +396,63 @@
         if (rawTitle.length > 100) { showToast('标题限100字'); return; }
         if (rawContent.length > 2000) { showToast('内容限2000字'); return; }
 
-        var selectedTags = [];
-        modal.querySelectorAll('#stf-submit-tag-selector .select-tag.active').forEach(function (chip) {
-            selectedTags.push(chip.getAttribute('data-tag'));
-        });
+        var selectedTags = readTagsFrom(modal.querySelector('#stf-submit-tag-selector'));
 
-        var now = new Date();
-        var newSub = {
-            id: 'stf_' + now.getTime(),
-            name: escapeHTML(rawName),
-            type: type,
-            title: escapeHTML(rawTitle),
-            content: escapeHTML(rawContent),
-            realm: 'startorch',
-            tags: selectedTags,
-            time: now.getTime(),
-            timeStr: now.getFullYear() + '-' +
-                String(now.getMonth() + 1).padStart(2, '0') + '-' +
-                String(now.getDate()).padStart(2, '0') + ' ' +
-                String(now.getHours()).padStart(2, '0') + ':' +
-                String(now.getMinutes()).padStart(2, '0'),
-            likes: 0,
-            liked: false,
-            color: '#6B8AFF'
-        };
-
-        var list = getAllSubmissions();
-        list.unshift(newSub);
-        StarTorchData.saveSubmissions(list);
-        StarTorchData.setNickname(escapeHTML(rawName));
+        var newSub = buildSubmission(rawName, type, rawTitle, rawContent, selectedTags);
 
         modal.querySelector('form').reset();
         modal.querySelectorAll('.select-tag.active').forEach(function (c) { c.classList.remove('active'); });
         closeSubmitModal();
+        persistNewSubmission(newSub);
         showToast('投稿成功，已发布到星炬学院论坛 ✨');
-        communityFilter = 'all';
-        communityPage = 0;
-        updateFilterUI();
-        renderCommunity();
+    }
+
+    /* 快捷发布框（feed 内常驻）提交 */
+    function handleQuickSubmit(e) {
+        e.preventDefault();
+        var form = document.getElementById('stf-composer-form');
+        if (!form) return;
+
+        var rawName = form.querySelector('#stf-composer-nickname').value.trim();
+        var type = form.querySelector('#stf-composer-type').value;
+        var rawTitle = form.querySelector('#stf-composer-title').value.trim();
+        var rawContent = form.querySelector('#stf-composer-content').value.trim();
+
+        if (!rawName || !rawTitle || !rawContent) { showToast('请填写完整信息'); return; }
+        if (rawName.length > 20) { showToast('昵称限20字'); return; }
+        if (rawTitle.length > 100) { showToast('标题限100字'); return; }
+        if (rawContent.length > 2000) { showToast('内容限2000字'); return; }
+
+        var selectedTags = readTagsFrom(form.querySelector('#stf-composer-tag-selector'));
+        var newSub = buildSubmission(rawName, type, rawTitle, rawContent, selectedTags);
+
+        form.reset();
+        form.querySelectorAll('.select-tag.active').forEach(function (c) { c.classList.remove('active'); });
+        closeComposer();
+        persistNewSubmission(newSub);
+        showToast('已发布到星炬学院论坛 ✨');
+    }
+
+    function openComposer() {
+        var composer = document.getElementById('stf-composer');
+        var form = document.getElementById('stf-composer-form');
+        var trigger = document.getElementById('stf-composer-trigger');
+        if (!composer || !form) return;
+        form.hidden = false;
+        if (trigger) trigger.setAttribute('aria-expanded', 'true');
+        var nickname = StarTorchData.getNickname();
+        var nameInput = form.querySelector('#stf-composer-nickname');
+        if (nameInput && nickname) nameInput.value = nickname;
+        var first = form.querySelector('#stf-composer-title');
+        if (first) first.focus();
+    }
+
+    function closeComposer() {
+        var form = document.getElementById('stf-composer-form');
+        var trigger = document.getElementById('stf-composer-trigger');
+        if (!form) return;
+        form.hidden = true;
+        if (trigger) trigger.setAttribute('aria-expanded', 'false');
     }
 
     function updateFilterUI() {
@@ -436,10 +521,25 @@
                 if (!card) return;
                 var id = card.getAttribute('data-id');
 
+                // 评论输入框区域点击不触发抽屉开合
+                if (e.target.closest('.stf-comment-form')) return;
+
                 if (e.target.closest('[data-action="like"]')) { toggleLike(id); return; }
                 if (e.target.closest('[data-action="comment"]')) { toggleComments(id); return; }
                 if (e.target.closest('[data-action="bookmark"]')) { toggleBookmark(id); return; }
-                if (e.target.closest('[data-action="expand"]')) { expandCard(card); return; }
+
+                // 展开/收起按钮或卡片主体点击 → 切换抽屉
+                toggleCard(card);
+            });
+
+            grid.addEventListener('keydown', function (e) {
+                if (e.key !== 'Enter' && e.key !== ' ') return;
+                var card = e.target.closest('.stf-card');
+                if (!card) return;
+                // 焦点在按钮/输入时不拦截
+                if (e.target.closest('button, input, textarea, a')) return;
+                e.preventDefault();
+                toggleCard(card);
             });
 
             grid.addEventListener('submit', function (e) {
@@ -452,6 +552,35 @@
                 if (!name || !text) { showToast('请填写昵称和评论'); return; }
                 addComment(targetId, name, text);
                 form.querySelector('.stf-comment-input').value = '';
+            });
+        }
+
+        // 快捷发布框
+        var composerTrigger = document.getElementById('stf-composer-trigger');
+        if (composerTrigger) {
+            composerTrigger.addEventListener('click', function () {
+                var form = document.getElementById('stf-composer-form');
+                if (form && form.hidden) openComposer(); else closeComposer();
+            });
+        }
+        var composerCancel = document.getElementById('stf-composer-cancel');
+        if (composerCancel) composerCancel.addEventListener('click', closeComposer);
+        var composerForm = document.getElementById('stf-composer-form');
+        if (composerForm) composerForm.addEventListener('submit', handleQuickSubmit);
+
+        // 快捷发布框标签选择器
+        var composerSelector = document.getElementById('stf-composer-tag-selector');
+        if (composerSelector) {
+            composerSelector.addEventListener('click', function (e) {
+                var chip = e.target.closest('.select-tag');
+                if (!chip) return;
+                e.preventDefault();
+                var activeCount = composerSelector.querySelectorAll('.select-tag.active').length;
+                if (!chip.classList.contains('active') && activeCount >= 5) {
+                    showToast('最多选择5个标签');
+                    return;
+                }
+                chip.classList.toggle('active');
             });
         }
 

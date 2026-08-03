@@ -1,0 +1,45 @@
+/* ============================================================
+   飞行雪绒主页 · 颜色断层修复（轻量加法层）
+   仅补充连续深空背景 + 极淡过渡光晕，位于所有内容之下，
+   不改动既有粉白星光主题与任何交互层。
+   ============================================================ */
+
+/* 连续深空底色：自上而下微调，避免板块间出现硬色块边界 */
+body {
+    background:
+        radial-gradient(1200px 700px at 50% -10%, rgba(255,107,157,.10), transparent 60%),
+        radial-gradient(900px 600px at 80% 22%, rgba(107,138,255,.07), transparent 55%),
+        linear-gradient(180deg, #0A0710 0%, #0B0814 42%, #08060F 100%);
+    background-attachment: fixed;
+}
+
+/* 全页柔和过渡光晕：置于内容之下，仅作视觉连贯，不遮挡任何元素 */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent, rgba(255,107,157,.04) 50%, transparent);
+}
+
+/* 各 .section 顶部/底部微光，柔化相邻板块的接缝 */
+.section { position: relative; }
+.section::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 88px;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(255,107,157,.06), transparent);
+}
+.section::after {
+    content: "";
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 88px;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(to top, rgba(107,138,255,.06), transparent);
+}

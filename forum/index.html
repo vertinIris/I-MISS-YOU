@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="forum.css">
     <link rel="stylesheet" href="forum-easter.css">
+    <link rel="stylesheet" href="forum-theme.css">
     <script>
         /* 沿用主站主题偏好，仅做视觉同步；不影响功能独立性 */
         (function () {
@@ -162,7 +163,63 @@
                 <button class="stf-tag-chip" data-tag="漂泊者">漂泊者</button>
             </div>
 
-            <div class="stf-community-grid" id="stf-community-grid">
+            <div class="stf-composer" id="stf-composer">
+                <button type="button" class="stf-composer-trigger" id="stf-composer-trigger" aria-expanded="false" aria-controls="stf-composer-form">
+                    <span class="stf-composer-avatar" aria-hidden="true">✎</span>
+                    <span class="stf-composer-placeholder">分享你的鸣潮同人…</span>
+                    <span class="stf-composer-hint">投稿</span>
+                </button>
+                <form class="stf-composer-form" id="stf-composer-form" hidden>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="stf-composer-nickname">昵称</label>
+                            <input type="text" class="form-input" id="stf-composer-nickname" placeholder="你的名字" maxlength="20" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="stf-composer-type">类型</label>
+                            <select class="form-input form-select" id="stf-composer-type">
+                                <option value="text">文字</option>
+                                <option value="story">故事</option>
+                                <option value="poem">诗歌</option>
+                                <option value="art">插画描述</option>
+                                <option value="music">音乐感悟</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="stf-composer-title">标题</label>
+                        <input type="text" class="form-input" id="stf-composer-title" placeholder="给作品起个名字" maxlength="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">标签 <span class="form-hint">（可选，最多5个）</span></label>
+                        <div class="submission-tag-selector" id="stf-composer-tag-selector">
+                            <span class="tag-category-label">角色</span>
+                            <button type="button" class="tag-chip select-tag" data-tag="爱弥斯">爱弥斯</button>
+                            <button type="button" class="tag-chip select-tag" data-tag="达妮娅">达妮娅</button>
+                            <button type="button" class="tag-chip select-tag" data-tag="西格莉卡">西格莉卡</button>
+                            <button type="button" class="tag-chip select-tag" data-tag="琳奈">琳奈</button>
+                            <button type="button" class="tag-chip select-tag" data-tag="莫宁">莫宁</button>
+                            <button type="button" class="tag-chip select-tag" data-tag="洛瑟菈">洛瑟菈</button>
+                            <button type="button" class="tag-chip select-tag" data-tag="漂泊者">漂泊者</button>
+                            <span class="tag-category-label">类型</span>
+                            <button type="button" class="tag-chip select-tag" data-tag="日常">日常</button>
+                            <button type="button" class="tag-chip select-tag" data-tag="冒险">冒险</button>
+                            <button type="button" class="tag-chip select-tag" data-tag="情感">情感</button>
+                            <button type="button" class="tag-chip select-tag" data-tag="考据">考据</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="stf-composer-content">内容</label>
+                        <textarea class="form-input form-textarea" id="stf-composer-content" placeholder="在这里写下你的创作……" rows="4" maxlength="2000" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary magnetic"><span>发布</span></button>
+                        <button type="button" class="btn-ghost magnetic" id="stf-composer-cancel"><span>取消</span></button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="stf-timeline" id="stf-community-grid">
                 <!-- JS 渲染 -->
             </div>
 

@@ -45,6 +45,26 @@
         }
     }
 
+    function createNotes(overlay) {
+        var notes = ['♪', '♫', '♬', '✨'];
+        var cx = window.innerWidth / 2;
+        var cy = window.innerHeight / 2;
+        for (var i = 0; i < 10; i++) {
+            var n = document.createElement('span');
+            n.className = 'stf-easter-note';
+            n.textContent = notes[Math.floor(Math.random() * notes.length)];
+            var angle = -Math.PI / 2 + (Math.random() - .5) * 1.4;
+            var dist = 120 + Math.random() * 200;
+            n.style.left = (cx + (Math.random() - .5) * 80) + 'px';
+            n.style.top = (cy + (Math.random() - .5) * 60) + 'px';
+            n.style.setProperty('--nx', (Math.cos(angle) * dist) + 'px');
+            n.style.setProperty('--ny', (Math.sin(angle) * dist - 80) + 'px');
+            n.style.setProperty('--nr', ((Math.random() - .5) * 30) + 'deg');
+            n.style.animationDelay = (Math.random() * .6) + 's';
+            overlay.appendChild(n);
+        }
+    }
+
     function playTransition() {
         if (active) return;
         active = true;
@@ -54,6 +74,7 @@
         if (!overlay) return;
 
         if (particles) createParticles(particles);
+        createNotes(overlay);
         overlay.classList.add('is-active');
 
         // 同步播放轻量提示音（可选，失败静默）
@@ -75,9 +96,10 @@
             }
         } catch (e) { /* ignore */ }
 
+        // 与像素飞出动画（2s）对齐后跳转
         setTimeout(function () {
             window.location.href = TARGET;
-        }, 1250);
+        }, 2000);
     }
 
     function onKey(e) {
