@@ -35,6 +35,29 @@ body {
     color: var(--stf-text);
 }
 
+/* 禁用背景旋转动效：星河光带、粉色星云、流星、雪花等保持静态 */
+.galaxy-river,
+.pink-galaxy,
+.shooting-star-container,
+.snowfall,
+.sparkle-particles {
+    animation: none !important;
+}
+.galaxy-river,
+.pink-galaxy {
+    opacity: 0 !important;
+    display: none !important;
+}
+
+/* 论坛页 hero 背景去旋转、去流动，仅保留静态深空光晕 */
+.forum-hero::before {
+    background:
+        radial-gradient(circle at 20% 20%, rgba(107,138,255,.16), transparent 45%),
+        radial-gradient(circle at 80% 30%, rgba(232,197,106,.10), transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(107,138,255,.12), transparent 50%);
+    animation: none !important;
+}
+
 /* Hero 雾层：承接 hero 紫光向下渐隐，消除板块切换硬边 */
 .forum-hero::after {
     content: "";
@@ -109,6 +132,17 @@ body {
 }
 .btn-primary::after {
     background: linear-gradient(110deg, transparent 30%, rgba(243,224,163,.5), transparent 70%);
+}
+
+/* 投稿作为子功能：Toolbar 中降级为蓝金 ghost */
+.stf-toolbar .btn-ghost {
+    border-color: rgba(168,216,255,.25);
+    color: var(--stf-brand-light);
+}
+.stf-toolbar .btn-ghost:hover {
+    border-color: rgba(168,216,255,.5);
+    background: rgba(107,138,255,.1);
+    color: #fff;
 }
 
 /* 功能区核心卡：蓝金顶边 + 飘带 */
@@ -224,97 +258,130 @@ body {
     100% { transform: scale(1);   box-shadow: 0 0 0 4px rgba(107,138,255,.15), 0 0 14px rgba(107,138,255,.65); }
 }
 
-/* ---------- 3. 抽屉式半收纳卡片 ---------- */
-/* 外层仅作定位包裹（节点在外面）；视觉与裁剪交给 .stf-card-body */
+/* ---------- 3. 立体翻转卡片 ---------- */
+.stf-timeline { perspective: 1400px; }
+
 .stf-card {
-    background: none;
+    display: block;
+    position: relative;
+    background: transparent;
     border: none;
     padding: 0;
     border-radius: 0;
     box-shadow: none;
     overflow: visible;
-    max-height: none;
-    transition: none;
+    cursor: pointer;
+    outline: none;
 }
 .stf-card:hover { transform: none; box-shadow: none; }
+.stf-card:focus-visible .stf-card-inner {
+    box-shadow: 0 0 0 2px rgba(168,216,255,.5), 0 20px 48px rgba(0,0,0,.35);
+}
 
-.stf-card-body {
+.stf-card-inner {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
+    width: 100%;
+    min-height: 280px;
+    transform-style: preserve-3d;
+    transition: transform .65s cubic-bezier(.16,1,.3,1);
+}
+.stf-card.is-flipped .stf-card-inner {
+    transform: rotateY(180deg);
+}
+
+.stf-card-front,
+.stf-card-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     border-radius: 22px;
+    padding: 22px 24px 20px;
     background: rgba(255,255,255,.045);
     border: 1px solid rgba(255,255,255,.08);
     border-top: 3px solid var(--char, var(--stf-brand));
-    max-height: 152px;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
-    transition:
-        transform .35s cubic-bezier(.16,1,.3,1),
-        box-shadow .35s,
-        max-height .35s cubic-bezier(.16,1,.3,1);
-}
-.stf-card.is-collapsed .stf-card-body { max-height: 152px; }
-.stf-card:not(.is-collapsed) .stf-card-body { max-height: 2200px; }
-.stf-card.comments-open .stf-card-body { max-height: none; }
-
-/* 收起态：内容底部渐隐 */
-.stf-card.is-collapsed .stf-card-body .stf-card-content {
-    -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
-    mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
 }
 
-/* 收起态显示元信息（纯数字），展开态显示操作按钮 */
-.stf-card .stf-card-meta { display: none; }
-.stf-card.is-collapsed .stf-card-meta { display: flex; }
-.stf-card.is-collapsed .stf-card-actions { display: none; }
-.stf-card:not(.is-collapsed) .stf-card-actions { display: flex; }
-.stf-card .stf-card-tags { display: flex; }
-.stf-card.is-collapsed .stf-card-tags { display: none; }
-.stf-card .stf-card-expand { display: none; }
-.stf-card.is-collapsed .stf-card-expand { display: inline-block; }
-.stf-card .stf-card-collapse { display: none; }
-.stf-card:not(.is-collapsed) .stf-card-collapse { display: inline-block; }
-.stf-card-meta, .stf-card-actions { margin-top: auto; }
-
-/* 展开 / 收起 微按钮（置于元信息行与操作行，避免被裁剪） */
-.stf-card .stf-card-expand,
-.stf-card .stf-card-collapse {
-    margin-left: auto;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 13px;
-    padding: 0;
-}
-.stf-card .stf-card-expand { color: var(--stf-brand); }
-.stf-card .stf-card-collapse { color: var(--stf-text-muted); }
-.stf-card .stf-card-expand:hover,
-.stf-card .stf-card-collapse:hover { opacity: .8; }
-
-/* 桌面悬停：微预览（标题高亮 + 轻微抬起），并临时展开便于浏览 */
-@media (hover: hover) {
-    .stf-card.is-collapsed:hover .stf-card-body { max-height: 2200px; }
-    .stf-card.is-collapsed:hover .stf-card-body .stf-card-content { -webkit-mask-image: none; mask-image: none; }
-    .stf-card.is-collapsed:hover .stf-card-meta { display: none; }
-    .stf-card.is-collapsed:hover .stf-card-actions { display: flex; }
-}
-.stf-card.is-collapsed:hover .stf-card-body { transform: translateY(-3px); }
-.stf-card:not(.is-collapsed):hover .stf-card-body {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 48px rgba(0,0,0,.35);
+.stf-card-back {
+    transform: rotateY(180deg);
+    overflow-y: auto;
 }
 
-/* 元信息行样式 */
-.stf-card-meta {
-    gap: 18px;
+/* 自定义滚动条，避免背面滚动破坏沉浸 */
+.stf-card-back::-webkit-scrollbar { width: 5px; }
+.stf-card-back::-webkit-scrollbar-track { background: transparent; }
+.stf-card-back::-webkit-scrollbar-thumb { background: rgba(168,216,255,.25); border-radius: 999px; }
+
+/* 正面：摘要布局 */
+.stf-card-preview {
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(240,244,255,.72);
+    white-space: pre-line;
+    margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.stf-card-tags--preview { margin-top: auto; margin-bottom: 12px; }
+.stf-card-front-actions {
+    display: flex;
     align-items: center;
+    gap: 14px;
+    margin-top: auto;
     padding-top: 12px;
     border-top: 1px solid rgba(255,255,255,.06);
     font-size: 13px;
     color: var(--stf-text-muted);
 }
-.stf-meta-item b { color: #fff; font-weight: 600; margin-left: 4px; }
+.stf-front-stat { display: inline-flex; align-items: center; gap: 4px; }
+.stf-card-flip-hint,
+.stf-card-flip-back {
+    margin-left: auto;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--stf-brand);
+    padding: 0;
+}
+.stf-card-flip-back { color: var(--stf-text-muted); }
+.stf-card-flip-hint:hover,
+.stf-card-flip-back:hover { opacity: .8; }
+
+/* 背面：完整内容与互动 */
+.stf-card-back .stf-card-content {
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(240,244,255,.78);
+    white-space: pre-line;
+    margin-bottom: 12px;
+}
+.stf-card-back .stf-card-tags { margin-bottom: 12px; }
+.stf-card-back .stf-card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 0;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,.06);
+}
+
+/* 悬停 3D 倾斜：仅桌面、未翻转时 */
+@media (hover: hover) {
+    .stf-card:not(.is-flipped):hover .stf-card-inner {
+        transform: rotateY(6deg) rotateX(2deg) translateY(-4px);
+    }
+    .stf-card.is-flipped:hover .stf-card-inner {
+        transform: rotateY(174deg) rotateX(2deg) translateY(-4px);
+    }
+}
+
+/* 卡片动效增强 */
+.stf-card.is-new .stf-node { animation: stf-node-pulse 1s ease; }
 
 /* ---------- 2.(续) 常驻快捷发布框 ---------- */
 .stf-composer {
@@ -414,18 +481,19 @@ body {
 .archive-float--featured > .character-archive-card { position: relative; z-index: 1; }
 @keyframes stf-conic-spin { to { transform: rotate(360deg); } }
 
-/* ---------- 响应式：时间线与抽屉 ---------- */
+/* ---------- 响应式：时间线与翻转卡 ---------- */
 @media (max-width: 768px) {
     .stf-timeline { padding-left: 0; max-width: 100%; }
     .stf-timeline::before { display: none; }
     .stf-node { display: none; }
-    .stf-card-body { border-left: 3px solid var(--char, var(--stf-brand)); }
+    .stf-card-inner { min-height: 240px; }
     .stf-composer { max-width: 100%; }
 }
 
 /* ---------- 可访问性：reduced-motion ---------- */
 @media (prefers-reduced-motion: reduce) {
     .stf-card,
+    .stf-card-inner,
     .stf-timeline .stf-card .stf-node,
     .archive-float--featured,
     .character-archive-card.is-featured::before,
@@ -436,17 +504,15 @@ body {
     .stf-conic-spin,
     .stf-ribbon-glow,
     .stf-node-pulse { animation: none !important; }
-    .stf-card-body {
-        max-height: none !important;
-        overflow: visible !important;
+    .stf-card-inner {
+        transform: none !important;
         transition: opacity .2s ease !important;
     }
-    .stf-card.is-collapsed .stf-card-body .stf-card-content {
-        -webkit-mask-image: none !important;
-        mask-image: none !important;
+    .stf-card-front,
+    .stf-card-back {
+        position: relative;
+        transform: none !important;
+        backface-visibility: visible !important;
     }
-    .stf-card.is-collapsed .stf-card-meta { display: none !important; }
-    .stf-card.is-collapsed .stf-card-actions { display: flex !important; }
-    .stf-card.is-collapsed .stf-card-tags { display: flex !important; }
-    .stf-card.is-collapsed:hover .stf-card-body { transform: none !important; }
+    .stf-card-back { margin-top: 16px; }
 }

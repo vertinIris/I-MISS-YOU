@@ -132,9 +132,46 @@
         }
     }
 
+    /* 开场沉浸提示：仅首次访问，延迟 1.2s 出现 */
+    function initWelcome() {
+        try {
+            if (localStorage.getItem('stf_welcome_seen') === '1') return;
+        } catch (e) { return; }
+
+        var welcome = document.getElementById('stf-welcome');
+        if (!welcome) return;
+
+        function openWelcome() {
+            welcome.hidden = false;
+            requestAnimationFrame(function () { welcome.classList.add('is-open'); });
+        }
+        function closeWelcome() {
+            welcome.classList.remove('is-open');
+            setTimeout(function () { welcome.hidden = true; }, 450);
+            try { localStorage.setItem('stf_welcome_seen', '1'); } catch (e) {}
+        }
+
+        var timer = setTimeout(openWelcome, 1200);
+
+        welcome.querySelectorAll('[data-welcome-close]').forEach(function (el) {
+            el.addEventListener('click', closeWelcome);
+        });
+        var enterBtn = document.getElementById('stf-welcome-enter');
+        if (enterBtn) enterBtn.addEventListener('click', closeWelcome);
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && welcome.classList.contains('is-open')) closeWelcome();
+        });
+
+        // 页面隐藏时取消未触发的弹窗，避免切回后突然弹出
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden && timer) { clearTimeout(timer); timer = null; }
+        });
+    }
+
     ready(function () {
         document.addEventListener('keydown', onKey);
         var trigger = document.getElementById('stf-hidden-trigger');
         if (trigger) trigger.addEventListener('click', onTriggerClick);
+        initWelcome();
     });
 })();

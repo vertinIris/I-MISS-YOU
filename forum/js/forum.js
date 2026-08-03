@@ -112,57 +112,74 @@
         var commentCount = (StarTorchData.getComments(s.id) || []).length;
 
         var tagsHtml = '';
+        var tagsPreviewHtml = '';
         if (s.tags && s.tags.length) {
             tagsHtml = '<div class="stf-card-tags">' +
                 s.tags.map(function (t) { return '<span class="stf-card-tag">' + escapeHTML(t) + '</span>'; }).join('') +
                 '</div>';
+            tagsPreviewHtml = '<div class="stf-card-tags stf-card-tags--preview">' +
+                s.tags.slice(0, 3).map(function (t) { return '<span class="stf-card-tag">' + escapeHTML(t) + '</span>'; }).join('') +
+                (s.tags.length > 3 ? '<span class="stf-card-tag">+' + (s.tags.length - 3) + '</span>' : '') +
+                '</div>';
         }
 
-        /* 抽屉卡片：外层定位包裹 + 时间节点 + 裁剪内容体
-           默认 is-collapsed；内容完整渲染，由 CSS max-height + mask 控制收起预览 */
-        return '<article class="stf-card is-collapsed" data-id="' + s.id + '"' + cardCharStyle +
+        var previewText = escapeHTML(previewText(s.content, 110));
+        var headerHtml =
+            '<div class="stf-card-header">' +
+                '<div class="stf-card-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
+                '<div class="stf-card-info">' +
+                    '<div class="stf-card-author">' + escapeHTML(s.name) + '</div>' +
+                    '<div class="stf-card-time">' + escapeHTML(s.timeStr) + '</div>' +
+                '</div>' +
+                '<span class="stf-card-badge" data-type="' + s.type + '">' + (typeLabels[s.type] || s.type) + '</span>' +
+            '</div>';
+
+        /* 立体翻转卡片：正面摘要 / 背面完整内容与互动
+           外层仅作定位与时间线节点；翻转由 .stf-card-inner 的 rotateY 驱动 */
+        return '<article class="stf-card" data-id="' + s.id + '"' + cardCharStyle +
                 ' tabindex="0" role="button" aria-expanded="false">' +
             '<span class="stf-node" aria-hidden="true"></span>' +
-            '<div class="stf-card-body">' +
-                '<div class="stf-card-header">' +
-                    '<div class="stf-card-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
-                    '<div class="stf-card-info">' +
-                        '<div class="stf-card-author">' + escapeHTML(s.name) + '</div>' +
-                        '<div class="stf-card-time">' + escapeHTML(s.timeStr) + '</div>' +
+            '<div class="stf-card-inner">' +
+                '<div class="stf-card-front">' +
+                    headerHtml +
+                    '<h3 class="stf-card-title">' + escapeHTML(s.title) + '</h3>' +
+                    '<div class="stf-card-preview">' + previewText + '</div>' +
+                    tagsPreviewHtml +
+                    '<div class="stf-card-front-actions">' +
+                        '<span class="stf-front-stat">❤ ' + (s.likes || 0) + '</span>' +
+                        '<span class="stf-front-stat">💬 ' + commentCount + '</span>' +
+                        '<span class="stf-front-stat">⭐ ' + (s.bookmarks || 0) + '</span>' +
+                        '<span class="stf-card-flip-hint">点击翻转 ↻</span>' +
                     '</div>' +
-                    '<span class="stf-card-badge" data-type="' + s.type + '">' + (typeLabels[s.type] || s.type) + '</span>' +
                 '</div>' +
-                '<h3 class="stf-card-title">' + escapeHTML(s.title) + '</h3>' +
-                '<div class="stf-card-content">' + escapeHTML(s.content) + '</div>' +
-                tagsHtml +
-                '<div class="stf-card-meta">' +
-                    '<span class="stf-meta-item">❤<b>' + (s.likes || 0) + '</b></span>' +
-                    '<span class="stf-meta-item">💬<b>' + commentCount + '</b></span>' +
-                    '<span class="stf-meta-item">⭐<b>' + (s.bookmarks || 0) + '</b></span>' +
-                    '<button type="button" class="stf-card-expand">展开全文 ↓</button>' +
-                '</div>' +
-                '<div class="stf-card-actions">' +
-                    '<button class="stf-card-action' + (s.liked ? ' liked' : '') + '" data-action="like">' +
-                        '<svg viewBox="0 0 24 24" fill="' + (s.liked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
-                        '<span>' + (s.likes || 0) + '</span>' +
-                    '</button>' +
-                    '<button class="stf-card-action" data-action="comment">' +
-                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
-                        '<span>评论</span>' +
-                    '</button>' +
-                    '<button class="stf-card-action' + (s.bookmarked ? ' bookmarked' : '') + '" data-action="bookmark">' +
-                        '<svg viewBox="0 0 24 24" fill="' + (s.bookmarked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>' +
-                        '<span>收藏</span>' +
-                    '</button>' +
-                    '<button type="button" class="stf-card-collapse">收起 ↑</button>' +
-                '</div>' +
-                '<div class="stf-card-comments" id="stf-comments-' + s.id + '">' +
-                    '<div class="stf-comment-list" id="stf-comment-list-' + s.id + '"></div>' +
-                    '<form class="stf-comment-form" data-target="' + s.id + '">' +
-                        '<input type="text" class="stf-comment-name" placeholder="昵称" maxlength="20" required>' +
-                        '<input type="text" class="stf-comment-input" placeholder="写下你的评论……" maxlength="500" required>' +
-                        '<button type="submit" class="stf-comment-submit">发送</button>' +
-                    '</form>' +
+                '<div class="stf-card-back">' +
+                    headerHtml +
+                    '<h3 class="stf-card-title">' + escapeHTML(s.title) + '</h3>' +
+                    '<div class="stf-card-content">' + escapeHTML(s.content) + '</div>' +
+                    tagsHtml +
+                    '<div class="stf-card-actions">' +
+                        '<button class="stf-card-action' + (s.liked ? ' liked' : '') + '" data-action="like">' +
+                            '<svg viewBox="0 0 24 24" fill="' + (s.liked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
+                            '<span>' + (s.likes || 0) + '</span>' +
+                        '</button>' +
+                        '<button class="stf-card-action" data-action="comment">' +
+                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
+                            '<span>评论</span>' +
+                        '</button>' +
+                        '<button class="stf-card-action' + (s.bookmarked ? ' bookmarked' : '') + '" data-action="bookmark">' +
+                            '<svg viewBox="0 0 24 24" fill="' + (s.bookmarked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>' +
+                            '<span>收藏</span>' +
+                        '</button>' +
+                        '<button type="button" class="stf-card-flip-back">返回 ↺</button>' +
+                    '</div>' +
+                    '<div class="stf-card-comments" id="stf-comments-' + s.id + '">' +
+                        '<div class="stf-comment-list" id="stf-comment-list-' + s.id + '"></div>' +
+                        '<form class="stf-comment-form" data-target="' + s.id + '">' +
+                            '<input type="text" class="stf-comment-name" placeholder="昵称" maxlength="20" required>' +
+                            '<input type="text" class="stf-comment-input" placeholder="写下你的评论……" maxlength="500" required>' +
+                            '<button type="submit" class="stf-comment-submit">发送</button>' +
+                        '</form>' +
+                    '</div>' +
                 '</div>' +
             '</div>' +
         '</article>';
@@ -283,11 +300,11 @@
         if (card) card.classList.toggle('comments-open', open);
     }
 
-    /* 抽屉开合：内容始终完整渲染，仅切换 is-collapsed 控制 CSS 裁剪/预览 */
+    /* 立体翻转：点击卡片主体切换 is-flipped，驱动 rotateY(180deg) */
     function toggleCard(card) {
         if (!card) return;
-        var collapsed = card.classList.toggle('is-collapsed');
-        card.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        var flipped = card.classList.toggle('is-flipped');
+        card.setAttribute('aria-expanded', flipped ? 'true' : 'false');
     }
 
     function addComment(targetId, name, text) {
@@ -521,14 +538,14 @@
                 if (!card) return;
                 var id = card.getAttribute('data-id');
 
-                // 评论输入框区域点击不触发抽屉开合
-                if (e.target.closest('.stf-comment-form')) return;
+                // 评论区域点击不触发翻转
+                if (e.target.closest('.stf-comment-form, .stf-card-comments, .stf-comment-list')) return;
 
                 if (e.target.closest('[data-action="like"]')) { toggleLike(id); return; }
                 if (e.target.closest('[data-action="comment"]')) { toggleComments(id); return; }
                 if (e.target.closest('[data-action="bookmark"]')) { toggleBookmark(id); return; }
 
-                // 展开/收起按钮或卡片主体点击 → 切换抽屉
+                // 翻转触发：正面/背面空白区域或显式翻转按钮
                 toggleCard(card);
             });
 

@@ -11,20 +11,39 @@
     var LOGO_CLICKS = 5;
     var COMBO_WINDOW = 4000;
 
-    // 像素歌姬（粉色像素小人，呼应 3.0 调频 9072 会唱歌的粉色像素小人）
+    // 像素歌姬（圆形粉发双团、蓝眼、腮红、蓝白领子、右下角粉色通知点，贴近游戏内头像）
     var PIXEL_SVG =
-        '<svg viewBox="0 0 16 16" width="92" height="92" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">' +
-            '<rect x="4" y="1" width="8" height="2" fill="#FFB6D9"/>' +
-            '<rect x="3" y="3" width="10" height="2" fill="#FF8FB0"/>' +
-            '<rect x="4" y="5" width="8" height="5" fill="#FFF0F5"/>' +
-            '<rect x="5" y="7" width="2" height="2" fill="#6B8AFF"/>' +
-            '<rect x="9" y="7" width="2" height="2" fill="#6B8AFF"/>' +
-            '<rect x="4" y="9" width="2" height="1" fill="#FF6B9D"/>' +
-            '<rect x="10" y="9" width="2" height="1" fill="#FF6B9D"/>' +
-            '<rect x="4" y="10" width="8" height="4" fill="#FF6B9D"/>' +
-            '<rect x="12" y="2" width="1" height="4" fill="#A8D8FF"/>' +
-            '<rect x="11" y="2" width="2" height="1" fill="#A8D8FF"/>' +
-            '<rect x="13" y="1" width="1" height="1" fill="#A8D8FF"/>' +
+        '<svg viewBox="0 0 64 64" width="92" height="92" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">' +
+            '<defs>' +
+                '<clipPath id="sp-pixel-clip">' +
+                    '<circle cx="32" cy="32" r="30"/>' +
+                '</clipPath>' +
+            '</defs>' +
+            '<circle cx="32" cy="32" r="30" fill="#1A0E1C"/>' +
+            '<g clip-path="url(#sp-pixel-clip)">' +
+                '<rect x="14" y="8" width="36" height="28" fill="#FF6B9D"/>' +
+                '<rect x="8" y="6" width="14" height="14" fill="#FF6B9D"/>' +
+                '<rect x="10" y="8" width="10" height="10" fill="#FFB6D9"/>' +
+                '<rect x="42" y="6" width="14" height="14" fill="#FF6B9D"/>' +
+                '<rect x="44" y="8" width="10" height="10" fill="#FFB6D9"/>' +
+                '<rect x="20" y="16" width="24" height="22" fill="#FFE0CC"/>' +
+                '<rect x="20" y="16" width="24" height="6" fill="#FF6B9D"/>' +
+                '<rect x="22" y="18" width="6" height="4" fill="#FFB6D9"/>' +
+                '<rect x="36" y="18" width="6" height="4" fill="#FFB6D9"/>' +
+                '<rect x="25" y="24" width="5" height="6" fill="#6B8AFF"/>' +
+                '<rect x="34" y="24" width="5" height="6" fill="#6B8AFF"/>' +
+                '<rect x="26" y="25" width="2" height="2" fill="#FFFFFF"/>' +
+                '<rect x="35" y="25" width="2" height="2" fill="#FFFFFF"/>' +
+                '<rect x="22" y="30" width="5" height="3" fill="#FF9EC4"/>' +
+                '<rect x="37" y="30" width="5" height="3" fill="#FF9EC4"/>' +
+                '<rect x="29" y="34" width="6" height="2" fill="#C25B7A"/>' +
+                '<rect x="18" y="38" width="28" height="18" fill="#6B8AFF"/>' +
+                '<rect x="20" y="40" width="24" height="6" fill="#FFFFFF"/>' +
+                '<rect x="24" y="42" width="16" height="4" fill="#A8D8FF"/>' +
+            '</g>' +
+            '<circle cx="32" cy="32" r="30" fill="none" stroke="#FF6B9D" stroke-width="2" stroke-opacity="0.55"/>' +
+            '<circle cx="54" cy="54" r="7" fill="#FF6B9D"/>' +
+            '<circle cx="54" cy="54" r="4" fill="#FFB6D9"/>' +
         '</svg>';
 
     var root, portal, built = false, open = false, audioCtx = null;

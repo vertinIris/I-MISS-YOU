@@ -45,7 +45,6 @@
                 <a href="#stf-community" class="nav-link">讨论</a>
                 <a href="#characters-archive" class="nav-link">角色档案</a>
                 <a href="#worldview" class="nav-link">世界观</a>
-                <button type="button" class="nav-link nav-link-btn" data-action="open-submit">投稿</button>
             </div>
             <button type="button" class="nav-toggle" id="nav-toggle" aria-label="展开菜单" aria-expanded="false">
                 <span></span><span></span><span></span>
@@ -73,8 +72,8 @@
                 </a>
             </div>
             <div class="forum-hero-actions">
-                <button type="button" class="btn-primary magnetic" data-action="open-submit"><span>去投稿</span></button>
-                <a href="#stf-community" class="btn-ghost magnetic"><span>进入社区</span></a>
+                <a href="#stf-community" class="btn-primary magnetic"><span>进入社区</span></a>
+                <a href="#characters-archive" class="btn-ghost magnetic"><span>浏览档案</span></a>
             </div>
         </div>
     </header>
@@ -149,7 +148,7 @@
                     <button class="stf-sort-btn active" data-sort="new">最新</button>
                     <button class="stf-sort-btn" data-sort="hot">热门</button>
                 </div>
-                <button type="button" class="btn-primary magnetic" data-action="open-submit"><span>投稿</span></button>
+                <button type="button" class="btn-ghost magnetic" data-action="open-submit"><span>投稿</span></button>
             </div>
 
             <div class="stf-tag-bar">
@@ -371,12 +370,6 @@
         </span>
     </p>
 
-    <!-- 悬浮投稿按钮（提升社区参与度） -->
-    <button type="button" class="stf-fab" data-action="open-submit" aria-label="投稿创作">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        <span class="stf-fab-label">投稿</span>
-    </button>
-
     <!-- 投稿弹窗 -->
     <div class="stf-modal" id="stf-submit-modal" role="dialog" aria-modal="true" aria-label="向星炬学院论坛投稿" hidden>
         <div class="stf-modal-backdrop" data-close></div>
@@ -442,41 +435,69 @@
         <div class="stf-easter-particles" id="stf-easter-particles"></div>
         <div class="stf-easter-pixel" id="stf-easter-pixel" aria-hidden="true">
             <svg viewBox="0 0 64 64" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
-                <!-- 头发后层 -->
-                <rect x="18" y="8" width="28" height="10" fill="#FF6B9D"/>
-                <rect x="14" y="14" width="6" height="18" fill="#FF6B9D"/>
-                <rect x="44" y="14" width="6" height="18" fill="#FF6B9D"/>
-                <!-- 双马尾发团 -->
-                <rect x="10" y="10" width="10" height="10" fill="#FFB6D9"/>
-                <rect x="44" y="10" width="10" height="10" fill="#FFB6D9"/>
-                <!-- 脸 -->
-                <rect x="20" y="16" width="24" height="22" fill="#FFE0CC"/>
-                <!-- 眼睛 -->
-                <rect x="26" y="24" width="4" height="6" fill="#3A2A4A"/>
-                <rect x="34" y="24" width="4" height="6" fill="#3A2A4A"/>
-                <!-- 腮红 -->
-                <rect x="23" y="30" width="4" height="3" fill="#FF9EC4"/>
-                <rect x="37" y="30" width="4" height="3" fill="#FF9EC4"/>
-                <!-- 微笑 -->
-                <rect x="29" y="32" width="6" height="2" fill="#C25B7A"/>
-                <!-- 金色星点（脸颊） -->
-                <rect x="40" y="22" width="4" height="4" fill="#FFD700"/>
-                <!-- 脖颈 -->
-                <rect x="29" y="38" width="6" height="4" fill="#FFD9C2"/>
-                <!-- 裙子 -->
-                <rect x="22" y="42" width="20" height="18" fill="#FFF0F7"/>
-                <rect x="22" y="42" width="20" height="4" fill="#FFB6D9"/>
-                <!-- 裙上金星 -->
-                <rect x="30" y="48" width="5" height="5" fill="#FFD700"/>
-                <!-- 手臂 -->
-                <rect x="16" y="44" width="6" height="10" fill="#FFE0CC"/>
-                <rect x="42" y="44" width="6" height="10" fill="#FFE0CC"/>
-                <!-- 音符 -->
-                <rect x="46" y="46" width="4" height="4" fill="#A8D8FF"/>
-                <rect x="49" y="42" width="2" height="8" fill="#A8D8FF"/>
+                <defs>
+                    <clipPath id="stf-pixel-clip">
+                        <circle cx="32" cy="32" r="30"/>
+                    </clipPath>
+                </defs>
+                <!-- 圆形暗底 -->
+                <circle cx="32" cy="32" r="30" fill="#1A0E1C"/>
+                <!-- 像素头像（被圆形裁切） -->
+                <g clip-path="url(#stf-pixel-clip)">
+                    <!-- 后发 -->
+                    <rect x="14" y="8" width="36" height="28" fill="#FF6B9D"/>
+                    <!-- 左发团 -->
+                    <rect x="8" y="6" width="14" height="14" fill="#FF6B9D"/>
+                    <rect x="10" y="8" width="10" height="10" fill="#FFB6D9"/>
+                    <!-- 右发团 -->
+                    <rect x="42" y="6" width="14" height="14" fill="#FF6B9D"/>
+                    <rect x="44" y="8" width="10" height="10" fill="#FFB6D9"/>
+                    <!-- 脸 -->
+                    <rect x="20" y="16" width="24" height="22" fill="#FFE0CC"/>
+                    <!-- 刘海 -->
+                    <rect x="20" y="16" width="24" height="6" fill="#FF6B9D"/>
+                    <rect x="22" y="18" width="6" height="4" fill="#FFB6D9"/>
+                    <rect x="36" y="18" width="6" height="4" fill="#FFB6D9"/>
+                    <!-- 眼睛 -->
+                    <rect x="25" y="24" width="5" height="6" fill="#6B8AFF"/>
+                    <rect x="34" y="24" width="5" height="6" fill="#6B8AFF"/>
+                    <rect x="26" y="25" width="2" height="2" fill="#FFFFFF"/>
+                    <rect x="35" y="25" width="2" height="2" fill="#FFFFFF"/>
+                    <!-- 腮红 -->
+                    <rect x="22" y="30" width="5" height="3" fill="#FF9EC4"/>
+                    <rect x="37" y="30" width="5" height="3" fill="#FF9EC4"/>
+                    <!-- 嘴 -->
+                    <rect x="29" y="34" width="6" height="2" fill="#C25B7A"/>
+                    <!-- 身体 / 蓝白领子 -->
+                    <rect x="18" y="38" width="28" height="18" fill="#6B8AFF"/>
+                    <rect x="20" y="40" width="24" height="6" fill="#FFFFFF"/>
+                    <rect x="24" y="42" width="16" height="4" fill="#A8D8FF"/>
+                </g>
+                <!-- 圆形描边 -->
+                <circle cx="32" cy="32" r="30" fill="none" stroke="#FF6B9D" stroke-width="2" stroke-opacity="0.55"/>
+                <!-- 右下角通知点 -->
+                <circle cx="54" cy="54" r="7" fill="#FF6B9D"/>
+                <circle cx="54" cy="54" r="4" fill="#FFB6D9"/>
             </svg>
         </div>
         <p class="stf-easter-hint">调频 9072 · 像素信号同步中</p>
+    </div>
+
+    <!-- 开场沉浸提示：仅首次访问延迟出现 -->
+    <div class="stf-welcome" id="stf-welcome" role="dialog" aria-modal="true" aria-labelledby="stf-welcome-title" hidden>
+        <div class="stf-welcome-backdrop" data-welcome-close></div>
+        <div class="stf-welcome-panel glass">
+            <div class="stf-welcome-signal">
+                <span class="stf-welcome-dot" aria-hidden="true"></span>
+                <span>STAR TORCH · 初次接入</span>
+            </div>
+            <h2 id="stf-welcome-title">欢迎来到星炬学院论坛</h2>
+            <p>这里是鸣潮同好的核心聚集地。翻阅角色档案、考据世界观，或在社区中分享你的同人创作。</p>
+            <p class="stf-welcome-hint">小提示：论坛某处隐藏着调频 <b>9072</b> 的入口。</p>
+            <div class="stf-welcome-actions">
+                <button type="button" class="btn-primary magnetic" id="stf-welcome-enter"><span>进入论坛</span></button>
+            </div>
+        </div>
     </div>
 
     <script src="js/forum-data.js"></script>

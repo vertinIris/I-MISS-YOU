@@ -237,30 +237,6 @@
     box-shadow: 0 6px 16px rgba(255,107,157,.3);
 }
 
-/* 悬浮投稿按钮（FAB） */
-.stf-fab {
-    position: fixed;
-    right: 26px;
-    bottom: 26px;
-    z-index: 9000;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 20px;
-    border: none;
-    border-radius: 999px;
-    cursor: pointer;
-    color: #fff;
-    font-size: 15px;
-    font-weight: 600;
-    background: linear-gradient(100deg, var(--aimisi-pink, #FF6B9D), var(--drifter-purple, #B66BFF));
-    box-shadow: 0 14px 34px rgba(255,107,157,.4);
-    transition: transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s;
-}
-.stf-fab svg { width: 22px; height: 22px; }
-.stf-fab:hover { transform: translateY(-4px) scale(1.04); box-shadow: 0 20px 44px rgba(255,107,157,.5); }
-.stf-fab:active { transform: translateY(-1px) scale(.98); }
-
 /* 移动端导航切换 */
 .nav-toggle {
     display: none;
@@ -747,8 +723,8 @@
     .forum-hero-title, .forum-entry, .forum-entry::after, .lore-card,
     .stf-card, .stf-filter-btn, .stf-tag-chip, .stf-page-btn,
     .stf-modal, .stf-modal-panel, .stf-toast,
-    .hero-pill, .archive-float, .character-archive-card, .stf-fab,
+    .hero-pill, .archive-float, .character-archive-card,
     .stf-stat, .stf-sort-btn { animation: none !important; transition: opacity .2s ease !important; }
     .forum-entry:hover, .lore-card:hover, .stf-card:hover,
-    .hero-pill:hover, .archive-float:hover .character-archive-card, .stf-fab:hover { transform: none !important; }
+    .hero-pill:hover, .archive-float:hover .character-archive-card { transform: none !important; }
 }
