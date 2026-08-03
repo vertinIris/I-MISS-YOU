@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>鸣潮同人论坛 · 飞行雪绒</title>
-    <meta name="description" content="鸣潮同人创作聚合站 —— 飞行雪绒沉浸站、角色档案、世界观考据、同人创作与社区讨论。">
-    <meta property="og:title" content="鸣潮同人论坛 · 飞行雪绒">
-    <meta property="og:description" content="星炬学院的创作集合：飞行雪绒沉浸站、角色档案、世界观考据、同人创作与社区讨论。">
+    <title>鸣潮同人论坛 · 星炬学院</title>
+    <meta name="description" content="星炬学院主论坛 —— 鸣潮角色档案、世界观考据、同人创作与社区讨论的独立聚合站。">
+    <meta property="og:title" content="鸣潮同人论坛 · 星炬学院">
+    <meta property="og:description" content="星炬学院主论坛：角色档案、世界观、同人创作与社区讨论。">
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="forum.css">
     <script>
-        /* 沿用主站主题偏好（snowfluff-theme: dark/light/auto），避免跨页跳变 */
+        /* 沿用主站主题偏好，仅做视觉同步；不影响功能独立性 */
         (function () {
             try {
                 var t = localStorage.getItem('snowfluff-theme') || 'dark';
@@ -43,8 +43,8 @@
                 <a href="../index.html" class="nav-link">飞行雪绒</a>
                 <a href="../index.html#character-hub" class="nav-link">角色档案</a>
                 <a href="#worldview" class="nav-link">世界观</a>
-                <a href="../index.html#submit" class="nav-link">创作</a>
-                <a href="../index.html#community" class="nav-link">讨论</a>
+                <a href="#stf-community" class="nav-link">讨论</a>
+                <button type="button" class="nav-link nav-link-btn" data-action="open-submit">投稿</button>
             </div>
         </div>
     </nav>
@@ -59,7 +59,7 @@
             </p>
             <div class="forum-hero-actions">
                 <a href="../index.html" class="btn-primary magnetic"><span>进入飞行雪绒</span></a>
-                <a href="../index.html#submit" class="btn-ghost magnetic"><span>去投稿</span></a>
+                <button type="button" class="btn-ghost magnetic" data-action="open-submit"><span>去投稿</span></button>
             </div>
         </div>
     </header>
@@ -91,24 +91,71 @@
                     <span class="forum-entry-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
                 </a>
 
-                <a class="forum-entry glass" href="../index.html#submit" style="--char: var(--drifter-purple);">
-                    <span class="forum-entry-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
-                    </span>
-                    <span class="forum-entry-title">同人创作</span>
-                    <span class="forum-entry-desc">文字 / 故事 / 诗歌 / 插画 / 音乐 —— 投稿你的鸣潮同人，让世界更丰富。</span>
-                    <span class="forum-entry-cta">开始创作 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
-                </a>
-
-                <a class="forum-entry glass" href="../index.html#community" style="--char: var(--sigrica-green);">
+                <a class="forum-entry glass" href="#stf-community" style="--char: var(--drifter-purple);">
                     <span class="forum-entry-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     </span>
                     <span class="forum-entry-title">社区讨论</span>
-                    <span class="forum-entry-desc">来自星炬学院的创作集合与话题讨论 —— 收藏、点赞、评论，与同好相遇。</span>
+                    <span class="forum-entry-desc">来自星炬学院的创作集合与话题讨论 —— 点赞、评论、收藏，与同好相遇。</span>
                     <span class="forum-entry-cta">进入社区 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
                 </a>
 
+                <a class="forum-entry glass" href="#worldview" style="--char: var(--sigrica-green);">
+                    <span class="forum-entry-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    </span>
+                    <span class="forum-entry-title">世界观</span>
+                    <span class="forum-entry-desc">星炬学院、残星会、拉海洛、深空联合 —— 考据鸣潮世界的每一个角落。</span>
+                    <span class="forum-entry-cta">考据世界 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="forum-section" id="stf-community">
+        <div class="forum-section-inner">
+            <div class="section-header reveal">
+                <span class="section-label">COMMUNITY</span>
+                <h2 class="section-title">星炬学院社区</h2>
+                <p class="section-desc">鸣潮角色与世界观的同人创作 · 共 <span id="stf-community-count">0</span> 份作品</p>
+            </div>
+
+            <div class="stf-toolbar">
+                <div class="stf-filters">
+                    <button class="stf-filter-btn active" data-filter="all">全部</button>
+                    <button class="stf-filter-btn" data-filter="text">文字</button>
+                    <button class="stf-filter-btn" data-filter="story">故事</button>
+                    <button class="stf-filter-btn" data-filter="poem">诗歌</button>
+                    <button class="stf-filter-btn" data-filter="art">插画</button>
+                    <button class="stf-filter-btn" data-filter="music">音乐</button>
+                </div>
+                <button type="button" class="btn-primary magnetic" data-action="open-submit"><span>投稿</span></button>
+            </div>
+
+            <div class="stf-tag-bar">
+                <span class="tag-category-label">角色</span>
+                <button class="stf-tag-chip" data-tag="爱弥斯">爱弥斯</button>
+                <button class="stf-tag-chip" data-tag="达妮娅">达妮娅</button>
+                <button class="stf-tag-chip" data-tag="西格莉卡">西格莉卡</button>
+                <button class="stf-tag-chip" data-tag="琳奈">琳奈</button>
+                <button class="stf-tag-chip" data-tag="莫宁">莫宁</button>
+                <button class="stf-tag-chip" data-tag="洛瑟菈">洛瑟菈</button>
+                <button class="stf-tag-chip" data-tag="漂泊者">漂泊者</button>
+            </div>
+
+            <div class="stf-community-grid" id="stf-community-grid">
+                <!-- JS 渲染 -->
+            </div>
+
+            <nav class="stf-pagination" id="stf-pagination" hidden aria-label="社区分页"></nav>
+
+            <div class="stf-community-empty" id="stf-community-empty">
+                <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M32 8 L40 24 L56 26 L44 38 L48 54 L32 46 L16 54 L20 38 L8 26 L24 24 Z"/>
+                </svg>
+                <p>还没有人投稿呢，来成为第一个创作者吧！</p>
+                <button type="button" class="btn-ghost magnetic" data-action="open-submit"><span>去投稿</span></button>
             </div>
         </div>
     </section>
@@ -148,8 +195,69 @@
 
     <p class="forum-foot-note">
         飞行雪绒是《鸣潮》角色爱弥斯的同人创作账号，本论坛为粉丝向非官方二创聚合站。<br>
-        回到 <a href="../index.html" style="color: var(--aimisi-pink);">飞行雪绒沉浸站</a> · Made with 星辉与微光
+        飞行雪绒沉浸站：<a href="../index.html">I-MISS-YOU</a> · Made with 星辉与微光
     </p>
 
+    <!-- 投稿弹窗 -->
+    <div class="stf-modal" id="stf-submit-modal" role="dialog" aria-modal="true" aria-label="向星炬学院论坛投稿" hidden>
+        <div class="stf-modal-backdrop" data-close></div>
+        <div class="stf-modal-panel glass">
+            <div class="stf-modal-header">
+                <h3>向星炬学院论坛投稿</h3>
+                <button type="button" class="stf-modal-close" data-close aria-label="关闭">×</button>
+            </div>
+            <form class="stf-submit-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="stf-submit-nickname">昵称</label>
+                        <input type="text" class="form-input" id="stf-submit-nickname" placeholder="你的名字" maxlength="20" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="stf-submit-type">类型</label>
+                        <select class="form-input form-select" id="stf-submit-type">
+                            <option value="text">文字</option>
+                            <option value="story">故事</option>
+                            <option value="poem">诗歌</option>
+                            <option value="art">插画描述</option>
+                            <option value="music">音乐感悟</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="stf-submit-title">标题</label>
+                    <input type="text" class="form-input" id="stf-submit-title" placeholder="给作品起个名字" maxlength="100" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">标签 <span class="form-hint">（可选，最多5个）</span></label>
+                    <div class="submission-tag-selector" id="stf-submit-tag-selector">
+                        <span class="tag-category-label">角色</span>
+                        <button type="button" class="tag-chip select-tag" data-tag="爱弥斯">爱弥斯</button>
+                        <button type="button" class="tag-chip select-tag" data-tag="达妮娅">达妮娅</button>
+                        <button type="button" class="tag-chip select-tag" data-tag="西格莉卡">西格莉卡</button>
+                        <button type="button" class="tag-chip select-tag" data-tag="琳奈">琳奈</button>
+                        <button type="button" class="tag-chip select-tag" data-tag="莫宁">莫宁</button>
+                        <button type="button" class="tag-chip select-tag" data-tag="洛瑟菈">洛瑟菈</button>
+                        <button type="button" class="tag-chip select-tag" data-tag="漂泊者">漂泊者</button>
+                        <span class="tag-category-label">类型</span>
+                        <button type="button" class="tag-chip select-tag" data-tag="日常">日常</button>
+                        <button type="button" class="tag-chip select-tag" data-tag="冒险">冒险</button>
+                        <button type="button" class="tag-chip select-tag" data-tag="情感">情感</button>
+                        <button type="button" class="tag-chip select-tag" data-tag="考据">考据</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="stf-submit-content">内容</label>
+                    <textarea class="form-input form-textarea" id="stf-submit-content" placeholder="在这里写下你的创作……" rows="6" maxlength="2000" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary magnetic"><span>提交作品</span></button>
+                    <button type="button" class="btn-ghost magnetic" data-close><span>取消</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/forum-data.js"></script>
+    <script src="js/forum.js"></script>
 </body>
 </html>

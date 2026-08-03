@@ -1,0 +1,132 @@
+/**
+ * 星炬学院主论坛 · 独立数据层
+ * 与飞行雪绒站（fxre_*）完全隔离，键前缀 stf_*
+ */
+(function () {
+    'use strict';
+
+    var SEED_VERSION = 'v1.0';
+
+    var SEED_SUBMISSIONS = [
+        {
+            id: 'stf_1', name: '达妮娅', type: 'poem', title: '泡泡',
+            realm: 'startorch', tags: ['达妮娅'],
+            content: '我吹了一个泡泡\n它是圆的，透明的，漂亮的\n光线穿过它的时候\n会变成彩虹\n\n它飘啊飘\n碰到墙壁也不破\n因为我的泡泡\n比墙壁还硬\n\n可是你伸出手的时候\n它就碎了\n\n不是因为你的手太重\n是因为泡泡本来就\n一碰就碎\n\n就像我',
+            timeStr: '2026-07-05 14:20', likes: 23, liked: false, color: '#FFB6D9'
+        },
+        {
+            id: 'stf_2', name: '西格莉卡', type: 'story', title: '第三个符文',
+            realm: 'startorch', tags: ['西格莉卡'],
+            content: '罗伊冰原的夜晚很安静。安静到能听见自己血液流动的声音。\n\n我蹲在雪地上，用匕首在空气中画第三个符文。刀尖很稳——我练了很多年，手不会抖。笔画也对——我背过所有符文的形态，一笔不差。\n\n但它没有亮。\n\n后来我想了很久，终于明白：那个符文的意思是「守护」。不是防御的守护，是那种——你明知道守护的东西终将失去，却依然选择站在它面前的守护。\n\n那时候的我，还没有失去过什么。所以符文不认我。\n\n现在，我好像快要失去什么了。可符文依然没有亮。\n\n也许是因为，我还不敢承认。',
+            timeStr: '2026-07-03 23:15', likes: 31, liked: false, color: '#7FD99E'
+        },
+        {
+            id: 'stf_4', name: '达妮娅', type: 'story', title: '最后一个生日',
+            realm: 'startorch', tags: ['达妮娅', '西格莉卡'],
+            content: '今天我过生日。\n\n其实不是真的。但漂泊者没有拆穿我，我就当是真的了。\n\n我带她去了天文台。那里的穹顶可以看到整片天空。我想记住星星的位置，这样以后就算看不见了，也能在脑子里画出来。\n\n我去了训练场。站在中间哼了一首歌。那首歌是我自己编的，没有歌词，只有旋律。以前在西格莉卡面前哼过一次，她说好听。我说是随便哼的，其实练了很多遍。\n\n我去了花园。那棵老树下面，是我和西格莉卡第一次一起做课题的地方。树皮比以前粗糙了。我也比以前粗糙了。\n\n我去了图书馆露台。夕阳被云遮住了。我假装没关系，说「下次再来看」。其实我知道没有下次了。\n\n漂泊者一直在旁边看着，什么也没说。她说「生日快乐」的时候，声音很轻。像是怕说重了，这个生日就会碎掉。\n\n谢谢你。今天。\n\n这是我过得最好的一个生日。虽然它是假的。但开心是真的。',
+            timeStr: '2026-06-30 21:00', likes: 42, liked: false, color: '#FFB6D9'
+        },
+        {
+            id: 'stf_5', name: '西格莉卡', type: 'poem', title: '写给娅娅的信',
+            realm: 'startorch', tags: ['西格莉卡', '达妮娅'],
+            content: '娅娅：\n\n这封信我写了很多遍，但一次也没有寄出去。\n\n因为每次写到一半，我就会发现：我写的不是信，是遗书。而你还活着。你还站在我面前，笑着说「没事呀」。\n\n所以我把信收起来，告诉自己：等她好了，我再寄。等她好了，我当面念给她听。\n\n可是娅娅，你什么时候才能好呢？\n\n你上次来花园看我的时候，手在发抖。你以为我没看到，但我看到了。你笑的时候，嘴角是歪的——不是平时那种可爱的歪，是在用力的歪。好像不用力，笑容就会掉下来。\n\n我想抓住你的手。但我的手也在抖。\n\n天赋告诉我你在消失。可我宁愿相信你说的「没事」。\n\n因为如果你真的在消失，那我这些年来学的所有符文、解的所有谜题、拼了命也要成为的昭日者——有什么用呢？\n\n我连一个人都守护不了。\n\n第三个符文，还是没有亮。\n\n——你的西西',
+            timeStr: '2026-07-02 01:30', likes: 38, liked: false, color: '#7FD99E'
+        },
+        {
+            id: 'stf_7', name: '达妮娅×西格莉卡', type: 'art', title: '花园里的两个影子',
+            realm: 'startorch', tags: ['达妮娅', '西格莉卡'],
+            content: '【画作构思】\n\n画面中央是一座花园。阳光从右侧斜照进来，将花圃切成明暗两半。\n\n左侧阴影中，一个女孩背对画面坐着。白发渐变成浅紫色，长发散落在草地上。她手里抱着一只小熊玩偶。她的周围飘着几个透明的泡泡，折射出淡淡的虹光。\n\n右侧阳光中，另一个女孩面朝阴影站着。她穿着星炬学院的制服，花型头饰在阳光下几乎透明。她伸出手，像是要触碰阴影中的人，但手指停在半空——差一点点，就能碰到了。\n\n两个人之间，有一道光与影的分界线。\n\n画的标题是：「差一点点」。\n\n——有时候，差一点点，就是一辈子。',
+            timeStr: '2026-07-04 16:45', likes: 35, liked: false, color: '#D4A0FF'
+        },
+        {
+            id: 'stf_8', name: '莫宁', type: 'text', title: '星枢演构课笔记',
+            realm: 'startorch', tags: ['莫宁', '星炬学院'],
+            content: '今日星枢演构课记录：\n\n1. 共鸣模态的稳定性与隧者情感波动呈负相关。样本数据显示，当个体处于「被需要」状态时，模态输出功率提升约 12%。\n2. 深空联合提供的「换日仪式」资料中，关于拉海洛的部分存在 17 处关键数据缺失。建议学生不要据此做结课论文。\n3. 琳奈同学的预实验报告写得不错，但光学迷彩部分的功耗计算少了一个数量级。已批注。\n\n课后有学生问我：「教授，您相信电子幽灵吗？」\n\n我回答：「我相信数据。而当数据无法解释某个现象时，我会先检查仪器，再检查自己。」\n\n但我没有说的是——\n\n有些仪器，是检查不了人心的。',
+            timeStr: '2026-07-06 11:20', likes: 18, liked: false, color: '#FF6B5B'
+        },
+        {
+            id: 'stf_9', name: '洛瑟菈', type: 'story', title: '校长办公室的午后',
+            realm: 'startorch', tags: ['洛瑟菈', '星炬学院'],
+            content: '下午三点十七分，阳光从百叶窗的缝隙里照进来，落在办公桌上那盆干掉的薄荷上。\n\n我给它浇了一点水。\n\n凯尔梅尔以前总说，养植物和养学生一样——不能浇太多，也不能太少。要让它自己学会往下扎根。\n\n我有时会在深夜打开学生档案，看看那些已经不在的人。不是怀念，是确认。确认自己曾经记得他们，确认自己没有因为他们的离开而变得麻木。\n\n今天翻到的是一张 smiling face。照片里的女孩扎着歪马尾，眼睛很亮，像是随时会说出什么让人接不住的话。\n\n我把档案合上，起身拉开窗帘。\n\n星炬学院的钟楼还在。学生们还在走廊上跑。\n\n这就够了。\n\n只要学院还在，他们就还在某个地方。',
+            timeStr: '2026-07-02 16:00', likes: 26, liked: false, color: '#E8C56A'
+        }
+    ];
+
+    var SEED_COMMENTS = {
+        'stf_2': [
+            { name: '达妮娅', text: '西西，符文不亮也没关系。你亮着就够了。', timeStr: '7月4日 00:10', color: '#FFB6D9' }
+        ],
+        'stf_5': [
+            { name: '达妮娅', text: '我收下了。等我们都好了，你念给我听。', timeStr: '7月2日 08:00', color: '#FFB6D9' }
+        ],
+        'stf_8': [
+            { name: '琳奈', text: '教授，那个数量级我已经改好了！下次课交。', timeStr: '7月6日 14:30', color: '#B98CFF' }
+        ]
+    };
+
+    function safeGet(key) {
+        try { return localStorage.getItem(key); } catch (e) { return null; }
+    }
+
+    function safeSet(key, value) {
+        try { localStorage.setItem(key, value); return true; } catch (e) { return false; }
+    }
+
+    function ensureSeedData() {
+        var key = 'stf_seed_version';
+        if (safeGet(key) === SEED_VERSION) return;
+
+        for (var targetId in SEED_COMMENTS) {
+            if (!safeGet('stf_comments_' + targetId)) {
+                safeSet('stf_comments_' + targetId, JSON.stringify(SEED_COMMENTS[targetId]));
+            }
+        }
+
+        if (!safeGet('stf_submissions') && SEED_SUBMISSIONS) {
+            safeSet('stf_submissions', JSON.stringify(SEED_SUBMISSIONS));
+        }
+
+        safeSet(key, SEED_VERSION);
+    }
+
+    function getSubmissions() {
+        try {
+            var data = safeGet('stf_submissions');
+            var all = data ? JSON.parse(data) : [];
+            return all.filter(function (s) { return s.realm === 'startorch'; });
+        } catch (e) { return []; }
+    }
+
+    function saveSubmissions(list) {
+        safeSet('stf_submissions', JSON.stringify(list));
+    }
+
+    function getComments(targetId) {
+        try {
+            var data = safeGet('stf_comments_' + targetId);
+            return data ? JSON.parse(data) : [];
+        } catch (e) { return []; }
+    }
+
+    function saveComments(targetId, list) {
+        safeSet('stf_comments_' + targetId, JSON.stringify(list));
+    }
+
+    function getNickname() {
+        return safeGet('stf_nickname') || '';
+    }
+
+    function setNickname(name) {
+        safeSet('stf_nickname', name);
+    }
+
+    window.StarTorchData = {
+        ensureSeedData: ensureSeedData,
+        getSubmissions: getSubmissions,
+        saveSubmissions: saveSubmissions,
+        getComments: getComments,
+        saveComments: saveComments,
+        getNickname: getNickname,
+        setNickname: setNickname
+    };
+})();

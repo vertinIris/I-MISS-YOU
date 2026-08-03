@@ -31,6 +31,27 @@
     var keyBuffer = '';
     var logoTimer = null, logoClicks = 0;
 
+    // 爱弥斯剪影 SVG（入场特效）
+    var AIMISI_SVG =
+        '<svg class="sp-entrance-silhouette" viewBox="0 0 120 160" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+            '<defs>' +
+                '<linearGradient id="aimisiSil" x1="0" y1="0" x2="1" y2="1">' +
+                    '<stop offset="0%" stop-color="#FF6B9D"/>' +
+                    '<stop offset="55%" stop-color="#FFB6D9"/>' +
+                    '<stop offset="100%" stop-color="#A8D8FF"/>' +
+                '</linearGradient>' +
+            '</defs>' +
+            '<path fill="url(#aimisiSil)" opacity="0.95" d="M60 18c-9 0-16 6-18 14-1 4-1 8 0 12-10 3-18 12-20 22-1 5 0 10 2 15-6 4-10 11-10 19 0 12 9 22 21 24 4 8 12 14 21 16 2 0 4 0 6 0h4c2 0 4 0 6 0 9-2 17-8 21-16 12-2 21-12 21-24 0-8-4-15-10-19 2-5 3-10 2-15-2-10-10-19-20-22 1-4 1-8 0-12-2-8-9-14-18-14z"/>' +
+            '<circle cx="46" cy="64" r="4" fill="#0A0A12"/>' +
+            '<circle cx="74" cy="64" r="4" fill="#0A0A12"/>' +
+            '<path d="M52 74c3 2 13 2 16 0" stroke="#0A0A12" stroke-width="2" stroke-linecap="round"/>' +
+            '<path d="M60 28c-8 0-14 4-16 10 6-3 16-3 22 0 0 0-2-10-6-10z" fill="#FFFFFF" opacity="0.35"/>' +
+            '<circle cx="20" cy="46" r="3" fill="#FFFFFF" opacity="0.6"/>' +
+            '<circle cx="100" cy="46" r="2.5" fill="#FFFFFF" opacity="0.5"/>' +
+            '<circle cx="34" cy="30" r="2" fill="#FFFFFF" opacity="0.4"/>' +
+            '<circle cx="86" cy="32" r="1.8" fill="#FFFFFF" opacity="0.4"/>' +
+        '</svg>';
+
     function ready(fn) {
         if (document.readyState !== 'loading') fn();
         else document.addEventListener('DOMContentLoaded', fn);
@@ -73,6 +94,12 @@
 
         portal = root.querySelector('#secret-portal');
 
+        // 入口标题旁标注待完善
+        var title = portal.querySelector('#sp-title');
+        if (title && !title.querySelector('.sp-wip-badge')) {
+            title.innerHTML = title.textContent + '<span class="sp-wip-badge">待完善</span>';
+        }
+
         root.querySelectorAll('[data-close]').forEach(function (el) {
             el.addEventListener('click', closePortal);
         });
@@ -90,15 +117,67 @@
         built = true;
     }
 
-    function openPortal() {
+    function createEntranceOverlay() {
+        var overlay = document.createElement('div');
+        overlay.className = 'sp-entrance';
+        overlay.id = 'sp-entrance';
+        overlay.setAttribute('aria-hidden', 'true');
+
+        var burst = document.createElement('div');
+        burst.className = 'sp-entrance-burst';
+        overlay.appendChild(burst);
+
+        var ring = document.createElement('div');
+        ring.className = 'sp-entrance-ring';
+        overlay.appendChild(ring);
+
+        // 粒子爆发
+        for (var i = 0; i < 24; i++) {
+            var p = document.createElement('span');
+            p.className = 'sp-entrance-particle';
+            var angle = (Math.PI * 2 * i) / 24;
+            var dist = 90 + Math.random() * 110;
+            var tx = Math.cos(angle) * dist + 'px';
+            var ty = Math.sin(angle) * dist + 'px';
+            var size = 4 + Math.random() * 6;
+            p.style.cssText =
+                'left:50%;top:50%;width:' + size + 'px;height:' + size + 'px;' +
+                'margin-left:' + (-size / 2) + 'px;margin-top:' + (-size / 2) + 'px;' +
+                '--tx:' + tx + ';--ty:' + ty + ';animation-delay:' + (Math.random() * 0.15).toFixed(3) + 's;';
+            var colors = ['#FF6B9D', '#FFB6D9', '#A8D8FF', '#B66BFF', '#FFFFFF'];
+            p.style.background = colors[Math.floor(Math.random() * colors.length)];
+            overlay.appendChild(p);
+        }
+
+        overlay.insertAdjacentHTML('beforeend', AIMISI_SVG);
+        document.body.appendChild(overlay);
+        return overlay;
+    }
+
+    function playEntranceThenOpen() {
         if (!built) buildPortal();
         if (open) return;
-        portal.hidden = false;
-        void portal.offsetWidth; // 强制回流，确保过渡生效
-        requestAnimationFrame(function () { portal.classList.add('is-open'); });
-        open = true;
-        var closeEl = portal.querySelector('.sp-close');
-        if (closeEl) closeEl.focus();
+        var overlay = document.getElementById('sp-entrance') || createEntranceOverlay();
+        overlay.classList.remove('is-active');
+        void overlay.offsetWidth;
+        overlay.classList.add('is-active');
+
+        // 同步播放星光琶音，营造入场仪式感
+        playChime();
+
+        window.setTimeout(function () {
+            overlay.classList.remove('is-active');
+            portal.hidden = false;
+            void portal.offsetWidth;
+            requestAnimationFrame(function () { portal.classList.add('is-open'); });
+            open = true;
+            var closeEl = portal.querySelector('.sp-close');
+            if (closeEl) closeEl.focus();
+        }, 1100);
+    }
+
+    function openPortal() {
+        playEntranceThenOpen();
     }
 
     function closePortal() {
@@ -185,5 +264,18 @@
         document.addEventListener('keydown', onKey);
         var logo = document.querySelector('.nav-logo');
         if (logo) logo.addEventListener('click', onLogoClick);
+
+        // 在导航 logo 旁插入彩蛋入口标识，明确入口位置与待完善状态
+        var navContainer = document.querySelector('.nav-container');
+        if (navContainer && !document.getElementById('egg-entry-marker')) {
+            var marker = document.createElement('span');
+            marker.id = 'egg-entry-marker';
+            marker.className = 'egg-entry-marker';
+            marker.setAttribute('role', 'img');
+            marker.setAttribute('aria-label', '彩蛋入口：输入 9072 或连点雪花 logo 5 次（待完善）');
+            marker.setAttribute('tabindex', '0');
+            marker.title = '彩蛋入口：输入 9072 或连点雪花 logo 5 次（待完善）';
+            navContainer.insertBefore(marker, navContainer.children[1] || null);
+        }
     });
 })();
