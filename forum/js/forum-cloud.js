@@ -95,12 +95,24 @@
     }
 
     /* ---------- 会话（透明匿名登录） ---------- */
+    function isAnonUser(user) {
+        if (!user) return true;
+        if (user.is_anonymous === true) return true;
+        if (user.app_metadata && user.app_metadata.provider === 'anonymous') return true;
+        if (!user.email) return true;
+        return false;
+    }
+
     function ensureSession() {
         if (sessionPromise) return sessionPromise;
         sessionPromise = (async function () {
             try {
                 var res = await client.auth.getSession();
-                if (res && res.data && res.data.session) return res.data.session;
+                if (res && res.data && res.data.session) {
+                    var sessUser = res.data.session.user;
+                    /* 显式退出后若仍残留匿名会话，允许继续用于 RLS，但不强迫通行证登录态 */
+                    return res.data.session;
+                }
 
                 /* 已有真实通行证镜像时，勿抢先匿名登录覆盖共享会话（竞态窗口） */
                 var authUser = (window.StarTorchAuth && window.StarTorchAuth.getUser)
@@ -112,6 +124,7 @@
                     return null;
                 }
 
+                /* 显式退出后仍可静默匿名拿 uid 发帖，但 Auth UI 不会把它当登录（见 applyUser） */
                 var anon = await client.auth.signInAnonymously();
                 if (anon && anon.data && anon.data.user) {
                     try {

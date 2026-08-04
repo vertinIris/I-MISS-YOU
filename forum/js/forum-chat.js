@@ -34,10 +34,11 @@
     var lastSentAt = 0;
     var sentIds = {};                 // 去重：已渲染过的消息 id（含系统去重 key）
     var pendingByTemp = {};            // tempId -> { content, name, user_id, time } 乐观消息待合并
-    var participants = {};             // name -> 最近活跃时间戳（在线人数统计）
+    var participants = {};             // stableKey -> { t, name }（按用户/终端 id，不按显示名）
     var typingPeers = {};              // name -> 时间戳（正在输入指示）
     var bc = null;                     // BroadcastChannel 实例
     var PENDING_MATCH_MS = 120000;     // 乐观消息与服务端回显的匹配窗口
+    var tabId = null;
 
     function $(id) { return document.getElementById(id); }
 
@@ -83,17 +84,59 @@
         })[state] || '';
     }
 
-    function touchParticipant(name) {
-        if (name) participants[name] = Date.now();
+    function getTabId() {
+        if (tabId) return tabId;
+        try {
+            tabId = sessionStorage.getItem('stf_chat_tab') || '';
+            if (!tabId) {
+                tabId = 't_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+                sessionStorage.setItem('stf_chat_tab', tabId);
+            }
+        } catch (e) {
+            tabId = 't_' + Date.now().toString(36);
+        }
+        return tabId;
+    }
+
+    function participantKey(optUserId) {
+        if (optUserId) return 'u:' + String(optUserId);
+        var user = currentUser();
+        if (user && user.key) return 'u:' + String(user.key);
+        return 'tab:' + getTabId();
+    }
+
+    function touchParticipant(key, nameHint) {
+        /* 仅接受稳定 key（u: / tab:），禁止用显示名开槽，避免改名刷人数 */
+        if (!key) return;
+        var k = String(key);
+        if (k.indexOf('u:') !== 0 && k.indexOf('tab:') !== 0) return;
+        participants[k] = {
+            t: Date.now(),
+            name: nameHint || (participants[k] && participants[k].name) || ''
+        };
+    }
+
+    function touchFromMessage(m) {
+        if (!m) return;
+        if (m.user_id) {
+            touchParticipant('u:' + String(m.user_id), m.name);
+            return;
+        }
+        if (m.isSelf) touchParticipant(participantKey(), m.name);
     }
 
     function refreshPresence() {
         if (!els.online) return;
         var now = Date.now();
-        var count = 1; // 至少是自己
-        Object.keys(participants).forEach(function (n) {
-            if (now - (participants[n] || 0) < PRESENCE_WINDOW) count++;
+        var selfKey = participantKey();
+        touchParticipant(selfKey, getSenderName());
+        var count = 0;
+        Object.keys(participants).forEach(function (k) {
+            var row = participants[k];
+            var ts = row && typeof row === 'object' ? row.t : row;
+            if (now - (ts || 0) < PRESENCE_WINDOW) count++;
         });
+        if (count < 1) count = 1;
         if (cloudChatReady()) {
             els.online.textContent = count + ' 人在线 · 星域公共频道';
         } else if (chatTableMissing) {
@@ -262,7 +305,7 @@
         sentIds[m.id] = true;
         messages.push(m);
         if (messages.length > HISTORY_LIMIT) messages = messages.slice(messages.length - HISTORY_LIMIT);
-        touchParticipant(m.name);
+        touchFromMessage(m);
         renderMessages();
         if (!silent && window.StarTorchForum && window.StarTorchForum.toast) {
             window.StarTorchForum.toast(m.name + '：' + m.content.slice(0, 30) + (m.content.length > 30 ? '…' : ''));
@@ -369,7 +412,11 @@
                         time: r.time, user_id: r.user_id,
                         isSelf: isMinePayload(r)
                     });
-                    touchParticipant(r.name);
+                    touchFromMessage({
+                        user_id: r.user_id,
+                        name: r.name,
+                        isSelf: isMinePayload(r)
+                    });
                 });
                 renderMessages();
             }
@@ -515,8 +562,8 @@
             }, document.hidden);
         } else if (data.t === 'typing' && data.name) {
             if (data.name !== getSenderName()) markPeerTyping(data.name);
-        } else if (data.t === 'hello' && data.name) {
-            touchParticipant(data.name);
+        } else if (data.t === 'hello' && (data.key || data.name)) {
+            if (data.key) touchParticipant(data.key, data.name);
             refreshPresence();
         }
     }
@@ -587,7 +634,25 @@
     function setChatExpanded(on) {
         if (!els.card) return;
         var bd = ensureBackdrop();
-        els.card.classList.toggle('is-chat-expanded', !!on);
+        if (on) {
+            if (!els.card._stfHomeParent) {
+                els.card._stfHomeParent = els.card.parentNode;
+                els.card._stfHomeNext = els.card.nextSibling;
+            }
+            /* 挂到 body，脱离侧栏/父级 filter·containment，避免放大后文字发糊 */
+            document.body.appendChild(els.card);
+            els.card.classList.add('is-chat-expanded');
+        } else {
+            els.card.classList.remove('is-chat-expanded');
+            els.card.style.removeProperty('transform');
+            if (els.card._stfHomeParent) {
+                if (els.card._stfHomeNext && els.card._stfHomeNext.parentNode === els.card._stfHomeParent) {
+                    els.card._stfHomeParent.insertBefore(els.card, els.card._stfHomeNext);
+                } else {
+                    els.card._stfHomeParent.appendChild(els.card);
+                }
+            }
+        }
         document.body.classList.toggle('stf-chat-expanded-open', !!on);
         bd.hidden = !on;
         if (els.expand) {
@@ -595,7 +660,6 @@
             els.expand.textContent = on ? '收起' : '放大';
             els.expand.title = on ? '收起回侧栏' : '放大聊天面板';
         }
-        /* 放大时确保侧栏面板可见，便于同一 DOM 展示 */
         var panel = $('stf-chat-panel');
         var entry = $('stf-chat-entry');
         if (on && panel) {
@@ -616,7 +680,7 @@
             bc = new BroadcastChannel('stf-chat-room');
             bc.onmessage = onBroadcastMessage;
             // 宣告在线，让其他标签页知道有同伴
-            try { bc.postMessage({ t: 'hello', name: getSenderName() }); } catch (e) {}
+            try { bc.postMessage({ t: 'hello', key: participantKey(), name: getSenderName() }); } catch (e) {}
         } catch (e) { bc = null; }
     }
 
@@ -635,12 +699,12 @@
 
         bindEvents();
         setupBroadcast();
-        touchParticipant(getSenderName());
+        touchParticipant(participantKey(), getSenderName());
 
-        /* 登录态变化时刷新在线署名提示（不改历史消息） */
+        /* 登录态变化时刷新在线署名提示（不改历史消息）；改名不新增人数 */
         if (window.StarTorchAuth && window.StarTorchAuth.onChange) {
             window.StarTorchAuth.onChange(function () {
-                touchParticipant(getSenderName());
+                touchParticipant(participantKey(), getSenderName());
                 refreshPresence();
             });
         }

@@ -236,7 +236,25 @@ window.StarTorchAuth = (function () {
      * 优先级：有效 profiles.nickname > 有效 user_metadata > 邮箱前缀 > 兜底文案
      * （显式跳过「匿名信号源」等占位默认值，避免主站真实登录后论坛仍显示匿名）
      */
+    /** Supabase 匿名会话：仅供 RLS 写库，不得当作通行证「已登录」 */
+    function isAnonymousAuthUser(user) {
+        if (!user) return true;
+        if (user.is_anonymous === true) return true;
+        if (user.app_metadata && user.app_metadata.provider === 'anonymous') return true;
+        /* 无邮箱且非已识别用户 → 匿名；昵称通行证带合成邮箱，不算匿名 */
+        if (!user.email) return true;
+        return false;
+    }
+
     function applyUser(user, profile) {
+        if (isAnonymousAuthUser(user)) {
+            /* 退出后 ensureSession 可能静默匿名登录——UI 必须保持未登录 */
+            clearMirror();
+            current = null;
+            emit();
+            return null;
+        }
+
         var meta = (user && user.user_metadata) || {};
         var email = (user && user.email) ? user.email : null;
         var synthetic = isSyntheticEmail(email);
@@ -249,6 +267,8 @@ window.StarTorchAuth = (function () {
         var joined = (profile && profile.created_at) ? Date.parse(profile.created_at)
             : (user && user.created_at) ? Date.parse(user.created_at)
             : (current ? current.joined : Date.now());
+
+        try { localStorage.removeItem('stf_explicit_logout'); } catch (e) { /* ignore */ }
 
         var v = publicView(user.id, name, color, joined,
             current ? current.posts : 0, email, authMode, role);
@@ -291,12 +311,20 @@ window.StarTorchAuth = (function () {
         if (!client.auth || !client.auth.getSession) return;
         client.auth.getSession().then(function (res) {
             if (res && res.data && res.data.session && res.data.session.user) {
-                hydrate(client, res.data.session.user);
-            } else if (current && current.email && !isSyntheticEmail(current.email)) {
-                /* 有邮箱镜像但云端无会话：清镜像，避免伪登录态 */
-                clearMirror();
-                current = null;
-                emit();
+                if (isAnonymousAuthUser(res.data.session.user)) {
+                    clearMirror();
+                    current = null;
+                    emit();
+                } else {
+                    hydrate(client, res.data.session.user);
+                }
+            } else {
+                /* 云端无真实会话：清镜像，避免伪登录态 */
+                if (current) {
+                    clearMirror();
+                    current = null;
+                    emit();
+                }
             }
         }).catch(function () { /* 无会话则保持本地镜像 */ });
 
@@ -305,7 +333,15 @@ window.StarTorchAuth = (function () {
             refreshFromCloud._bound = true;
             client.auth.onAuthStateChange(function (event, session) {
                 if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
-                    if (session && session.user) hydrate(client, session.user);
+                    if (session && session.user) {
+                        if (isAnonymousAuthUser(session.user)) {
+                            clearMirror();
+                            current = null;
+                            emit();
+                        } else {
+                            hydrate(client, session.user);
+                        }
+                    }
                 } else if (event === 'SIGNED_OUT') {
                     clearMirror();
                     current = null;
@@ -394,13 +430,18 @@ window.StarTorchAuth = (function () {
     }
 
     function logout() {
-        var client = window.supabaseClient;
-        if (client && client.auth && client.auth.signOut) {
-            try { client.auth.signOut(); } catch (e) { /* ignore */ }
-        }
+        try { localStorage.setItem('stf_explicit_logout', '1'); } catch (e) { /* ignore */ }
         clearMirror();
         current = null;
         emit();
+        var client = window.supabaseClient;
+        if (!client || !client.auth || !client.auth.signOut) {
+            return Promise.resolve();
+        }
+        /* global：清掉与主站共享的持久会话，避免「退出后又自动回来」 */
+        return client.auth.signOut({ scope: 'global' }).catch(function () {
+            return client.auth.signOut({ scope: 'local' });
+        }).catch(function () { /* ignore */ });
     }
 
     /**
@@ -740,9 +781,10 @@ window.StarTorchAuth = (function () {
         var logoutBtn = $('stf-logout-btn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', function () {
-                logout();
-                closePanel();
-                toast('已退出登录，你仍可用匿名身份发帖');
+                Promise.resolve(logout()).then(function () {
+                    closePanel();
+                    toast('已退出登录。发帖仍可用访客会话，通行证需重新登录');
+                });
             });
         }
 
