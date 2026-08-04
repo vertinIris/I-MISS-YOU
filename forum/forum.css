@@ -1286,6 +1286,53 @@ html.archive-orbit-active .archive-album-shelf { display: none; }
 .stf-account-card-text b { font-size: 17px; font-family: "Noto Serif SC", serif; color: #fff; }
 .stf-account-card-text span { font-size: 12.5px; color: rgba(240,244,255,.6); }
 
+/* 通行证：显示名表单与保存按钮间距（避免输入框与按钮视觉重叠） */
+#stf-account-user {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+#stf-account-user[hidden] { display: none !important; }
+.stf-nick-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 0;
+}
+.stf-nick-form .form-group {
+    margin: 0;
+    gap: 8px;
+}
+.stf-nick-form .form-input {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+.stf-nick-form .stf-auth-error {
+    margin: 0;
+}
+.stf-nick-form .stf-auth-error[hidden] {
+    display: none !important;
+}
+.stf-nick-form .form-actions {
+    margin: 0;
+    padding-top: 4px;
+}
+.stf-nick-form .btn-primary {
+    position: relative;
+    z-index: 0;
+    margin: 0;
+    align-self: flex-start;
+}
+#stf-account-user > .stf-auth-note {
+    margin: 0;
+}
+#stf-account-user > .form-actions {
+    margin: 0;
+}
+
 /* 社区搜索 */
 .stf-search {
     display: inline-flex; align-items: center; gap: 8px;
