@@ -86,14 +86,14 @@
 
     /* ---------- 渲染 ---------- */
     function statusText() {
-        if (!state.healthy) return '同步异常 · 请点击重试';
-        if (state.cloudDegraded) return '云端未连接 · 本地数据正常 · 点击重试';
-        if (state.hasRemoteUpdate) return '检测到新内容 · 同步中…';
+        if (!state.healthy) return '同步异常';
+        if (state.cloudDegraded) return '本地正常';
+        if (state.hasRemoteUpdate) return '同步中…';
         if (state.mode === 'cloud') {
             var p = getPending();
-            return '云端已连接' + (p > 0 ? ' · 待上报 ' + p : '') + ' · 上次 ' + fmtTime(state.lastSync);
+            return '云端已连接' + (p > 0 ? ' · 待上报 ' + p : '');
         }
-        return '本地模式 · 上次同步 ' + fmtTime(state.lastSync);
+        return '本地模式';
     }
 
     function paint() {
@@ -368,11 +368,11 @@
             if (!s.healthy) txt.textContent = '同步异常 · 点击重试';
             else if (s.cloudDegraded) {
                 var hint = s.lastError && s.lastError.stage ? (' · ' + s.lastError.stage + ' 失败') : '';
-                txt.textContent = '云端未连接 · 本地正常 · 点击重试' + hint;
+                txt.textContent = '本地正常 · 点击重试' + hint;
             }
             else if (s.syncing || s.hasRemoteUpdate) txt.textContent = '同步中…';
-            else if (s.mode === 'cloud') txt.textContent = '云端已连接 · 上次 ' + (s.lastSyncText || '—');
-            else txt.textContent = '本地模式 · 上次 ' + (s.lastSyncText || '—');
+            else if (s.mode === 'cloud') txt.textContent = '云端已连接';
+            else txt.textContent = '本地模式';
         }
         if (btn) {
             btn.classList.toggle('syncing', !!(s.syncing || s.hasRemoteUpdate));

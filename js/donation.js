@@ -1,16 +1,15 @@
 /**
- * donation.js — 请我喝杯咖啡 / 支持创作者
+ * donation.js — 请制作人喝杯咖啡 / 支持创作者
  *
  * - 在主站与论坛共用
  * - 提供右下角悬浮入口 + 弹窗
- * - 关闭后 7 天内不再自动弹出（仍可通过入口手动打开）
+ * - 仅通过入口手动打开，不再自动弹出
  */
 (function () {
     'use strict';
 
     var MODAL_ID = 'donate-modal';
     var FAB_ID = 'donate-fab';
-    var SUPPRESS_DAYS = 7;
     var PAY_ACCOUNT = 'vertiniris@example.com'; // 占位，替换为真实收款账号
 
     function $(id) { return document.getElementById(id); }
@@ -20,20 +19,6 @@
         return String(str)
             .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-    }
-
-    function shouldAutoShow() {
-        try {
-            var ts = localStorage.getItem('donate_suppress_until');
-            if (!ts) return true;
-            return Date.now() > parseInt(ts, 10);
-        } catch (e) { return true; }
-    }
-
-    function suppressAutoShow() {
-        try {
-            localStorage.setItem('donate_suppress_until', String(Date.now() + SUPPRESS_DAYS * 86400000));
-        } catch (e) {}
     }
 
     function openModal() {
@@ -123,25 +108,14 @@
             var copyBtn = modal.querySelector('.donate-copy-btn');
             if (copyBtn) copyBtn.addEventListener('click', copyAccount);
             var laterBtn = modal.querySelector('.donate-later-btn');
-            if (laterBtn) laterBtn.addEventListener('click', function () {
-                suppressAutoShow();
-                closeModal();
-            });
+            if (laterBtn) laterBtn.addEventListener('click', closeModal);
             document.addEventListener('keydown', onKeydown);
         }
     }
 
     function init() {
         bindOnce();
-        // 首次访问自动弹出（7 天内最多一次）
-        if (shouldAutoShow()) {
-            // 延迟 2.5 秒，避免打扰首屏体验
-            setTimeout(function () {
-                if (!$(MODAL_ID) || $(MODAL_ID).classList.contains('open')) return;
-                openModal();
-                suppressAutoShow();
-            }, 2500);
-        }
+        // 仅通过悬浮入口手动打开，不再自动弹出
     }
 
     if (document.readyState !== 'loading') init();

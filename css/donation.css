@@ -160,29 +160,12 @@
     position: relative;
     overflow: hidden;
 }
-.donate-qr-placeholder {
+.donate-qr-img {
     width: 100%;
     height: 100%;
     border-radius: 8px;
-    background:
-        repeating-linear-gradient(0deg, #111 0, #111 4px, #fff 4px, #fff 8px),
-        repeating-linear-gradient(90deg, #111 0, #111 4px, #fff 4px, #fff 8px);
-    background-blend-mode: exclusion;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.donate-qr-hint {
-    position: absolute;
-    inset: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-size: 0.75rem;
-    color: rgba(0, 0, 0, 0.55);
-    font-weight: 600;
-    pointer-events: none;
+    object-fit: contain;
+    display: block;
 }
 .donate-note {
     text-align: center;

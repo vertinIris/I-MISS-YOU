@@ -325,10 +325,9 @@
             <div class="archive-album">
                 <div class="archive-album-shelf" aria-hidden="true"></div>
 
-                <!-- 主角：爱弥斯（主卡 / 最高优先级） -->
+                <!-- 爱弥斯（主卡 / 最高优先级） -->
                 <div class="archive-float archive-float--featured">
                     <a class="character-archive-card is-featured glass" href="../characters/aimisi/index.html" style="--char: var(--aimisi-pink);">
-                        <span class="card-featured-ribbon">主角</span>
                         <span class="character-archive-icon" aria-hidden="true">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                         </span>
@@ -382,8 +381,8 @@
                             <span class="character-archive-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
                             </span>
-                            <span class="character-archive-name">莫宁</span>
-                            <span class="character-archive-alias">星枢演构 · 白发红瞳</span>
+                        <span class="character-archive-name">莫宁</span>
+                        <span class="character-archive-alias">星枢演构 · 深空学者</span>
                             <span class="character-archive-line">深空联合学者，星炬学院隧者工学部教授，热熔长刃共鸣者。</span>
                             <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
                         </a>
@@ -770,15 +769,17 @@
         </div>
     </div>
 
-    <!-- 左侧悬浮返回主站入口（与右下角同步按钮同款风格） -->
-    <a href="../index.html" class="stf-back-home" id="stf-back-home" aria-label="返回飞行雪绒主站">
+    <!-- 左侧悬浮返回主站入口（调频台主题） -->
+    <a href="../index.html" class="stf-back-home" id="stf-back-home" aria-label="返回调频台主站">
         <span class="stf-back-home-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12l9-9 9 9"/>
-                <path d="M9 21V12h6v9"/>
+                <path d="M3 18h18"/>
+                <path d="M5 14l5-8 5 8"/>
+                <circle cx="17" cy="10" r="2"/>
+                <path d="M17 12v6"/>
             </svg>
         </span>
-        <span class="stf-back-home-text">飞行雪绒</span>
+        <span class="stf-back-home-text">调频台</span>
     </a>
 
     <button type="button" class="donate-fab" id="donate-fab" aria-label="支持飞行雪绒">
@@ -787,7 +788,7 @@
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
             </svg>
         </span>
-        <span class="donate-fab-text">请我喝杯咖啡</span>
+        <span class="donate-fab-text">请制作人喝咖啡</span>
     </button>
 
     <div class="donate-modal" id="donate-modal" role="dialog" aria-modal="true" aria-labelledby="donate-title" tabindex="-1" hidden>
@@ -795,19 +796,18 @@
             <button type="button" class="donate-close" aria-label="关闭">×</button>
             <div class="donate-header">
                 <div class="donate-emoji" aria-hidden="true">☕</div>
-                <h2 class="donate-title" id="donate-title">请飞行雪绒喝杯咖啡</h2>
-                <p class="donate-subtitle">每一份支持，都会变成星空下的一首歌。<br>如果你喜欢这个小小的创作角落，欢迎鼓励一下。</p>
+                <h2 class="donate-title" id="donate-title">请制作人喝杯咖啡</h2>
+                <p class="donate-subtitle">每一份支持，都会变成星空下更稳定的信号。<br>如果你认可这个创作角落，欢迎请制作人喝杯咖啡。</p>
             </div>
             <div class="donate-body">
-                <div class="donate-qr" aria-label="收款二维码占位">
-                    <div class="donate-qr-placeholder"></div>
-                    <span class="donate-qr-hint">替换为真实收款二维码</span>
+                <div class="donate-qr" aria-label="收款二维码">
+                    <img src="../assets/qrcode-donation.jpg" alt="支付宝与微信收款二维码" class="donate-qr-img" loading="lazy">
                 </div>
-                <p class="donate-note">扫码支持，或点击下方按钮复制收款账号。<br>你的陪伴，是飞行雪绒继续发光的理由。</p>
+                <p class="donate-note">扫码支持，或点击下方按钮复制收款账号。<br>你的陪伴，是这里继续发光的理由。</p>
             </div>
             <div class="donate-actions">
                 <button type="button" class="donate-btn donate-copy-btn">复制账号</button>
-                <button type="button" class="donate-btn donate-btn-primary donate-later-btn">下次再说</button>
+                <button type="button" class="donate-btn donate-btn-primary donate-later-btn">好的</button>
             </div>
         </div>
     </div>
