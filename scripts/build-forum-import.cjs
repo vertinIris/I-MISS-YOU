@@ -14,7 +14,9 @@
  *   - 正文只取「### 正文」与「### 回复列表」之间的真实内容
  *   - 字段缺失时用安全默认值兜底
  *
- * 用法：node scripts/build-forum-import.js
+ * 「论坛内容/」为离线源稿（不部署、默认不入 git）；其中「技术参考/」是旧快照，勿覆盖现网 js/forum。
+ *
+ * 用法：node scripts/build-forum-import.cjs
  */
 'use strict';
 
