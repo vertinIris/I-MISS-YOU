@@ -408,8 +408,10 @@ window.StarTorchAuth = (function () {
      * nickname = 发帖/顶栏/聊天署名，不是登录邮箱。
      */
     function updateNickname(raw) {
+        /* 按 Unicode 字素近似计数，避免把中文算错；去首尾空白并折叠中间空格 */
         var nick = String(raw || '').trim().replace(/\s+/g, ' ');
-        if (nick.length < 2 || nick.length > 20) {
+        var len = Array.from(nick).length;
+        if (len < 2 || len > 20) {
             return Promise.reject(new Error('显示名需 2–20 个字'));
         }
         if (isPlaceholderName(nick)) {
@@ -433,12 +435,29 @@ window.StarTorchAuth = (function () {
             return Promise.resolve(current);
         }
 
-        return client.from('profiles').upsert({
-            id: current.key,
+        /* 只用 UPDATE：profiles 通常无用户 INSERT 策略，upsert 会走 INSERT 触发 RLS「new row violates…」 */
+        return client.from('profiles').update({
             nickname: nick,
             avatar_color: color
-        }, { onConflict: 'id' }).then(function (res) {
+        }).eq('id', current.key).select('id, nickname').then(function (res) {
             if (res.error) throw new Error(res.error.message || '保存失败');
+            var rows = res.data || [];
+            if (!rows.length) {
+                /* 行缺失时再 upsert（需 migration-027 的 INSERT 策略）；仍失败则至少写 metadata */
+                return client.from('profiles').upsert({
+                    id: current.key,
+                    nickname: nick,
+                    avatar_color: color
+                }, { onConflict: 'id' }).then(function (up) {
+                    if (up.error) {
+                        console.warn('[StarTorchAuth] profiles 写入失败，回落 user_metadata:', up.error.message);
+                    }
+                    if (client.auth && client.auth.updateUser) {
+                        return client.auth.updateUser({ data: { nickname: nick } }).then(applyLocal).catch(applyLocal);
+                    }
+                    return applyLocal();
+                });
+            }
             if (client.auth && client.auth.updateUser) {
                 return client.auth.updateUser({ data: { nickname: nick } }).then(function () {
                     return applyLocal();

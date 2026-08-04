@@ -832,9 +832,9 @@
                 </div>
                 <form class="stf-nick-form" id="stf-nick-form">
                     <div class="form-group">
-                        <label class="form-label" for="stf-nick-input">显示名（nickname）</label>
-                        <p class="form-hint" style="margin:0 0 8px;">这是你在论坛顶栏、发帖与聊天里显示的署名，保存在 profiles.nickname。</p>
-                        <input type="text" class="form-input" id="stf-nick-input" maxlength="20" autocomplete="nickname" placeholder="2–20 字显示名" required>
+                        <label class="form-label" for="stf-nick-input">显示名</label>
+                        <p class="form-hint" style="margin:0 0 8px;">出现在顶栏、发帖与聊天里的署名（支持中文）。</p>
+                        <input type="text" class="form-input" id="stf-nick-input" maxlength="20" autocomplete="nickname" placeholder="2–20 字，例如：澈秋" required>
                     </div>
                     <p class="stf-auth-error" id="stf-nick-error" role="alert" hidden></p>
                     <div class="form-actions">
@@ -898,10 +898,8 @@
                     <img src="../assets/qrcode-alipay.jpg" alt="支付宝二维码" class="donate-qr-img" data-method="alipay" loading="lazy">
                 </div>
                 <p class="donate-note">选择支付方式后扫码支持。<br>你的陪伴，是这里继续发光的理由。</p>
-                <p class="donate-account-line">收款账号：<code class="donate-account-value" id="donate-account-value" data-account="vertiniris@example.com">vertiniris@example.com</code><span class="donate-account-hint">（占位，待替换）</span></p>
             </div>
             <div class="donate-actions">
-                <button type="button" class="donate-btn donate-copy-btn" data-copy-target="donate-account-value">复制账号</button>
                 <button type="button" class="donate-btn donate-btn-primary donate-later-btn">好的</button>
             </div>
         </div>

@@ -1490,27 +1490,73 @@
         updateSignal();
     }
 
-    /* ============ 角色档案：桌面环形旋转 / 移动端静态网格 ============ */
+    /* ============ 角色档案：3D 竖环（正面朝向）/ 移动端静态网格 ============ */
     function initArchiveOrbit() {
         var grid = document.getElementById('archive-album-grid');
         var orbit = document.getElementById('archive-orbit');
         var ring = document.getElementById('archive-orbit-ring');
         if (!grid || !orbit || !ring) return;
 
-        var mq = window.matchMedia ? window.matchMedia('(min-width: 900px) and (prefers-reduced-motion: no-preference)') : null;
+        var mq = window.matchMedia
+            ? window.matchMedia('(min-width: 900px) and (prefers-reduced-motion: no-preference)')
+            : null;
         var cards = Array.prototype.slice.call(grid.querySelectorAll('.archive-float'));
         if (!cards.length) return;
 
-        function placeOnRing() {
+        var paused = false;
+        var rafId = 0;
+        var baseAngle = 0;
+        var DEG_PER_MS = 360 / 56000;
+
+        function layoutMetrics() {
+            var w = orbit.clientWidth || 720;
+            var radius = Math.min(300, Math.max(200, Math.floor(w * 0.34)));
+            return { radius: radius, yLift: -12 };
+        }
+
+        function paint(angleDeg) {
             var n = cards.length;
-            var radius = Math.min(210, Math.max(150, Math.floor(orbit.clientWidth * 0.32)));
-            ring.style.setProperty('--orbit-n', String(n));
+            var m = layoutMetrics();
+            var step = 360 / n;
             cards.forEach(function (card, i) {
-                var angle = (360 / n) * i;
-                card.style.setProperty('--orbit-angle', angle + 'deg');
-                card.style.setProperty('--orbit-radius', radius + 'px');
+                var a = (angleDeg + step * i) * Math.PI / 180;
+                /* XZ 平面绕 Y 公转；卡片本身不旋转 → 始终正面朝向镜头 */
+                var x = Math.sin(a) * m.radius;
+                var z = Math.cos(a) * m.radius;
+                var depth = (z + m.radius) / (2 * m.radius);
+                var scale = 0.78 + depth * 0.28;
+                var opacity = 0.45 + depth * 0.55;
+                card.style.transform =
+                    'translate(-50%, -50%) translate3d(' + x.toFixed(1) + 'px,' + m.yLift + 'px,' + z.toFixed(1) + 'px) scale(' + scale.toFixed(3) + ')';
+                card.style.zIndex = String(100 + Math.round(depth * 100));
+                card.style.opacity = String(opacity.toFixed(3));
+                card.style.filter = depth < 0.35 ? 'brightness(0.72)' : 'none';
                 card.classList.add('is-orbit-item');
             });
+        }
+
+        function loop(ts) {
+            if (!document.documentElement.classList.contains('archive-orbit-active')) {
+                rafId = 0;
+                return;
+            }
+            var last = loop._last || ts;
+            var dt = Math.min(48, ts - last);
+            loop._last = ts;
+            if (!paused) baseAngle = (baseAngle + DEG_PER_MS * dt) % 360;
+            paint(baseAngle);
+            rafId = requestAnimationFrame(loop);
+        }
+
+        function startLoop() {
+            if (rafId) return;
+            loop._last = 0;
+            rafId = requestAnimationFrame(loop);
+        }
+
+        function stopLoop() {
+            if (rafId) cancelAnimationFrame(rafId);
+            rafId = 0;
         }
 
         function enableOrbit(on) {
@@ -1519,20 +1565,23 @@
             document.documentElement.classList.toggle('archive-orbit-active', !!on);
             if (on) {
                 cards.forEach(function (card) { ring.appendChild(card); });
-                placeOnRing();
+                paint(baseAngle);
+                startLoop();
             } else {
+                stopLoop();
                 cards.forEach(function (card) {
                     card.classList.remove('is-orbit-item');
-                    card.style.removeProperty('--orbit-angle');
-                    card.style.removeProperty('--orbit-radius');
+                    card.style.removeProperty('transform');
+                    card.style.removeProperty('z-index');
+                    card.style.removeProperty('opacity');
+                    card.style.removeProperty('filter');
                     grid.appendChild(card);
                 });
             }
         }
 
         function sync() {
-            var ok = !!(mq && mq.matches);
-            enableOrbit(ok);
+            enableOrbit(!!(mq && mq.matches));
         }
 
         sync();
@@ -1541,14 +1590,22 @@
             else if (mq.addListener) mq.addListener(sync);
         }
         window.addEventListener('resize', function () {
-            if (document.documentElement.classList.contains('archive-orbit-active')) placeOnRing();
+            if (document.documentElement.classList.contains('archive-orbit-active')) paint(baseAngle);
         }, { passive: true });
 
-        ring.addEventListener('mouseenter', function () { ring.classList.add('is-paused'); });
-        ring.addEventListener('mouseleave', function () { ring.classList.remove('is-paused'); });
-        ring.addEventListener('focusin', function () { ring.classList.add('is-paused'); });
+        function setPaused(v) {
+            paused = !!v;
+            ring.classList.toggle('is-paused', paused);
+        }
+        ring.addEventListener('mouseenter', function () { setPaused(true); });
+        ring.addEventListener('mouseleave', function () { setPaused(false); });
+        ring.addEventListener('focusin', function () { setPaused(true); });
         ring.addEventListener('focusout', function () {
-            if (!ring.contains(document.activeElement)) ring.classList.remove('is-paused');
+            if (!ring.contains(document.activeElement)) setPaused(false);
+        });
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden) stopLoop();
+            else if (document.documentElement.classList.contains('archive-orbit-active')) startLoop();
         });
     }
 

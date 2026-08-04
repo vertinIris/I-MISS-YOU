@@ -477,13 +477,15 @@
     border-color: color-mix(in srgb, var(--char, #FF6B9D) 55%, transparent);
 }
 
-/* 桌面环形旋转（小屏回退静态网格） */
+/* 桌面 3D 竖环：卡片始终正面朝向观众（billboard），绕 Y 轴公转 */
 .archive-orbit { display: none; }
 .archive-orbit-stage {
     position: relative;
-    width: min(720px, 100%);
-    height: 520px;
+    width: min(860px, 100%);
+    height: 560px;
     margin: 8px auto 0;
+    perspective: 1400px;
+    perspective-origin: 50% 42%;
 }
 .archive-orbit-ring {
     position: absolute;
@@ -491,42 +493,31 @@
     margin: auto;
     width: 100%;
     height: 100%;
-    transform-origin: 50% 50%;
-    animation: archive-orbit-spin 48s linear infinite;
+    transform-style: preserve-3d;
     will-change: transform;
 }
-.archive-orbit-ring.is-paused,
-.archive-orbit-ring.is-paused .archive-float.is-orbit-item .character-archive-card {
-    animation-play-state: paused;
-}
-@keyframes archive-orbit-spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-@keyframes archive-orbit-spin-rev {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(-360deg); }
+.archive-orbit-ring.is-paused .archive-float.is-orbit-item {
+    /* 暂停由 JS 停止 rAF；此处仅作语义类 */
 }
 .archive-orbit-ring .archive-float.is-orbit-item {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: min(200px, 42vw);
+    width: min(210px, 40vw);
     margin: 0;
     animation: none;
-    /* 固定在环上的角位置；卡片内容单独反向旋转以保持正向可读 */
-    transform:
-        translate(-50%, -50%)
-        rotate(var(--orbit-angle, 0deg))
-        translateY(calc(var(--orbit-radius, 180px) * -1));
+    transform-style: preserve-3d;
     transform-origin: center center;
+    /* JS 写入：translate3d(x,y,z) — 不旋转卡片本身，保证始终正面朝向屏幕 */
+    transition: filter .35s ease, opacity .35s ease;
 }
 .archive-orbit-ring .archive-float.is-orbit-item .character-archive-card {
     height: 100%;
-    min-height: 168px;
+    min-height: 176px;
     padding: 16px 14px 14px;
-    animation: archive-orbit-spin-rev 48s linear infinite;
-    transform-origin: center center;
+    animation: none;
+    backface-visibility: hidden;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .45);
 }
 .archive-orbit-ring .archive-float.is-orbit-item .character-archive-line {
     display: -webkit-box;
@@ -535,7 +526,7 @@
     overflow: hidden;
 }
 .archive-orbit-ring .archive-float--featured {
-    width: min(230px, 46vw);
+    width: min(236px, 44vw);
 }
 html.archive-orbit-active .archive-album-grid.is-orbit-source {
     display: none;
