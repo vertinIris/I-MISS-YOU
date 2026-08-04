@@ -164,6 +164,12 @@
     background: #FFE08A;
     animation: chat-dot-pulse 1s ease-in-out infinite;
 }
+/* 云端聊天表尚未创建（db/migration-023 未执行）：琥珀慢脉冲，与"离线"区分 */
+.stf-chat-dot.nomissing {
+    background: #FFC46B;
+    box-shadow: 0 0 10px rgba(255, 196, 107, 0.5);
+    animation: chat-dot-pulse 2.4s ease-in-out infinite;
+}
 @keyframes chat-dot-pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.55; }
@@ -172,6 +178,64 @@
     font-weight: 500;
     color: rgba(168, 216, 255, 0.9);
     letter-spacing: 0.02em;
+}
+/* 正在输入指示 */
+.stf-chat-typing {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 18px 2px;
+    font-size: 0.78rem;
+    color: rgba(168, 216, 255, 0.75);
+    min-height: 18px;
+}
+.stf-chat-typing[hidden] { display: none; }
+.stf-chat-typing-dots {
+    display: inline-flex;
+    gap: 3px;
+}
+.stf-chat-typing-dots i {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: rgba(168, 216, 255, 0.85);
+    animation: chat-typing-bounce 1.2s infinite ease-in-out;
+}
+.stf-chat-typing-dots i:nth-child(2) { animation-delay: 0.15s; }
+.stf-chat-typing-dots i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes chat-typing-bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+    30% { transform: translateY(-4px); opacity: 1; }
+}
+/* 系统提示行 */
+.stf-chat-system {
+    align-self: center;
+    max-width: 90%;
+    margin: 4px auto;
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+/* 消息状态勾 */
+.stf-chat-tick {
+    font-size: 0.7rem;
+    line-height: 1;
+}
+.stf-chat-tick.sending { color: rgba(255, 255, 255, 0.5); animation: chat-spin 1s linear infinite; }
+.stf-chat-tick.delivered { color: #7CFFB2; }
+.stf-chat-tick.local { color: rgba(255, 182, 182, 0.8); }
+@keyframes chat-spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+/* 字数计数器 */
+.stf-chat-counter {
+    flex: 0 0 auto;
+    align-self: center;
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-variant-numeric: tabular-nums;
+    min-width: 48px;
+    text-align: right;
 }
 .stf-chat-messages {
     min-height: 220px;
@@ -291,7 +355,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
     .stf-chat-messages { scroll-behavior: auto; }
-    .stf-chat-message, .stf-chat-dot { animation: none !important; }
+    .stf-chat-message, .stf-chat-dot, .stf-chat-typing-dots i, .stf-chat-tick.sending { animation: none !important; }
 }
 
 /* 核心互动区标识 */
