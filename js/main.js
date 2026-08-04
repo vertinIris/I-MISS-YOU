@@ -859,7 +859,7 @@
             dialogueBubble = document.createElement('div');
             dialogueBubble.className = 'avatar-dialogue-bubble';
             dialogueBubble.innerHTML = '<span class="dialogue-text">' + escapeHTML(hiddenDialogues[dialogueIndex % hiddenDialogues.length]) + '</span><span class="dialogue-close">&times;</span>';
-            /* position:fixed escapes overflow:hidden on .profile-card；锚点用头像壳，不含构型立绘 */
+            /* position:fixed escapes overflow:hidden on .profile-card；锚点用头像壳 */
             var rect = avatarShell.getBoundingClientRect();
             dialogueBubble.style.cssText = 'position:fixed;top:' + (rect.bottom + 12) + 'px;left:' + (rect.left + rect.width / 2) + 'px;transform:translateX(-50%);padding:10px 16px;background:rgba(15,15,24,0.95);border:1px solid rgba(168,216,255,0.25);border-radius:12px;color:#FAF8FF;font-size:0.85rem;z-index:9999;max-width:280px;white-space:normal;word-break:break-word;line-height:1.5;box-shadow:0 8px 25px rgba(0,0,0,0.35);animation:fadeInUp 0.3s ease;';
             document.body.appendChild(dialogueBubble);
@@ -881,7 +881,7 @@
             setTimeout(function() { document.addEventListener('click', outsideHandler, true); }, 100);
         }
 
-        /* 仅绑头像壳，避免与构型立绘长按冒泡叠彩蛋 */
+        /* 仅绑头像壳，避免与其它长按热区叠彩蛋 */
         avatarShell.addEventListener('mousedown', function() { pressTimer = setTimeout(showDialogue, 800); });
         avatarShell.addEventListener('mouseup', function() { clearTimeout(pressTimer); });
         avatarShell.addEventListener('mouseleave', function() { clearTimeout(pressTimer); });

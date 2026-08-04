@@ -217,71 +217,12 @@
         });
     }
 
-    /**
-     * 构型切换：爱弥斯档案卡剪影 crossfade
-     * 设定依据：characters/aimisi — 爱弥斯形态 / 机兵形态「构型切换」。
-     * 双击或长按爱弥斯卡图标；不拦截普通单击跳转（长按/双击专用）。
-     */
-    function initAimisiFormSwitch() {
-        var card = document.querySelector('.archive-float--featured .character-archive-card.is-featured');
-        if (!card) return;
-        var icon = card.querySelector('.character-archive-icon');
-        if (!icon) return;
-
-        var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-        var mecha = false;
-        var longTimer = null;
-        var toast = null;
-
-        function say(msg) {
-            toast = toast || document.getElementById('stf-easter-toast');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.id = 'stf-easter-toast';
-                toast.className = 'stf-easter-toast';
-                toast.setAttribute('role', 'status');
-                document.body.appendChild(toast);
-            }
-            toast.textContent = msg;
-            toast.classList.add('is-visible');
-            clearTimeout(say._t);
-            say._t = setTimeout(function () { toast.classList.remove('is-visible'); }, 2800);
-        }
-
-        function toggle(e) {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            mecha = !mecha;
-            icon.classList.toggle('is-mecha-form', mecha);
-            if (reduceMotion) icon.style.transition = 'none';
-            say(mecha ? '构型切换 · 机兵形态' : '构型切换 · 爱弥斯形态');
-        }
-
-        icon.addEventListener('dblclick', toggle);
-        icon.addEventListener('pointerdown', function (e) {
-            if (e.pointerType === 'mouse' && e.button !== 0) return;
-            longTimer = setTimeout(function () {
-                longTimer = null;
-                toggle(e);
-            }, 650);
-        });
-        function clearLong() {
-            if (longTimer) { clearTimeout(longTimer); longTimer = null; }
-        }
-        icon.addEventListener('pointerup', clearLong);
-        icon.addEventListener('pointerleave', clearLong);
-        icon.addEventListener('pointercancel', clearLong);
-    }
-
     ready(function () {
         document.addEventListener('keydown', onKey);
         var trigger = document.getElementById('stf-hidden-trigger');
         if (trigger) trigger.addEventListener('click', onTriggerClick);
         initWelcome();
         initCorridorThirtySeven();
-        initAimisiFormSwitch();
     });
 
     /* 供论坛主逻辑（调谐台）调用 */

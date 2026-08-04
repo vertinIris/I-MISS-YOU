@@ -383,7 +383,7 @@
 .character-archive-cta svg { width: 16px; height: 16px; transition: transform .3s; }
 .character-archive-card:hover .character-archive-cta svg { transform: translateX(4px); }
 
-/* W4–W5 · 走廊三十七 / 构型切换 / 静默提示 */
+/* W4–W5 · 走廊三十七 / 静默提示 */
 .stf-corridor-mark {
     appearance: none;
     border: none;
@@ -430,17 +430,6 @@
     opacity: 1;
     transform: translateX(-50%) translateY(0);
 }
-.archive-float--featured .character-archive-icon {
-    position: relative;
-    transition: transform 0.45s ease, filter 0.45s ease;
-}
-.archive-float--featured .character-archive-icon.is-mecha-form {
-    transform: scale(1.08) rotate(-6deg);
-    filter: drop-shadow(0 0 10px rgba(168, 216, 255, 0.45));
-}
-.archive-float--featured .character-archive-icon.is-mecha-form svg {
-    stroke: #A8D8FF;
-}
 
 /* 调频 9072 临近微响应 */
 .stf-tuner-frame.is-close .stf-tuner-wave {
@@ -468,5 +457,4 @@
     .stf-dial-input.is-hit { animation: none !important; transition: opacity .2s ease !important; }
     .character-archive-card:hover, .stf-hidden-trigger:hover, .archive-float:hover .character-archive-card { transform: none !important; }
     .stf-easter-toast { transition: opacity 0.15s ease !important; }
-    .archive-float--featured .character-archive-icon { transition: none !important; }
 }

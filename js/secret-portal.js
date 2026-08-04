@@ -50,26 +50,71 @@
     var keyBuffer = '';
     var logoTimer = null, logoClicks = 0;
 
-    // 爱弥斯剪影 SVG（入场特效）
-    var AIMISI_SVG =
-        '<svg class="sp-entrance-silhouette" viewBox="0 0 120 160" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    // 爱弥斯入场剪影（秘门特效，独立 SVG，不依赖构型切换模块）
+    var entranceSilUid = 0;
+    function getEntranceSilhouette() {
+        var id = 'sp-ent-' + (++entranceSilUid);
+        return (
+            '<svg class="sp-entrance-silhouette" viewBox="0 0 120 160" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
             '<defs>' +
-                '<linearGradient id="aimisiSil" x1="0" y1="0" x2="1" y2="1">' +
-                    '<stop offset="0%" stop-color="#FF6B9D"/>' +
-                    '<stop offset="55%" stop-color="#FFB6D9"/>' +
-                    '<stop offset="100%" stop-color="#A8D8FF"/>' +
-                '</linearGradient>' +
+            '<linearGradient id="' + id + 'hair" x1="0.5" y1="0" x2="0.5" y2="1">' +
+            '<stop offset="0%" stop-color="#FFE8F2"/><stop offset="40%" stop-color="#FF8FB0"/>' +
+            '<stop offset="100%" stop-color="#E84C7E"/>' +
+            '</linearGradient>' +
+            '<linearGradient id="' + id + 'hairSide" x1="0" y1="0" x2="1" y2="1">' +
+            '<stop offset="0%" stop-color="#FFD7E8"/><stop offset="100%" stop-color="#FF6B9D"/>' +
+            '</linearGradient>' +
+            '<linearGradient id="' + id + 'outfit" x1="0.25" y1="0" x2="0.8" y2="1">' +
+            '<stop offset="0%" stop-color="#B4C6FF"/><stop offset="50%" stop-color="#6B8AFF"/>' +
+            '<stop offset="100%" stop-color="#4A6AE0"/>' +
+            '</linearGradient>' +
+            '<radialGradient id="' + id + 'ghost" cx="50%" cy="45%" r="55%">' +
+            '<stop offset="0%" stop-color="#FFB6D9" stop-opacity="0.28"/>' +
+            '<stop offset="100%" stop-color="#A8D8FF" stop-opacity="0"/>' +
+            '</radialGradient>' +
             '</defs>' +
-            '<path fill="url(#aimisiSil)" opacity="0.95" d="M60 18c-9 0-16 6-18 14-1 4-1 8 0 12-10 3-18 12-20 22-1 5 0 10 2 15-6 4-10 11-10 19 0 12 9 22 21 24 4 8 12 14 21 16 2 0 4 0 6 0h4c2 0 4 0 6 0 9-2 17-8 21-16 12-2 21-12 21-24 0-8-4-15-10-19 2-5 3-10 2-15-2-10-10-19-20-22 1-4 1-8 0-12-2-8-9-14-18-14z"/>' +
-            '<circle cx="46" cy="64" r="4" fill="#0A0A12"/>' +
-            '<circle cx="74" cy="64" r="4" fill="#0A0A12"/>' +
-            '<path d="M52 74c3 2 13 2 16 0" stroke="#0A0A12" stroke-width="2" stroke-linecap="round"/>' +
-            '<path d="M60 28c-8 0-14 4-16 10 6-3 16-3 22 0 0 0-2-10-6-10z" fill="#FFFFFF" opacity="0.35"/>' +
-            '<circle cx="20" cy="46" r="3" fill="#FFFFFF" opacity="0.6"/>' +
-            '<circle cx="100" cy="46" r="2.5" fill="#FFFFFF" opacity="0.5"/>' +
-            '<circle cx="34" cy="30" r="2" fill="#FFFFFF" opacity="0.4"/>' +
-            '<circle cx="86" cy="32" r="1.8" fill="#FFFFFF" opacity="0.4"/>' +
-        '</svg>';
+            '<ellipse cx="60" cy="84" rx="34" ry="48" fill="url(#' + id + 'ghost)"/>' +
+            '<path fill="#FFB6D9" opacity="0.22" d="M42 70 C28 66 20 78 24 90 C30 84 36 78 42 76 Z"/>' +
+            '<path fill="#A8D8FF" opacity="0.22" d="M78 70 C92 66 100 78 96 90 C90 84 84 78 78 76 Z"/>' +
+            '<path fill="url(#' + id + 'hairSide)" d="M44 38 C34 50 30 70 32 96 C34 118 40 136 48 146 L52 132 C48 116 46 98 48 76 C50 58 52 46 56 40 Z"/>' +
+            '<path fill="url(#' + id + 'hairSide)" d="M76 38 C86 50 90 70 88 96 C86 118 80 136 72 146 L68 132 C72 116 74 98 72 76 C70 58 68 46 64 40 Z"/>' +
+            '<path fill="url(#' + id + 'hair)" opacity="0.85" d="M40 52 C36 68 36 88 40 108 L46 104 C44 86 44 68 48 56 Z"/>' +
+            '<path fill="url(#' + id + 'hair)" opacity="0.85" d="M80 52 C84 68 84 88 80 108 L74 104 C76 86 76 68 72 56 Z"/>' +
+            '<path fill="url(#' + id + 'hair)" d="M46 34 C48 18 54 12 60 12 C66 12 72 18 74 34 C70 24 65 20 60 20 C55 20 50 24 46 34 Z"/>' +
+            '<path fill="url(#' + id + 'hair)" d="M48 32 C52 26 56 24 60 24 C64 24 68 26 72 32 C68 30 64 28 60 28 C56 28 52 30 48 32 Z"/>' +
+            '<ellipse cx="60" cy="44" rx="12" ry="13.5" fill="#FFF5F8"/>' +
+            '<path fill="url(#' + id + 'hair)" d="M48 36 C46 44 46 54 48 62 L52 58 C51 48 51 40 54 36 Z"/>' +
+            '<path fill="url(#' + id + 'hair)" d="M72 36 C74 44 74 54 72 62 L68 58 C69 48 69 40 66 36 Z"/>' +
+            '<rect x="51" y="41" width="5" height="5" rx="1" fill="#6B8AFF"/>' +
+            '<rect x="64" y="41" width="5" height="5" rx="1" fill="#6B8AFF"/>' +
+            '<rect x="52" y="41.5" width="2" height="2" fill="#A8D8FF"/>' +
+            '<rect x="65" y="41.5" width="2" height="2" fill="#A8D8FF"/>' +
+            '<rect x="54" y="41" width="1.5" height="1.5" fill="#FFFFFF"/>' +
+            '<rect x="67" y="41" width="1.5" height="1.5" fill="#FFFFFF"/>' +
+            '<ellipse cx="49" cy="50" rx="2.4" ry="1.5" fill="#FFB6D9" opacity="0.8"/>' +
+            '<ellipse cx="71" cy="50" rx="2.4" ry="1.5" fill="#FFB6D9" opacity="0.8"/>' +
+            '<path d="M56 51.5 C58.5 53.5 61.5 53.5 64 51.5" stroke="#FF6B9D" stroke-width="1.25" stroke-linecap="round" fill="none"/>' +
+            '<path fill="#FFF5F8" d="M55 55 H65 L66 66 H54 Z"/>' +
+            '<path fill="url(#' + id + 'outfit)" d="M50 66 C44 70 40 82 42 98 L46 122 L54 146 L60 150 L66 146 L74 122 L78 98 C80 82 76 70 70 66 C66 72 54 72 50 66 Z"/>' +
+            '<path fill="#9AB3FF" opacity="0.9" d="M51 66 H69 L67 74 H53 Z"/>' +
+            '<path fill="#FFFFFF" d="M60 88 L62.5 92.5 L60 97 L57.5 92.5 Z"/>' +
+            '<path fill="#A8D8FF" d="M55.5 92.5 L60 90 L64.5 92.5 L60 95 Z"/>' +
+            '<path fill="#B66BFF" opacity="0.5" d="M42 76 L48 70 L50 80 Z"/>' +
+            '<path fill="#B66BFF" opacity="0.5" d="M78 76 L72 70 L70 80 Z"/>' +
+            '<path fill="#FF8FB0" d="M42 74 L36 96 L42 100 L48 80 Z"/>' +
+            '<path fill="#FF8FB0" d="M78 74 L84 96 L78 100 L72 80 Z"/>' +
+            '<path stroke="#F2F7FF" stroke-width="2.1" stroke-linecap="round" d="M84 98 L102 134" opacity="0.8"/>' +
+            '<path stroke="#FF6B9D" stroke-width="1.3" stroke-linecap="round" d="M82 96 L86 100"/>' +
+            '<rect x="51" y="16" width="2.4" height="2.4" rx="0.4" fill="#FFD700"/>' +
+            '<rect x="66.5" y="16" width="2.4" height="2.4" rx="0.4" fill="#FFD700"/>' +
+            '<circle cx="16" cy="48" r="1.5" fill="#FFFFFF" opacity="0.75"/>' +
+            '<circle cx="104" cy="56" r="1.3" fill="#FFFFFF" opacity="0.55"/>' +
+            '<circle cx="22" cy="92" r="1.1" fill="#FFB6D9" opacity="0.55"/>' +
+            '<circle cx="98" cy="100" r="1.1" fill="#A8D8FF" opacity="0.55"/>' +
+            '<path fill="#FFFFFF" opacity="0.3" d="M54 18 C57 14 63 14 66 18 C63 16 57 16 54 18 Z"/>' +
+            '</svg>'
+        );
+    }
 
     function ready(fn) {
         if (document.readyState !== 'loading') fn();
@@ -168,7 +213,7 @@
             overlay.appendChild(p);
         }
 
-        overlay.insertAdjacentHTML('beforeend', AIMISI_SVG);
+        overlay.insertAdjacentHTML('beforeend', getEntranceSilhouette());
         document.body.appendChild(overlay);
         return overlay;
     }
