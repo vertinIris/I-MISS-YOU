@@ -1824,10 +1824,19 @@
                 <p class="donate-subtitle">每一份支持，都会变成星空下更稳定的信号。<br>如果你认可这个创作角落，欢迎请制作人喝杯咖啡。</p>
             </div>
             <div class="donate-body">
-                <div class="donate-qr" aria-label="收款二维码">
-                    <img src="assets/qrcode-donation.jpg" alt="支付宝与微信收款二维码" class="donate-qr-img" loading="lazy">
+                <div class="donate-tabs" role="tablist" aria-label="选择支付方式">
+                    <button type="button" class="donate-tab is-active" data-method="wechat" role="tab" aria-selected="true">
+                        <span class="donate-tab-dot" aria-hidden="true"></span>微信支付
+                    </button>
+                    <button type="button" class="donate-tab" data-method="alipay" role="tab" aria-selected="false">
+                        <span class="donate-tab-dot" aria-hidden="true"></span>支付宝
+                    </button>
                 </div>
-                <p class="donate-note">扫码支持，或点击下方按钮复制收款账号。<br>你的陪伴，是这里继续发光的理由。</p>
+                <div class="donate-qr" aria-label="收款二维码">
+                    <img src="assets/qrcode-wechat.png" alt="微信支付二维码" class="donate-qr-img is-active" data-method="wechat" loading="lazy">
+                    <img src="assets/qrcode-alipay.jpg" alt="支付宝二维码" class="donate-qr-img" data-method="alipay" loading="lazy">
+                </div>
+                <p class="donate-note">选择支付方式后扫码支持。<br>你的陪伴，是这里继续发光的理由。</p>
             </div>
             <div class="donate-actions">
                 <button type="button" class="donate-btn donate-copy-btn">复制账号</button>

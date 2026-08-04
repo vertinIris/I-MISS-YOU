@@ -86,6 +86,20 @@
         }, 1800);
     }
 
+    function switchMethod(modal, method) {
+        if (!modal) return;
+        var tabs = modal.querySelectorAll('.donate-tab');
+        var imgs = modal.querySelectorAll('.donate-qr-img');
+        tabs.forEach(function (tab) {
+            var active = tab.getAttribute('data-method') === method;
+            tab.classList.toggle('is-active', active);
+            tab.setAttribute('aria-selected', String(active));
+        });
+        imgs.forEach(function (img) {
+            img.classList.toggle('is-active', img.getAttribute('data-method') === method);
+        });
+    }
+
     function onKeydown(e) {
         if (e.key === 'Escape') closeModal();
     }
@@ -109,6 +123,13 @@
             if (copyBtn) copyBtn.addEventListener('click', copyAccount);
             var laterBtn = modal.querySelector('.donate-later-btn');
             if (laterBtn) laterBtn.addEventListener('click', closeModal);
+            var tabs = modal.querySelectorAll('.donate-tab');
+            tabs.forEach(function (tab) {
+                tab.addEventListener('click', function () {
+                    var method = tab.getAttribute('data-method');
+                    if (method) switchMethod(modal, method);
+                });
+            });
             document.addEventListener('keydown', onKeydown);
         }
     }

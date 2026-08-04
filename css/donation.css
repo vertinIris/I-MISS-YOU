@@ -165,8 +165,53 @@
     height: 100%;
     border-radius: 8px;
     object-fit: contain;
-    display: block;
+    display: none;
 }
+.donate-qr-img.is-active { display: block; }
+
+/* ---- 支付方式切换标签 ---- */
+.donate-tabs {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+.donate-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+.donate-tab:hover {
+    background: rgba(255, 255, 255, 0.13);
+    color: #fff;
+    transform: translateY(-1px);
+}
+.donate-tab.is-active {
+    background: linear-gradient(135deg, rgba(107, 138, 255, 0.35), rgba(255, 107, 157, 0.32));
+    border-color: rgba(168, 216, 255, 0.45);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(107, 138, 255, 0.22);
+}
+.donate-tab-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+    transition: background 0.2s ease;
+}
+.donate-tab.is-active .donate-tab-dot { background: #A8D8FF; box-shadow: 0 0 6px rgba(168, 216, 255, 0.7); }
+.donate-tab[data-method="alipay"].is-active .donate-tab-dot { background: #A8D8FF; }
+.donate-tab[data-method="wechat"].is-active .donate-tab-dot { background: #7FD99E; }
+
 .donate-note {
     text-align: center;
     font-size: 0.85rem;
@@ -250,3 +295,20 @@
     border-color: rgba(0, 0, 0, 0.1);
 }
 [data-theme="light"] .donate-btn:hover { background: rgba(0, 0, 0, 0.1); }
+[data-theme="light"] .donate-tab {
+    background: rgba(0, 0, 0, 0.05);
+    color: rgba(0, 0, 0, 0.65);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+[data-theme="light"] .donate-tab:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.85);
+}
+[data-theme="light"] .donate-tab.is-active {
+    background: linear-gradient(135deg, rgba(107, 138, 255, 0.22), rgba(255, 107, 157, 0.18));
+    border-color: rgba(107, 138, 255, 0.4);
+    color: rgba(0, 0, 0, 0.85);
+}
+[data-theme="light"] .donate-tab-dot { background: rgba(0, 0, 0, 0.25); }
+[data-theme="light"] .donate-tab.is-active .donate-tab-dot { background: #6B8AFF; box-shadow: none; }
+[data-theme="light"] .donate-tab[data-method="wechat"].is-active .donate-tab-dot { background: #2AA876; }
