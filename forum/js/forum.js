@@ -989,8 +989,77 @@
         /* 登录态变化 → 刷新两个表单的署名控件 */
         if (window.StarTorchAuth) window.StarTorchAuth.onChange(syncAuthUI);
 
-        /* 调谐台彩蛋入口 */
+        /* 调谐台彩蛋入口 + 左下角浮钮双态 */
         initTuner();
+        initTunerFab();
+    }
+
+    /* ============ 左下角浮钮：首次→调频台；拨频成功后→设置快捷入口 ============
+     * 「成功进入」判定（见 markTunerEntered）：用户对调频台完成至少一次有效拨频
+     * （步进按钮 / 方向键 / 数字键入 / 滚轮改变任一位）。仅滚动到区域不算进入。
+     * 状态键：localStorage['stf_tuner_entered'] === '1'
+     * 设置入口：复用 StarTorchAuth.openPanel()（星炬学院通行证面板），不新造 UI。
+     */
+    var TUNER_ENTERED_KEY = 'stf_tuner_entered';
+
+    function hasEnteredTuner() {
+        try { return localStorage.getItem(TUNER_ENTERED_KEY) === '1'; } catch (e) { return false; }
+    }
+
+    function markTunerEntered() {
+        if (hasEnteredTuner()) return;
+        try { localStorage.setItem(TUNER_ENTERED_KEY, '1'); } catch (e) { /* private mode */ }
+        applyTunerFabMode(true);
+    }
+
+    function applyTunerFabMode(entered) {
+        var fab = document.getElementById('stf-back-home');
+        if (!fab) return;
+        var label = fab.querySelector('.stf-back-home-text');
+        var iconTuner = fab.querySelector('.stf-back-home-svg--tuner');
+        var iconSettings = fab.querySelector('.stf-back-home-svg--settings');
+        fab.classList.toggle('is-settings', !!entered);
+        if (label) label.textContent = entered ? '设置' : '调频台';
+        if (iconTuner) iconTuner.hidden = !!entered;
+        if (iconSettings) iconSettings.hidden = !entered;
+        fab.setAttribute('aria-label', entered ? '打开通行证设置' : '前往深夜电台调频台');
+    }
+
+    function scrollToTuner() {
+        var tuner = document.getElementById('stf-tuner');
+        if (!tuner) return;
+        /* 调频台紧挨世界观区块下方；滚动定位即可，无需切换独立 tab */
+        var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+        tuner.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+        try {
+            if (history.replaceState) history.replaceState(null, '', '#stf-tuner');
+            else window.location.hash = 'stf-tuner';
+        } catch (e) { /* ignore */ }
+        var dial0 = document.getElementById('stf-dial-0');
+        if (dial0) {
+            setTimeout(function () {
+                try { dial0.focus({ preventScroll: true }); } catch (err) { dial0.focus(); }
+            }, reduceMotion ? 0 : 420);
+        }
+    }
+
+    function openSettingsShortcut() {
+        if (window.StarTorchAuth && typeof window.StarTorchAuth.openPanel === 'function') {
+            window.StarTorchAuth.openPanel();
+            return;
+        }
+        var accountBtn = document.getElementById('stf-account-btn');
+        if (accountBtn) accountBtn.click();
+    }
+
+    function initTunerFab() {
+        var fab = document.getElementById('stf-back-home');
+        if (!fab) return;
+        applyTunerFabMode(hasEnteredTuner());
+        fab.addEventListener('click', function () {
+            if (hasEnteredTuner()) openSettingsShortcut();
+            else scrollToTuner();
+        });
     }
 
     /* ============ Nav enhancements: mobile toggle + scrollspy ============ */
@@ -1071,6 +1140,8 @@
         function setDigit(idx, val) {
             var v = ((val % 10) + 10) % 10;
             if (inputs[idx]) inputs[idx].value = String(v);
+            /* 任意有效拨频即记为「成功进入调频台」（见 TUNER_ENTERED_KEY 注释） */
+            markTunerEntered();
         }
 
         function readCode() {
@@ -1223,6 +1294,7 @@
             inp.addEventListener('input', function () {
                 var d = (inp.value.replace(/\D/g, '') || '0').charAt(0);
                 inp.value = d;
+                markTunerEntered();
                 if (idx < 3 && inputs[idx + 1]) inputs[idx + 1].focus();
                 checkLock();
             });

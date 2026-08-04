@@ -1611,7 +1611,7 @@
     .stf-edge-btn { transition: none !important; }
 }
 
-/* ===== 左下角悬浮返回主站按钮（与右下角同步按钮同款 · 蓝金学院配色） ===== */
+/* ===== 左下角浮钮：调频台引导 / 设置快捷入口（与右下角同步按钮同款 · 蓝金学院配色） ===== */
 .stf-back-home {
     position: fixed;
     left: 20px;
@@ -1628,12 +1628,29 @@
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(232, 197, 106, 0.08);
     color: var(--stf-text, #F0F4FF);
+    font: inherit;
     font-size: 13px;
+    line-height: 1.2;
     text-decoration: none;
+    cursor: pointer;
     opacity: 0.92;
     user-select: none;
-    transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     max-width: calc(100vw - 32px);
+}
+.stf-back-home.is-settings {
+    border-color: rgba(232, 197, 106, 0.4);
+}
+.stf-back-home.is-settings .stf-back-home-icon {
+    border-color: rgba(232, 197, 106, 0.5);
+    background: rgba(232, 197, 106, 0.14);
+    color: var(--stf-gold, #E8C56A);
+}
+.stf-back-home.is-settings:hover .stf-back-home-icon {
+    background: rgba(232, 197, 106, 0.28);
+    box-shadow: 0 0 16px rgba(232, 197, 106, 0.35);
 }
 .stf-back-home:hover {
     opacity: 1;
@@ -1658,6 +1675,7 @@
     justify-content: center;
     transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
+.stf-back-home-svg[hidden] { display: none !important; }
 .stf-back-home:hover .stf-back-home-icon {
     background: rgba(107, 138, 255, 0.34);
     transform: scale(1.08);
