@@ -220,147 +220,94 @@ body {
 }
 .stf-fab:hover { box-shadow: 0 20px 44px rgba(107,138,255,.5); }
 
-/* ---------- 2. 社交动态流：时间线布局 ---------- */
-.stf-timeline {
+/* ---------- 2. 社交动态流：信息流布局（翻转卡已退役） ---------- */
+.stf-timeline,
+.stf-feed {
     display: flex;
     flex-direction: column;
-    gap: 22px;
-    max-width: 720px;
-    margin: 28px auto 0;
+    gap: 14px;
+    max-width: none;
+    margin: 20px 0 0;
     position: relative;
-    padding-left: 34px;
+    padding-left: 0;
 }
-.stf-timeline::before {
-    content: "";
-    position: absolute;
-    left: 15px; top: 6px; bottom: 6px;
-    width: 2px;
-    background: linear-gradient(to bottom,
-        rgba(107,138,255,0),
-        rgba(107,138,255,.55) 12%,
-        rgba(107,138,255,.55) 88%,
-        rgba(107,138,255,0));
-}
-.stf-timeline .stf-card { position: relative; margin: 0; }
+.stf-timeline::before { display: none; }
+.stf-node { display: none; }
 
-/* 时间节点（独立元素，避免被卡片 overflow 裁剪） */
-.stf-node {
-    position: absolute;
-    left: -30px; top: 30px;
-    width: 13px; height: 13px;
-    border-radius: 50%;
-    background: var(--stf-brand);
-    box-shadow: 0 0 0 4px rgba(107,138,255,.15), 0 0 14px rgba(107,138,255,.65);
-    z-index: 1;
-    transition: transform .3s, box-shadow .3s;
-}
-.stf-card:hover .stf-node {
-    transform: scale(1.25);
-    box-shadow: 0 0 0 5px rgba(107,138,255,.2), 0 0 20px rgba(107,138,255,.9);
-}
-.stf-card.is-new .stf-node { animation: stf-node-pulse 1s ease; }
-@keyframes stf-node-pulse {
-    0%   { transform: scale(1);   box-shadow: 0 0 0 4px rgba(107,138,255,.4), 0 0 16px rgba(107,138,255,.9); }
-    50%  { transform: scale(1.6); box-shadow: 0 0 0 10px rgba(107,138,255,.1), 0 0 26px rgba(107,138,255,1); }
-    100% { transform: scale(1);   box-shadow: 0 0 0 4px rgba(107,138,255,.15), 0 0 14px rgba(107,138,255,.65); }
-}
-
-/* ---------- 3. 立体翻转卡片 ---------- */
-.stf-timeline { perspective: 1400px; }
-
-.stf-card {
+/* ---------- 3. 帖流卡（可读摘要 + 展开全文，替代立体翻转） ---------- */
+.stf-feed .stf-card,
+.stf-timeline .stf-card {
     display: block;
     position: relative;
-    background: transparent;
-    border: none;
-    padding: 0;
-    border-radius: 0;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-left: 3px solid var(--char, var(--stf-brand));
+    padding: 18px 20px 14px;
+    border-radius: 16px;
     box-shadow: none;
     overflow: visible;
-    cursor: pointer;
+    cursor: default;
     outline: none;
 }
-.stf-card:hover { transform: none; box-shadow: none; }
-.stf-card:focus-visible .stf-card-inner {
-    box-shadow: 0 0 0 2px rgba(168,216,255,.5), 0 20px 48px rgba(0,0,0,.35);
+.stf-feed .stf-card:hover,
+.stf-timeline .stf-card:hover {
+    transform: none;
+    background: rgba(255,255,255,.055);
+    border-color: rgba(168,216,255,.18);
+    box-shadow: 0 10px 28px rgba(0,0,0,.22);
+}
+.stf-feed .stf-card:focus-visible,
+.stf-timeline .stf-card:focus-visible {
+    box-shadow: 0 0 0 2px rgba(168,216,255,.45);
 }
 
 .stf-card-inner {
-    position: relative;
+    position: static;
     width: 100%;
-    min-height: 280px;
-    transform-style: preserve-3d;
-    transition: transform .65s cubic-bezier(.16,1,.3,1);
+    min-height: 0;
+    transform: none !important;
+    transform-style: flat;
+    transition: none;
 }
-.stf-card.is-flipped .stf-card-inner {
-    transform: rotateY(180deg);
-}
-
 .stf-card-front,
 .stf-card-back {
-    position: absolute;
-    inset: 0;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    border-radius: 22px;
-    padding: 22px 24px 20px;
-    background: rgba(255,255,255,.045);
-    border: 1px solid rgba(255,255,255,.08);
-    border-top: 3px solid var(--char, var(--stf-brand));
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    position: static;
+    inset: auto;
+    backface-visibility: visible;
+    transform: none !important;
+    border-radius: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    display: block;
+    overflow: visible;
 }
+.stf-card-back { display: none; }
+.stf-card.is-flipped .stf-card-back,
+.stf-card.is-expanded .stf-card-back { display: block; }
 
-.stf-card-back {
-    transform: rotateY(180deg);
-    overflow-y: auto;
-}
-
-/* 自定义滚动条，避免背面滚动破坏沉浸 */
-.stf-card-back::-webkit-scrollbar { width: 5px; }
-.stf-card-back::-webkit-scrollbar-track { background: transparent; }
-.stf-card-back::-webkit-scrollbar-thumb { background: rgba(168,216,255,.25); border-radius: 999px; }
-
-/* 正面：摘要布局 */
 .stf-card-preview {
     font-size: 14px;
-    line-height: 1.8;
-    color: rgba(240,244,255,.72);
+    line-height: 1.75;
+    color: rgba(240,244,255,.74);
     white-space: pre-line;
     margin-bottom: 10px;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
 }
-.stf-card-tags--preview { margin-top: auto; margin-bottom: 12px; }
+.stf-card-tags--preview { margin-bottom: 8px; }
 .stf-card-front-actions {
     display: flex;
     align-items: center;
     gap: 14px;
-    margin-top: auto;
-    padding-top: 12px;
+    margin-top: 4px;
+    padding-top: 10px;
     border-top: 1px solid rgba(255,255,255,.06);
     font-size: 13px;
     color: var(--stf-text-muted);
 }
 .stf-front-stat { display: inline-flex; align-items: center; gap: 4px; }
 .stf-card-flip-hint,
-.stf-card-flip-back {
-    margin-left: auto;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 13px;
-    color: var(--stf-brand);
-    padding: 0;
-}
-.stf-card-flip-back { color: var(--stf-text-muted); }
-.stf-card-flip-hint:hover,
-.stf-card-flip-back:hover { opacity: .8; }
+.stf-card-flip-back { display: none; }
 
-/* 背面：完整内容与互动 */
 .stf-card-back .stf-card-content {
     font-size: 14px;
     line-height: 1.8;
@@ -377,23 +324,10 @@ body {
     border-top: 1px solid rgba(255,255,255,.06);
 }
 
-/* 悬停 3D 倾斜：仅桌面、未翻转时 */
-@media (hover: hover) {
-    .stf-card:not(.is-flipped):hover .stf-card-inner {
-        transform: rotateY(6deg) rotateX(2deg) translateY(-4px);
-    }
-    .stf-card.is-flipped:hover .stf-card-inner {
-        transform: rotateY(174deg) rotateX(2deg) translateY(-4px);
-    }
-}
-
-/* 卡片动效增强 */
-.stf-card.is-new .stf-node { animation: stf-node-pulse 1s ease; }
-
 /* ---------- 2.(续) 常驻快捷发布框 ---------- */
 .stf-composer {
-    max-width: 720px;
-    margin: 24px auto 0;
+    max-width: none;
+    margin: 18px 0 0;
     position: relative;
     z-index: 2;
 }
@@ -470,12 +404,8 @@ body {
 /* 过渡装饰：仅保留柔光，不再使用旋转方框，避免喧宾夺主 */
 .archive-float--featured { position: relative; }
 
-/* ---------- 响应式：时间线与翻转卡 ---------- */
+/* ---------- 响应式 ---------- */
 @media (max-width: 768px) {
-    .stf-timeline { padding-left: 0; max-width: 100%; }
-    .stf-timeline::before { display: none; }
-    .stf-node { display: none; }
-    .stf-card-inner { min-height: 240px; }
     .stf-composer { max-width: 100%; }
 }
 
@@ -483,23 +413,11 @@ body {
 @media (prefers-reduced-motion: reduce) {
     .stf-card,
     .stf-card-inner,
-    .stf-timeline .stf-card .stf-node,
     .archive-float--featured,
     .character-archive-card.is-featured::before,
-    .forum-entry-ribbon,
-    .stf-node,
-    .stf-breathe,
-    .stf-ribbon-glow,
-    .stf-node-pulse { animation: none !important; }
+    .forum-entry-ribbon { animation: none !important; }
     .stf-card-inner {
         transform: none !important;
-        transition: opacity .2s ease !important;
+        transition: none !important;
     }
-    .stf-card-front,
-    .stf-card-back {
-        position: relative;
-        transform: none !important;
-        backface-visibility: visible !important;
-    }
-    .stf-card-back { margin-top: 16px; }
 }

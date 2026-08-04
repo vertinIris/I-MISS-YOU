@@ -43,7 +43,7 @@
             </a>
             <div class="nav-links" id="nav-links">
                 <a href="#top" class="nav-link">首页</a>
-                <a href="#stf-community" class="nav-link">讨论</a>
+                <a href="#stf-community" class="nav-link">讨论区</a>
                 <a href="#characters-archive" class="nav-link">角色档案</a>
                 <a href="#worldview" class="nav-link">世界观</a>
             </div>
@@ -63,11 +63,11 @@
             <h1 class="forum-hero-title">鸣潮同人论坛</h1>
             <p class="forum-hero-sub">
                 星炬学院的创作集合 —— 所有鸣潮同好的核心聚集地。<br>
-                翻阅角色档案、考据世界观、投稿你的同人、加入讨论。
+                翻阅角色档案、考据世界观、在讨论区发帖、加入话题。
             </p>
             <div class="forum-hero-quicknav" role="navigation" aria-label="核心入口">
                 <a class="hero-pill" href="#stf-community">
-                    <b>讨论</b><span>同人创作 · 互动</span>
+                    <b>讨论区</b><span>帖子 · 话题 · 互动</span>
                 </a>
                 <a class="hero-pill" href="#characters-archive">
                     <b>档案</b><span>官方角色考据</span>
@@ -77,7 +77,7 @@
                 </a>
             </div>
             <div class="forum-hero-actions">
-                <a href="#stf-community" class="btn-primary magnetic"><span>进入社区</span></a>
+                <a href="#stf-community" class="btn-primary magnetic"><span>进入讨论区</span></a>
                 <a href="#characters-archive" class="btn-ghost magnetic"><span>浏览档案</span></a>
             </div>
         </div>
@@ -98,9 +98,9 @@
                     <span class="forum-entry-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     </span>
-                    <span class="forum-entry-title">社区讨论</span>
-                    <span class="forum-entry-desc">星炬学院的核心互动区 —— 同人创作、话题讨论、点赞评论收藏，与同好相遇。</span>
-                    <span class="forum-entry-cta">进入社区 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                    <span class="forum-entry-title">讨论区</span>
+                    <span class="forum-entry-desc">星炬学院的核心互动区 —— 发帖、话题筛选、点赞评论收藏，异步沉淀，与同好相遇。</span>
+                    <span class="forum-entry-cta">进入讨论区 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
                 </a>
 
                 <a class="forum-entry" href="#characters-archive" style="--char: var(--drifter-blue);">
@@ -125,192 +125,227 @@
         </div>
     </section>
 
-    <!-- 实时公共聊天室 -->
-    <section class="forum-section forum-section--chat" id="stf-chat">
-        <div class="forum-section-inner">
-            <div class="section-header reveal">
-                <span class="section-label">LIVE · CHAT</span>
-                <h2 class="section-title">信号塔实时聊天</h2>
-                <p class="section-desc">在同一频率上，留下你的回声 · 与星域同好即时对话</p>
-            </div>
-
-            <div class="stf-chat-card glass">
-                <div class="stf-chat-header">
-                    <span class="stf-chat-status" role="status" aria-live="polite">
-                        <span class="stf-chat-dot" id="stf-chat-dot"></span>
-                        <span id="stf-chat-status">连接中…</span>
-                    </span>
-                    <span class="stf-chat-online" id="stf-chat-online">星域公共频道</span>
-                </div>
-                <div class="stf-chat-messages" id="stf-chat-messages" role="log" aria-live="polite" aria-atomic="false" aria-label="聊天消息"></div>
-                <div class="stf-chat-typing" id="stf-chat-typing" aria-live="polite" hidden></div>
-                <form class="stf-chat-form" id="stf-chat-form">
-                    <input type="text" class="stf-chat-input" id="stf-chat-input" placeholder="输入消息，按 Enter 发送…" maxlength="200" autocomplete="off" aria-label="聊天消息">
-                    <span class="stf-chat-counter" id="stf-chat-counter" aria-hidden="true">0/200</span>
-                    <button type="submit" class="stf-chat-send" id="stf-chat-send" aria-label="发送">发送</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <!-- 核心互动区 -->
+    <!-- 讨论区：帖子信息流（主视觉）+ 侧栏次要入口 -->
     <section class="forum-section forum-section--core" id="stf-community">
         <div class="forum-section-inner">
             <div class="section-header reveal">
-                <span class="section-label">CORE · COMMUNITY</span>
-                <h2 class="section-title">星炬学院社区</h2>
-                <p class="section-desc">鸣潮角色与世界观的同人创作与讨论 · 核心互动区</p>
+                <span class="section-label">DISCUSS · FEED</span>
+                <h2 class="section-title">讨论区</h2>
+                <p class="section-desc">异步帖流 · 发帖、筛选、点赞评论收藏 —— 比即时聊天更适合沉淀话题</p>
             </div>
 
-            <div class="stf-stats" aria-label="社区数据">
-                <div class="stf-stat"><b id="stf-stat-works">0</b><span>作品</span></div>
-                <div class="stf-stat"><b id="stf-stat-members">0</b><span>同好</span></div>
-                <div class="stf-stat"><b id="stf-stat-online">0</b><span>在线</span></div>
-            </div>
+            <div class="stf-discuss-layout">
+                <div class="stf-discuss-main">
 
-            <div class="stf-toolbar">
-                <div class="stf-filters">
-                    <button class="stf-filter-btn active" data-filter="all">全部</button>
-                    <button class="stf-filter-btn" data-filter="text">文字</button>
-                    <button class="stf-filter-btn" data-filter="story">故事</button>
-                    <button class="stf-filter-btn" data-filter="poem">诗歌</button>
-                    <button class="stf-filter-btn" data-filter="art">插画</button>
-                    <button class="stf-filter-btn" data-filter="music">音乐</button>
-                </div>
-                <div class="stf-sort" role="group" aria-label="排序">
-                    <button class="stf-sort-btn active" data-sort="new">最新</button>
-                    <button class="stf-sort-btn" data-sort="hot">热门</button>
-                </div>
-                <div class="stf-search">
-                    <svg class="stf-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/>
-                    </svg>
-                    <input type="search" class="stf-search-input" id="stf-search" placeholder="搜索标题 / 正文 / 作者" aria-label="搜索社区作品">
-                    <button type="button" class="stf-search-clear" id="stf-search-clear" aria-label="清空搜索" hidden>×</button>
-                </div>
-                <button type="button" class="btn-ghost magnetic" data-action="open-submit"><span>投稿</span></button>
-            </div>
+                    <div class="stf-feed-tabs" role="tablist" aria-label="讨论区筛选">
+                        <button type="button" class="stf-feed-tab active" data-sort="new" role="tab" aria-selected="true">全部</button>
+                        <button type="button" class="stf-feed-tab" data-sort="hot" role="tab" aria-selected="false">热门</button>
+                        <button type="button" class="stf-feed-tab" data-sort="essence" role="tab" aria-selected="false">精华</button>
+                    </div>
 
-            <div class="stf-sync-bar" id="stf-sync-bar" aria-label="数据同步状态">
-                <div class="stf-sync-status" id="stf-sync-status" role="status" aria-live="polite">
-                    <span class="stf-sync-dot" id="stf-sync-dot" aria-hidden="true"></span>
-                    <span class="stf-sync-text" id="stf-sync-text">本地模式 · 同步就绪</span>
-                </div>
-                <button type="button" class="stf-sync-btn" id="stf-sync-now" aria-label="立即同步数据">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/>
-                    </svg>
-                    <span>立即同步</span>
-                </button>
-            </div>
-
-            <div class="stf-tag-bar">
-                <span class="tag-category-label">角色</span>
-                <button class="stf-tag-chip" data-tag="爱弥斯">爱弥斯</button>
-                <button class="stf-tag-chip" data-tag="达妮娅">达妮娅</button>
-                <button class="stf-tag-chip" data-tag="西格莉卡">西格莉卡</button>
-                <button class="stf-tag-chip" data-tag="琳奈">琳奈</button>
-                <button class="stf-tag-chip" data-tag="莫宁">莫宁</button>
-                <button class="stf-tag-chip" data-tag="洛瑟菈">洛瑟菈</button>
-                <button class="stf-tag-chip" data-tag="漂泊者">漂泊者</button>
-            </div>
-
-            <div class="stf-composer" id="stf-composer">
-                <button type="button" class="stf-composer-trigger" id="stf-composer-trigger" aria-expanded="false" aria-controls="stf-composer-form">
-                    <span class="stf-composer-avatar" aria-hidden="true">✎</span>
-                    <span class="stf-composer-placeholder">分享你的鸣潮同人…</span>
-                    <span class="stf-composer-hint">投稿</span>
-                </button>
-                <form class="stf-composer-form" id="stf-composer-form" hidden>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="stf-composer-nickname">昵称</label>
-                            <input type="text" class="form-input" id="stf-composer-nickname" placeholder="你的名字" maxlength="60" required>
+                    <div class="stf-toolbar">
+                        <div class="stf-filters" role="group" aria-label="内容类型">
+                            <button type="button" class="stf-filter-btn active" data-filter="all">全部类型</button>
+                            <button type="button" class="stf-filter-btn" data-filter="text">文字</button>
+                            <button type="button" class="stf-filter-btn" data-filter="story">故事</button>
+                            <button type="button" class="stf-filter-btn" data-filter="poem">诗歌</button>
+                            <button type="button" class="stf-filter-btn" data-filter="art">插画</button>
+                            <button type="button" class="stf-filter-btn" data-filter="music">音乐</button>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label" for="stf-composer-type">类型</label>
-                            <select class="form-input form-select" id="stf-composer-type">
-                                <option value="text">文字</option>
-                                <option value="story">故事</option>
-                                <option value="poem">诗歌</option>
-                                <option value="art">插画描述</option>
-                                <option value="music">音乐感悟</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="stf-composer-identity">身份 <span class="form-hint">（未登录时可选匿名身份）</span></label>
-                        <select class="form-input form-select" id="stf-composer-identity">
-                            <option value="">自定义昵称</option>
-                            <option value="student">星炬学院学生</option>
-                            <option value="resident">拉海洛居民</option>
-                            <option value="observer">残星会观察员</option>
-                            <option value="intern">深空联合实习生</option>
-                            <option value="club">泛音社社员</option>
-                            <option value="rover">路过漂泊者</option>
-                            <option value="listener">匿名听众</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="stf-composer-title">标题</label>
-                        <input type="text" class="form-input" id="stf-composer-title" placeholder="给作品起个名字" maxlength="300" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">标签 <span class="form-hint">（可选，最多5个）</span></label>
-                        <div class="submission-tag-selector" id="stf-composer-tag-selector">
-                            <span class="tag-category-label">角色</span>
-                            <button type="button" class="tag-chip select-tag" data-tag="爱弥斯">爱弥斯</button>
-                            <button type="button" class="tag-chip select-tag" data-tag="达妮娅">达妮娅</button>
-                            <button type="button" class="tag-chip select-tag" data-tag="西格莉卡">西格莉卡</button>
-                            <button type="button" class="tag-chip select-tag" data-tag="琳奈">琳奈</button>
-                            <button type="button" class="tag-chip select-tag" data-tag="莫宁">莫宁</button>
-                            <button type="button" class="tag-chip select-tag" data-tag="洛瑟菈">洛瑟菈</button>
-                            <button type="button" class="tag-chip select-tag" data-tag="漂泊者">漂泊者</button>
-                            <span class="tag-category-label">类型</span>
-                            <button type="button" class="tag-chip select-tag" data-tag="日常">日常</button>
-                            <button type="button" class="tag-chip select-tag" data-tag="冒险">冒险</button>
-                            <button type="button" class="tag-chip select-tag" data-tag="情感">情感</button>
-                            <button type="button" class="tag-chip select-tag" data-tag="考据">考据</button>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="stf-composer-content">内容</label>
-                        <textarea class="form-input form-textarea" id="stf-composer-content" placeholder="在这里写下你的创作……" rows="4" maxlength="6000" required></textarea>
-                        <span class="form-counter" id="stf-composer-counter">0 / 6000</span>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">附件 <span class="form-hint">（可选 · 文本自动入正文 / 图片作封面 / 音频登记信息）</span></label>
-                        <div class="stf-upload-zone" id="stf-composer-upload-zone" tabindex="0" role="button" aria-label="上传附件：点击选择，或拖拽文件到此处">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-                                <path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+                        <div class="stf-search">
+                            <svg class="stf-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/>
                             </svg>
-                            <b>拖拽或点击上传</b>
-                            <span>文本 30MB · 图片 15MB · 音频 30MB</span>
+                            <input type="search" class="stf-search-input" id="stf-search" placeholder="搜索标题 / 正文 / 作者" aria-label="搜索讨论帖">
+                            <button type="button" class="stf-search-clear" id="stf-search-clear" aria-label="清空搜索" hidden>×</button>
                         </div>
-                        <input type="file" id="stf-composer-upload-input" class="stf-upload-input" hidden>
-                        <p class="stf-upload-status" id="stf-composer-upload-status" role="status" hidden></p>
-                        <div class="stf-upload-preview" id="stf-composer-upload-preview" hidden></div>
+                        <button type="button" class="btn-ghost magnetic" data-action="open-submit" title="打开发帖"><span>发帖</span></button>
                     </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn-primary magnetic"><span>发布</span></button>
-                        <button type="button" class="btn-ghost magnetic" id="stf-composer-cancel"><span>取消</span></button>
-                        <span class="stf-draft-hint" id="stf-composer-draft" aria-live="polite"></span>
+
+                    <div class="stf-sync-bar" id="stf-sync-bar" aria-label="数据同步状态">
+                        <div class="stf-sync-status" id="stf-sync-status" role="status" aria-live="polite">
+                            <span class="stf-sync-dot" id="stf-sync-dot" aria-hidden="true"></span>
+                            <span class="stf-sync-text" id="stf-sync-text">本地模式 · 同步就绪</span>
+                        </div>
+                        <button type="button" class="stf-sync-btn" id="stf-sync-now" aria-label="立即同步数据">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/>
+                            </svg>
+                            <span>立即同步</span>
+                        </button>
                     </div>
-                </form>
-            </div>
 
-            <div class="stf-timeline" id="stf-community-grid">
-                <!-- JS 渲染 -->
-            </div>
+                    <div class="stf-tag-bar" aria-label="角色标签筛选">
+                        <span class="tag-category-label">角色</span>
+                        <button type="button" class="stf-tag-chip" data-tag="爱弥斯">爱弥斯</button>
+                        <button type="button" class="stf-tag-chip" data-tag="达妮娅">达妮娅</button>
+                        <button type="button" class="stf-tag-chip" data-tag="西格莉卡">西格莉卡</button>
+                        <button type="button" class="stf-tag-chip" data-tag="琳奈">琳奈</button>
+                        <button type="button" class="stf-tag-chip" data-tag="莫宁">莫宁</button>
+                        <button type="button" class="stf-tag-chip" data-tag="洛瑟菈">洛瑟菈</button>
+                        <button type="button" class="stf-tag-chip" data-tag="漂泊者">漂泊者</button>
+                        <span class="tag-category-label">话题</span>
+                        <button type="button" class="stf-tag-chip" data-tag="日常">日常</button>
+                        <button type="button" class="stf-tag-chip" data-tag="考据">考据</button>
+                        <button type="button" class="stf-tag-chip" data-tag="情感">情感</button>
+                        <button type="button" class="stf-tag-chip" data-tag="冒险">冒险</button>
+                    </div>
 
-            <nav class="stf-pagination" id="stf-pagination" hidden aria-label="社区分页"></nav>
+                    <div class="stf-pinned" id="stf-pinned" hidden aria-label="置顶与精华">
+                        <div class="stf-pinned-head">
+                            <span class="stf-pinned-label">置顶</span>
+                            <button type="button" class="stf-pinned-toggle" id="stf-pinned-toggle" aria-expanded="true">收起</button>
+                        </div>
+                        <ul class="stf-pinned-list" id="stf-pinned-list"></ul>
+                    </div>
 
-            <div class="stf-community-empty" id="stf-community-empty">
-                <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M32 8 L40 24 L56 26 L44 38 L48 54 L32 46 L16 54 L20 38 L8 26 L24 24 Z"/>
-                </svg>
-                <p>还没有人投稿呢，来成为第一个创作者吧！</p>
-                <button type="button" class="btn-ghost magnetic" data-action="open-submit"><span>去投稿</span></button>
+                    <div class="stf-composer" id="stf-composer">
+                        <button type="button" class="stf-composer-trigger" id="stf-composer-trigger" aria-expanded="false" aria-controls="stf-composer-form">
+                            <span class="stf-composer-avatar" aria-hidden="true">✎</span>
+                            <span class="stf-composer-placeholder">说点什么，或分享你的鸣潮同人…</span>
+                            <span class="stf-composer-hint">发帖</span>
+                        </button>
+                        <form class="stf-composer-form" id="stf-composer-form" hidden>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="stf-composer-nickname">昵称</label>
+                                    <input type="text" class="form-input" id="stf-composer-nickname" placeholder="你的名字" maxlength="60" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="stf-composer-type">类型</label>
+                                    <select class="form-input form-select" id="stf-composer-type">
+                                        <option value="text">文字</option>
+                                        <option value="story">故事</option>
+                                        <option value="poem">诗歌</option>
+                                        <option value="art">插画描述</option>
+                                        <option value="music">音乐感悟</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="stf-composer-identity">身份 <span class="form-hint">（未登录时可选匿名身份）</span></label>
+                                <select class="form-input form-select" id="stf-composer-identity">
+                                    <option value="">自定义昵称</option>
+                                    <option value="student">星炬学院学生</option>
+                                    <option value="resident">拉海洛居民</option>
+                                    <option value="observer">残星会观察员</option>
+                                    <option value="intern">深空联合实习生</option>
+                                    <option value="club">泛音社社员</option>
+                                    <option value="rover">路过漂泊者</option>
+                                    <option value="listener">匿名听众</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="stf-composer-title">标题 <span class="form-hint">（可选；留空则取正文开头）</span></label>
+                                <input type="text" class="form-input" id="stf-composer-title" placeholder="给帖子起个标题（可选）" maxlength="300">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">标签 <span class="form-hint">（可选，最多5个）</span></label>
+                                <div class="submission-tag-selector" id="stf-composer-tag-selector">
+                                    <span class="tag-category-label">角色</span>
+                                    <button type="button" class="tag-chip select-tag" data-tag="爱弥斯">爱弥斯</button>
+                                    <button type="button" class="tag-chip select-tag" data-tag="达妮娅">达妮娅</button>
+                                    <button type="button" class="tag-chip select-tag" data-tag="西格莉卡">西格莉卡</button>
+                                    <button type="button" class="tag-chip select-tag" data-tag="琳奈">琳奈</button>
+                                    <button type="button" class="tag-chip select-tag" data-tag="莫宁">莫宁</button>
+                                    <button type="button" class="tag-chip select-tag" data-tag="洛瑟菈">洛瑟菈</button>
+                                    <button type="button" class="tag-chip select-tag" data-tag="漂泊者">漂泊者</button>
+                                    <span class="tag-category-label">话题</span>
+                                    <button type="button" class="tag-chip select-tag" data-tag="日常">日常</button>
+                                    <button type="button" class="tag-chip select-tag" data-tag="冒险">冒险</button>
+                                    <button type="button" class="tag-chip select-tag" data-tag="情感">情感</button>
+                                    <button type="button" class="tag-chip select-tag" data-tag="考据">考据</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="stf-composer-content">正文</label>
+                                <textarea class="form-input form-textarea" id="stf-composer-content" placeholder="写下你的讨论或同人……" rows="4" maxlength="6000" required></textarea>
+                                <span class="form-counter" id="stf-composer-counter">0 / 6000</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">附件 <span class="form-hint">（可选 · 文本入正文 / 图片作封面 / 音频登记信息）</span></label>
+                                <div class="stf-upload-zone" id="stf-composer-upload-zone" tabindex="0" role="button" aria-label="上传附件：点击选择，或拖拽文件到此处">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                                        <path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+                                    </svg>
+                                    <b>拖拽或点击上传</b>
+                                    <span>文本 30MB · 图片 15MB · 音频 30MB</span>
+                                </div>
+                                <input type="file" id="stf-composer-upload-input" class="stf-upload-input" hidden>
+                                <p class="stf-upload-status" id="stf-composer-upload-status" role="status" hidden></p>
+                                <div class="stf-upload-preview" id="stf-composer-upload-preview" hidden></div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary magnetic"><span>发布</span></button>
+                                <button type="button" class="btn-ghost magnetic" id="stf-composer-cancel"><span>取消</span></button>
+                                <span class="stf-draft-hint" id="stf-composer-draft" aria-live="polite"></span>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="stf-feed" id="stf-community-grid" aria-label="讨论帖列表">
+                        <!-- JS 渲染 -->
+                    </div>
+
+                    <nav class="stf-pagination" id="stf-pagination" hidden aria-label="讨论区分页"></nav>
+
+                    <div class="stf-community-empty" id="stf-community-empty">
+                        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M32 8 L40 24 L56 26 L44 38 L48 54 L32 46 L16 54 L20 38 L8 26 L24 24 Z"/>
+                        </svg>
+                        <p>还没有帖子，来发第一条讨论吧！</p>
+                        <button type="button" class="btn-ghost magnetic" data-action="open-submit"><span>去发帖</span></button>
+                    </div>
+                </div>
+
+                <aside class="stf-discuss-aside" aria-label="讨论区侧栏">
+                    <div class="stf-aside-card">
+                        <h3 class="stf-aside-title">频道简介</h3>
+                        <p class="stf-aside-text">星炬学院讨论区是鸣潮同好的异步帖流：适合考据、同人与长话题。点赞、评论、收藏会沉淀下来，方便后来者继续参与。</p>
+                        <p class="stf-aside-meta">帖子 <b id="stf-stat-works">0</b> · 参与者 <b id="stf-stat-members">0</b></p>
+                    </div>
+
+                    <div class="stf-aside-card">
+                        <h3 class="stf-aside-title">使用提示</h3>
+                        <ul class="stf-aside-tips">
+                            <li>用「热门 / 精华」与角色标签快速找帖</li>
+                            <li>标题可留空，正文必填</li>
+                            <li>长文请写清标题，方便检索</li>
+                        </ul>
+                    </div>
+
+                    <!-- 实时聊天：次要入口，默认收起 -->
+                    <div class="stf-aside-card stf-aside-chat" id="stf-chat">
+                        <button type="button" class="stf-chat-entry" id="stf-chat-entry" aria-expanded="false" aria-controls="stf-chat-panel" title="打开公共频段（次要入口）">
+                            <span class="stf-chat-entry-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            </span>
+                            <span class="stf-chat-entry-body">
+                                <b>公共频段</b>
+                                <span>瞬时信号 · 次要入口</span>
+                            </span>
+                            <span class="stf-chat-entry-status" role="status" aria-live="polite">
+                                <span class="stf-chat-dot" id="stf-chat-dot"></span>
+                                <span id="stf-chat-status">连接中…</span>
+                            </span>
+                        </button>
+                        <div class="stf-chat-panel" id="stf-chat-panel" hidden>
+                            <div class="stf-chat-card">
+                                <div class="stf-chat-header">
+                                    <span class="stf-chat-online" id="stf-chat-online">星域公共频道</span>
+                                    <span class="stf-aside-meta" id="stf-stat-online" hidden>0</span>
+                                </div>
+                                <div class="stf-chat-messages" id="stf-chat-messages" role="log" aria-live="polite" aria-atomic="false" aria-label="聊天消息"></div>
+                                <div class="stf-chat-typing" id="stf-chat-typing" aria-live="polite" hidden></div>
+                                <form class="stf-chat-form" id="stf-chat-form">
+                                    <input type="text" class="stf-chat-input" id="stf-chat-input" placeholder="瞬时信号，Enter 发送…" maxlength="200" autocomplete="off" aria-label="聊天消息">
+                                    <span class="stf-chat-counter" id="stf-chat-counter" aria-hidden="true">0/200</span>
+                                    <button type="submit" class="stf-chat-send" id="stf-chat-send" aria-label="发送">发送</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
             </div>
         </div>
     </section>
@@ -490,12 +525,12 @@
         飞行雪绒是《鸣潮》角色爱弥斯的同人创作账号，本论坛为粉丝向非官方二创聚合站。
     </p>
 
-    <!-- 投稿弹窗 -->
-    <div class="stf-modal" id="stf-submit-modal" role="dialog" aria-modal="true" aria-label="向星炬学院论坛投稿" hidden>
+    <!-- 发帖弹窗 -->
+    <div class="stf-modal" id="stf-submit-modal" role="dialog" aria-modal="true" aria-label="在讨论区发帖" hidden>
         <div class="stf-modal-backdrop" data-close></div>
         <div class="stf-modal-panel glass">
             <div class="stf-modal-header">
-                <h3>向星炬学院论坛投稿</h3>
+                <h3>在讨论区发帖</h3>
                 <button type="button" class="stf-modal-close" data-close aria-label="关闭">×</button>
             </div>
             <form class="stf-submit-form">
@@ -529,8 +564,8 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="stf-submit-title">标题</label>
-                    <input type="text" class="form-input" id="stf-submit-title" placeholder="给作品起个名字" maxlength="300" required>
+                    <label class="form-label" for="stf-submit-title">标题 <span class="form-hint">（可选）</span></label>
+                    <input type="text" class="form-input" id="stf-submit-title" placeholder="给帖子起个标题（可选）" maxlength="300">
                 </div>
                 <div class="form-group">
                     <label class="form-label">标签 <span class="form-hint">（可选，最多5个）</span></label>
@@ -543,7 +578,7 @@
                         <button type="button" class="tag-chip select-tag" data-tag="莫宁">莫宁</button>
                         <button type="button" class="tag-chip select-tag" data-tag="洛瑟菈">洛瑟菈</button>
                         <button type="button" class="tag-chip select-tag" data-tag="漂泊者">漂泊者</button>
-                        <span class="tag-category-label">类型</span>
+                        <span class="tag-category-label">话题</span>
                         <button type="button" class="tag-chip select-tag" data-tag="日常">日常</button>
                         <button type="button" class="tag-chip select-tag" data-tag="冒险">冒险</button>
                         <button type="button" class="tag-chip select-tag" data-tag="情感">情感</button>
@@ -551,12 +586,12 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="stf-submit-content">内容</label>
-                    <textarea class="form-input form-textarea" id="stf-submit-content" placeholder="在这里写下你的创作……" rows="6" maxlength="6000" required></textarea>
+                    <label class="form-label" for="stf-submit-content">正文</label>
+                    <textarea class="form-input form-textarea" id="stf-submit-content" placeholder="写下你的讨论或同人……" rows="6" maxlength="6000" required></textarea>
                     <span class="form-counter" id="stf-submit-counter">0 / 6000</span>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">附件 <span class="form-hint">（可选 · 文本自动入正文 / 图片作封面 / 音频登记信息）</span></label>
+                    <label class="form-label">附件 <span class="form-hint">（可选 · 文本入正文 / 图片作封面 / 音频登记信息）</span></label>
                     <div class="stf-upload-zone" id="stf-submit-upload-zone" tabindex="0" role="button" aria-label="上传附件：点击选择，或拖拽文件到此处">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
                             <path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
@@ -569,7 +604,7 @@
                     <div class="stf-upload-preview" id="stf-submit-upload-preview" hidden></div>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn-primary magnetic"><span>提交作品</span></button>
+                    <button type="submit" class="btn-primary magnetic"><span>发布帖子</span></button>
                     <button type="button" class="btn-ghost magnetic" data-close><span>取消</span></button>
                     <span class="stf-draft-hint" id="stf-submit-draft" aria-live="polite"></span>
                 </div>
@@ -662,7 +697,7 @@
                 <span>STAR TORCH · 初次接入</span>
             </div>
             <h2 id="stf-welcome-title">欢迎来到星炬学院论坛</h2>
-            <p>这里是鸣潮同好的核心聚集地。翻阅角色档案、考据世界观，或在社区中分享你的同人创作。</p>
+            <p>这里是鸣潮同好的核心聚集地。翻阅角色档案、考据世界观，或在讨论区发帖分享。</p>
             <p class="stf-welcome-hint">小提示：论坛某处隐藏着调频 <b>9072</b> 的入口。</p>
             <div class="stf-welcome-actions">
                 <button type="button" class="btn-primary magnetic" id="stf-welcome-enter"><span>进入论坛</span></button>

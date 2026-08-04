@@ -10,13 +10,15 @@
     window.StarTorchForum.toast = showToast;
     window.StarTorchForum.refreshCommunity = function () { renderCommunity(); };
 
-    var COMMUNITY_PAGE_SIZE = 6;
+    var COMMUNITY_PAGE_SIZE = 8;
     var communityFilter = 'all';
     var communitySort = 'new';
     var communityPage = 0;
     var activeTags = [];
     var searchQuery = '';
     var searchTimer = null;
+    var ESSENCE_LIKE_MIN = 20;
+    var PINNED_MAX = 3;
 
     /* 内容上限：较改版前统一提升 3 倍 */
     var LIMIT_NAME = 60;
@@ -147,8 +149,8 @@
         if (trigger) {
             var user = currentUser();
             trigger.textContent = user
-                ? (user.name + '，分享你的鸣潮同人…')
-                : '分享你的鸣潮同人…';
+                ? (user.name + '，说点什么…')
+                : '说点什么，或分享你的鸣潮同人…';
         }
     }
 
@@ -177,6 +179,38 @@
         }, duration);
     }
 
+    function isEssencePost(s) {
+        if (!s) return false;
+        if ((s.likes || 0) >= ESSENCE_LIKE_MIN) return true;
+        if (!s.tags || !Array.isArray(s.tags)) return false;
+        return s.tags.some(function (t) {
+            return t === '精华' || t === '置顶' || t === '公告';
+        });
+    }
+
+    function getPinnedCandidates(pool) {
+        var tagged = [];
+        var hot = [];
+        (pool || []).forEach(function (s) {
+            var hasPinTag = s.tags && s.tags.some(function (t) {
+                return t === '置顶' || t === '公告' || t === '精华';
+            });
+            if (hasPinTag) tagged.push(s);
+            else if ((s.likes || 0) >= ESSENCE_LIKE_MIN) hot.push(s);
+        });
+        tagged.sort(function (a, b) { return (b.likes || 0) - (a.likes || 0); });
+        hot.sort(function (a, b) { return (b.likes || 0) - (a.likes || 0); });
+        var merged = tagged.concat(hot);
+        var seen = {};
+        var out = [];
+        for (var i = 0; i < merged.length && out.length < PINNED_MAX; i++) {
+            if (seen[merged[i].id]) continue;
+            seen[merged[i].id] = true;
+            out.push(merged[i]);
+        }
+        return out;
+    }
+
     /* ============ Rendering ============ */
     function getFilteredSubmissions() {
         var submissions = StarTorchData.getSubmissions().filter(function (s) { return !s.is_hidden; });
@@ -199,6 +233,15 @@
             });
         }
 
+        if (communitySort === 'essence') {
+            filtered = filtered.filter(isEssencePost);
+            return filtered.sort(function (a, b) {
+                var la = a.likes || 0, lb = b.likes || 0;
+                if (lb !== la) return lb - la;
+                return (b.time || 0) - (a.time || 0);
+            });
+        }
+
         if (communitySort === 'hot') {
             return filtered.sort(function (a, b) {
                 var la = a.likes || 0, lb = b.likes || 0;
@@ -213,14 +256,18 @@
     function renderStats() {
         var subs = StarTorchData.getSubmissions().filter(function (s) { return !s.is_hidden; });
         var works = subs.length;
-        var members = new Set(subs.map(function (s) { return s.name; })).size + 24;
-        var online = 8 + Math.floor(Math.random() * 13);
+        var members = new Set(subs.map(function (s) { return s.name; })).size;
         var w = document.getElementById('stf-stat-works');
         var m = document.getElementById('stf-stat-members');
-        var o = document.getElementById('stf-stat-online');
         if (w) w.textContent = works;
         if (m) m.textContent = members;
-        if (o) o.textContent = online;
+    }
+
+    function displayTitle(s) {
+        if (s && s.title && String(s.title).trim()) return String(s.title).trim();
+        var body = (s && s.content) ? String(s.content).replace(/\s+/g, ' ').trim() : '';
+        if (!body) return '无标题讨论';
+        return body.length > 36 ? body.slice(0, 36) + '…' : body;
     }
 
     function buildCardHTML(s) {
@@ -229,83 +276,95 @@
         var cardCharColor = charColorForSubmission(s);
         var cardCharStyle = cardCharColor ? ' style="--char:' + cardCharColor + '"' : '';
         var commentCount = (StarTorchData.getComments(s.id) || []).length;
+        var title = displayTitle(s);
+        var fullLen = (s.content || '').length;
+        var needsExpand = fullLen > 160;
+        var preview = escapeHTML(previewText(s.content, 160));
 
         var tagsHtml = '';
-        var tagsPreviewHtml = '';
         if (s.tags && s.tags.length) {
             tagsHtml = '<div class="stf-card-tags">' +
                 s.tags.map(function (t) { return '<span class="stf-card-tag">' + escapeHTML(t) + '</span>'; }).join('') +
                 '</div>';
-            tagsPreviewHtml = '<div class="stf-card-tags stf-card-tags--preview">' +
-                s.tags.slice(0, 3).map(function (t) { return '<span class="stf-card-tag">' + escapeHTML(t) + '</span>'; }).join('') +
-                (s.tags.length > 3 ? '<span class="stf-card-tag">+' + (s.tags.length - 3) + '</span>' : '') +
-                '</div>';
         }
 
-        var preview = escapeHTML(previewText(s.content, 110));
-        var headerHtml =
+        var coverHtml = s.image
+            ? '<img class="stf-card-cover" src="' + escapeHTML(s.image) + '" alt="" loading="lazy">'
+            : '';
+
+        var essenceBadge = isEssencePost(s)
+            ? '<span class="stf-card-badge" data-type="essence" title="精华">精华</span>'
+            : '';
+
+        return '<article class="stf-card" data-id="' + s.id + '"' + cardCharStyle + '>' +
             '<div class="stf-card-header">' +
                 '<div class="stf-card-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
                 '<div class="stf-card-info">' +
                     '<div class="stf-card-author">' + escapeHTML(s.name) + '</div>' +
                     '<div class="stf-card-time">' + escapeHTML(s.timeStr) + '</div>' +
                 '</div>' +
+                essenceBadge +
                 '<span class="stf-card-badge" data-type="' + s.type + '">' + (typeLabels[s.type] || s.type) + '</span>' +
-            '</div>';
-
-        /* 立体翻转卡片：正面摘要 / 背面完整内容与互动
-           外层仅作定位与时间线节点；翻转由 .stf-card-inner 的 rotateY 驱动 */
-        return '<article class="stf-card" data-id="' + s.id + '"' + cardCharStyle +
-                ' tabindex="0" role="button" aria-expanded="false">' +
-            '<span class="stf-node" aria-hidden="true"></span>' +
-            '<div class="stf-card-inner">' +
-                '<div class="stf-card-front">' +
-                    headerHtml +
-                    '<h3 class="stf-card-title">' + escapeHTML(s.title) + '</h3>' +
-                    '<div class="stf-card-preview">' + preview + '</div>' +
-                    tagsPreviewHtml +
-                    '<div class="stf-card-front-actions">' +
-                        '<span class="stf-front-stat">❤ ' + (s.likes || 0) + '</span>' +
-                        '<span class="stf-front-stat">💬 ' + commentCount + '</span>' +
-                        '<span class="stf-front-stat">⭐ ' + (s.bookmarks || 0) + '</span>' +
-                        '<span class="stf-card-flip-hint">点击翻转 ↻</span>' +
-                    '</div>' +
-                '</div>' +
-                '<div class="stf-card-back">' +
-                    headerHtml +
-                    '<h3 class="stf-card-title">' + escapeHTML(s.title) + '</h3>' +
-                    '<div class="stf-card-content">' + escapeHTML(s.content) + '</div>' +
-                    tagsHtml +
-                    '<div class="stf-card-actions">' +
-                        '<button class="stf-card-action' + (s.liked ? ' liked' : '') + '" data-action="like">' +
-                            '<svg viewBox="0 0 24 24" fill="' + (s.liked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
-                            '<span>' + (s.likes || 0) + '</span>' +
-                        '</button>' +
-                        '<button class="stf-card-action" data-action="comment">' +
-                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
-                            '<span>评论</span>' +
-                        '</button>' +
-                        '<button class="stf-card-action' + (s.bookmarked ? ' bookmarked' : '') + '" data-action="bookmark">' +
-                            '<svg viewBox="0 0 24 24" fill="' + (s.bookmarked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>' +
-                            '<span>收藏</span>' +
-                        '</button>' +
-                        (window.StarTorchAuth && window.StarTorchAuth.isForumAdmin() ? '<button type="button" class="stf-card-action stf-admin-hide" data-action="admin-hide" title="管理员：隐藏该帖">' +
-                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>' +
-                            '<span>隐藏</span>' +
-                        '</button>' : '') +
-                        '<button type="button" class="stf-card-flip-back">返回 ↺</button>' +
-                    '</div>' +
-                    '<div class="stf-card-comments" id="stf-comments-' + s.id + '">' +
-                        '<div class="stf-comment-list" id="stf-comment-list-' + s.id + '"></div>' +
-                        '<form class="stf-comment-form" data-target="' + s.id + '">' +
-                            '<input type="text" class="stf-comment-name" placeholder="昵称" maxlength="20" required>' +
-                            '<input type="text" class="stf-comment-input" placeholder="写下你的评论……" maxlength="500" required>' +
-                            '<button type="submit" class="stf-comment-submit">发送</button>' +
-                        '</form>' +
-                    '</div>' +
-                '</div>' +
+            '</div>' +
+            '<h3 class="stf-card-title">' + escapeHTML(title) + '</h3>' +
+            coverHtml +
+            '<div class="stf-card-preview">' + preview + '</div>' +
+            '<div class="stf-card-content">' + escapeHTML(s.content) + '</div>' +
+            (needsExpand
+                ? '<button type="button" class="stf-card-expand-btn" data-action="expand">' +
+                    (needsExpand ? '展开全文' : '') + '</button>'
+                : '') +
+            tagsHtml +
+            '<div class="stf-card-actions">' +
+                '<button type="button" class="stf-card-action' + (s.liked ? ' liked' : '') + '" data-action="like" title="点赞">' +
+                    '<svg viewBox="0 0 24 24" fill="' + (s.liked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
+                    '<span>' + (s.likes || 0) + '</span>' +
+                '</button>' +
+                '<button type="button" class="stf-card-action" data-action="comment" title="评论">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
+                    '<span>' + commentCount + '</span>' +
+                '</button>' +
+                '<button type="button" class="stf-card-action' + (s.bookmarked ? ' bookmarked' : '') + '" data-action="bookmark" title="收藏">' +
+                    '<svg viewBox="0 0 24 24" fill="' + (s.bookmarked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>' +
+                    '<span>收藏</span>' +
+                '</button>' +
+                (window.StarTorchAuth && window.StarTorchAuth.isForumAdmin() ? '<button type="button" class="stf-card-action stf-admin-hide" data-action="admin-hide" title="管理员：隐藏该帖">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>' +
+                    '<span>隐藏</span>' +
+                '</button>' : '') +
+            '</div>' +
+            '<div class="stf-card-comments" id="stf-comments-' + s.id + '">' +
+                '<div class="stf-comment-list" id="stf-comment-list-' + s.id + '"></div>' +
+                '<form class="stf-comment-form" data-target="' + s.id + '">' +
+                    '<input type="text" class="stf-comment-name" placeholder="昵称" maxlength="20" required>' +
+                    '<input type="text" class="stf-comment-input" placeholder="写下你的评论……" maxlength="500" required>' +
+                    '<button type="submit" class="stf-comment-submit">发送</button>' +
+                '</form>' +
             '</div>' +
         '</article>';
+    }
+
+    function renderPinned() {
+        var wrap = document.getElementById('stf-pinned');
+        var list = document.getElementById('stf-pinned-list');
+        if (!wrap || !list) return;
+        var pool = StarTorchData.getSubmissions().filter(function (s) { return !s.is_hidden; });
+        var pins = getPinnedCandidates(pool);
+        if (!pins.length) {
+            wrap.hidden = true;
+            list.innerHTML = '';
+            return;
+        }
+        wrap.hidden = false;
+        list.innerHTML = pins.map(function (s) {
+            var badge = (s.tags && s.tags.indexOf('公告') !== -1) ? '公告'
+                : (s.tags && s.tags.indexOf('置顶') !== -1) ? '置顶' : '精华';
+            return '<li><button type="button" class="stf-pinned-item" data-pin-id="' + escapeHTML(s.id) + '">' +
+                '<span class="stf-pinned-badge">' + badge + '</span>' +
+                '<span class="stf-pinned-title">' + escapeHTML(displayTitle(s)) + '</span>' +
+                '<span class="stf-pinned-meta">❤ ' + (s.likes || 0) + '</span>' +
+            '</button></li>';
+        }).join('');
     }
 
     function renderComments(targetId) {
@@ -393,6 +452,7 @@
         if (countEl) countEl.textContent = filtered.length;
 
         renderStats();
+        renderPinned();
         renderPagination(filtered.length);
 
         if (filtered.length === 0) {
@@ -493,11 +553,12 @@
         if (card) card.classList.toggle('comments-open', open);
     }
 
-    /* 立体翻转：点击卡片主体切换 is-flipped，驱动 rotateY(180deg) */
-    function toggleCard(card) {
+    /* 展开/收起全文（替代立体翻转） */
+    function toggleExpand(card) {
         if (!card) return;
-        var flipped = card.classList.toggle('is-flipped');
-        card.setAttribute('aria-expanded', flipped ? 'true' : 'false');
+        var expanded = card.classList.toggle('is-expanded');
+        var btn = card.querySelector('[data-action="expand"]');
+        if (btn) btn.textContent = expanded ? '收起' : '展开全文';
     }
 
     function addComment(targetId, name, text) {
@@ -553,11 +614,16 @@
         if (attachment && attachment.kind === 'audio') {
             body += '\n\n♪ 附件音频：' + attachment.name;
         }
+        var finalTitle = (title && String(title).trim()) || '';
+        if (!finalTitle) {
+            var snippet = String(body || '').replace(/\s+/g, ' ').trim();
+            finalTitle = snippet ? (snippet.length > 36 ? snippet.slice(0, 36) + '…' : snippet) : '无标题讨论';
+        }
         return {
             id: 'stf_' + now.getTime(),
             name: displayName,
             type: type,
-            title: title,
+            title: finalTitle,
             content: body,
             image: (attachment && attachment.image) ? attachment.image : '',
             realm: 'startorch',
@@ -650,14 +716,14 @@
         syncIdentityControls('stf-submit', '');
         updateCounter('stf-submit');
         closeSubmitModal();
-        showToast('投稿成功，已发布到星炬学院论坛 ✨');
+        showToast('发帖成功，已发布到讨论区 ✨');
     }
 
-    /* 统一字段校验，上限已提升 3 倍 */
+    /* 统一字段校验：标题可选，正文必填 */
     function validateFields(name, title, content) {
-        if (!name || !title || !content) { showToast('请填写完整信息'); return false; }
+        if (!name || !content) { showToast('请填写昵称和正文'); return false; }
         if (name.length > LIMIT_NAME) { showToast('昵称限 ' + LIMIT_NAME + ' 字'); return false; }
-        if (title.length > LIMIT_TITLE) { showToast('标题限 ' + LIMIT_TITLE + ' 字'); return false; }
+        if (title && title.length > LIMIT_TITLE) { showToast('标题限 ' + LIMIT_TITLE + ' 字'); return false; }
         if (content.length > LIMIT_CONTENT) { showToast('内容限 ' + LIMIT_CONTENT + ' 字'); return false; }
         return true;
     }
@@ -688,7 +754,7 @@
         syncIdentityControls('stf-composer', '');
         updateCounter('stf-composer');
         closeComposer();
-        showToast('已发布到星炬学院论坛 ✨');
+        showToast('已发布到讨论区 ✨');
     }
 
     /* ============ 字数计数 / 草稿 ============ */
@@ -809,17 +875,76 @@
             });
         }
 
-        // sort toggle (最新 / 热门)
-        document.querySelectorAll('.stf-sort-btn').forEach(function (btn) {
+        // sort toggle (全部 / 热门 / 精华) — 新 Tab 与旧 sort 按钮兼容
+        document.querySelectorAll('.stf-feed-tab, .stf-sort-btn').forEach(function (btn) {
             btn.addEventListener('click', function () {
-                communitySort = btn.getAttribute('data-sort');
-                document.querySelectorAll('.stf-sort-btn').forEach(function (b) {
-                    b.classList.toggle('active', b === btn);
+                communitySort = btn.getAttribute('data-sort') || 'new';
+                document.querySelectorAll('.stf-feed-tab, .stf-sort-btn').forEach(function (b) {
+                    var on = b.getAttribute('data-sort') === communitySort;
+                    b.classList.toggle('active', on);
+                    if (b.getAttribute('role') === 'tab') b.setAttribute('aria-selected', on ? 'true' : 'false');
                 });
                 communityPage = 0;
                 renderCommunity();
             });
         });
+
+        // 置顶区收起 + 跳转
+        var pinnedToggle = document.getElementById('stf-pinned-toggle');
+        if (pinnedToggle) {
+            pinnedToggle.addEventListener('click', function () {
+                var wrap = document.getElementById('stf-pinned');
+                if (!wrap) return;
+                var collapsed = wrap.classList.toggle('is-collapsed');
+                pinnedToggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+                pinnedToggle.textContent = collapsed ? '展开' : '收起';
+            });
+        }
+        var pinnedList = document.getElementById('stf-pinned-list');
+        if (pinnedList) {
+            pinnedList.addEventListener('click', function (e) {
+                var item = e.target.closest('[data-pin-id]');
+                if (!item) return;
+                var id = item.getAttribute('data-pin-id');
+                var card = document.querySelector('.stf-card[data-id="' + id + '"]');
+                if (card) {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    card.classList.add('is-expanded');
+                    var expandBtn = card.querySelector('[data-action="expand"]');
+                    if (expandBtn) expandBtn.textContent = '收起';
+                } else {
+                    searchQuery = '';
+                    var searchEl = document.getElementById('stf-search');
+                    if (searchEl) searchEl.value = '';
+                    communityFilter = 'all';
+                    communitySort = 'hot';
+                    communityPage = 0;
+                    updateFilterUI();
+                    document.querySelectorAll('.stf-feed-tab').forEach(function (b) {
+                        var on = b.getAttribute('data-sort') === 'hot';
+                        b.classList.toggle('active', on);
+                        b.setAttribute('aria-selected', on ? 'true' : 'false');
+                    });
+                    renderCommunity();
+                    setTimeout(function () {
+                        var c = document.querySelector('.stf-card[data-id="' + id + '"]');
+                        if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 80);
+                }
+            });
+        }
+
+        // 公共频段（次要聊天入口）折叠
+        var chatEntry = document.getElementById('stf-chat-entry');
+        var chatPanel = document.getElementById('stf-chat-panel');
+        if (chatEntry && chatPanel) {
+            chatEntry.addEventListener('click', function () {
+                var open = chatPanel.hasAttribute('hidden');
+                if (open) chatPanel.removeAttribute('hidden');
+                else chatPanel.setAttribute('hidden', '');
+                chatEntry.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+        }
 
         // grid actions
         var grid = document.getElementById('stf-community-grid');
@@ -829,26 +954,13 @@
                 if (!card) return;
                 var id = card.getAttribute('data-id');
 
-                // 评论区域点击不触发翻转
                 if (e.target.closest('.stf-comment-form, .stf-card-comments, .stf-comment-list')) return;
 
                 if (e.target.closest('[data-action="like"]')) { toggleLike(id); return; }
                 if (e.target.closest('[data-action="comment"]')) { toggleComments(id); return; }
                 if (e.target.closest('[data-action="bookmark"]')) { toggleBookmark(id); return; }
                 if (e.target.closest('[data-action="admin-hide"]')) { hideSubmission(id); return; }
-
-                // 翻转触发：正面/背面空白区域或显式翻转按钮
-                toggleCard(card);
-            });
-
-            grid.addEventListener('keydown', function (e) {
-                if (e.key !== 'Enter' && e.key !== ' ') return;
-                var card = e.target.closest('.stf-card');
-                if (!card) return;
-                // 焦点在按钮/输入时不拦截
-                if (e.target.closest('button, input, textarea, a')) return;
-                e.preventDefault();
-                toggleCard(card);
+                if (e.target.closest('[data-action="expand"]')) { toggleExpand(card); return; }
             });
 
             grid.addEventListener('submit', function (e) {
@@ -863,7 +975,7 @@
                 form.querySelector('.stf-comment-input').value = '';
             });
 
-            /* 管理员：隐藏评论（评论区在 grid 主点击处理器中被 early-return，这里单独代理） */
+            /* 管理员：隐藏评论 */
             grid.addEventListener('click', function (e) {
                 var btn = e.target.closest('[data-action="admin-hide-comment"]');
                 if (!btn) return;

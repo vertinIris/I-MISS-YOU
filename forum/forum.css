@@ -728,12 +728,18 @@
 .stf-card-author { font-size: 15px; font-weight: 600; color: #fff; }
 .stf-card-time { font-size: 12px; color: rgba(240,244,255,.55); margin-top: 2px; }
 .stf-card-badge {
-    margin-left: auto;
     font-size: 11px;
     padding: 4px 10px;
     border-radius: 999px;
     background: rgba(168,216,255,.12);
     color: var(--drifter-blue-light, #A8D8FF);
+}
+.stf-card-header .stf-card-info + .stf-card-badge {
+    margin-left: auto;
+}
+.stf-card-badge[data-type="essence"] {
+    background: rgba(232, 197, 106, 0.18);
+    color: var(--lucilla-gold, #E8C56A);
 }
 .stf-card-title {
     font-family: "Noto Serif SC", serif;
@@ -1721,4 +1727,366 @@
 .stf-comment-hide:hover {
     background: rgba(255, 90, 90, 0.15);
     color: #ff6b6b;
+}
+
+/* ============================================================
+   讨论区信息流改版：双栏布局 / 置顶 / 侧栏 / 帖流卡
+   ============================================================ */
+
+.stf-discuss-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 28px;
+    align-items: start;
+    margin-top: 8px;
+}
+.stf-discuss-main { min-width: 0; }
+
+.stf-feed-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.stf-feed-tab {
+    appearance: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    background: transparent;
+    color: rgba(240, 244, 255, 0.62);
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.stf-feed-tab:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.06);
+}
+.stf-feed-tab.active {
+    color: #fff;
+    background: rgba(107, 138, 255, 0.22);
+    border-color: rgba(168, 216, 255, 0.28);
+}
+
+.stf-pinned {
+    margin: 18px 0 6px;
+    border-radius: 14px;
+    background: rgba(107, 138, 255, 0.06);
+    border: 1px solid rgba(168, 216, 255, 0.16);
+    overflow: hidden;
+}
+.stf-pinned-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.stf-pinned-label {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: var(--drifter-blue-light, #A8D8FF);
+    font-weight: 600;
+}
+.stf-pinned-toggle {
+    appearance: none;
+    border: none;
+    background: none;
+    color: rgba(240, 244, 255, 0.5);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 2px 6px;
+}
+.stf-pinned-toggle:hover { color: #fff; }
+.stf-pinned.is-collapsed .stf-pinned-list { display: none; }
+.stf-pinned-list {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+}
+.stf-pinned-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    color: rgba(240, 244, 255, 0.88);
+    text-align: left;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.2s;
+}
+.stf-pinned-item:hover { background: rgba(255, 255, 255, 0.05); }
+.stf-pinned-badge {
+    flex: none;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 6px;
+    background: rgba(232, 197, 106, 0.18);
+    color: var(--lucilla-gold, #E8C56A);
+    letter-spacing: 0.04em;
+}
+.stf-pinned-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+}
+.stf-pinned-meta {
+    flex: none;
+    font-size: 11px;
+    color: rgba(240, 244, 255, 0.45);
+}
+
+.stf-discuss-aside {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: sticky;
+    top: 88px;
+}
+.stf-aside-card {
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.stf-aside-title {
+    margin: 0 0 10px;
+    font-family: "Noto Serif SC", serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+}
+.stf-aside-text {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.7;
+    color: rgba(240, 244, 255, 0.68);
+}
+.stf-aside-meta {
+    margin: 12px 0 0;
+    font-size: 12px;
+    color: rgba(240, 244, 255, 0.5);
+}
+.stf-aside-meta b { color: var(--drifter-blue-light, #A8D8FF); font-weight: 600; }
+.stf-aside-tips {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    line-height: 1.75;
+    color: rgba(240, 244, 255, 0.68);
+}
+.stf-aside-tips li { margin-bottom: 4px; }
+
+.stf-aside-chat { padding: 0; overflow: hidden; }
+.stf-chat-entry {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 16px;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s;
+}
+.stf-chat-entry:hover { background: rgba(255, 255, 255, 0.04); }
+.stf-chat-entry-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    flex: none;
+    background: rgba(107, 138, 255, 0.15);
+    color: var(--drifter-blue-light, #A8D8FF);
+}
+.stf-chat-entry-icon svg { width: 18px; height: 18px; }
+.stf-chat-entry-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.stf-chat-entry-body b {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+}
+.stf-chat-entry-body span {
+    font-size: 11px;
+    color: rgba(240, 244, 255, 0.5);
+}
+.stf-chat-entry-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: rgba(240, 244, 255, 0.55);
+    max-width: 88px;
+}
+.stf-chat-entry-status #stf-chat-status {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.stf-chat-panel {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 0 0 8px;
+}
+.stf-aside-chat .stf-chat-card {
+    margin: 0;
+    max-width: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+}
+.stf-aside-chat .stf-chat-header {
+    padding: 8px 14px;
+    background: transparent;
+}
+.stf-aside-chat .stf-chat-messages {
+    min-height: 160px;
+    max-height: 260px;
+    padding: 10px 12px;
+}
+.stf-aside-chat .stf-chat-form {
+    padding: 8px 12px 12px;
+    flex-wrap: wrap;
+}
+.stf-aside-chat .stf-chat-input { font-size: 13px; }
+.stf-aside-chat .stf-chat-send { padding: 8px 12px; font-size: 13px; }
+
+/* 帖子信息流 */
+.stf-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 20px;
+}
+.stf-feed .stf-card {
+    position: relative;
+    display: block;
+    margin: 0;
+    padding: 18px 20px 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 3px solid var(--char, var(--drifter-blue, #6B8AFF));
+    cursor: default;
+    outline: none;
+    transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+}
+.stf-feed .stf-card:hover {
+    background: rgba(255, 255, 255, 0.055);
+    border-color: rgba(168, 216, 255, 0.18);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+}
+.stf-feed .stf-card.is-new {
+    animation: stf-feed-in 0.55s ease;
+}
+@keyframes stf-feed-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+}
+.stf-feed .stf-card-header { margin-bottom: 10px; }
+.stf-feed .stf-card-title {
+    font-size: 17px;
+    margin: 0 0 8px;
+    line-height: 1.35;
+}
+.stf-feed .stf-card-preview {
+    font-size: 14px;
+    line-height: 1.75;
+    color: rgba(240, 244, 255, 0.74);
+    white-space: pre-line;
+    margin: 0 0 10px;
+}
+.stf-feed .stf-card-content {
+    display: none;
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(240, 244, 255, 0.8);
+    white-space: pre-line;
+    margin: 0 0 10px;
+}
+.stf-feed .stf-card.is-expanded .stf-card-preview { display: none; }
+.stf-feed .stf-card.is-expanded .stf-card-content { display: block; }
+.stf-feed .stf-card-cover {
+    display: block;
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin: 0 0 12px;
+}
+.stf-feed .stf-card-actions {
+    margin-top: 4px;
+    padding-top: 12px;
+    flex-wrap: wrap;
+}
+.stf-card-expand-btn {
+    appearance: none;
+    border: none;
+    background: none;
+    color: var(--drifter-blue-light, #A8D8FF);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 0;
+    margin: 0 0 8px;
+}
+.stf-card-expand-btn:hover { opacity: 0.8; }
+.stf-feed .stf-card-comments {
+    margin-top: 12px;
+}
+.stf-feed .stf-node { display: none; }
+
+.stf-composer {
+    max-width: none;
+    margin: 18px 0 0;
+}
+.stf-composer-form {
+    margin-top: 12px;
+}
+
+@media (max-width: 980px) {
+    .stf-discuss-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    .stf-discuss-aside {
+        position: static;
+        order: -1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    .stf-aside-chat { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+    .stf-discuss-aside { grid-template-columns: 1fr; }
+    .stf-feed-tabs { gap: 4px; }
+    .stf-feed-tab { padding: 7px 12px; font-size: 13px; }
+    .stf-feed .stf-card { padding: 14px 14px 12px; }
+    .stf-aside-chat .stf-chat-messages {
+        min-height: 140px;
+        max-height: 220px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stf-feed .stf-card.is-new { animation: none; }
 }
