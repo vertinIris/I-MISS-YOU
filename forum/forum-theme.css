@@ -30,11 +30,13 @@
     /* 焦点环 */
     --stf-focus: 0 0 0 2px rgba(10, 12, 22, 0.9), 0 0 0 4px rgba(168, 216, 255, 0.55);
 
-    /* 浮层 z-index 表（B6） */
+    /* 浮层 z-index 表（B6）
+       遮罩必须低于放大聊天卡；勿再写死 10040 盖住 1100 导致整片发糊 */
     --stf-z-nav: 900;
     --stf-z-fab-tuner: 960;
     --stf-z-fab-donate: 970;
     --stf-z-edge: 980;
+    --stf-z-chat-backdrop: 1090;
     --stf-z-chat-expand: 1100;
     --stf-z-modal: 1200;
     --stf-z-toast: 1300;
@@ -774,6 +776,9 @@ body.forum-page .donate-btn-primary {
     border: 1px solid rgba(107, 138, 255, 0.22);
     border-radius: 14px;
     box-shadow: var(--stf-metal);
+    filter: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 }
 .stf-chat-header {
     background: rgba(107, 138, 255, 0.07);
@@ -802,8 +807,41 @@ body.forum-page .donate-btn-primary {
 .stf-chat-send {
     background: linear-gradient(135deg, var(--stf-brand), color-mix(in srgb, var(--stf-brand) 65%, var(--stf-gold))) !important;
 }
+/* 放大态：实色底 + 禁止 blur；z 高于遮罩、低于 modal */
 .stf-chat-card.is-chat-expanded {
     z-index: var(--stf-z-chat-expand) !important;
+    background: #0b1020 !important;
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    isolation: isolate;
+}
+.stf-chat-card.is-chat-expanded .stf-chat-messages,
+.stf-chat-card.is-chat-expanded .stf-chat-header,
+.stf-chat-card.is-chat-expanded .stf-chat-form,
+.stf-chat-card.is-chat-expanded .stf-chat-text,
+.stf-chat-card.is-chat-expanded .stf-chat-name,
+.stf-chat-card.is-chat-expanded .stf-chat-meta,
+.stf-chat-card.is-chat-expanded .stf-chat-bubble {
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+.stf-chat-card.is-chat-expanded .stf-chat-messages {
+    background: #0b1020 !important;
+}
+.stf-chat-backdrop {
+    z-index: var(--stf-z-chat-backdrop) !important;
+    /* 实色遮罩，禁止 backdrop blur 糊住面板 */
+    background: rgba(4, 8, 20, 0.88) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
+}
+/* 放大时关掉 body 薄膜噪点，避免叠在浮层上发糊 */
+body.stf-chat-expanded-open::after {
+    opacity: 0 !important;
+    visibility: hidden !important;
 }
 .stf-modal {
     z-index: var(--stf-z-modal);

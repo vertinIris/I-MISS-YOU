@@ -733,6 +733,10 @@
             }
             /* 挂到 body，脱离侧栏/父级 filter·containment，避免放大后文字发糊 */
             document.body.appendChild(els.card);
+            /* 遮罩须在聊天卡之下（DOM 序 + CSS z-index 双保险） */
+            if (bd.parentNode === document.body && bd.nextSibling !== els.card) {
+                document.body.insertBefore(bd, els.card);
+            }
             els.card.classList.add('is-chat-expanded');
         } else {
             els.card.classList.remove('is-chat-expanded');
