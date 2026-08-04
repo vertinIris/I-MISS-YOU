@@ -8,7 +8,7 @@
  *
  * 真实感细节：
  *   - 正在输入指示（同浏览器多标签页）
- *   - 在线人数 / 本地会话标识
+ *   - 在线人数：本端 tab + BroadcastChannel hello/心跳（禁止用历史消息 user_id 累计）
  *   - 自己消息的「发送中 / 已送达」双态
  *   - 连接状态系统提示（接入频道 / 本地模式 / 聊天表待创建）
  *   - 去重、平滑动画、自动滚动到底
@@ -23,22 +23,25 @@
     var VISIBLE_LIMIT = 40;
     var POLL_MS = 8000;
     var TYPING_TIMEOUT = 3000;
-    var PRESENCE_WINDOW = 5 * 60 * 1000; // 5 分钟内算"在线"
+    var PRESENCE_WINDOW = 5 * 60 * 1000; // 5 分钟内无心跳则离线
+    var PRESENCE_HEARTBEAT_MS = 30 * 1000; // 同浏览器多标签页心跳
     var visibleCount = VISIBLE_LIMIT;
 
     var els = {};
     var messages = [];
     var pollTimer = null;
+    var presenceTimer = null;
     var realtimeOk = false;
     var chatTableMissing = false;
     var lastSentAt = 0;
     var sentIds = {};                 // 去重：已渲染过的消息 id（含系统去重 key）
     var pendingByTemp = {};            // tempId -> { content, name, user_id, time } 乐观消息待合并
-    var participants = {};             // stableKey -> { t, name }（按用户/终端 id，不按显示名）
+    var participants = {};             // stableKey -> { t, name }（仅活跃连接：本端 + BC hello/心跳）
     var typingPeers = {};              // name -> 时间戳（正在输入指示）
     var bc = null;                     // BroadcastChannel 实例
     var PENDING_MATCH_MS = 120000;     // 乐观消息与服务端回显的匹配窗口
     var tabId = null;
+    var lastSelfPresenceKey = null;
 
     function $(id) { return document.getElementById(id); }
 
@@ -116,26 +119,42 @@
         };
     }
 
-    function touchFromMessage(m) {
-        if (!m) return;
-        if (m.user_id) {
-            touchParticipant('u:' + String(m.user_id), m.name);
-            return;
+    function touchSelfPresence(nameHint) {
+        var key = participantKey();
+        /* 登录/登出导致本端 key 变化时，清掉旧槽，避免 1 人变成 2 */
+        if (lastSelfPresenceKey && lastSelfPresenceKey !== key) {
+            delete participants[lastSelfPresenceKey];
         }
-        if (m.isSelf) touchParticipant(participantKey(), m.name);
+        lastSelfPresenceKey = key;
+        touchParticipant(key, nameHint || getSenderName());
+    }
+
+    function broadcastHello(needAck) {
+        if (!bc) return;
+        try {
+            bc.postMessage({
+                t: 'hello',
+                key: participantKey(),
+                name: getSenderName(),
+                needAck: needAck !== false
+            });
+        } catch (e) {}
+    }
+
+    function pruneParticipants(now) {
+        Object.keys(participants).forEach(function (k) {
+            var row = participants[k];
+            var ts = row && typeof row === 'object' ? row.t : row;
+            if (now - (ts || 0) >= PRESENCE_WINDOW) delete participants[k];
+        });
     }
 
     function refreshPresence() {
         if (!els.online) return;
         var now = Date.now();
-        var selfKey = participantKey();
-        touchParticipant(selfKey, getSenderName());
-        var count = 0;
-        Object.keys(participants).forEach(function (k) {
-            var row = participants[k];
-            var ts = row && typeof row === 'object' ? row.t : row;
-            if (now - (ts || 0) < PRESENCE_WINDOW) count++;
-        });
+        touchSelfPresence();
+        pruneParticipants(now);
+        var count = Object.keys(participants).length;
         if (count < 1) count = 1;
         if (cloudChatReady()) {
             els.online.textContent = count + ' 人在线 · 星域公共频道';
@@ -305,7 +324,8 @@
         sentIds[m.id] = true;
         messages.push(m);
         if (messages.length > HISTORY_LIMIT) messages = messages.slice(messages.length - HISTORY_LIMIT);
-        touchFromMessage(m);
+        /* 在线人数不跟聊天记录走：仅本端发言时刷新自己的心跳 */
+        if (m.isSelf) touchSelfPresence(m.name);
         renderMessages();
         if (!silent && window.StarTorchForum && window.StarTorchForum.toast) {
             window.StarTorchForum.toast(m.name + '：' + m.content.slice(0, 30) + (m.content.length > 30 ? '…' : ''));
@@ -412,11 +432,7 @@
                         time: r.time, user_id: r.user_id,
                         isSelf: isMinePayload(r)
                     });
-                    touchFromMessage({
-                        user_id: r.user_id,
-                        name: r.name,
-                        isSelf: isMinePayload(r)
-                    });
+                    /* 禁止：历史发言者 ≠ 当前在线（匿名刷新换 uid 会把旧 uid 全算进来） */
                 });
                 renderMessages();
             }
@@ -535,7 +551,6 @@
         if (sentIds[r.id]) return;
         if (mergeOrMarkServerMessage(r, false)) {
             setStatus('ok', '实时连接中');
-            refreshPresence();
             return;
         }
         addMessage({
@@ -544,7 +559,7 @@
             isSelf: isMinePayload(r)
         }, document.hidden);
         setStatus('ok', '实时连接中');
-        refreshPresence();
+        /* Realtime 聊天消息不计入在线：无 Presence 时跨设备人数不可靠，避免历史回放/延迟消息刷人数 */
     }
 
     function onBroadcastMessage(e) {
@@ -560,10 +575,15 @@
                 time: m.time || Date.now(), user_id: m.user_id,
                 isSelf: isMinePayload(m)
             }, document.hidden);
+            /* BC 聊天内容不 touch：同伴在线靠 hello/心跳 */
         } else if (data.t === 'typing' && data.name) {
             if (data.name !== getSenderName()) markPeerTyping(data.name);
-        } else if (data.t === 'hello' && (data.key || data.name)) {
-            if (data.key) touchParticipant(data.key, data.name);
+        } else if (data.t === 'hello' && data.key) {
+            var selfKey = participantKey();
+            if (data.key === selfKey) return;
+            touchParticipant(data.key, data.name);
+            /* 新标签页打开时回一声，避免对方只宣告、收不到本端已在线 */
+            if (data.needAck !== false) broadcastHello(false);
             refreshPresence();
         }
     }
@@ -679,9 +699,17 @@
         try {
             bc = new BroadcastChannel('stf-chat-room');
             bc.onmessage = onBroadcastMessage;
-            // 宣告在线，让其他标签页知道有同伴
-            try { bc.postMessage({ t: 'hello', key: participantKey(), name: getSenderName() }); } catch (e) {}
+            broadcastHello(true);
         } catch (e) { bc = null; }
+    }
+
+    function startPresenceHeartbeat() {
+        if (presenceTimer) clearInterval(presenceTimer);
+        presenceTimer = setInterval(function () {
+            touchSelfPresence();
+            broadcastHello(false);
+            refreshPresence();
+        }, PRESENCE_HEARTBEAT_MS);
     }
 
     function init() {
@@ -699,12 +727,14 @@
 
         bindEvents();
         setupBroadcast();
-        touchParticipant(participantKey(), getSenderName());
+        touchSelfPresence();
+        startPresenceHeartbeat();
 
         /* 登录态变化时刷新在线署名提示（不改历史消息）；改名不新增人数 */
         if (window.StarTorchAuth && window.StarTorchAuth.onChange) {
             window.StarTorchAuth.onChange(function () {
-                touchParticipant(participantKey(), getSenderName());
+                touchSelfPresence();
+                broadcastHello(false);
                 refreshPresence();
             });
         }
