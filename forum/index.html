@@ -370,7 +370,13 @@
             <div class="archive-album">
                 <div class="archive-album-shelf" aria-hidden="true"></div>
 
-                <div class="archive-album-grid">
+                <div class="archive-orbit" id="archive-orbit" aria-label="角色卡片环">
+                    <div class="archive-orbit-stage" id="archive-orbit-stage">
+                        <div class="archive-orbit-ring" id="archive-orbit-ring"></div>
+                    </div>
+                </div>
+
+                <div class="archive-album-grid" id="archive-album-grid">
 
                     <!-- 爱弥斯：栅格内强调（span 宽列），不破坏响应式 -->
                     <div class="archive-float archive-float--featured">
@@ -495,13 +501,19 @@
         </div>
     </section>
 
-    <!-- 深夜电台调谐台：隐藏入口的显性化设计 -->
-    <section class="stf-tuner" id="stf-tuner" aria-labelledby="stf-tuner-title">
-        <div class="stf-tuner-frame">
+    <!-- 深夜电台调谐台：默认可收成小按钮，点击放大还原完整拨频 UI -->
+    <section class="stf-tuner is-collapsed" id="stf-tuner" aria-labelledby="stf-tuner-title">
+        <button type="button" class="stf-tuner-compact" id="stf-tuner-compact" aria-expanded="false" aria-controls="stf-tuner-frame">
+            <span class="stf-tuner-compact-led" aria-hidden="true"></span>
+            <span class="stf-tuner-compact-text">深夜电台 · 调频台</span>
+            <span class="stf-tuner-compact-hint">点击展开</span>
+        </button>
+        <div class="stf-tuner-frame" id="stf-tuner-frame" hidden>
             <div class="stf-tuner-head">
                 <span class="stf-tuner-led" id="stf-tuner-led" aria-hidden="true"></span>
                 <h2 class="stf-tuner-title" id="stf-tuner-title">深夜电台 · 频率调谐台</h2>
                 <span class="stf-tuner-state" id="stf-tuner-state">待机</span>
+                <button type="button" class="stf-tuner-minify" id="stf-tuner-minify" title="收起调频台" aria-label="收起调频台">收起</button>
             </div>
 
             <div class="stf-tuner-wave" id="stf-tuner-wave" aria-hidden="true"></div>
@@ -818,7 +830,18 @@
                         <span id="stf-account-card-meta">—</span>
                     </span>
                 </div>
-                <p class="stf-auth-note">已登录状态下发帖将使用通行证署名，匿名身份选择器会自动停用。</p>
+                <form class="stf-nick-form" id="stf-nick-form">
+                    <div class="form-group">
+                        <label class="form-label" for="stf-nick-input">显示名（nickname）</label>
+                        <p class="form-hint" style="margin:0 0 8px;">这是你在论坛顶栏、发帖与聊天里显示的署名，保存在 profiles.nickname。</p>
+                        <input type="text" class="form-input" id="stf-nick-input" maxlength="20" autocomplete="nickname" placeholder="2–20 字显示名" required>
+                    </div>
+                    <p class="stf-auth-error" id="stf-nick-error" role="alert" hidden></p>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary magnetic"><span>保存显示名</span></button>
+                    </div>
+                </form>
+                <p class="stf-auth-note">已登录状态下发帖将使用通行证署名，匿名身份选择器会自动停用。设置请用顶栏通行证入口。</p>
                 <div class="form-actions">
                     <button type="button" class="btn-ghost magnetic" id="stf-logout-btn"><span>退出登录</span></button>
                 </div>
@@ -826,7 +849,7 @@
         </div>
     </div>
 
-    <!-- 左下角浮钮：首次引导至调频台；成功拨频后切换为通行证/设置快捷入口 -->
+    <!-- 左下角浮钮：首次→展开调频台；成功进入后→跳转飞行雪绒主站（设置改走顶栏通行证） -->
     <button type="button" class="stf-back-home" id="stf-back-home" aria-label="前往深夜电台调频台">
         <span class="stf-back-home-icon" aria-hidden="true">
             <svg class="stf-back-home-svg stf-back-home-svg--tuner" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -835,9 +858,10 @@
                 <circle cx="17" cy="10" r="2"/>
                 <path d="M17 12v6"/>
             </svg>
-            <svg class="stf-back-home-svg stf-back-home-svg--settings" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden>
-                <circle cx="12" cy="12" r="3"/>
-                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            <svg class="stf-back-home-svg stf-back-home-svg--home" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden>
+                <path d="M3 11l9-8 9 8"/>
+                <path d="M5 10v10h14V10"/>
+                <path d="M10 20v-6h4v6"/>
             </svg>
         </span>
         <span class="stf-back-home-text">调频台</span>
@@ -874,9 +898,10 @@
                     <img src="../assets/qrcode-alipay.jpg" alt="支付宝二维码" class="donate-qr-img" data-method="alipay" loading="lazy">
                 </div>
                 <p class="donate-note">选择支付方式后扫码支持。<br>你的陪伴，是这里继续发光的理由。</p>
+                <p class="donate-account-line">收款账号：<code class="donate-account-value" id="donate-account-value" data-account="vertiniris@example.com">vertiniris@example.com</code><span class="donate-account-hint">（占位，待替换）</span></p>
             </div>
             <div class="donate-actions">
-                <button type="button" class="donate-btn donate-copy-btn">复制账号</button>
+                <button type="button" class="donate-btn donate-copy-btn" data-copy-target="donate-account-value">复制账号</button>
                 <button type="button" class="donate-btn donate-btn-primary donate-later-btn">好的</button>
             </div>
         </div>

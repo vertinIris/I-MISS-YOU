@@ -108,16 +108,26 @@
                 if (authUser && authUser.email && String(authUser.email).indexOf('@startorch.example.com') === -1) {
                     var retry = await client.auth.getSession();
                     if (retry && retry.data && retry.data.session) return retry.data.session;
+                    /* 真实邮箱镜像存在时，绝不降级匿名登录，避免顶栏变成「星炬学院访客」 */
+                    return null;
                 }
 
                 var anon = await client.auth.signInAnonymously();
                 if (anon && anon.data && anon.data.user) {
                     try {
-                        await client.from('profiles').upsert({
-                            id: anon.data.user.id,
-                            nickname: '星炬学院访客',
-                            avatar_color: '#6B8AFF'
-                        });
+                        /* 仅在尚无 nickname 时写入占位，避免覆盖真实用户资料 */
+                        var existing = await client.from('profiles')
+                            .select('nickname')
+                            .eq('id', anon.data.user.id)
+                            .maybeSingle();
+                        var nick = existing && existing.data && existing.data.nickname;
+                        if (!nick) {
+                            await client.from('profiles').upsert({
+                                id: anon.data.user.id,
+                                nickname: '星炬学院访客',
+                                avatar_color: '#6B8AFF'
+                            });
+                        }
                     } catch (e) { /* 忽略：profile 非发帖必需 */ }
                     return anon.data.session;
                 }

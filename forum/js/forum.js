@@ -1128,16 +1128,23 @@
 
         /* 调谐台彩蛋入口 + 左下角浮钮双态 */
         initTuner();
+        initTunerCollapse();
         initTunerFab();
+        initArchiveOrbit();
     }
 
-    /* ============ 左下角浮钮：首次→调频台；拨频成功后→设置快捷入口 ============
-     * 「成功进入」判定（见 markTunerEntered）：用户对调频台完成至少一次有效拨频
-     * （步进按钮 / 方向键 / 数字键入 / 滚轮改变任一位）。仅滚动到区域不算进入。
+    /* ============ 左下角浮钮 + 调频台收展 ============
+     * 交互约定：
+     * 1) 调频台区块本身默认可收成小按钮（#stf-tuner-compact），点击放大还原完整拨频 UI。
+     * 2) 左下角浮钮：
+     *    - 尚未「成功进入」：滚动并展开调频台；
+     *    - 首次有效拨频后：直接跳转飞行雪绒主站（../index.html）。
+     * 3) 通行证/设置改走顶栏「登录」按钮，浮钮不再打开设置，避免与跳转冲突。
+     * 「成功进入」：对调频台完成至少一次有效拨频（步进 / 方向键 / 数字 / 滚轮）。
      * 状态键：localStorage['stf_tuner_entered'] === '1'
-     * 设置入口：复用 StarTorchAuth.openPanel()（星炬学院通行证面板），不新造 UI。
      */
     var TUNER_ENTERED_KEY = 'stf_tuner_entered';
+    var HOME_URL = '../index.html';
 
     function hasEnteredTuner() {
         try { return localStorage.getItem(TUNER_ENTERED_KEY) === '1'; } catch (e) { return false; }
@@ -1154,18 +1161,33 @@
         if (!fab) return;
         var label = fab.querySelector('.stf-back-home-text');
         var iconTuner = fab.querySelector('.stf-back-home-svg--tuner');
-        var iconSettings = fab.querySelector('.stf-back-home-svg--settings');
-        fab.classList.toggle('is-settings', !!entered);
-        if (label) label.textContent = entered ? '设置' : '调频台';
+        var iconHome = fab.querySelector('.stf-back-home-svg--home');
+        fab.classList.toggle('is-home', !!entered);
+        fab.classList.remove('is-settings');
+        if (label) label.textContent = entered ? '飞行雪绒' : '调频台';
         if (iconTuner) iconTuner.hidden = !!entered;
-        if (iconSettings) iconSettings.hidden = !entered;
-        fab.setAttribute('aria-label', entered ? '打开通行证设置' : '前往深夜电台调频台');
+        if (iconHome) iconHome.hidden = !entered;
+        fab.setAttribute('aria-label', entered ? '返回飞行雪绒主站' : '展开深夜电台调频台');
     }
 
-    function scrollToTuner() {
+    function setTunerExpanded(on) {
+        var tuner = document.getElementById('stf-tuner');
+        var frame = document.getElementById('stf-tuner-frame');
+        var compact = document.getElementById('stf-tuner-compact');
+        if (!tuner) return;
+        tuner.classList.toggle('is-collapsed', !on);
+        tuner.classList.toggle('is-expanded', !!on);
+        if (frame) frame.hidden = !on;
+        if (compact) {
+            compact.hidden = !!on;
+            compact.setAttribute('aria-expanded', on ? 'true' : 'false');
+        }
+    }
+
+    function expandAndFocusTuner() {
         var tuner = document.getElementById('stf-tuner');
         if (!tuner) return;
-        /* 调频台紧挨世界观区块下方；滚动定位即可，无需切换独立 tab */
+        setTunerExpanded(true);
         var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
         tuner.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
         try {
@@ -1180,13 +1202,23 @@
         }
     }
 
-    function openSettingsShortcut() {
-        if (window.StarTorchAuth && typeof window.StarTorchAuth.openPanel === 'function') {
-            window.StarTorchAuth.openPanel();
-            return;
+    function goFlyingEdelweissHome() {
+        window.location.href = HOME_URL;
+    }
+
+    function initTunerCollapse() {
+        var compact = document.getElementById('stf-tuner-compact');
+        var minify = document.getElementById('stf-tuner-minify');
+        setTunerExpanded(false);
+        if (compact) {
+            compact.addEventListener('click', function () { expandAndFocusTuner(); });
         }
-        var accountBtn = document.getElementById('stf-account-btn');
-        if (accountBtn) accountBtn.click();
+        if (minify) {
+            minify.addEventListener('click', function () { setTunerExpanded(false); });
+        }
+        if (window.location.hash === '#stf-tuner') {
+            setTunerExpanded(true);
+        }
     }
 
     function initTunerFab() {
@@ -1194,8 +1226,8 @@
         if (!fab) return;
         applyTunerFabMode(hasEnteredTuner());
         fab.addEventListener('click', function () {
-            if (hasEnteredTuner()) openSettingsShortcut();
-            else scrollToTuner();
+            if (hasEnteredTuner()) goFlyingEdelweissHome();
+            else expandAndFocusTuner();
         });
     }
 
@@ -1456,6 +1488,68 @@
         });
 
         updateSignal();
+    }
+
+    /* ============ 角色档案：桌面环形旋转 / 移动端静态网格 ============ */
+    function initArchiveOrbit() {
+        var grid = document.getElementById('archive-album-grid');
+        var orbit = document.getElementById('archive-orbit');
+        var ring = document.getElementById('archive-orbit-ring');
+        if (!grid || !orbit || !ring) return;
+
+        var mq = window.matchMedia ? window.matchMedia('(min-width: 900px) and (prefers-reduced-motion: no-preference)') : null;
+        var cards = Array.prototype.slice.call(grid.querySelectorAll('.archive-float'));
+        if (!cards.length) return;
+
+        function placeOnRing() {
+            var n = cards.length;
+            var radius = Math.min(210, Math.max(150, Math.floor(orbit.clientWidth * 0.32)));
+            ring.style.setProperty('--orbit-n', String(n));
+            cards.forEach(function (card, i) {
+                var angle = (360 / n) * i;
+                card.style.setProperty('--orbit-angle', angle + 'deg');
+                card.style.setProperty('--orbit-radius', radius + 'px');
+                card.classList.add('is-orbit-item');
+            });
+        }
+
+        function enableOrbit(on) {
+            orbit.hidden = !on;
+            grid.classList.toggle('is-orbit-source', !!on);
+            document.documentElement.classList.toggle('archive-orbit-active', !!on);
+            if (on) {
+                cards.forEach(function (card) { ring.appendChild(card); });
+                placeOnRing();
+            } else {
+                cards.forEach(function (card) {
+                    card.classList.remove('is-orbit-item');
+                    card.style.removeProperty('--orbit-angle');
+                    card.style.removeProperty('--orbit-radius');
+                    grid.appendChild(card);
+                });
+            }
+        }
+
+        function sync() {
+            var ok = !!(mq && mq.matches);
+            enableOrbit(ok);
+        }
+
+        sync();
+        if (mq) {
+            if (mq.addEventListener) mq.addEventListener('change', sync);
+            else if (mq.addListener) mq.addListener(sync);
+        }
+        window.addEventListener('resize', function () {
+            if (document.documentElement.classList.contains('archive-orbit-active')) placeOnRing();
+        }, { passive: true });
+
+        ring.addEventListener('mouseenter', function () { ring.classList.add('is-paused'); });
+        ring.addEventListener('mouseleave', function () { ring.classList.remove('is-paused'); });
+        ring.addEventListener('focusin', function () { ring.classList.add('is-paused'); });
+        ring.addEventListener('focusout', function () {
+            if (!ring.contains(document.activeElement)) ring.classList.remove('is-paused');
+        });
     }
 
     /* ============ Init ============ */

@@ -471,7 +471,85 @@
     }
 }
 .archive-float:hover { animation-play-state: paused; }
-.archive-float:hover .character-archive-card { transform: translateY(-6px); box-shadow: 0 22px 50px rgba(0,0,0,.42); border-color: color-mix(in srgb, var(--char, #FF6B9D) 55%, transparent); }
+.archive-album-grid .archive-float:hover .character-archive-card { transform: translateY(-6px); box-shadow: 0 22px 50px rgba(0,0,0,.42); border-color: color-mix(in srgb, var(--char, #FF6B9D) 55%, transparent); }
+.archive-orbit-ring .archive-float.is-orbit-item:hover .character-archive-card {
+    box-shadow: 0 18px 40px rgba(0,0,0,.45);
+    border-color: color-mix(in srgb, var(--char, #FF6B9D) 55%, transparent);
+}
+
+/* 桌面环形旋转（小屏回退静态网格） */
+.archive-orbit { display: none; }
+.archive-orbit-stage {
+    position: relative;
+    width: min(720px, 100%);
+    height: 520px;
+    margin: 8px auto 0;
+}
+.archive-orbit-ring {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 100%;
+    height: 100%;
+    transform-origin: 50% 50%;
+    animation: archive-orbit-spin 48s linear infinite;
+    will-change: transform;
+}
+.archive-orbit-ring.is-paused,
+.archive-orbit-ring.is-paused .archive-float.is-orbit-item .character-archive-card {
+    animation-play-state: paused;
+}
+@keyframes archive-orbit-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+@keyframes archive-orbit-spin-rev {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(-360deg); }
+}
+.archive-orbit-ring .archive-float.is-orbit-item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(200px, 42vw);
+    margin: 0;
+    animation: none;
+    /* 固定在环上的角位置；卡片内容单独反向旋转以保持正向可读 */
+    transform:
+        translate(-50%, -50%)
+        rotate(var(--orbit-angle, 0deg))
+        translateY(calc(var(--orbit-radius, 180px) * -1));
+    transform-origin: center center;
+}
+.archive-orbit-ring .archive-float.is-orbit-item .character-archive-card {
+    height: 100%;
+    min-height: 168px;
+    padding: 16px 14px 14px;
+    animation: archive-orbit-spin-rev 48s linear infinite;
+    transform-origin: center center;
+}
+.archive-orbit-ring .archive-float.is-orbit-item .character-archive-line {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.archive-orbit-ring .archive-float--featured {
+    width: min(230px, 46vw);
+}
+html.archive-orbit-active .archive-album-grid.is-orbit-source {
+    display: none;
+}
+html.archive-orbit-active .archive-orbit {
+    display: block;
+}
+html.archive-orbit-active .archive-album-shelf { display: none; }
+@media (max-width: 899px), (prefers-reduced-motion: reduce) {
+    .archive-orbit { display: none !important; }
+    html.archive-orbit-active .archive-album-grid.is-orbit-source {
+        display: grid !important;
+    }
+}
 
 /* 主卡（爱弥斯）：栅格内强调，高度与邻卡协调 */
 .character-archive-card.is-featured {
@@ -1302,11 +1380,40 @@
     margin-left: auto; align-self: center;
 }
 
-/* 调谐台：深夜电台频率入口 */
+/* 调谐台：深夜电台频率入口（默认可收成小按钮） */
 .stf-tuner {
-    display: flex; justify-content: center;
-    padding: 56px 24px 12px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 56px 24px 12px; gap: 14px;
 }
+.stf-tuner-compact {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 12px 18px 12px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(168, 216, 255, 0.28);
+    background: rgba(11, 14, 26, 0.72);
+    color: var(--stf-text, #F0F4FF);
+    font: inherit; font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 12px 32px rgba(0,0,0,.35);
+    backdrop-filter: blur(10px);
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.stf-tuner-compact:hover {
+    transform: translateY(-2px);
+    border-color: rgba(107, 138, 255, 0.55);
+    box-shadow: 0 14px 36px rgba(0,0,0,.45), 0 0 18px rgba(107,138,255,.18);
+}
+.stf-tuner-compact-led {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #A8D8FF;
+    box-shadow: 0 0 10px 2px rgba(168,216,255,.7);
+}
+.stf-tuner-compact-text { font-weight: 600; letter-spacing: .04em; }
+.stf-tuner-compact-hint {
+    font-size: 12px; color: rgba(240,244,255,.55);
+}
+.stf-tuner.is-expanded .stf-tuner-compact { display: none; }
+.stf-tuner.is-collapsed .stf-tuner-frame { display: none !important; }
 .stf-tuner-frame {
     width: min(560px, 100%);
     padding: 30px 28px 26px;
@@ -1320,7 +1427,22 @@
 }
 .stf-tuner-head {
     display: flex; align-items: center; justify-content: center; gap: 12px;
-    margin-bottom: 18px;
+    margin-bottom: 18px; flex-wrap: wrap;
+}
+.stf-tuner-minify {
+    margin-left: auto;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.06);
+    color: rgba(240,244,255,.8);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+}
+.stf-tuner-minify:hover {
+    background: rgba(107,138,255,.18);
+    border-color: rgba(107,138,255,.4);
+    color: #fff;
 }
 .stf-tuner-led {
     width: 11px; height: 11px; border-radius: 50%;
@@ -1663,15 +1785,18 @@
     transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     max-width: calc(100vw - 32px);
 }
-.stf-back-home.is-settings {
+.stf-back-home.is-settings,
+.stf-back-home.is-home {
     border-color: rgba(232, 197, 106, 0.4);
 }
-.stf-back-home.is-settings .stf-back-home-icon {
+.stf-back-home.is-settings .stf-back-home-icon,
+.stf-back-home.is-home .stf-back-home-icon {
     border-color: rgba(232, 197, 106, 0.5);
     background: rgba(232, 197, 106, 0.14);
     color: var(--stf-gold, #E8C56A);
 }
-.stf-back-home.is-settings:hover .stf-back-home-icon {
+.stf-back-home.is-settings:hover .stf-back-home-icon,
+.stf-back-home.is-home:hover .stf-back-home-icon {
     background: rgba(232, 197, 106, 0.28);
     box-shadow: 0 0 16px rgba(232, 197, 106, 0.35);
 }
@@ -2037,21 +2162,70 @@
 }
 .stf-chat-card.is-chat-expanded {
     position: fixed;
-    inset: max(4vh, 12px) max(3vw, 12px) max(4vh, 12px) max(3vw, 12px);
+    inset: max(2vh, 8px) max(2vw, 8px) max(2vh, 8px) max(2vw, 8px);
     z-index: 1200;
-    max-width: 920px;
+    width: min(1100px, calc(100vw - 16px));
+    max-width: none;
+    height: min(92vh, 900px);
     margin: 0 auto;
     border-radius: 20px;
     border: 1px solid rgba(107, 138, 255, 0.28);
-    background: rgba(12, 16, 32, 0.96);
+    background: rgba(12, 16, 32, 0.97);
     box-shadow: 0 28px 80px rgba(0, 0, 0, 0.55);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+}
+.stf-chat-card.is-chat-expanded .stf-chat-header {
+    flex: none;
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
 }
 .stf-chat-card.is-chat-expanded .stf-chat-messages {
-    flex: 1;
-    min-height: 280px;
+    flex: 1 1 auto;
+    min-height: 0;
     max-height: none;
+    overflow-y: auto;
+    padding: 16px 18px 12px;
+    font-size: 15px;
+    line-height: 1.65;
+}
+.stf-chat-card.is-chat-expanded .stf-chat-text {
+    font-size: 15px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+.stf-chat-card.is-chat-expanded .stf-chat-form {
+    flex: none;
+    position: sticky;
+    bottom: 0;
+    padding: 12px 16px 16px;
+    background: linear-gradient(180deg, rgba(12,16,32,.2), rgba(12,16,32,.96) 30%);
+    border-top: 1px solid rgba(255,255,255,.08);
+}
+.stf-chat-card.is-chat-expanded .stf-chat-message {
+    cursor: copy;
+}
+.stf-chat-card.is-chat-expanded .stf-chat-message:hover .stf-chat-bubble {
+    outline: 1px solid rgba(168, 216, 255, 0.25);
+}
+.stf-chat-load-more {
+    display: block;
+    width: 100%;
+    margin: 0 0 12px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px dashed rgba(168, 216, 255, 0.35);
+    background: rgba(107, 138, 255, 0.08);
+    color: rgba(240, 244, 255, 0.8);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+.stf-chat-load-more:hover {
+    background: rgba(107, 138, 255, 0.16);
+    color: #fff;
 }
 .stf-chat-backdrop {
     position: fixed;
@@ -2063,8 +2237,14 @@
 body.stf-chat-expanded-open { overflow: hidden; }
 @media (max-width: 640px) {
     .stf-chat-card.is-chat-expanded {
-        inset: 8px;
-        border-radius: 16px;
+        inset: 4px;
+        width: auto;
+        height: auto;
+        border-radius: 14px;
+    }
+    .stf-chat-card.is-chat-expanded .stf-chat-messages {
+        font-size: 14px;
+        padding: 12px;
     }
 }
 

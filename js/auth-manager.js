@@ -407,7 +407,7 @@ var AuthManager = (function() {
                     nickname: result.data.nickname || null,
                     avatar_color: result.data.avatar_color || '#6B8AFF'
                 };
-                if (profile.nickname && profile.nickname !== '匿名信号源') {
+                if (profile.nickname && profile.nickname !== '匿名信号源' && profile.nickname !== '星炬学院访客') {
                     session.nickname = profile.nickname;
                     session.avatarColor = profile.avatar_color;
                     cacheProfile(profile);
@@ -422,7 +422,7 @@ var AuthManager = (function() {
     function saveNickname(nickname) {
         if (!nickname) return Promise.resolve(false);
         nickname = nickname.trim().substring(0, 50);
-        if (!nickname || nickname === '匿名信号源') return Promise.resolve(false);
+        if (!nickname || nickname === '匿名信号源' || nickname === '星炬学院访客') return Promise.resolve(false);
 
         session.nickname = nickname;
         cacheProfile({ nickname: nickname, avatar_color: session.avatarColor });

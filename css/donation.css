@@ -219,6 +219,32 @@
     line-height: 1.6;
     max-width: 300px;
 }
+.donate-account-line {
+    margin: 12px 0 0;
+    text-align: center;
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.72);
+    max-width: 320px;
+}
+.donate-account-value {
+    display: inline-block;
+    margin: 0 4px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    user-select: all;
+    word-break: break-all;
+}
+.donate-account-hint {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    color: rgba(255, 200, 120, 0.88);
+}
 .donate-actions {
     display: flex;
     gap: 12px;

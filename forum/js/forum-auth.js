@@ -215,18 +215,20 @@ window.StarTorchAuth = (function () {
     function isPlaceholderName(n) {
         var s = String(n || '').trim();
         if (!s) return true;
-        return s === '匿名信号源' || s === '星炬学院访客';
+        return s === '匿名信号源' || s === '星炬学院访客' || s === '匿名' || s === '访客';
     }
 
     function pickDisplayName(profile, meta, email, synthetic) {
         if (profile && !isPlaceholderName(profile.nickname)) return String(profile.nickname).trim();
         if (meta && !isPlaceholderName(meta.nickname)) return String(meta.nickname).trim();
         if (meta && !isPlaceholderName(meta.full_name)) return String(meta.full_name).trim();
+        if (meta && !isPlaceholderName(meta.name)) return String(meta.name).trim();
         if (email && !synthetic) {
             var local = String(email).split('@')[0];
             if (local && !isPlaceholderName(local)) return local;
         }
-        return '星炬学院访客';
+        /* 匿名会话才用访客文案；真实邮箱账号至少回落到邮箱前缀，上面已处理 */
+        return synthetic ? '星炬学院访客' : (email ? String(email).split('@')[0] : '星炬学院访客');
     }
 
     /**
@@ -401,6 +403,51 @@ window.StarTorchAuth = (function () {
         emit();
     }
 
+    /**
+     * 更新显示名（nickname）并写回 profiles + user_metadata。
+     * nickname = 发帖/顶栏/聊天署名，不是登录邮箱。
+     */
+    function updateNickname(raw) {
+        var nick = String(raw || '').trim().replace(/\s+/g, ' ');
+        if (nick.length < 2 || nick.length > 20) {
+            return Promise.reject(new Error('显示名需 2–20 个字'));
+        }
+        if (isPlaceholderName(nick)) {
+            return Promise.reject(new Error('请换一个更有辨识度的显示名'));
+        }
+        if (!current || !current.key) {
+            return Promise.reject(new Error('请先登录通行证'));
+        }
+        var client = window.supabaseClient;
+        var color = current.color || '#6B8AFF';
+
+        function applyLocal() {
+            current.name = nick;
+            saveMirror(current);
+            emit();
+            return current;
+        }
+
+        if (!client) {
+            applyLocal();
+            return Promise.resolve(current);
+        }
+
+        return client.from('profiles').upsert({
+            id: current.key,
+            nickname: nick,
+            avatar_color: color
+        }, { onConflict: 'id' }).then(function (res) {
+            if (res.error) throw new Error(res.error.message || '保存失败');
+            if (client.auth && client.auth.updateUser) {
+                return client.auth.updateUser({ data: { nickname: nick } }).then(function () {
+                    return applyLocal();
+                }).catch(function () { return applyLocal(); });
+            }
+            return applyLocal();
+        });
+    }
+
     function bumpPostCount() {
         if (!current) return;
         current.posts = (current.posts || 0) + 1;
@@ -482,6 +529,10 @@ window.StarTorchAuth = (function () {
                 meta.textContent = kind + ' · 加入于 ' + formatDate(current.joined)
                     + ' · 已发布 ' + (current.posts || 0) + ' 篇';
             }
+            var nickInput = $('stf-nick-input');
+            if (nickInput && !isPlaceholderName(current.name)) nickInput.value = current.name;
+            else if (nickInput) nickInput.value = '';
+            setError('stf-nick-error', '');
         } else {
             guest.hidden = false;
             user.hidden = true;
@@ -676,6 +727,22 @@ window.StarTorchAuth = (function () {
             });
         }
 
+        var nickForm = $('stf-nick-form');
+        if (nickForm) {
+            nickForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                setError('stf-nick-error', '');
+                updateNickname(readValue('stf-nick-input'))
+                    .then(function (u) {
+                        toast('显示名已更新为「' + u.name + '」');
+                        renderPanel();
+                    })
+                    .catch(function (err) {
+                        setError('stf-nick-error', err.message || '保存失败');
+                    });
+            });
+        }
+
         onChange(function () { renderEntry(); renderPanel(); });
     }
 
@@ -706,6 +773,8 @@ window.StarTorchAuth = (function () {
         isForumStaff: isForumStaff,
         bumpPostCount: bumpPostCount,
         openPanel: openPanel,
+        updateNickname: updateNickname,
+        isPlaceholderName: isPlaceholderName,
         /* 身份层工具（供调试 / 未来复用；昵称→邮箱为纯函数，可离线推算） */
         nickToEmail: nickToEmail,
         isSyntheticEmail: isSyntheticEmail,

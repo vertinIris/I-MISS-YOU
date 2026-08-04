@@ -19,10 +19,12 @@
     'use strict';
 
     var MAX_LEN = 200;
-    var HISTORY_LIMIT = 50;
+    var HISTORY_LIMIT = 80;
+    var VISIBLE_LIMIT = 40;
     var POLL_MS = 8000;
     var TYPING_TIMEOUT = 3000;
     var PRESENCE_WINDOW = 5 * 60 * 1000; // 5 分钟内算"在线"
+    var visibleCount = VISIBLE_LIMIT;
 
     var els = {};
     var messages = [];
@@ -106,7 +108,10 @@
         if (user && user.name) {
             var n = String(user.name).trim();
             /* 与 StarTorchAuth 对齐：占位默认名不当作真实署名 */
-            if (n && n !== '匿名信号源') return n;
+            var placeholder = (window.StarTorchAuth && StarTorchAuth.isPlaceholderName)
+                ? StarTorchAuth.isPlaceholderName(n)
+                : (n === '匿名信号源' || n === '星炬学院访客');
+            if (n && !placeholder) return n;
             if (user.displayEmail) return String(user.displayEmail).split('@')[0];
             if (user.email && String(user.email).indexOf('@startorch.example.com') === -1) {
                 return String(user.email).split('@')[0];
@@ -157,9 +162,22 @@
     }
 
     /* ---------- 渲染 ---------- */
+    function visibleSlice() {
+        if (messages.length <= visibleCount) return messages;
+        return messages.slice(messages.length - visibleCount);
+    }
+
     function renderMessages() {
         if (!els.list) return;
-        var html = messages.map(function (m) {
+        var slice = visibleSlice();
+        var hidden = messages.length - slice.length;
+        var html = '';
+        if (hidden > 0) {
+            html += '<button type="button" class="stf-chat-load-more" id="stf-chat-load-more">'
+                + '加载更早的 ' + Math.min(VISIBLE_LIMIT, hidden) + ' 条（还有 ' + hidden + ' 条）'
+                + '</button>';
+        }
+        html += slice.map(function (m) {
             if (m.system) {
                 return '<div class="stf-chat-system" role="status">' + escapeHTML(m.text) + '</div>';
             }
@@ -171,7 +189,7 @@
                 else if (m.status === 'delivered') statusMark = '<span class="stf-chat-tick delivered" aria-label="已送达">✓</span>';
                 else if (m.status === 'local') statusMark = '<span class="stf-chat-tick local" aria-label="仅本地">•</span>';
             }
-            return '<div class="stf-chat-message' + (isSelf ? ' is-self' : '') + '" data-id="' + escapeHTML(m.id) + '">'
+            return '<div class="stf-chat-message' + (isSelf ? ' is-self' : '') + '" data-id="' + escapeHTML(m.id) + '" data-copy="' + escapeHTML(m.content) + '" title="点击复制全文">'
                 + '<span class="stf-chat-avatar" aria-hidden="true" style="background:' + color + '">' + escapeHTML(String(m.name).charAt(0)) + '</span>'
                 + '<div class="stf-chat-bubble">'
                 + '<div class="stf-chat-meta">'
@@ -183,14 +201,59 @@
                 + '</div>'
                 + '</div>';
         }).join('');
-        if (!html) {
+        if (!slice.length) {
             html = '<div class="stf-chat-empty" role="status">'
                 + '<span>📡</span><p>暂无信号，发送第一条消息，开启这个频率吧。</p>'
                 + '</div>';
         }
         els.list.innerHTML = html;
+        var loadBtn = document.getElementById('stf-chat-load-more');
+        if (loadBtn) {
+            loadBtn.addEventListener('click', function () {
+                visibleCount = Math.min(messages.length, visibleCount + VISIBLE_LIMIT);
+                renderMessages();
+            });
+        }
         scrollToBottom();
         refreshPresence();
+    }
+
+    function copyChatText(text) {
+        if (!text) return;
+        function ok() {
+            if (window.StarTorchForum && window.StarTorchForum.toast) {
+                window.StarTorchForum.toast('已复制消息全文');
+            }
+        }
+        function fail() {
+            if (window.StarTorchForum && window.StarTorchForum.toast) {
+                window.StarTorchForum.toast('复制失败，请手动选择文字');
+            }
+        }
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(ok).catch(function () {
+                    fallbackCopyText(text, ok, fail);
+                });
+                return;
+            }
+        } catch (e) { /* fallback */ }
+        fallbackCopyText(text, ok, fail);
+    }
+
+    function fallbackCopyText(text, ok, fail) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try {
+            var done = document.execCommand('copy');
+            if (done) ok(); else fail();
+        } catch (e) { fail(); }
+        document.body.removeChild(ta);
     }
 
     function addMessage(m, silent) {
@@ -493,6 +556,14 @@
         }
         if (els.expand) {
             els.expand.addEventListener('click', function () { toggleChatExpand(); });
+        }
+        if (els.list) {
+            els.list.addEventListener('click', function (e) {
+                var msg = e.target.closest('.stf-chat-message');
+                if (!msg || !els.list.contains(msg)) return;
+                var text = msg.getAttribute('data-copy') || '';
+                if (text) copyChatText(text);
+            });
         }
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape' && els.card && els.card.classList.contains('is-chat-expanded')) {
