@@ -1615,14 +1615,14 @@ html.archive-orbit-active .archive-album-shelf {
     margin-left: auto; align-self: center;
 }
 
-/* 调谐台：深夜电台频率入口（默认可收成频率胶囊） */
+/* 调谐台：深夜电台频率入口（收起胶囊可直接输入四位频率） */
 .stf-tuner {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     padding: 48px 24px 12px; gap: 14px;
 }
 .stf-tuner-compact {
     display: inline-flex; align-items: center; gap: 12px;
-    padding: 8px 16px 8px 8px;
+    padding: 8px 12px 8px 8px;
     border-radius: 999px;
     border: 1px solid rgba(168, 216, 255, 0.32);
     background:
@@ -1630,15 +1630,14 @@ html.archive-orbit-active .archive-album-shelf {
         radial-gradient(circle at 18% 50%, rgba(107,138,255,.18), transparent 55%);
     color: var(--stf-text, #F0F4FF);
     font: inherit; font-size: 14px;
-    cursor: pointer;
+    cursor: default;
     box-shadow:
         0 12px 28px rgba(0,0,0,.38),
         inset 0 1px 0 rgba(255,255,255,.08);
     backdrop-filter: blur(10px);
     transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
-.stf-tuner-compact:hover {
-    transform: translateY(-2px);
+.stf-tuner-compact:focus-within {
     border-color: rgba(107, 138, 255, 0.55);
     box-shadow: 0 14px 32px rgba(0,0,0,.45), 0 0 18px rgba(107,138,255,.2);
 }
@@ -1667,6 +1666,16 @@ html.archive-orbit-active .archive-album-shelf {
     box-shadow: 0 0 14px 3px rgba(232,197,106,.85);
     animation: stf-led-pulse 1.2s ease-in-out infinite;
 }
+.stf-tuner-compact-freq-wrap {
+    position: relative;
+    display: inline-grid;
+    align-items: center;
+    min-width: 4.2em;
+    min-height: 1.35em;
+}
+.stf-tuner-compact-freq-wrap > * {
+    grid-area: 1 / 1;
+}
 .stf-tuner-compact-freq {
     font-family: "Noto Serif SC", serif;
     font-size: 15px;
@@ -1674,7 +1683,24 @@ html.archive-orbit-active .archive-album-shelf {
     letter-spacing: .12em;
     font-variant-numeric: tabular-nums;
     color: #fff;
-    min-width: 4.2em;
+    pointer-events: none;
+    user-select: none;
+}
+.stf-tuner-compact-input {
+    width: 100%;
+    height: 100%;
+    margin: 0; padding: 0;
+    border: 0; outline: none;
+    background: transparent;
+    opacity: 0;
+    font-family: "Noto Serif SC", serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    font-variant-numeric: tabular-nums;
+    text-align: left;
+    cursor: text;
+    caret-color: transparent;
 }
 .stf-tuner-compact-copy {
     display: flex;
@@ -1686,6 +1712,28 @@ html.archive-orbit-active .archive-album-shelf {
 .stf-tuner-compact-text { font-weight: 600; letter-spacing: .04em; font-size: 13px; }
 .stf-tuner-compact-hint {
     font-size: 11px; color: rgba(240,244,255,.5);
+}
+.stf-tuner-compact-expand {
+    margin: 0; margin-left: 2px;
+    padding: 4px 8px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: rgba(168, 216, 255, 0.72);
+    font: inherit;
+    font-size: 11px;
+    letter-spacing: .04em;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(168, 216, 255, 0.35);
+    transition: color .15s ease, text-decoration-color .15s ease;
+}
+.stf-tuner-compact-expand:hover,
+.stf-tuner-compact-expand:focus-visible {
+    color: #A8D8FF;
+    text-decoration-color: rgba(168, 216, 255, 0.7);
+    outline: none;
 }
 .stf-tuner.is-expanded .stf-tuner-compact { display: none; }
 .stf-tuner.is-collapsed .stf-tuner-frame { display: none !important; }

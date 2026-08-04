@@ -1135,20 +1135,17 @@
 
     /* ============ 左下角浮钮 + 调频台收展 ============
      * 交互约定：
-     * 1) 调频台区块本身默认可收成小按钮（#stf-tuner-compact），点击放大还原完整拨频 UI。
-     * 2) 左下角浮钮：
-     *    - 尚未「成功进入」：滚动并展开调频台；
-     *    - 首次有效拨频后：跳转飞行雪绒频道页（../index.html，沉浸站/频道页，非论坛主体）。
-     * 3) 通行证/设置改走顶栏「登录」按钮，浮钮不再打开设置，避免与跳转冲突。
-     * 「成功进入」：对调频台完成至少一次有效拨频（步进 / 方向键 / 数字 / 滚轮）。
-     * 状态键：localStorage['stf_tuner_entered'] === '1'
+     * 1) 调频台默认收成胶囊（#stf-tuner-compact）：主路径为直接输入四位频率；
+     *    「完整面板」为次要入口，展开后可用拨轮 / 方向键。
+     * 2) 左下角浮钮：始终打开飞行雪绒频道页（../index.html），不再引导展开调频。
+     * 3) 通行证/设置改走顶栏「登录」按钮。
+     * 「成功进入」：对调频台完成至少一次有效拨频（步进 / 方向键 / 数字 / 滚轮 / 胶囊输入）。
+     * 状态键：localStorage['stf_tuner_entered'] === '1'（保留，供其它逻辑使用）
      * 文案约定：论坛为社区主体，勿把「飞行雪绒」写成「主站」。
      */
     var TUNER_ENTERED_KEY = 'stf_tuner_entered';
     var FLYING_CHANNEL_URL = '../index.html';
-    var FAB_LABEL_TUNER = '调频台';
     var FAB_LABEL_CHANNEL = '打开飞行雪绒频道';
-    var FAB_ARIA_TUNER = '展开深夜电台调频台';
     var FAB_ARIA_CHANNEL = '打开飞行雪绒频道页';
 
     function hasEnteredTuner() {
@@ -1158,37 +1155,34 @@
     function markTunerEntered() {
         if (hasEnteredTuner()) return;
         try { localStorage.setItem(TUNER_ENTERED_KEY, '1'); } catch (e) { /* private mode */ }
-        applyTunerFabMode(true);
     }
 
-    function applyTunerFabMode(entered) {
+    function applyTunerFabMode() {
         var fab = document.getElementById('stf-back-home');
         if (!fab) return;
         var label = fab.querySelector('.stf-back-home-text');
         var iconTuner = fab.querySelector('.stf-back-home-svg--tuner');
         var iconHome = fab.querySelector('.stf-back-home-svg--home');
-        fab.classList.toggle('is-home', !!entered);
+        fab.classList.add('is-home');
         fab.classList.remove('is-settings');
-        if (label) label.textContent = entered ? FAB_LABEL_CHANNEL : FAB_LABEL_TUNER;
-        if (iconTuner) iconTuner.hidden = !!entered;
-        if (iconHome) iconHome.hidden = !entered;
-        var aria = entered ? FAB_ARIA_CHANNEL : FAB_ARIA_TUNER;
-        fab.setAttribute('aria-label', aria);
-        fab.setAttribute('title', aria);
+        if (label) label.textContent = FAB_LABEL_CHANNEL;
+        if (iconTuner) iconTuner.hidden = true;
+        if (iconHome) iconHome.hidden = false;
+        fab.setAttribute('aria-label', FAB_ARIA_CHANNEL);
+        fab.setAttribute('title', FAB_ARIA_CHANNEL);
     }
 
     function setTunerExpanded(on) {
         var tuner = document.getElementById('stf-tuner');
         var frame = document.getElementById('stf-tuner-frame');
         var compact = document.getElementById('stf-tuner-compact');
+        var expandBtn = document.getElementById('stf-tuner-compact-expand');
         if (!tuner) return;
         tuner.classList.toggle('is-collapsed', !on);
         tuner.classList.toggle('is-expanded', !!on);
         if (frame) frame.hidden = !on;
-        if (compact) {
-            compact.hidden = !!on;
-            compact.setAttribute('aria-expanded', on ? 'true' : 'false');
-        }
+        if (compact) compact.hidden = !!on;
+        if (expandBtn) expandBtn.setAttribute('aria-expanded', on ? 'true' : 'false');
         /* 展开后启动静噪床；收起淡出。须在用户手势路径内 unlock。 */
         if (on) TunerAudio.unlockAndStart();
         else TunerAudio.stop();
@@ -1291,11 +1285,11 @@
     }
 
     function initTunerCollapse() {
-        var compact = document.getElementById('stf-tuner-compact');
+        var expandBtn = document.getElementById('stf-tuner-compact-expand');
         var minify = document.getElementById('stf-tuner-minify');
         setTunerExpanded(false);
-        if (compact) {
-            compact.addEventListener('click', function () { expandAndFocusTuner(); });
+        if (expandBtn) {
+            expandBtn.addEventListener('click', function () { expandAndFocusTuner(); });
         }
         if (minify) {
             minify.addEventListener('click', function () { setTunerExpanded(false); });
@@ -1311,10 +1305,9 @@
     function initTunerFab() {
         var fab = document.getElementById('stf-back-home');
         if (!fab) return;
-        applyTunerFabMode(hasEnteredTuner());
+        applyTunerFabMode();
         fab.addEventListener('click', function () {
-            if (hasEnteredTuner()) openFlyingEdelweissChannel();
-            else expandAndFocusTuner();
+            openFlyingEdelweissChannel();
         });
     }
 
@@ -1370,12 +1363,14 @@
         var hintEl = document.getElementById('stf-tuner-hint');
         var waveEl = document.getElementById('stf-tuner-wave');
         var compactFreqEl = document.getElementById('stf-tuner-compact-freq');
+        var compactInput = document.getElementById('stf-tuner-compact-input');
         var compactLed = document.querySelector('#stf-tuner-compact .stf-tuner-compact-led');
         var frame = document.getElementById('stf-tuner-frame');
 
         var TARGET_CODE = '9072';
         var TARGET_FREQ = 9072;
         var locked = false;
+        var syncingCompact = false;
 
         /* —— 信号模型参数 ——
          * 真实接收机的响应不是「对了几位」，而是与目标频率的距离决定的。
@@ -1408,6 +1403,34 @@
         }
 
         function readFreq() { return parseInt(readCode(), 10) || 0; }
+
+        function padFreqCode(raw) {
+            return (String(raw || '').replace(/\D/g, '') + '0000').slice(0, 4);
+        }
+
+        function formatFreqDisplay(code) {
+            code = padFreqCode(code);
+            return code.slice(0, 2) + '·' + code.slice(2);
+        }
+
+        /* 把四位频率写入拨轮（不触发 compact 回写循环） */
+        function applyCodeToDials(code) {
+            code = padFreqCode(code);
+            for (var i = 0; i < 4; i++) {
+                if (inputs[i]) inputs[i].value = code.charAt(i);
+            }
+            markTunerEntered();
+        }
+
+        function syncCompactDisplay(code) {
+            code = padFreqCode(code);
+            if (compactFreqEl) compactFreqEl.textContent = formatFreqDisplay(code);
+            if (compactInput && document.activeElement !== compactInput) {
+                syncingCompact = true;
+                compactInput.value = code;
+                syncingCompact = false;
+            }
+        }
 
         /* 谐振响应曲线 */
         function computeSnr() {
@@ -1443,9 +1466,7 @@
                 inputs[i].classList.toggle('is-hit', !locked && code.charAt(i) === TARGET_CODE.charAt(i));
                 inputs[i].classList.toggle('is-locked', locked);
             }
-            if (compactFreqEl) {
-                compactFreqEl.textContent = code.slice(0, 2) + '·' + code.slice(2);
-            }
+            syncCompactDisplay(code);
             if (compactLed) {
                 compactLed.classList.toggle('is-tuned', !locked && trueSnr >= 40);
                 compactLed.classList.toggle('is-locked', locked);
@@ -1534,6 +1555,10 @@
                 if (frame) frame.classList.remove('is-close');
                 /* 设定：调频 9072 第一次广播曾收到「收到了。」反馈 */
                 if (hintEl) { hintEl.textContent = '信号锁定 —— 收到了。正在接通深夜电台…'; lastHint = hintEl.textContent; }
+                if (compactInput) {
+                    compactInput.setAttribute('readonly', 'readonly');
+                    compactInput.setAttribute('aria-readonly', 'true');
+                }
                 stopLoop();
                 if (window.playTransition) setTimeout(window.playTransition, 480);
             }
@@ -1578,6 +1603,76 @@
                 checkLock();
             }, { passive: false });
         });
+
+        /* 收起胶囊：四位频率输入 ↔ 拨轮 / 锁定状态打通（input 已豁免全局 9072 彩蛋） */
+        if (compactInput) {
+            var compactRoot = document.getElementById('stf-tuner-compact');
+            if (compactRoot) {
+                compactRoot.addEventListener('click', function (e) {
+                    if (e.target.closest && e.target.closest('.stf-tuner-compact-expand')) return;
+                    if (e.target === compactInput) return;
+                    try { compactInput.focus({ preventScroll: true }); } catch (err) { compactInput.focus(); }
+                });
+            }
+
+            function commitCompactInput() {
+                if (syncingCompact || locked) return;
+                var typed = String(compactInput.value || '').replace(/\D/g, '').slice(0, 4);
+                syncingCompact = true;
+                compactInput.value = typed;
+                syncingCompact = false;
+                if (compactFreqEl) {
+                    compactFreqEl.textContent = formatFreqDisplay(typed);
+                }
+                applyCodeToDials(typed);
+                /* 收起态输入也算用户手势：解锁静噪床，便于临近锁定反馈 */
+                TunerAudio.unlockAndStart();
+                checkLock();
+            }
+
+            compactInput.addEventListener('focus', function () {
+                if (locked) return;
+                syncingCompact = true;
+                compactInput.value = readCode();
+                syncingCompact = false;
+                try { compactInput.select(); } catch (e) { /* ignore */ }
+            });
+
+            compactInput.addEventListener('input', commitCompactInput);
+
+            compactInput.addEventListener('keydown', function (e) {
+                if (locked) {
+                    if (/^\d$/.test(e.key) || e.key === 'Backspace' || e.key === 'Delete') e.preventDefault();
+                    return;
+                }
+                if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    var code = readCode().split('');
+                    var caret = compactInput.selectionStart || 0;
+                    var idx = Math.min(3, Math.max(0, caret >= 4 ? 3 : caret));
+                    var next = ((parseInt(code[idx], 10) || 0) + (e.key === 'ArrowUp' ? 1 : -1) + 10) % 10;
+                    code[idx] = String(next);
+                    applyCodeToDials(code.join(''));
+                    syncingCompact = true;
+                    compactInput.value = code.join('');
+                    syncingCompact = false;
+                    if (compactFreqEl) compactFreqEl.textContent = formatFreqDisplay(code.join(''));
+                    try { compactInput.setSelectionRange(idx, idx + 1); } catch (err) { /* ignore */ }
+                    TunerAudio.unlockAndStart();
+                    checkLock();
+                }
+            });
+
+            compactInput.addEventListener('blur', function () {
+                syncingCompact = true;
+                compactInput.value = readCode();
+                syncingCompact = false;
+                if (compactFreqEl) compactFreqEl.textContent = formatFreqDisplay(readCode());
+                /* 收起态失焦后停静噪，避免论坛页持续底噪 */
+                var tuner = document.getElementById('stf-tuner');
+                if (tuner && tuner.classList.contains('is-collapsed')) TunerAudio.stop();
+            });
+        }
 
         /* 离开视口时停掉噪声循环，避免无谓耗电 */
         if (typeof IntersectionObserver !== 'undefined') {

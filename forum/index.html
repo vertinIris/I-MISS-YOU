@@ -511,18 +511,22 @@
         </div>
     </section>
 
-    <!-- 深夜电台调谐台：默认可收成频率胶囊，点击放大还原完整拨频 UI -->
+    <!-- 深夜电台调谐台：默认收成频率胶囊，主路径为直接输入四位频率；完整面板为次要入口 -->
     <section class="stf-tuner is-collapsed" id="stf-tuner" aria-labelledby="stf-tuner-title">
-        <button type="button" class="stf-tuner-compact" id="stf-tuner-compact" aria-expanded="false" aria-controls="stf-tuner-frame">
-            <span class="stf-tuner-compact-shell" aria-hidden="true">
-                <span class="stf-tuner-compact-led"></span>
-                <span class="stf-tuner-compact-freq" id="stf-tuner-compact-freq">----</span>
+        <div class="stf-tuner-compact" id="stf-tuner-compact" role="group" aria-label="深夜电台频率输入">
+            <span class="stf-tuner-compact-shell">
+                <span class="stf-tuner-compact-led" aria-hidden="true"></span>
+                <span class="stf-tuner-compact-freq-wrap">
+                    <span class="stf-tuner-compact-freq" id="stf-tuner-compact-freq" aria-hidden="true">00·00</span>
+                    <input class="stf-tuner-compact-input" id="stf-tuner-compact-input" type="text" inputmode="numeric" maxlength="4" autocomplete="off" spellcheck="false" aria-label="输入四位频率" value="0000">
+                </span>
             </span>
             <span class="stf-tuner-compact-copy">
                 <span class="stf-tuner-compact-text">深夜电台</span>
-                <span class="stf-tuner-compact-hint">展开调谐</span>
+                <span class="stf-tuner-compact-hint">输入频率</span>
             </span>
-        </button>
+            <button type="button" class="stf-tuner-compact-expand" id="stf-tuner-compact-expand" aria-expanded="false" aria-controls="stf-tuner-frame">完整面板</button>
+        </div>
         <div class="stf-tuner-frame" id="stf-tuner-frame" hidden>
             <div class="stf-tuner-head">
                 <span class="stf-tuner-led" id="stf-tuner-led" aria-hidden="true"></span>
@@ -872,22 +876,22 @@
         </div>
     </div>
 
-    <!-- 左下角浮钮：首次→展开调频台；成功进入后→打开飞行雪绒频道页（../index.html，非论坛主体；设置改走顶栏通行证） -->
-    <button type="button" class="stf-back-home" id="stf-back-home" aria-label="展开深夜电台调频台" title="展开深夜电台调频台">
+    <!-- 左下角浮钮：打开飞行雪绒频道页（../index.html，非论坛主体；调频在本区胶囊输入，浮钮不再展开调频） -->
+    <button type="button" class="stf-back-home is-home" id="stf-back-home" aria-label="打开飞行雪绒频道页" title="打开飞行雪绒频道页">
         <span class="stf-back-home-icon" aria-hidden="true">
-            <svg class="stf-back-home-svg stf-back-home-svg--tuner" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="stf-back-home-svg stf-back-home-svg--tuner" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden>
                 <path d="M3 18h18"/>
                 <path d="M5 14l5-8 5 8"/>
                 <circle cx="17" cy="10" r="2"/>
                 <path d="M17 12v6"/>
             </svg>
-            <svg class="stf-back-home-svg stf-back-home-svg--home" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden>
+            <svg class="stf-back-home-svg stf-back-home-svg--home" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 11l9-8 9 8"/>
                 <path d="M5 10v10h14V10"/>
                 <path d="M10 20v-6h4v6"/>
             </svg>
         </span>
-        <span class="stf-back-home-text">调频台</span>
+        <span class="stf-back-home-text">打开飞行雪绒频道</span>
     </button>
 
     <button type="button" class="donate-fab" id="donate-fab" aria-label="支持飞行雪绒">

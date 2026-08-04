@@ -558,7 +558,7 @@ body .nav-logo span {
         inset 0 1px 0 rgba(255, 255, 255, 0.1),
         inset 0 -1px 0 rgba(0, 0, 0, 0.35);
 }
-.stf-tuner-compact:hover {
+.stf-tuner-compact:focus-within {
     border-color: rgba(107, 138, 255, 0.55);
     box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45), 0 0 14px rgba(107, 138, 255, 0.16);
 }
@@ -860,7 +860,8 @@ body.stf-chat-expanded-open::after {
 .stf-chat-expand:focus-visible,
 .stf-chat-input:focus-visible,
 .stf-dial-input:focus-visible,
-.stf-tuner-compact:focus-visible,
+.stf-tuner-compact-input:focus-visible,
+.stf-tuner-compact-expand:focus-visible,
 .stf-tuner-minify:focus-visible,
 .hero-pill:focus-visible,
 .forum-entry:focus-visible,

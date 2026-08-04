@@ -104,12 +104,12 @@
 
     function onKey(e) {
         if (active) return;
-        /* 登录/发帖/聊天输入时勿累积数字，避免口令含 9072 误触发跳转主站 */
+        /* 登录/发帖/聊天/调频输入时勿累积数字，避免口令含 9072 误触发跳转主站 */
         var t = e.target;
         if (t) {
             var tag = (t.tagName || '').toLowerCase();
             if (tag === 'input' || tag === 'textarea' || tag === 'select' || t.isContentEditable) return;
-            if (t.closest && (t.closest('.stf-modal') || t.closest('.stf-welcome') || t.closest('#stf-chat-card'))) return;
+            if (t.closest && (t.closest('.stf-modal') || t.closest('.stf-welcome') || t.closest('#stf-chat-card') || t.closest('#stf-tuner'))) return;
         }
         var ch = e.key;
         if (!/^\d$/.test(ch)) {
