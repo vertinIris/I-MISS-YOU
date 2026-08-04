@@ -1138,13 +1138,18 @@
      * 1) 调频台区块本身默认可收成小按钮（#stf-tuner-compact），点击放大还原完整拨频 UI。
      * 2) 左下角浮钮：
      *    - 尚未「成功进入」：滚动并展开调频台；
-     *    - 首次有效拨频后：直接跳转飞行雪绒主站（../index.html）。
+     *    - 首次有效拨频后：跳转飞行雪绒频道页（../index.html，沉浸站/频道页，非论坛主体）。
      * 3) 通行证/设置改走顶栏「登录」按钮，浮钮不再打开设置，避免与跳转冲突。
      * 「成功进入」：对调频台完成至少一次有效拨频（步进 / 方向键 / 数字 / 滚轮）。
      * 状态键：localStorage['stf_tuner_entered'] === '1'
+     * 文案约定：论坛为社区主体，勿把「飞行雪绒」写成「主站」。
      */
     var TUNER_ENTERED_KEY = 'stf_tuner_entered';
-    var HOME_URL = '../index.html';
+    var FLYING_CHANNEL_URL = '../index.html';
+    var FAB_LABEL_TUNER = '调频台';
+    var FAB_LABEL_CHANNEL = '打开飞行雪绒频道';
+    var FAB_ARIA_TUNER = '展开深夜电台调频台';
+    var FAB_ARIA_CHANNEL = '打开飞行雪绒频道页';
 
     function hasEnteredTuner() {
         try { return localStorage.getItem(TUNER_ENTERED_KEY) === '1'; } catch (e) { return false; }
@@ -1164,10 +1169,12 @@
         var iconHome = fab.querySelector('.stf-back-home-svg--home');
         fab.classList.toggle('is-home', !!entered);
         fab.classList.remove('is-settings');
-        if (label) label.textContent = entered ? '飞行雪绒' : '调频台';
+        if (label) label.textContent = entered ? FAB_LABEL_CHANNEL : FAB_LABEL_TUNER;
         if (iconTuner) iconTuner.hidden = !!entered;
         if (iconHome) iconHome.hidden = !entered;
-        fab.setAttribute('aria-label', entered ? '返回飞行雪绒主站' : '展开深夜电台调频台');
+        var aria = entered ? FAB_ARIA_CHANNEL : FAB_ARIA_TUNER;
+        fab.setAttribute('aria-label', aria);
+        fab.setAttribute('title', aria);
     }
 
     function setTunerExpanded(on) {
@@ -1202,8 +1209,8 @@
         }
     }
 
-    function goFlyingEdelweissHome() {
-        window.location.href = HOME_URL;
+    function openFlyingEdelweissChannel() {
+        window.location.href = FLYING_CHANNEL_URL;
     }
 
     function initTunerCollapse() {
@@ -1226,7 +1233,7 @@
         if (!fab) return;
         applyTunerFabMode(hasEnteredTuner());
         fab.addEventListener('click', function () {
-            if (hasEnteredTuner()) goFlyingEdelweissHome();
+            if (hasEnteredTuner()) openFlyingEdelweissChannel();
             else expandAndFocusTuner();
         });
     }

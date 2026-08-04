@@ -8,7 +8,10 @@
  *
  * 真实感细节：
  *   - 正在输入指示（同浏览器多标签页）
- *   - 在线人数：本端 tab + BroadcastChannel hello/心跳（禁止用历史消息 user_id 累计）
+ *   - 在线人数：本端 presence key + BroadcastChannel hello/心跳/替换（禁止用历史消息 user_id 累计）
+ *     · 未登录：同源浏览器共用一个 tab:guest（localStorage），多标签不计多人
+ *     · 已登录：以 u:id 为主 key，同账号多标签只计 1
+ *     · 登录/登出：废弃旧 key 并广播 replace，同伴立刻删旧槽
  *   - 自己消息的「发送中 / 已送达」双态
  *   - 连接状态系统提示（接入频道 / 本地模式 / 聊天表待创建）
  *   - 去重、平滑动画、自动滚动到底
@@ -41,7 +44,9 @@
     var bc = null;                     // BroadcastChannel 实例
     var PENDING_MATCH_MS = 120000;     // 乐观消息与服务端回显的匹配窗口
     var tabId = null;
+    var guestPresenceId = null;
     var lastSelfPresenceKey = null;
+    var pendingReplaceFrom = null; /* 紧随 hello 附带的废弃旧 key，供同伴删槽 */
 
     function $(id) { return document.getElementById(id); }
 
@@ -101,29 +106,70 @@
         return tabId;
     }
 
+    /** 未登录时同源浏览器共用 guest id，避免多标签各占一个 tab: 槽 */
+    function getGuestPresenceId() {
+        if (guestPresenceId) return guestPresenceId;
+        try {
+            guestPresenceId = localStorage.getItem('stf_chat_guest_presence') || '';
+            if (!guestPresenceId) {
+                guestPresenceId = 'g_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+                localStorage.setItem('stf_chat_guest_presence', guestPresenceId);
+            }
+        } catch (e) {
+            guestPresenceId = getTabId();
+        }
+        return guestPresenceId;
+    }
+
     function participantKey(optUserId) {
         if (optUserId) return 'u:' + String(optUserId);
         var user = currentUser();
         if (user && user.key) return 'u:' + String(user.key);
-        return 'tab:' + getTabId();
+        return 'tab:' + getGuestPresenceId();
+    }
+
+    function isPresenceKey(k) {
+        return !!k && (String(k).indexOf('u:') === 0 || String(k).indexOf('tab:') === 0);
     }
 
     function touchParticipant(key, nameHint) {
         /* 仅接受稳定 key（u: / tab:），禁止用显示名开槽，避免改名刷人数 */
-        if (!key) return;
+        if (!isPresenceKey(key)) return;
         var k = String(key);
-        if (k.indexOf('u:') !== 0 && k.indexOf('tab:') !== 0) return;
         participants[k] = {
             t: Date.now(),
             name: nameHint || (participants[k] && participants[k].name) || ''
         };
     }
 
+    function dropParticipant(key) {
+        if (!key) return;
+        delete participants[String(key)];
+    }
+
+    /** 通知其他标签：旧槽已由新 key 替换（登录/登出/guest 收敛） */
+    function broadcastPresenceReplace(fromKey, toKey) {
+        if (!bc || !fromKey || !toKey || fromKey === toKey) return;
+        try {
+            bc.postMessage({
+                t: 'presence',
+                op: 'replace',
+                from: fromKey,
+                to: toKey,
+                key: toKey,
+                name: getSenderName()
+            });
+        } catch (e) {}
+    }
+
     function touchSelfPresence(nameHint) {
         var key = participantKey();
-        /* 登录/登出导致本端 key 变化时，清掉旧槽，避免 1 人变成 2 */
+        /* 登录/登出导致本端 key 变化时，清掉旧槽并广播替换，避免匿名+实名并存计 2 */
         if (lastSelfPresenceKey && lastSelfPresenceKey !== key) {
-            delete participants[lastSelfPresenceKey];
+            var from = lastSelfPresenceKey;
+            dropParticipant(from);
+            pendingReplaceFrom = from;
+            broadcastPresenceReplace(from, key);
         }
         lastSelfPresenceKey = key;
         touchParticipant(key, nameHint || getSenderName());
@@ -132,12 +178,17 @@
     function broadcastHello(needAck) {
         if (!bc) return;
         try {
-            bc.postMessage({
+            var payload = {
                 t: 'hello',
                 key: participantKey(),
                 name: getSenderName(),
                 needAck: needAck !== false
-            });
+            };
+            if (pendingReplaceFrom) {
+                payload.replaces = pendingReplaceFrom;
+                pendingReplaceFrom = null;
+            }
+            bc.postMessage(payload);
         } catch (e) {}
     }
 
@@ -578,12 +629,32 @@
             /* BC 聊天内容不 touch：同伴在线靠 hello/心跳 */
         } else if (data.t === 'typing' && data.name) {
             if (data.name !== getSenderName()) markPeerTyping(data.name);
+        } else if (data.t === 'presence' && data.op === 'replace') {
+            /* 同伴登录/登出：删旧槽，写入新 key（同 u:id 多标签自然合并） */
+            if (data.from) dropParticipant(data.from);
+            if (data.replaces) dropParticipant(data.replaces);
+            var nextKey = data.to || data.key;
+            if (nextKey && nextKey !== participantKey()) {
+                touchParticipant(nextKey, data.name);
+            } else if (nextKey) {
+                /* 本端已是同一 key（同账号另一标签）：只确保旧槽清掉 */
+                touchSelfPresence(data.name);
+            }
+            refreshPresence();
         } else if (data.t === 'hello' && data.key) {
+            if (data.replaces) dropParticipant(data.replaces);
             var selfKey = participantKey();
-            if (data.key === selfKey) return;
+            if (data.key === selfKey) {
+                /* 同浏览器同 identity 的另一标签：合并为 1，不另开槽 */
+                refreshPresence();
+                return;
+            }
             touchParticipant(data.key, data.name);
             /* 新标签页打开时回一声，避免对方只宣告、收不到本端已在线 */
             if (data.needAck !== false) broadcastHello(false);
+            refreshPresence();
+        } else if (data.t === 'presence' && data.op === 'leave' && data.key) {
+            dropParticipant(data.key);
             refreshPresence();
         }
     }
@@ -730,7 +801,7 @@
         touchSelfPresence();
         startPresenceHeartbeat();
 
-        /* 登录态变化时刷新在线署名提示（不改历史消息）；改名不新增人数 */
+        /* 登录/登出：切换 u: ↔ tab:guest，废弃旧槽并广播 replace（改名不新增人数） */
         if (window.StarTorchAuth && window.StarTorchAuth.onChange) {
             window.StarTorchAuth.onChange(function () {
                 touchSelfPresence();
@@ -738,6 +809,16 @@
                 refreshPresence();
             });
         }
+
+        /* 页签关闭时尽力宣告离线；同 u:id / 同 guest 仍有其它标签时由心跳续命 */
+        try {
+            window.addEventListener('pagehide', function () {
+                if (!bc || !lastSelfPresenceKey) return;
+                try {
+                    bc.postMessage({ t: 'presence', op: 'leave', key: lastSelfPresenceKey });
+                } catch (e) {}
+            });
+        } catch (e) {}
 
         var c = cloud();
         if (c && c.onChatRealtime) {
