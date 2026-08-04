@@ -21,16 +21,16 @@
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(circle at 20% 20%, rgba(255,107,157,.18), transparent 45%),
-        radial-gradient(circle at 80% 30%, rgba(107,138,255,.20), transparent 45%),
-        radial-gradient(circle at 50% 90%, rgba(182,107,255,.16), transparent 50%);
+        radial-gradient(circle at 20% 20%, rgba(107,138,255,.16), transparent 45%),
+        radial-gradient(circle at 80% 30%, rgba(232,197,106,.10), transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(107,138,255,.12), transparent 50%);
     pointer-events: none;
 }
 .forum-hero-content { position: relative; z-index: 1; max-width: 760px; }
 .forum-hero-label {
     display: inline-block;
     font-size: 12px;
-    letter-spacing: .35em;
+    letter-spacing: .28em;
     color: var(--drifter-blue-light, #A8D8FF);
     text-transform: uppercase;
     margin-bottom: 18px;
@@ -45,12 +45,12 @@
     font-weight: 900;
     line-height: 1.05;
     margin: 0 0 18px;
-    background: linear-gradient(100deg, #FF6B9D, #A8D8FF, #B66BFF, #FF6B9D);
+    background: linear-gradient(100deg, #6B8AFF, #E8C56A, #A8D8FF, #6B8AFF);
     background-size: 300% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    animation: forum-flow 8s linear infinite;
+    animation: forum-flow 16s ease-in-out infinite;
 }
 @keyframes forum-flow { to { background-position: 300% 0; } }
 
@@ -91,13 +91,13 @@
 
 /* 功能分区导览：核心卡视觉权重更高 */
 .forum-entry--primary {
-    border-top-color: var(--aimisi-pink, #FF6B9D);
-    background: linear-gradient(180deg, rgba(255,107,157,.10), rgba(255,255,255,.04));
-    box-shadow: 0 0 0 1px rgba(255,107,157,.18), 0 18px 44px rgba(255,107,157,.10);
+    border-top-color: var(--stf-brand, #6B8AFF);
+    background: linear-gradient(180deg, rgba(107,138,255,.10), rgba(255,255,255,.04));
+    box-shadow: 0 0 0 1px rgba(107,138,255,.18), 0 18px 44px rgba(107,138,255,.10);
 }
 .forum-entry--primary:hover {
-    border-color: rgba(255,107,157,.6);
-    box-shadow: 0 0 0 1px rgba(255,107,157,.35), 0 26px 56px rgba(255,107,157,.20);
+    border-color: rgba(107,138,255,.6);
+    box-shadow: 0 0 0 1px rgba(107,138,255,.35), 0 26px 56px rgba(107,138,255,.20);
 }
 .forum-entry-ribbon {
     position: absolute;
@@ -108,8 +108,8 @@
     padding: 4px 10px;
     border-radius: 999px;
     color: #fff;
-    background: linear-gradient(100deg, var(--aimisi-pink, #FF6B9D), var(--drifter-purple, #B66BFF));
-    box-shadow: 0 6px 16px rgba(255,107,157,.3);
+    background: linear-gradient(100deg, var(--stf-brand, #6B8AFF), var(--stf-gold, #E8C56A));
+    box-shadow: 0 6px 16px rgba(107,138,255,.3);
 }
 .forum-section--overview { padding-top: 50px; }
 
@@ -288,8 +288,8 @@
     word-break: break-word;
 }
 .stf-chat-message.is-self .stf-chat-bubble {
-    background: linear-gradient(135deg, rgba(107, 138, 255, 0.22), rgba(182, 107, 255, 0.18));
-    border-color: rgba(107, 138, 255, 0.28);
+    background: linear-gradient(135deg, rgba(107, 138, 255, 0.26), rgba(168, 216, 255, 0.12));
+    border-color: rgba(107, 138, 255, 0.3);
 }
 .stf-chat-meta {
     display: flex;
@@ -331,7 +331,7 @@
     padding: 10px 22px;
     border-radius: var(--radius-full, 999px);
     border: none;
-    background: linear-gradient(135deg, var(--aimisi-pink, #FF6B9D), var(--drifter-purple, #B66BFF));
+    background: linear-gradient(135deg, var(--stf-brand, #6B8AFF), var(--stf-gold, #E8C56A));
     color: #fff;
     font-weight: 600;
     font-size: 0.9rem;
@@ -340,7 +340,7 @@
 }
 .stf-chat-send:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(255, 107, 157, 0.35);
+    box-shadow: 0 4px 16px rgba(107, 138, 255, 0.35);
 }
 .stf-chat-send:active { transform: translateY(0) scale(0.97); }
 @keyframes chat-fade-in {
@@ -364,7 +364,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 50% 0%, rgba(255,107,157,.06), transparent 55%);
+    background: radial-gradient(circle at 50% 0%, rgba(107,138,255,.08), transparent 55%);
     pointer-events: none;
 }
 
@@ -391,7 +391,7 @@
     font-size: 28px;
     font-weight: 700;
     line-height: 1;
-    background: linear-gradient(100deg, #FF6B9D, #A8D8FF);
+    background: linear-gradient(100deg, #6B8AFF, #E8C56A);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -412,7 +412,7 @@
     transition: all .25s;
 }
 .stf-sort-btn:hover { color: #fff; }
-.stf-sort-btn.active { background: linear-gradient(100deg, rgba(107,138,255,.35), rgba(182,107,255,.35)); color: #fff; }
+.stf-sort-btn.active { background: linear-gradient(100deg, rgba(107,138,255,.35), rgba(232,197,106,.28)); color: #fff; }
 
 /* 收纳册 + 浮动卡片 */
 .archive-float {
@@ -632,8 +632,8 @@ html.archive-orbit-active .archive-album-shelf { display: none; }
     padding: 4px 12px;
     border-radius: 999px;
     color: #fff;
-    background: linear-gradient(100deg, var(--aimisi-pink, #FF6B9D), var(--drifter-purple, #B66BFF));
-    box-shadow: 0 6px 16px rgba(255,107,157,.3);
+    background: linear-gradient(100deg, #FF6B9D, #E8C56A);
+    box-shadow: 0 6px 16px rgba(255,107,157,.28);
 }
 
 /* 移动端导航切换 */
@@ -705,7 +705,7 @@ html.archive-orbit-active .archive-album-shelf { display: none; }
     border-radius: 22px;
     background: rgba(255,255,255,.05);
     border: 1px solid rgba(255,255,255,.10);
-    border-top: 3px solid var(--char, var(--aimisi-pink));
+    border-top: 3px solid var(--char, var(--stf-brand, #6B8AFF));
     text-decoration: none;
     color: inherit;
     overflow: hidden;
@@ -715,7 +715,7 @@ html.archive-orbit-active .archive-album-shelf { display: none; }
     content: "";
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 80% 0%, color-mix(in srgb, var(--char, #FF6B9D) 22%, transparent), transparent 60%);
+    background: radial-gradient(circle at 80% 0%, color-mix(in srgb, var(--char, #6B8AFF) 22%, transparent), transparent 60%);
     opacity: 0;
     transition: opacity .4s;
     pointer-events: none;
@@ -723,15 +723,15 @@ html.archive-orbit-active .archive-album-shelf { display: none; }
 .forum-entry:hover {
     transform: translateY(-8px);
     box-shadow: 0 22px 50px rgba(0,0,0,.4);
-    border-color: color-mix(in srgb, var(--char, #FF6B9D) 55%, transparent);
+    border-color: color-mix(in srgb, var(--char, #6B8AFF) 55%, transparent);
 }
 .forum-entry:hover::after { opacity: 1; }
 .forum-entry-icon {
     width: 52px; height: 52px;
     display: grid; place-items: center;
     border-radius: 14px;
-    background: color-mix(in srgb, var(--char, #FF6B9D) 18%, transparent);
-    color: var(--char, var(--aimisi-pink));
+    background: color-mix(in srgb, var(--char, #6B8AFF) 18%, transparent);
+    color: var(--char, var(--stf-brand, #6B8AFF));
 }
 .forum-entry-icon svg { width: 26px; height: 26px; }
 .forum-entry-title {
@@ -741,7 +741,7 @@ html.archive-orbit-active .archive-album-shelf { display: none; }
 .forum-entry-desc { font-size: 14px; color: rgba(240,244,255,.7); line-height: 1.7; margin: 0; }
 .forum-entry-cta {
     margin-top: 6px; font-size: 13px; font-weight: 500;
-    color: var(--char, var(--aimisi-pink));
+    color: var(--char, var(--stf-brand, #6B8AFF));
     display: inline-flex; align-items: center; gap: 6px;
 }
 .forum-entry-cta svg { width: 16px; height: 16px; transition: transform .3s; }
@@ -912,7 +912,7 @@ html.archive-orbit-active .archive-album-shelf { display: none; }
     appearance: none;
     background: none;
     border: none;
-    color: var(--aimisi-pink, #FF6B9D);
+    color: var(--stf-brand, #6B8AFF);
     font-size: 13px;
     cursor: pointer;
     padding: 0;
@@ -954,7 +954,7 @@ html.archive-orbit-active .archive-album-shelf { display: none; }
     transition: all .25s;
 }
 .stf-card-action:hover { background: rgba(255,255,255,.1); color: #fff; }
-.stf-card-action.liked { color: var(--aimisi-pink, #FF6B9D); border-color: rgba(255,107,157,.35); background: rgba(255,107,157,.1); }
+.stf-card-action.liked { color: var(--stf-gold, #E8C56A); border-color: rgba(232,197,106,.35); background: rgba(232,197,106,.1); }
 .stf-card-action.bookmarked { color: var(--lucilla-gold, #E8C56A); border-color: rgba(232,197,106,.35); background: rgba(232,197,106,.1); }
 .stf-card-action svg { width: 16px; height: 16px; }
 
@@ -999,7 +999,7 @@ html.archive-orbit-active .archive-album-shelf { display: none; }
 .stf-comment-submit {
     appearance: none;
     border: none;
-    background: linear-gradient(100deg, var(--aimisi-pink, #FF6B9D), var(--drifter-purple, #B66BFF));
+    background: linear-gradient(100deg, var(--stf-brand, #6B8AFF), var(--stf-gold, #E8C56A));
     color: #fff;
     padding: 8px 16px;
     border-radius: 999px;
@@ -1648,8 +1648,8 @@ html.archive-orbit-active .archive-album-shelf { display: none; }
     box-shadow: 0 0 12px 3px rgba(168,216,255,.85);
 }
 .stf-tuner-compact-led.is-locked {
-    background: var(--aimisi-pink, #FF6B9D);
-    box-shadow: 0 0 14px 3px rgba(255,107,157,.85);
+    background: var(--stf-gold, #E8C56A);
+    box-shadow: 0 0 14px 3px rgba(232,197,106,.85);
     animation: stf-led-pulse 1.2s ease-in-out infinite;
 }
 .stf-tuner-compact-freq {
@@ -1718,13 +1718,13 @@ html.archive-orbit-active .archive-album-shelf { display: none; }
     box-shadow: 0 0 12px 2px rgba(168,216,255,.8);
 }
 .stf-tuner-led.is-locked {
-    background: var(--aimisi-pink, #FF6B9D);
-    box-shadow: 0 0 16px 3px rgba(255,107,157,.9);
+    background: var(--stf-gold, #E8C56A);
+    box-shadow: 0 0 16px 3px rgba(232,197,106,.9);
     animation: stf-led-pulse 1s ease-in-out infinite;
 }
 @keyframes stf-led-pulse {
-    0%, 100% { box-shadow: 0 0 12px 2px rgba(255,107,157,.7); }
-    50%      { box-shadow: 0 0 20px 5px rgba(255,107,157,1); }
+    0%, 100% { box-shadow: 0 0 12px 2px rgba(232,197,106,.7); }
+    50%      { box-shadow: 0 0 20px 5px rgba(232,197,106,1); }
 }
 @keyframes stf-tuner-breathe {
     0%, 100% { opacity: .72; filter: brightness(0.95); }
@@ -1820,7 +1820,7 @@ html.archive-orbit-active .archive-album-shelf { display: none; }
 .stf-tuner-signal-bar i {
     display: block; height: 100%; width: 0%;
     border-radius: 999px;
-    background: linear-gradient(90deg, #6B8AFF, #A8D8FF, rgba(255,107,157,.85));
+    background: linear-gradient(90deg, #6B8AFF, #A8D8FF, rgba(232,197,106,.85));
     /* 表针要跟手：JS 已做平滑，这里只留极短的插值，避免拖影 */
     transition: width .08s linear;
 }
@@ -2057,6 +2057,7 @@ html.archive-orbit-active .archive-album-shelf { display: none; }
 }
 .stf-back-home.is-settings,
 .stf-back-home.is-home {
+    /* 飞雪频道互链：粉光暗示，与学院蓝金分家 */
     border-color: rgba(255, 107, 157, 0.42);
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 107, 157, 0.1), 0 0 18px rgba(255, 107, 157, 0.12);
 }
@@ -2064,7 +2065,7 @@ html.archive-orbit-active .archive-album-shelf { display: none; }
 .stf-back-home.is-home .stf-back-home-icon {
     border-color: rgba(255, 107, 157, 0.5);
     background: rgba(255, 107, 157, 0.16);
-    color: var(--aimisi-pink, #FF6B9D);
+    color: #FF6B9D;
 }
 .stf-back-home.is-settings:hover .stf-back-home-icon,
 .stf-back-home.is-home:hover .stf-back-home-icon {

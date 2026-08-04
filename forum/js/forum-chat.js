@@ -316,7 +316,8 @@
         }).join('');
         if (!slice.length) {
             html = '<div class="stf-chat-empty" role="status">'
-                + '<span>📡</span><p>暂无信号，发送第一条消息，开启这个频率吧。</p>'
+                + '<span aria-hidden="true">◇</span>'
+                + '<p>公共频段静默中。<br>发一句短讯，信号就会亮起来。</p>'
                 + '</div>';
         }
         els.list.innerHTML = html;

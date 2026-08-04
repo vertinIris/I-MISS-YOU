@@ -1,41 +1,95 @@
 /* ============================================================
-   星炬学院主论坛 · 主题层（加法式覆盖）
-   职责：
-   1. 蓝金学院独立配色（覆盖飞行雪绒粉主题）
-   2. 社交动态流时间线布局
-   3. 抽屉式半收纳卡片
-   4. 主页颜色断层修复（连续深空背景 + 雾层 + 分隔器）
-   5. 爱弥斯动效增强（慢 · 大 · 亮 · 层次多）
-   本文件在 forum.css / forum-easter.css 之后加载，平级特异性下覆盖生效。
+   星炬学院主论坛 · 蓝金质感层（B1–B6）
+   加载于 forum.css / forum-easter.css 之后。
+   气质：深蓝学院深夜 · 冷金属边 · 内高光 · 薄膜噪点 · 金仅签发/精华
    ============================================================ */
 
-/* ---------- 1. 蓝金学院令牌 ---------- */
+/* ---------- B1 · 统一蓝金令牌 + surface 三档 ---------- */
 :root {
-    --stf-brand: #6B8AFF;          /* 学院蓝 */
-    --stf-brand-light: #A8D8FF;    /* 浅蓝星光 */
-    --stf-gold: #E8C56A;           /* 学院金 */
-    --stf-gold-soft: #F3E0A3;      /* 柔金 */
-    --stf-bg-top: #0F0B18;         /* 顶部紫黑 */
-    --stf-bg-mid: #0B0E1A;         /* 中部蓝黑 */
-    --stf-bg-bottom: #080A12;      /* 底部深黑 */
+    --stf-brand: #6B8AFF;
+    --stf-brand-light: #A8D8FF;
+    --stf-gold: #E8C56A;
+    --stf-gold-soft: #F3E0A3;
+    --stf-bg-top: #0A0C14;
+    --stf-bg-mid: #0B0E1A;
+    --stf-bg-bottom: #080A12;
     --stf-text: #F0F4FF;
-    --stf-text-muted: rgba(240,244,255,.65);
+    --stf-text-muted: rgba(240, 244, 255, 0.65);
+
+    /* surface 三档 */
+    --stf-surface-0: rgba(10, 12, 22, 0.96);           /* 正文实底 */
+    --stf-surface-1: rgba(255, 255, 255, 0.045);        /* 卡片 */
+    --stf-surface-2: rgba(255, 255, 255, 0.085);        /* 悬停/展开 */
+
+    /* 冷金属边 / 内高光 */
+    --stf-edge: rgba(168, 216, 255, 0.14);
+    --stf-edge-strong: rgba(168, 216, 255, 0.28);
+    --stf-inset: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    --stf-metal: 0 0 0 1px rgba(168, 216, 255, 0.12), var(--stf-inset);
+
+    /* 焦点环 */
+    --stf-focus: 0 0 0 2px rgba(10, 12, 22, 0.9), 0 0 0 4px rgba(168, 216, 255, 0.55);
+
+    /* 浮层 z-index 表（B6） */
+    --stf-z-nav: 900;
+    --stf-z-fab-tuner: 960;
+    --stf-z-fab-donate: 970;
+    --stf-z-edge: 980;
+    --stf-z-chat-expand: 1100;
+    --stf-z-modal: 1200;
+    --stf-z-toast: 1300;
+    --stf-z-easter: 1400;
+
+    /* 论坛强制覆盖主站粉令牌（角色色 --char 仍可局部粉） */
+    --aimisi-pink: #6B8AFF;
+    --aimisi-pink-light: #A8D8FF;
+    --aimisi-pink-soft: #8AA4FF;
+    --aimisi-pink-deep: #4A6AE0;
+    --color-pink: #6B8AFF;
+    --color-pink-light: #A8D8FF;
+    --color-pink-soft: #8AA4FF;
+    --color-pink-deep: #4A6AE0;
+    --c-primary: #6B8AFF;
+    --c-primary-strong: #4A6AE0;
+    --c-primary-soft: #A8D8FF;
+    --c-primary-dim: rgba(107, 138, 255, 0.14);
+    --surface-accent: rgba(107, 138, 255, 0.14);
+    --surface-accent-border: rgba(107, 138, 255, 0.35);
+    --shadow-glow: 0 0 22px rgba(107, 138, 255, 0.12);
+    --focus-ring: rgba(168, 216, 255, 0.55);
 }
 
-/* ---------- 4. 颜色断层修复：连续深空背景 ---------- */
+/* 角色色：仅爱弥斯档案保留粉点缀，不污染全局令牌 */
+.character-archive-card.is-featured,
+.archive-float--featured {
+    --aimisi-pink: #FF6B9D;
+    --char: #FF6B9D;
+}
+
+/* ---------- 连续深空背景 + 薄膜噪点（无 grain SVG 时用 data-URI 降级） ---------- */
 body {
     background:
-        radial-gradient(1200px 620px at 50% -8%, rgba(107,138,255,.12), transparent 60%),
+        radial-gradient(1100px 560px at 50% -10%, rgba(107, 138, 255, 0.1), transparent 58%),
         linear-gradient(180deg,
             var(--stf-bg-top) 0%,
-            var(--stf-bg-mid) 38%,
-            var(--stf-bg-bottom) 70%,
-            #0D0B14 100%);
+            var(--stf-bg-mid) 42%,
+            var(--stf-bg-bottom) 78%,
+            #070910 100%);
     background-attachment: fixed;
     color: var(--stf-text);
 }
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0.035;
+    mix-blend-mode: soft-light;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+}
 
-/* 禁用背景旋转动效：星河光带、粉色星云、流星、雪花等保持静态 */
 .galaxy-river,
 .pink-galaxy,
 .shooting-star-container,
@@ -49,118 +103,144 @@ body {
     display: none !important;
 }
 
-/* 论坛页 hero 背景去旋转、去流动，仅保留静态深空光晕 */
+/* ---------- B2 · Hero / 导航 / 帖流 / 侧栏 / 通行证 ---------- */
+.forum-hero {
+    min-height: 72vh;
+    padding: 112px 24px 64px;
+}
 .forum-hero::before {
     background:
-        radial-gradient(circle at 20% 20%, rgba(107,138,255,.16), transparent 45%),
-        radial-gradient(circle at 80% 30%, rgba(232,197,106,.10), transparent 45%),
-        radial-gradient(circle at 50% 90%, rgba(107,138,255,.12), transparent 50%);
+        radial-gradient(circle at 22% 18%, rgba(107, 138, 255, 0.16), transparent 46%),
+        radial-gradient(circle at 78% 28%, rgba(232, 197, 106, 0.08), transparent 44%),
+        radial-gradient(circle at 50% 92%, rgba(107, 138, 255, 0.1), transparent 52%) !important;
     animation: none !important;
 }
-
-/* Hero 雾层：柔和的蓝紫过渡，消隐板块切换硬边 */
 .forum-hero::after {
     content: "";
     position: absolute;
     left: 0; right: 0; bottom: 0;
-    height: 200px;
+    height: 180px;
     pointer-events: none;
     background: linear-gradient(to bottom,
         transparent 0%,
-        rgba(107,138,255,.05) 45%,
-        rgba(10,11,20,.25) 100%);
+        rgba(107, 138, 255, 0.04) 48%,
+        rgba(8, 10, 18, 0.35) 100%);
     -webkit-mask-image: linear-gradient(to bottom, transparent, #000 55%);
     mask-image: linear-gradient(to bottom, transparent, #000 55%);
 }
-
-/* Hero 光晕改为蓝金，去掉粉主导 */
-.forum-hero::before {
-    background:
-        radial-gradient(circle at 20% 20%, rgba(107,138,255,.18), transparent 45%),
-        radial-gradient(circle at 80% 30%, rgba(232,197,106,.12), transparent 45%),
-        radial-gradient(circle at 50% 90%, rgba(182,107,255,.14), transparent 50%);
-}
-
-/* Section 过渡：柔和顶光 + 淡出细线，替代发光节点，减少突兀感 */
-.forum-section-inner { position: relative; }
-.forum-section-inner::before {
-    content: "";
-    position: absolute;
-    top: -64px; left: 0; right: 0;
-    height: 100px;
-    pointer-events: none;
-    background: radial-gradient(ellipse 50% 40% at 50% 0%, rgba(107,138,255,.06), transparent 72%);
-    opacity: .85;
-}
-.forum-section-inner::after {
-    content: "";
-    position: absolute;
-    top: -36px; left: 50%; transform: translateX(-50%);
-    width: min(760px, 78%); height: 1px;
-    background: linear-gradient(90deg,
-        transparent 0%,
-        rgba(168,216,255,.05) 18%,
-        rgba(168,216,255,.12) 50%,
-        rgba(168,216,255,.05) 82%,
-        transparent 100%);
-    filter: blur(.5px);
-    opacity: .65;
-}
-/* 核心区保留自身蓝色光晕（覆盖 forum.css 粉色 radial） */
-.forum-section--core::before {
-    background: radial-gradient(circle at 50% 0%, rgba(107,138,255,.09), transparent 55%);
-}
-
-/* ---------- 1.(续) 蓝金覆盖：标题 / 按钮 / 统计 / 筛选 / FAB ---------- */
 .forum-hero-title {
-    background: linear-gradient(100deg, var(--stf-brand), var(--stf-gold), var(--stf-brand-light), var(--stf-brand));
-    background-size: 300% 100%;
+    background: linear-gradient(105deg, var(--stf-brand-light) 0%, var(--stf-brand) 42%, var(--stf-gold) 78%, var(--stf-brand-light) 100%);
+    background-size: 220% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    animation: stf-title-drift 16s ease-in-out infinite;
+    letter-spacing: 0.02em;
+}
+@keyframes stf-title-drift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 .forum-hero-label {
     color: var(--stf-brand-light);
-    border-color: rgba(168,216,255,.25);
+    border-color: var(--stf-edge-strong);
+    letter-spacing: 0.28em;
+    background: rgba(107, 138, 255, 0.06);
+    box-shadow: var(--stf-inset);
+}
+.forum-hero-sub {
+    color: rgba(240, 244, 255, 0.72);
+    letter-spacing: 0.01em;
+}
+.hero-pill {
+    border-radius: 12px;
+    border: 1px solid var(--stf-edge);
+    background: var(--stf-surface-1);
+    box-shadow: var(--stf-metal);
 }
 .hero-pill:hover {
-    border-color: rgba(168,216,255,.4);
-    box-shadow: 0 14px 30px rgba(107,138,255,.28);
+    border-color: var(--stf-edge-strong);
+    background: var(--stf-surface-2);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(107, 138, 255, 0.2);
+    transform: translateY(-2px);
 }
 
-/* 主按钮：蓝金渐变（覆盖 style.css 粉主题） */
+/* 导航：学院深蓝底 + 冷金属顶边 */
+body .nav-glass {
+    background: rgba(8, 10, 18, 0.84) !important;
+    border-bottom: 1px solid var(--stf-edge);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+    z-index: var(--stf-z-nav);
+}
+body .nav-logo span {
+    letter-spacing: 0.04em;
+}
+.stf-account-btn {
+    border: 1px solid var(--stf-edge-strong);
+    background: rgba(107, 138, 255, 0.1);
+    box-shadow: var(--stf-inset);
+    border-radius: 999px;
+}
+.stf-account-btn:hover {
+    border-color: rgba(232, 197, 106, 0.4);
+    background: rgba(107, 138, 255, 0.16);
+}
+.stf-account-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--stf-focus);
+}
+
+/* 主按钮蓝金 */
 .btn-primary {
-    background: linear-gradient(100deg, var(--stf-brand), var(--stf-gold), var(--stf-brand-light), var(--stf-brand));
-    background-size: 300% 100%;
+    background: linear-gradient(100deg, var(--stf-brand), color-mix(in srgb, var(--stf-brand) 70%, var(--stf-gold)), var(--stf-brand-light), var(--stf-brand));
+    background-size: 280% 100%;
     color: #fff;
+    box-shadow: 0 10px 28px rgba(107, 138, 255, 0.28), var(--stf-inset);
 }
 .btn-primary::before {
-    background: conic-gradient(from 0deg, transparent, rgba(168,216,255,.55), transparent 30%);
+    background: conic-gradient(from 0deg, transparent, rgba(168, 216, 255, 0.45), transparent 30%);
 }
 .btn-primary::after {
-    background: linear-gradient(110deg, transparent 30%, rgba(243,224,163,.5), transparent 70%);
+    background: linear-gradient(110deg, transparent 30%, rgba(243, 224, 163, 0.45), transparent 70%);
 }
-
-/* 投稿作为子功能：Toolbar 中降级为蓝金 ghost */
 .stf-toolbar .btn-ghost {
-    border-color: rgba(168,216,255,.25);
+    border-color: rgba(168, 216, 255, 0.25);
     color: var(--stf-brand-light);
 }
 .stf-toolbar .btn-ghost:hover {
-    border-color: rgba(168,216,255,.5);
-    background: rgba(107,138,255,.1);
+    border-color: rgba(168, 216, 255, 0.5);
+    background: rgba(107, 138, 255, 0.1);
     color: #fff;
 }
 
-/* 功能区核心卡：蓝金顶边 + 飘带 */
+/* 功能入口：默认蓝，非粉 */
+.forum-entry {
+    border-radius: 14px;
+    background: var(--stf-surface-1);
+    border: 1px solid var(--stf-edge);
+    border-top: 3px solid var(--char, var(--stf-brand));
+    box-shadow: var(--stf-metal);
+}
+.forum-entry::after {
+    background: radial-gradient(circle at 80% 0%, color-mix(in srgb, var(--char, var(--stf-brand)) 18%, transparent), transparent 60%);
+}
+.forum-entry:hover {
+    border-color: color-mix(in srgb, var(--char, var(--stf-brand)) 45%, transparent);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35), var(--stf-inset);
+}
+.forum-entry-icon {
+    background: color-mix(in srgb, var(--char, var(--stf-brand)) 16%, transparent);
+    color: var(--char, var(--stf-brand));
+}
+.forum-entry-cta { color: var(--char, var(--stf-brand)); }
 .forum-entry--primary {
     border-top-color: var(--stf-brand);
-    background: linear-gradient(180deg, rgba(107,138,255,.10), rgba(255,255,255,.04));
-    box-shadow: 0 0 0 1px rgba(107,138,255,.18), 0 18px 44px rgba(107,138,255,.10);
+    background: linear-gradient(180deg, rgba(107, 138, 255, 0.1), rgba(255, 255, 255, 0.035));
+    box-shadow: 0 0 0 1px rgba(107, 138, 255, 0.18), 0 16px 40px rgba(107, 138, 255, 0.08);
 }
 .forum-entry--primary:hover {
-    border-color: rgba(107,138,255,.6);
-    box-shadow: 0 0 0 1px rgba(107,138,255,.35), 0 26px 56px rgba(107,138,255,.20);
+    border-color: rgba(107, 138, 255, 0.55);
+    box-shadow: 0 0 0 1px rgba(107, 138, 255, 0.3), 0 22px 48px rgba(107, 138, 255, 0.16);
 }
 .forum-entry--primary .forum-entry-cta { color: var(--stf-brand); }
 .forum-entry--primary .forum-entry-icon {
@@ -169,63 +249,79 @@ body {
 }
 .forum-entry-ribbon {
     background: linear-gradient(100deg, var(--stf-brand), var(--stf-gold));
-    box-shadow: 0 6px 16px rgba(107,138,255,.3);
-    animation: stf-ribbon-glow 2.5s ease-in-out infinite;
-}
-@keyframes stf-ribbon-glow {
-    0%, 100% { box-shadow: 0 6px 16px rgba(107,138,255,.25); }
-    50%      { box-shadow: 0 6px 24px rgba(107,138,255,.6); }
+    box-shadow: 0 6px 16px rgba(107, 138, 255, 0.28);
+    animation: none;
 }
 
-/* 统计数字渐变 */
+.forum-section-inner { position: relative; }
+.forum-section-inner::before {
+    content: "";
+    position: absolute;
+    top: -64px; left: 0; right: 0;
+    height: 100px;
+    pointer-events: none;
+    background: radial-gradient(ellipse 50% 40% at 50% 0%, rgba(107, 138, 255, 0.06), transparent 72%);
+    opacity: 0.85;
+}
+.forum-section-inner::after {
+    content: "";
+    position: absolute;
+    top: -36px; left: 50%; transform: translateX(-50%);
+    width: min(760px, 78%); height: 1px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(168, 216, 255, 0.05) 18%,
+        rgba(168, 216, 255, 0.14) 50%,
+        rgba(168, 216, 255, 0.05) 82%,
+        transparent 100%);
+    opacity: 0.7;
+}
+.forum-section--core::before {
+    background: radial-gradient(circle at 50% 0%, rgba(107, 138, 255, 0.09), transparent 55%);
+}
+
 .stf-stat b {
     background: linear-gradient(100deg, var(--stf-brand), var(--stf-gold));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
 }
-
-/* 筛选 / 排序 / 标签 激活态 → 蓝金 */
 .stf-filter-btn.active {
-    background: linear-gradient(100deg, rgba(107,138,255,.35), rgba(232,197,106,.30));
-    border-color: rgba(168,216,255,.4);
+    background: rgba(107, 138, 255, 0.22);
+    border-color: rgba(168, 216, 255, 0.38);
     color: #fff;
-    box-shadow: 0 6px 18px rgba(107,138,255,.22);
+    box-shadow: var(--stf-inset);
 }
 .stf-sort-btn.active {
-    background: linear-gradient(100deg, rgba(107,138,255,.35), rgba(232,197,106,.28));
+    background: rgba(107, 138, 255, 0.24);
     color: #fff;
 }
 .stf-tag-chip.active {
-    background: rgba(107,138,255,.22);
-    border-color: rgba(107,138,255,.45);
+    background: rgba(107, 138, 255, 0.2);
+    border-color: rgba(107, 138, 255, 0.42);
     color: #fff;
 }
-
-/* 卡片展开按钮 / 点赞 / 评论提交 → 蓝金强调 */
 .stf-card-expand { color: var(--stf-brand); }
 .stf-card-action.liked {
     color: var(--stf-gold);
-    border-color: rgba(232,197,106,.35);
-    background: rgba(232,197,106,.1);
+    border-color: rgba(232, 197, 106, 0.35);
+    background: rgba(232, 197, 106, 0.1);
 }
 .stf-comment-submit {
     background: linear-gradient(100deg, var(--stf-brand), var(--stf-gold));
 }
-
-/* FAB → 蓝金 */
 .stf-fab {
     background: linear-gradient(100deg, var(--stf-brand), var(--stf-gold));
-    box-shadow: 0 14px 34px rgba(107,138,255,.4);
+    box-shadow: 0 12px 28px rgba(107, 138, 255, 0.32);
 }
-.stf-fab:hover { box-shadow: 0 20px 44px rgba(107,138,255,.5); }
+.stf-fab:hover { box-shadow: 0 16px 36px rgba(107, 138, 255, 0.4); }
 
-/* ---------- 2. 社交动态流：信息流布局（翻转卡已退役） ---------- */
+/* 帖流：材质边 + 内高光 + 12/10/8 节奏 */
 .stf-timeline,
 .stf-feed {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
     max-width: none;
     margin: 16px 0 0;
     position: relative;
@@ -234,17 +330,16 @@ body {
 .stf-timeline::before { display: none; }
 .stf-node { display: none; }
 
-/* ---------- 3. 帖流卡（紧凑扫读 + 展开全文） ---------- */
 .stf-feed .stf-card,
 .stf-timeline .stf-card {
     display: block;
     position: relative;
-    background: rgba(255,255,255,.035);
-    border: 1px solid rgba(255,255,255,.07);
+    background: var(--stf-surface-1);
+    border: 1px solid var(--stf-edge);
     border-left: 3px solid var(--char, var(--stf-brand));
     padding: 12px 14px 10px;
     border-radius: 12px;
-    box-shadow: none;
+    box-shadow: var(--stf-metal);
     overflow: visible;
     cursor: default;
     outline: none;
@@ -252,15 +347,22 @@ body {
 .stf-feed .stf-card:hover,
 .stf-timeline .stf-card:hover {
     transform: none;
-    background: rgba(255,255,255,.05);
-    border-color: rgba(168,216,255,.14);
-    box-shadow: 0 4px 14px rgba(0,0,0,.14);
+    background: var(--stf-surface-2);
+    border-color: rgba(168, 216, 255, 0.22);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18), var(--stf-inset);
 }
 .stf-feed .stf-card:focus-visible,
 .stf-timeline .stf-card:focus-visible {
-    box-shadow: 0 0 0 2px rgba(168,216,255,.45);
+    box-shadow: var(--stf-focus);
 }
-
+.stf-card.is-expanded .stf-card-back,
+.stf-card.is-flipped .stf-card-back {
+    background: var(--stf-surface-0);
+    border-radius: 10px;
+    margin-top: 8px;
+    padding: 12px 12px 4px;
+    border: 1px solid rgba(168, 216, 255, 0.1);
+}
 .stf-card-inner {
     position: static;
     width: 100%;
@@ -285,12 +387,10 @@ body {
 .stf-card-back { display: none; }
 .stf-card.is-flipped .stf-card-back,
 .stf-card.is-expanded .stf-card-back { display: block; }
-
 .stf-card-preview {
     font-size: 13px;
     line-height: 1.55;
-    color: rgba(240,244,255,.68);
-    white-space: normal;
+    color: rgba(240, 244, 255, 0.7);
     margin-bottom: 6px;
 }
 .stf-card-tags--preview { margin-bottom: 8px; }
@@ -300,18 +400,17 @@ body {
     gap: 14px;
     margin-top: 4px;
     padding-top: 10px;
-    border-top: 1px solid rgba(255,255,255,.06);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
     font-size: 13px;
     color: var(--stf-text-muted);
 }
 .stf-front-stat { display: inline-flex; align-items: center; gap: 4px; }
 .stf-card-flip-hint,
 .stf-card-flip-back { display: none; }
-
 .stf-card-back .stf-card-content {
     font-size: 14px;
     line-height: 1.8;
-    color: rgba(240,244,255,.78);
+    color: rgba(240, 244, 255, 0.82);
     white-space: pre-line;
     margin-bottom: 12px;
 }
@@ -321,10 +420,9 @@ body {
     gap: 8px;
     margin-top: 0;
     padding-top: 12px;
-    border-top: 1px solid rgba(255,255,255,.06);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* ---------- 2.(续) 常驻快捷发布框 ---------- */
 .stf-composer {
     max-width: none;
     margin: 18px 0 0;
@@ -336,19 +434,20 @@ body {
     align-items: center;
     gap: 12px;
     width: 100%;
-    padding: 14px 18px;
-    border-radius: 16px;
+    padding: 12px 16px;
+    border-radius: 12px;
     cursor: pointer;
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(168,216,255,.18);
+    background: var(--stf-surface-1);
+    border: 1px solid var(--stf-edge);
     color: var(--stf-text-muted);
     text-align: left;
     font-size: 14px;
-    transition: border-color .3s, background .3s, transform .3s;
+    box-shadow: var(--stf-metal);
+    transition: border-color 0.25s, background 0.25s;
 }
 .stf-composer-trigger:hover {
-    border-color: rgba(168,216,255,.4);
-    background: rgba(255,255,255,.08);
+    border-color: var(--stf-edge-strong);
+    background: var(--stf-surface-2);
 }
 .stf-composer-avatar {
     width: 36px; height: 36px;
@@ -358,7 +457,6 @@ body {
     color: #fff; font-size: 16px;
     flex: none;
 }
-.stf-composer-placeholder { flex: 1; }
 .stf-composer-hint {
     font-size: 12px;
     padding: 4px 12px;
@@ -368,80 +466,362 @@ body {
 }
 .stf-composer-form {
     margin-top: 12px;
-    padding: 20px;
-    border-radius: 18px;
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(168,216,255,.18);
+    padding: 18px;
+    border-radius: 14px;
+    background: var(--stf-surface-0);
+    border: 1px solid var(--stf-edge);
+    box-shadow: var(--stf-metal);
     display: flex;
     flex-direction: column;
     gap: 14px;
 }
 
-/* ---------- 5. 爱弥斯动效增强 ---------- */
-/* 收纳册主卡（爱弥斯）：浮动放慢加大 + 呼吸光晕，不再叠加旋转边框 */
-.archive-float--featured { animation: card-float-aimisi 12s ease-in-out infinite; }
-@keyframes card-float-aimisi {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-16px); }
+/* 侧栏：学院指示器气质 */
+.stf-discuss-aside {
+    position: sticky;
+    top: 88px;
 }
-/* 呼吸式光晕（::before，不占用 easter 的 ::after） */
+.stf-aside-card {
+    border-radius: 12px;
+    background: var(--stf-surface-1);
+    border: 1px solid var(--stf-edge);
+    box-shadow: var(--stf-metal);
+}
+.stf-pinned {
+    border-radius: 12px;
+    background: rgba(107, 138, 255, 0.05);
+    border: 1px solid rgba(168, 216, 255, 0.16);
+}
+.stf-pinned-badge {
+    background: rgba(232, 197, 106, 0.16);
+    color: var(--stf-gold);
+}
+.stf-feed-tab.active {
+    background: rgba(107, 138, 255, 0.2);
+    border-color: rgba(168, 216, 255, 0.28);
+}
+
+/* 通行证证件材质 */
+.stf-passport-panel {
+    border-radius: 14px !important;
+    background:
+        radial-gradient(ellipse at 12% 0%, rgba(107, 138, 255, 0.16), transparent 42%),
+        radial-gradient(ellipse at 88% 8%, rgba(232, 197, 106, 0.1), transparent 36%),
+        var(--stf-surface-0) !important;
+    border: 1px solid var(--stf-edge-strong) !important;
+    box-shadow:
+        0 28px 70px rgba(0, 0, 0, 0.55),
+        var(--stf-inset) !important;
+}
+.stf-passport-eyebrow {
+    letter-spacing: 0.2em;
+    color: rgba(232, 197, 106, 0.88);
+}
+.stf-passport-seal {
+    border-color: rgba(232, 197, 106, 0.55);
+}
+.stf-sync-btn {
+    background: linear-gradient(135deg, rgba(107, 138, 255, 0.28), rgba(232, 197, 106, 0.14));
+}
+.stf-sync-btn:hover {
+    background: linear-gradient(135deg, rgba(107, 138, 255, 0.4), rgba(232, 197, 106, 0.2));
+}
+.stf-sync-dot.is-error { background: #FF8A8A; }
+
+/* ---------- B3 · 调频器械化 + FAB 层级 ---------- */
+.stf-tuner-compact {
+    border-radius: 999px;
+    border: 1px solid rgba(168, 216, 255, 0.34);
+    background:
+        linear-gradient(145deg, rgba(22, 28, 48, 0.95), rgba(10, 12, 22, 0.92)),
+        radial-gradient(circle at 16% 50%, rgba(107, 138, 255, 0.2), transparent 55%);
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+}
+.stf-tuner-compact:hover {
+    border-color: rgba(107, 138, 255, 0.55);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45), 0 0 14px rgba(107, 138, 255, 0.16);
+}
+.stf-tuner-compact-shell {
+    background: rgba(0, 0, 0, 0.42);
+    border: 1px solid rgba(168, 216, 255, 0.24);
+    box-shadow: inset 0 0 14px rgba(107, 138, 255, 0.14);
+}
+.stf-tuner-compact-led,
+.stf-tuner-led {
+    animation: stf-tuner-breathe 3.6s ease-in-out infinite;
+}
+.stf-tuner-compact-led.is-locked,
+.stf-tuner-led.is-locked {
+    background: var(--stf-gold) !important;
+    box-shadow: 0 0 14px 3px rgba(232, 197, 106, 0.75) !important;
+    animation: stf-led-gold 1.2s ease-in-out infinite !important;
+}
+@keyframes stf-led-gold {
+    0%, 100% { box-shadow: 0 0 10px 2px rgba(232, 197, 106, 0.55); }
+    50% { box-shadow: 0 0 18px 4px rgba(232, 197, 106, 0.9); }
+}
+@keyframes stf-tuner-breathe {
+    0%, 100% { opacity: 0.72; filter: brightness(0.95); }
+    50% { opacity: 1; filter: brightness(1.12); }
+}
+.stf-tuner-frame {
+    border-radius: 16px;
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(107, 138, 255, 0.12), transparent 55%),
+        linear-gradient(180deg, rgba(14, 18, 32, 0.94), rgba(8, 10, 18, 0.96));
+    border: 1px solid rgba(168, 216, 255, 0.18);
+    border-top: 2px solid var(--stf-brand);
+    box-shadow:
+        0 22px 48px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        inset 0 0 40px rgba(107, 138, 255, 0.04);
+    position: relative;
+    overflow: hidden;
+}
+.stf-tuner-frame::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.028;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent 0 3px,
+        rgba(168, 216, 255, 0.35) 3px 4px
+    );
+}
+.stf-tuner.is-expanded .stf-dial {
+    animation: stf-dial-enter 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.stf-tuner.is-expanded .stf-dial:nth-child(1) { animation-delay: 0.04s; }
+.stf-tuner.is-expanded .stf-dial:nth-child(2) { animation-delay: 0.1s; }
+.stf-tuner.is-expanded .stf-dial:nth-child(3) { animation-delay: 0.16s; }
+.stf-tuner.is-expanded .stf-dial:nth-child(4) { animation-delay: 0.22s; }
+@keyframes stf-dial-enter {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.stf-dial-step:active { transform: scale(0.98); }
+.stf-dial-input {
+    border-radius: 10px;
+    border: 1px solid rgba(168, 216, 255, 0.3);
+    background: rgba(0, 0, 0, 0.35);
+    box-shadow: inset 0 0 18px rgba(107, 138, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.stf-dial-input.is-locked {
+    border-color: rgba(232, 197, 106, 0.8);
+    background: rgba(232, 197, 106, 0.1);
+    box-shadow: 0 0 18px rgba(232, 197, 106, 0.22) inset, 0 0 16px rgba(232, 197, 106, 0.14);
+}
+.stf-tuner-signal-bar i {
+    background: linear-gradient(90deg, #6B8AFF, #A8D8FF, rgba(232, 197, 106, 0.85)) !important;
+}
+
+/* FAB 层级：调频左下 < 捐赠 < 边缘同步 */
+.stf-back-home {
+    z-index: var(--stf-z-fab-tuner) !important;
+}
+body.forum-page .donate-fab {
+    z-index: var(--stf-z-fab-donate) !important;
+    opacity: 0.72;
+    border-color: rgba(107, 138, 255, 0.32) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.32), 0 0 0 1px rgba(232, 197, 106, 0.08) !important;
+}
+body.forum-page .donate-fab:hover {
+    opacity: 0.95;
+    border-color: rgba(232, 197, 106, 0.4) !important;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4), 0 0 14px rgba(107, 138, 255, 0.16) !important;
+}
+body.forum-page .donate-fab:focus-visible {
+    outline: none;
+    box-shadow: var(--stf-focus) !important;
+}
+body.forum-page .donate-fab-icon {
+    border-color: rgba(107, 138, 255, 0.4) !important;
+    background: linear-gradient(135deg, rgba(107, 138, 255, 0.2), rgba(232, 197, 106, 0.14)) !important;
+}
+body.forum-page .donate-fab:hover .donate-fab-icon {
+    background: linear-gradient(135deg, rgba(107, 138, 255, 0.34), rgba(232, 197, 106, 0.22)) !important;
+    box-shadow: 0 0 14px rgba(107, 138, 255, 0.28);
+    transform: scale(1.06) !important;
+}
+body.forum-page .donate-modal {
+    z-index: var(--stf-z-modal);
+}
+body.forum-page .donate-panel {
+    border-color: rgba(168, 216, 255, 0.22);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), 0 0 28px rgba(107, 138, 255, 0.1);
+    background: rgba(10, 12, 22, 0.96);
+}
+body.forum-page .donate-tab.is-active {
+    border-color: rgba(168, 216, 255, 0.35);
+    color: var(--stf-brand-light, #A8D8FF);
+}
+body.forum-page .donate-btn-primary {
+    background: linear-gradient(100deg, var(--stf-brand, #6B8AFF), var(--stf-gold, #E8C56A));
+}
+.stf-edge-indicator {
+    z-index: var(--stf-z-edge) !important;
+}
+
+/* ---------- B4 · 角色环深度光 / 爱弥斯点缀不染整区 ---------- */
+.archive-orbit-stage {
+    perspective: 1500px;
+}
+.archive-orbit-stage::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 58%;
+    width: min(520px, 78%);
+    height: 48px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(ellipse, rgba(107, 138, 255, 0.18), transparent 70%);
+    filter: blur(10px);
+    pointer-events: none;
+    z-index: 0;
+}
+.archive-orbit-ring .archive-float.is-orbit-item {
+    transition: filter 0.35s ease, opacity 0.35s ease, brightness 0.35s ease;
+}
+.archive-orbit-ring .archive-float.is-orbit-item .character-archive-card {
+    border-radius: 12px;
+    box-shadow:
+        0 14px 32px rgba(0, 0, 0, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.archive-orbit-ring.is-paused .archive-float.is-orbit-item {
+    filter: brightness(0.92);
+}
+.character-archive-card.is-featured {
+    background: linear-gradient(180deg, rgba(255, 107, 157, 0.1), rgba(255, 255, 255, 0.035));
+    box-shadow: 0 0 0 1px rgba(255, 107, 157, 0.14), 0 16px 40px rgba(255, 107, 157, 0.08);
+}
 .character-archive-card.is-featured::before {
     content: "";
     position: absolute;
-    inset: -34px;
-    border-radius: 44px;
-    background: radial-gradient(circle, rgba(255,107,157,.28), transparent 60%);
-    filter: blur(22px);
+    inset: -28px;
+    border-radius: 40px;
+    background: radial-gradient(circle, rgba(255, 107, 157, 0.18), transparent 62%);
+    filter: blur(18px);
     z-index: -1;
-    opacity: .45;
-    animation: stf-breathe 4s ease-in-out infinite;
+    opacity: 0.4;
+    animation: stf-breathe 5s ease-in-out infinite;
     pointer-events: none;
 }
 @keyframes stf-breathe {
-    0%, 100% { opacity: .35; transform: scale(.96); }
-    50%      { opacity: .85; transform: scale(1.04); }
+    0%, 100% { opacity: 0.28; transform: scale(0.97); }
+    50% { opacity: 0.55; transform: scale(1.03); }
 }
-/* 过渡装饰：仅保留柔光，不再使用旋转方框，避免喧宾夺主 */
-.archive-float--featured { position: relative; }
+.card-featured-ribbon {
+    background: linear-gradient(100deg, #FF6B9D, #E8C56A);
+    box-shadow: 0 6px 14px rgba(255, 107, 157, 0.22);
+}
+.archive-orbit-ring .archive-float--featured .character-archive-card.is-featured::before {
+    inset: -18px;
+    opacity: 0.35;
+}
+/* 环上其余卡不用粉晕 */
+.archive-orbit-ring .archive-float:not(.archive-float--featured) .character-archive-card::before {
+    display: none !important;
+}
 
-/* ---------- 响应式 ---------- */
+/* ---------- B6 · 聊天 / 焦点 / reduced-motion ---------- */
+.stf-chat-card {
+    background: var(--stf-surface-0);
+    border: 1px solid rgba(107, 138, 255, 0.22);
+    border-radius: 14px;
+    box-shadow: var(--stf-metal);
+}
+.stf-chat-header {
+    background: rgba(107, 138, 255, 0.07);
+    border-bottom: 1px solid rgba(107, 138, 255, 0.14);
+}
+.stf-chat-bubble {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(168, 216, 255, 0.1);
+    color: rgba(240, 244, 255, 0.92);
+    border-radius: 12px;
+}
+.stf-chat-message.is-self .stf-chat-bubble {
+    background: linear-gradient(135deg, rgba(107, 138, 255, 0.28), rgba(168, 216, 255, 0.1));
+    border-color: rgba(107, 138, 255, 0.32);
+}
+.stf-chat-empty {
+    color: rgba(168, 216, 255, 0.55);
+    line-height: 1.7;
+    padding: 24px 12px;
+}
+.stf-chat-empty span {
+    font-size: 1.35rem;
+    margin-bottom: 10px;
+    opacity: 0.85;
+}
+.stf-chat-send {
+    background: linear-gradient(135deg, var(--stf-brand), color-mix(in srgb, var(--stf-brand) 65%, var(--stf-gold))) !important;
+}
+.stf-chat-card.is-chat-expanded {
+    z-index: var(--stf-z-chat-expand) !important;
+}
+.stf-modal {
+    z-index: var(--stf-z-modal);
+}
+.stf-toast {
+    z-index: var(--stf-z-toast);
+}
+
+/* 统一焦点环 */
+.stf-filter-btn:focus-visible,
+.stf-sort-btn:focus-visible,
+.stf-feed-tab:focus-visible,
+.stf-tag-chip:focus-visible,
+.stf-page-btn:focus-visible,
+.stf-card-action:focus-visible,
+.stf-chat-expand:focus-visible,
+.stf-chat-input:focus-visible,
+.stf-dial-input:focus-visible,
+.stf-tuner-compact:focus-visible,
+.stf-tuner-minify:focus-visible,
+.hero-pill:focus-visible,
+.forum-entry:focus-visible,
+.btn-primary:focus-visible,
+.btn-ghost:focus-visible {
+    outline: none;
+    box-shadow: var(--stf-focus);
+}
+
 @media (max-width: 768px) {
     .stf-composer { max-width: 100%; }
+    .forum-hero-quicknav { gap: 8px; }
+    .hero-pill { min-width: calc(50% - 8px); }
 }
 
-/* ---------- 可访问性：reduced-motion ---------- */
 @media (prefers-reduced-motion: reduce) {
+    .forum-hero-title,
+    .stf-tuner-led,
+    .stf-tuner-compact-led,
+    .character-archive-card.is-featured::before,
+    .archive-float--featured,
+    .forum-entry-ribbon,
+    .stf-dial-input.is-locked,
+    .stf-tuner.is-expanded .stf-dial {
+        animation: none !important;
+    }
     .stf-card,
     .stf-card-inner,
-    .archive-float--featured,
-    .character-archive-card.is-featured::before,
-    .forum-entry-ribbon { animation: none !important; }
-    .stf-card-inner {
-        transform: none !important;
-        transition: none !important;
+    .hero-pill,
+    .forum-entry,
+    .stf-back-home,
+    .donate-fab {
+        transition: opacity 0.15s ease, border-color 0.15s ease, background 0.15s ease !important;
     }
-}
-
-/* ---------- 论坛页捐赠 FAB：蓝金描边降权，避免粉边抢学院主色 ---------- */
-.donate-fab {
-    opacity: 0.72;
-    border-color: rgba(107, 138, 255, 0.32);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.32), 0 0 0 1px rgba(232, 197, 106, 0.08);
-}
-.donate-fab:hover {
-    opacity: 0.95;
-    border-color: rgba(232, 197, 106, 0.4);
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4), 0 0 14px rgba(107, 138, 255, 0.16);
-}
-.donate-fab:focus-visible {
-    outline-color: var(--stf-brand-light, #A8D8FF);
-}
-.donate-fab-icon {
-    border-color: rgba(107, 138, 255, 0.4);
-    background: linear-gradient(135deg, rgba(107, 138, 255, 0.2), rgba(232, 197, 106, 0.14));
-}
-.donate-fab:hover .donate-fab-icon {
-    background: linear-gradient(135deg, rgba(107, 138, 255, 0.34), rgba(232, 197, 106, 0.22));
-    box-shadow: 0 0 14px rgba(107, 138, 255, 0.28);
-    transform: scale(1.06);
+    .hero-pill:hover,
+    .forum-entry:hover,
+    .archive-float:hover .character-archive-card {
+        transform: none !important;
+    }
+    body::after { opacity: 0.02; }
 }

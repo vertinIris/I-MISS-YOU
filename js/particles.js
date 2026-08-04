@@ -57,9 +57,9 @@
     var hasWebGLFailed = false;
     var resizeTimer = null;
 
-    // Configuration - conservative for mobile/low-end devices
-    var PARTICLE_COUNT = windowWidth < 768 ? 50 : 100;
-    var PARTICLE_SIZE = 2.2;
+    // Configuration - conservative for mobile/low-end devices（B5：粒子克制）
+    var PARTICLE_COUNT = windowWidth < 768 ? 28 : 56;
+    var PARTICLE_SIZE = 2.0;
     var PARTICLE_AREA = 80;
 
     // CSS Fallback generator
@@ -71,7 +71,7 @@
         container.innerHTML = '';
 
         var symbols = ['\u2744', '\u2726', '\u2745', '\u2727', '\u2728', '\u2022'];
-        var count = windowWidth < 768 ? 24 : 42;
+        var count = windowWidth < 768 ? 14 : 24;
         var fragment = document.createDocumentFragment();
 
         for (var i = 0; i < count; i++) {

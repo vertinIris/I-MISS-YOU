@@ -1,0 +1,109 @@
+/* ============================================================
+   飞行雪绒主站 · 氛围层减法（B5）
+   粉白星光电波气质；签名动效保留氛围漂浮 + 音乐；粒子克制
+   ============================================================ */
+
+:root {
+    --snow-focus: 0 0 0 2px rgba(14, 10, 18, 0.9), 0 0 0 4px rgba(244, 114, 155, 0.55);
+}
+
+/* 氛围层：保留粉星云 + 星河，弱化多余动效层 */
+.ult-energy-core,
+.hex-shield,
+.data-rain {
+    opacity: 0.22;
+    filter: saturate(0.85);
+}
+.galaxy-river {
+    opacity: 0.45;
+}
+.pink-galaxy {
+    opacity: 0.7;
+}
+#particle-canvas {
+    opacity: 0.55;
+}
+.css-snow-container {
+    opacity: 0.55;
+}
+
+/* Hero 预算：品牌 + 一句 tagline + 一组 CTA；副标题降权 */
+.hero {
+    position: relative;
+}
+.hero-title {
+    letter-spacing: 0.02em;
+}
+.hero-tagline {
+    font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+    letter-spacing: 0.08em;
+    color: rgba(255, 182, 217, 0.92);
+}
+.hero-subtitle {
+    max-width: 28em;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    color: rgba(240, 244, 255, 0.62);
+}
+.hero-actions {
+    gap: 12px;
+}
+.hero .scroll-indicator {
+    opacity: 0.55;
+}
+
+/* 论坛互链：蓝金学院信号（不串粉） */
+.forum-entry-fab {
+    border-color: rgba(107, 138, 255, 0.45);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(232, 197, 106, 0.14);
+    background: rgba(12, 16, 32, 0.92);
+}
+.forum-entry-fab:hover {
+    border-color: rgba(232, 197, 106, 0.5);
+    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.45), 0 0 18px rgba(107, 138, 255, 0.2);
+}
+.forum-entry-fab-icon {
+    border-color: rgba(232, 197, 106, 0.42);
+    background: linear-gradient(135deg, rgba(107, 138, 255, 0.3), rgba(232, 197, 106, 0.16));
+}
+.forum-entry-fab:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(12, 16, 32, 0.95), 0 0 0 4px rgba(168, 216, 255, 0.55);
+}
+
+/* 音乐区：克制旋转/光晕，playing 态轻微 */
+.music-section .track-card,
+#music .track-item,
+.track-card {
+    transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+}
+.track-card.is-playing,
+.track-item.is-playing {
+    border-color: rgba(244, 114, 155, 0.4);
+    box-shadow: 0 0 0 1px rgba(244, 114, 155, 0.18), 0 12px 28px rgba(0, 0, 0, 0.28);
+}
+.track-card .disc,
+.vinyl-disc,
+.music-disc {
+    animation-duration: 12s;
+}
+@media (prefers-reduced-motion: reduce) {
+    .ult-energy-core,
+    .hex-shield,
+    .data-rain,
+    .pink-galaxy::before,
+    .pink-galaxy::after,
+    .galaxy-river,
+    .track-card .disc,
+    .vinyl-disc,
+    .music-disc {
+        animation: none !important;
+    }
+    #particle-canvas,
+    .css-snow-container,
+    .shooting-star-container {
+        display: none !important;
+    }
+}

@@ -1189,7 +1189,84 @@
             compact.hidden = !!on;
             compact.setAttribute('aria-expanded', on ? 'true' : 'false');
         }
+        /* 展开后启动静噪床；收起淡出。须在用户手势路径内 unlock。 */
+        if (on) TunerAudio.unlockAndStart();
+        else TunerAudio.stop();
     }
+
+    /* ---------- 调频静噪音效（手势后解锁 · band-pass 噪声床） ---------- */
+    var TunerAudio = (function () {
+        var ctx = null;
+        var master = null;
+        var noiseSrc = null;
+        var filter = null;
+        var started = false;
+        var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+        function ensure() {
+            if (ctx) return ctx;
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return null;
+            ctx = new AC();
+            master = ctx.createGain();
+            master.gain.value = 0;
+            master.connect(ctx.destination);
+
+            var seconds = 2;
+            var buffer = ctx.createBuffer(1, ctx.sampleRate * seconds, ctx.sampleRate);
+            var data = buffer.getChannelData(0);
+            for (var i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+
+            noiseSrc = ctx.createBufferSource();
+            noiseSrc.buffer = buffer;
+            noiseSrc.loop = true;
+
+            filter = ctx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.value = 980;
+            filter.Q.value = 0.7;
+
+            noiseSrc.connect(filter);
+            filter.connect(master);
+            try { noiseSrc.start(); } catch (e) { /* already started */ }
+            return ctx;
+        }
+
+        function unlockAndStart() {
+            if (reduceMotion) return;
+            var c = ensure();
+            if (!c || !master) return;
+            if (c.state === 'suspended') {
+                c.resume().catch(function () { /* autoplay blocked */ });
+            }
+            var now = c.currentTime;
+            master.gain.cancelScheduledValues(now);
+            master.gain.setValueAtTime(master.gain.value, now);
+            master.gain.linearRampToValueAtTime(0.028, now + 0.55);
+            started = true;
+        }
+
+        function stop() {
+            if (!ctx || !master || !started) return;
+            var now = ctx.currentTime;
+            master.gain.cancelScheduledValues(now);
+            master.gain.setValueAtTime(master.gain.value, now);
+            master.gain.linearRampToValueAtTime(0, now + 0.4);
+            started = false;
+        }
+
+        function setProximity(snr, locked) {
+            if (!ctx || !filter || !master || !started) return;
+            var q = Math.max(0, Math.min(1, (snr || 0) / 100));
+            var targetFreq = locked ? 720 : 1400 - q * 620;
+            var targetGain = locked ? 0.012 : 0.018 + (1 - q) * 0.022;
+            var now = ctx.currentTime;
+            filter.frequency.setTargetAtTime(targetFreq, now, 0.12);
+            master.gain.setTargetAtTime(targetGain, now, 0.15);
+        }
+
+        return { unlockAndStart: unlockAndStart, stop: stop, setProximity: setProximity };
+    })();
 
     function expandAndFocusTuner() {
         var tuner = document.getElementById('stf-tuner');
@@ -1226,6 +1303,9 @@
         if (window.location.hash === '#stf-tuner') {
             setTunerExpanded(true);
         }
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden) TunerAudio.stop();
+        });
     }
 
     function initTunerFab() {
@@ -1422,6 +1502,8 @@
             }
             paint(display);
 
+            /* 静噪床：随 SNR / 锁定态调 cutoff 与音量 */
+            TunerAudio.setProximity(trueSnr, locked);
             if (locked && Math.abs(trueSnr - shownSnr) < 0.05) { paint(trueSnr); return; }
             startLoop();
         }
@@ -1540,13 +1622,14 @@
                 var x = Math.sin(a) * m.radius;
                 var z = Math.cos(a) * m.radius;
                 var depth = (z + m.radius) / (2 * m.radius);
-                var scale = 0.78 + depth * 0.28;
-                var opacity = 0.45 + depth * 0.55;
+                var scale = 0.76 + depth * 0.3;
+                var opacity = 0.42 + depth * 0.58;
+                var bright = 0.62 + depth * 0.42;
                 card.style.transform =
                     'translate(-50%, -50%) translate3d(' + x.toFixed(1) + 'px,' + m.yLift + 'px,' + z.toFixed(1) + 'px) scale(' + scale.toFixed(3) + ')';
                 card.style.zIndex = String(100 + Math.round(depth * 100));
                 card.style.opacity = String(opacity.toFixed(3));
-                card.style.filter = depth < 0.35 ? 'brightness(0.72)' : 'none';
+                card.style.filter = 'brightness(' + bright.toFixed(3) + ')';
                 card.classList.add('is-orbit-item');
             });
         }
