@@ -840,7 +840,8 @@
     /* ① Avatar long-press hidden dialogue */
     function initAvatarEasterEgg() {
         var avatarWrap = document.querySelector('.profile-avatar-wrap');
-        if (!avatarWrap) return;
+        var avatarShell = document.querySelector('.profile-avatar-shell') || avatarWrap;
+        if (!avatarShell) return;
         var pressTimer = null;
         var dialogueBubble = null;
 
@@ -858,8 +859,8 @@
             dialogueBubble = document.createElement('div');
             dialogueBubble.className = 'avatar-dialogue-bubble';
             dialogueBubble.innerHTML = '<span class="dialogue-text">' + escapeHTML(hiddenDialogues[dialogueIndex % hiddenDialogues.length]) + '</span><span class="dialogue-close">&times;</span>';
-            /* position:fixed escapes overflow:hidden on .profile-card */
-            var rect = avatarWrap.getBoundingClientRect();
+            /* position:fixed escapes overflow:hidden on .profile-card；锚点用头像壳，不含构型立绘 */
+            var rect = avatarShell.getBoundingClientRect();
             dialogueBubble.style.cssText = 'position:fixed;top:' + (rect.bottom + 12) + 'px;left:' + (rect.left + rect.width / 2) + 'px;transform:translateX(-50%);padding:10px 16px;background:rgba(15,15,24,0.95);border:1px solid rgba(168,216,255,0.25);border-radius:12px;color:#FAF8FF;font-size:0.85rem;z-index:9999;max-width:280px;white-space:normal;word-break:break-word;line-height:1.5;box-shadow:0 8px 25px rgba(0,0,0,0.35);animation:fadeInUp 0.3s ease;';
             document.body.appendChild(dialogueBubble);
             dialogueIndex++;
@@ -871,7 +872,7 @@
             });
             /* Click outside to close */
             var outsideHandler = function(e) {
-                if (dialogueBubble && !dialogueBubble.contains(e.target) && e.target !== avatarWrap) {
+                if (dialogueBubble && !dialogueBubble.contains(e.target) && e.target !== avatarShell && !avatarShell.contains(e.target)) {
                     dialogueBubble.remove();
                     dialogueBubble = null;
                     document.removeEventListener('click', outsideHandler, true);
@@ -880,11 +881,12 @@
             setTimeout(function() { document.addEventListener('click', outsideHandler, true); }, 100);
         }
 
-        avatarWrap.addEventListener('mousedown', function() { pressTimer = setTimeout(showDialogue, 800); });
-        avatarWrap.addEventListener('mouseup', function() { clearTimeout(pressTimer); });
-        avatarWrap.addEventListener('mouseleave', function() { clearTimeout(pressTimer); });
-        avatarWrap.addEventListener('touchstart', function() { pressTimer = setTimeout(showDialogue, 800); }, { passive: true });
-        avatarWrap.addEventListener('touchend', function() { clearTimeout(pressTimer); });
+        /* 仅绑头像壳，避免与构型立绘长按冒泡叠彩蛋 */
+        avatarShell.addEventListener('mousedown', function() { pressTimer = setTimeout(showDialogue, 800); });
+        avatarShell.addEventListener('mouseup', function() { clearTimeout(pressTimer); });
+        avatarShell.addEventListener('mouseleave', function() { clearTimeout(pressTimer); });
+        avatarShell.addEventListener('touchstart', function() { pressTimer = setTimeout(showDialogue, 800); }, { passive: true });
+        avatarShell.addEventListener('touchend', function() { clearTimeout(pressTimer); });
     }
 
     /* ② Double-tap diary title — signal flash */
