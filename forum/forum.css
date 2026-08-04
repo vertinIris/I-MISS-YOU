@@ -851,23 +851,72 @@
 
 .stf-pagination {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
     gap: 8px;
     margin-top: 32px;
+    max-width: 100%;
+    padding: 0 4px;
+    box-sizing: border-box;
 }
 .stf-page-btn {
     appearance: none;
-    width: 36px; height: 36px;
+    flex: 0 0 auto;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
     border-radius: 50%;
     border: 1px solid rgba(255,255,255,.1);
     background: rgba(255,255,255,.05);
     color: rgba(240,244,255,.75);
     font-size: 13px;
+    font-variant-numeric: tabular-nums;
     cursor: pointer;
-    transition: all .25s;
+    transition: background .25s, border-color .25s, color .25s;
 }
-.stf-page-btn:hover { background: rgba(255,255,255,.1); }
+.stf-page-btn:hover:not(:disabled) { background: rgba(255,255,255,.1); }
 .stf-page-btn.active { background: rgba(107,138,255,.3); border-color: rgba(168,216,255,.35); color: #fff; }
+.stf-page-btn:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+}
+.stf-page-btn.stf-page-nav {
+    border-radius: 12px;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0 10px;
+}
+.stf-page-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    color: rgba(240,244,255,.4);
+    font-size: 14px;
+    letter-spacing: 1px;
+    user-select: none;
+}
+.stf-page-info {
+    flex: 0 0 auto;
+    margin-left: 4px;
+    padding: 0 6px;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: rgba(240,244,255,.45);
+    white-space: nowrap;
+}
+
+@media (max-width: 520px) {
+    .stf-pagination { gap: 6px; }
+    .stf-page-btn {
+        min-width: 32px;
+        height: 32px;
+        font-size: 12px;
+        padding: 0 6px;
+    }
+    .stf-page-btn.stf-page-nav { font-size: 16px; padding: 0 8px; }
+}
 
 .stf-community-empty {
     display: none;

@@ -25,6 +25,7 @@
     var client = null;
     var connected = false;
     var initialized = false;
+    var chatTableMissing = false; /* forum_chat 表尚未在云端创建时为 true */
     var sessionPromise = null;
     var refreshTimer = null;
 
@@ -418,7 +419,7 @@
         chatListeners.forEach(function (cb) { try { cb(payload); } catch (e) {} });
     }
     async function pullChat(limit, cb) {
-        if (!client) return cb && cb([]);
+        if (!client) return cb && cb([], { code: 'NO_CLIENT' });
         try {
             await ensureSession();
             var res = await client.from('forum_chat')
@@ -428,15 +429,20 @@
                 .order('created_at', { ascending: false })
                 .limit(limit || 50);
             if (res.error) throw res.error;
+            chatTableMissing = false;
             var rows = (res.data || []).map(chatRowToLocal).reverse();
-            return cb && cb(rows);
+            return cb && cb(rows, null);
         } catch (e) {
             console.warn('[forum-cloud] 拉取聊天失败', e);
-            return cb && cb([]);
+            if (e && (e.code === 'PGRST205' || (e.message && /could not find the table/i.test(e.message)))) {
+                chatTableMissing = true;
+                return cb && cb([], e);
+            }
+            return cb && cb([], e);
         }
     }
     async function pushChat(msg, cb) {
-        if (!client) return cb && cb(false);
+        if (!client) return cb && cb(false, { code: 'NO_CLIENT' });
         try {
             await ensureSession();
             var row = {
@@ -448,10 +454,14 @@
             };
             var res = await client.from('forum_chat').insert(row);
             if (res.error) throw res.error;
-            return cb && cb(true);
+            chatTableMissing = false;
+            return cb && cb(true, null);
         } catch (e) {
             console.warn('[forum-cloud] 发送聊天失败', e);
-            return cb && cb(false);
+            if (e && (e.code === 'PGRST205' || (e.message && /could not find the table/i.test(e.message)))) {
+                chatTableMissing = true;
+            }
+            return cb && cb(false, e);
         }
     }
     function onChatRealtime(cb) {
@@ -522,6 +532,8 @@
         getMode: function () { return connected ? 'cloud' : 'local'; },
         isConnected: function () { return connected; },
         getLastError: function () { return lastPullError; },
+        isChatAvailable: function () { return !!client && !chatTableMissing; },
+        isChatTableMissing: function () { return chatTableMissing; },
         pullChat: pullChat,
         pushChat: pushChat,
         onChatRealtime: onChatRealtime

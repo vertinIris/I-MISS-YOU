@@ -326,17 +326,60 @@
         }).join('');
     }
 
+    /** 窗口分页：首尾 + 当前附近页码，中间用省略号，避免上百个圆点横排 */
+    function buildPageWindow(current, totalPages, siblingCount) {
+        var siblings = typeof siblingCount === 'number' ? siblingCount : 1;
+        var set = {};
+        var i;
+        set[0] = true;
+        set[totalPages - 1] = true;
+        for (i = current - siblings; i <= current + siblings; i++) {
+            if (i >= 0 && i < totalPages) set[i] = true;
+        }
+        var list = Object.keys(set).map(Number).sort(function (a, b) { return a - b; });
+        var out = [];
+        var prev = null;
+        for (i = 0; i < list.length; i++) {
+            if (prev !== null && list[i] - prev > 1) out.push('ellipsis');
+            out.push(list[i]);
+            prev = list[i];
+        }
+        return out;
+    }
+
     function renderPagination(total) {
         var nav = document.getElementById('stf-pagination');
         if (!nav) return;
         var pages = Math.ceil(total / COMMUNITY_PAGE_SIZE);
         if (pages <= 1) { nav.hidden = true; nav.innerHTML = ''; return; }
+        if (communityPage >= pages) communityPage = pages - 1;
+        if (communityPage < 0) communityPage = 0;
         nav.hidden = false;
 
         var html = '';
-        for (var i = 0; i < pages; i++) {
-            html += '<button class="stf-page-btn' + (i === communityPage ? ' active' : '') + '" data-page="' + i + '">' + (i + 1) + '</button>';
+        html += '<button type="button" class="stf-page-btn stf-page-nav"' +
+            (communityPage <= 0 ? ' disabled aria-disabled="true"' : '') +
+            ' data-page="' + Math.max(0, communityPage - 1) + '" aria-label="上一页">‹</button>';
+
+        var windowItems = buildPageWindow(communityPage, pages, 1);
+        for (var i = 0; i < windowItems.length; i++) {
+            var item = windowItems[i];
+            if (item === 'ellipsis') {
+                html += '<span class="stf-page-ellipsis" aria-hidden="true">…</span>';
+                continue;
+            }
+            html += '<button type="button" class="stf-page-btn' +
+                (item === communityPage ? ' active' : '') +
+                '" data-page="' + item + '" aria-label="第 ' + (item + 1) + ' 页"' +
+                (item === communityPage ? ' aria-current="page"' : '') +
+                '>' + (item + 1) + '</button>';
         }
+
+        html += '<button type="button" class="stf-page-btn stf-page-nav"' +
+            (communityPage >= pages - 1 ? ' disabled aria-disabled="true"' : '') +
+            ' data-page="' + Math.min(pages - 1, communityPage + 1) + '" aria-label="下一页">›</button>';
+
+        html += '<span class="stf-page-info">' + (communityPage + 1) + ' / ' + pages + '</span>';
         nav.innerHTML = html;
     }
 
@@ -756,8 +799,10 @@
         if (pagination) {
             pagination.addEventListener('click', function (e) {
                 var btn = e.target.closest('.stf-page-btn');
-                if (!btn) return;
-                communityPage = parseInt(btn.getAttribute('data-page'), 10);
+                if (!btn || btn.disabled) return;
+                var nextPage = parseInt(btn.getAttribute('data-page'), 10);
+                if (isNaN(nextPage) || nextPage === communityPage) return;
+                communityPage = nextPage;
                 renderCommunity();
                 var section = document.getElementById('stf-community');
                 if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });

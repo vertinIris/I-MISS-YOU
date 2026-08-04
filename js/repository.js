@@ -802,6 +802,70 @@
     }
 
     /**
+     * 一次性本地缓存迁移（v19 内容改写落地补丁）
+     *
+     * 背景：Supabase live 的评论（35 条匿名信号源）与投稿（6 篇 × 2 重复行）已
+     *       在云端按角色人设去 AI 化改写（见 db/migration-019-deaify-live-content.sql）。
+     *       但本仓库在合并云端与本地数据时采用「本地文本优先」：
+     *         - mergeComments 对同名 id 评论取本地 text（L273 pick(incoming.text, base.text)）
+     *         - mergeSubmissions 直接不回写 content（L681~698 只更新 id/likes/...）
+     *       老访客 localStorage 中缓存的带云端 id 的旧文本会持续压制云端改写结果，
+     *       导致改写对他们不生效。
+     *
+     * 做法：以版本标记 fxre_content_v19 为闸门，仅执行一次——遍历本地缓存，
+     *       剔除带云端 id 的副本（旧文本），仅保留无 id 的种子评论与
+     *       非数字 id 的种子/本地投稿。下次 getComments / getSubmissions 合并时，
+     *       这些 id 只剩云端改写后的版本，从而生效。
+     *
+     * 安全性：种子评论（main.js SEED_COMMENTS）仅含 timeStr 无 id，投稿种子用
+     *       'seed_' 前缀、本地乐观投稿用 'sub_' 前缀（均非数字 id），均被保留，
+     *       不会被误删，也不会被 syncLocalOnlyComments 回传污染云端改写成果。
+     */
+    function clearLocalCloudCommentsOnce() {
+        var MARKER = 'fxre_content_v19';
+        if (safeGetItem(MARKER)) return;                 /* 已执行过，跳过 */
+        try {
+            var removedAny = false;
+            for (var i = 0; i < localStorage.length; i++) {
+                var key;
+                try { key = localStorage.key(i); } catch(e) { continue; }
+                if (!key) continue;
+
+                if (key.indexOf('fxre_comments_') === 0) {
+                    if (key === 'fxre_comments_seed_version') continue;
+                    var clist;
+                    try { clist = JSON.parse(safeGetItem(key) || '[]'); } catch(e) { continue; }
+                    if (!Array.isArray(clist)) continue;
+                    var ckept = clist.filter(function(c) { return !(c && c.id != null); });
+                    if (ckept.length !== clist.length) {
+                        safeSetItem(key, JSON.stringify(ckept));
+                        removedAny = true;
+                    }
+
+                } else if (key === 'fxre_submissions') {
+                    var slist;
+                    try { slist = JSON.parse(safeGetItem(key) || '[]'); } catch(e) { continue; }
+                    if (!Array.isArray(slist)) continue;
+                    var skept = slist.filter(function(s) {
+                        /* 仅剔除带数字 id 的云端投稿副本，保留种子(seed_)/本地(sub_) */
+                        return !(s && s.id != null && /^\d+$/.test(String(s.id)));
+                    });
+                    if (skept.length !== slist.length) {
+                        safeSetItem(key, JSON.stringify(skept));
+                        removedAny = true;
+                    }
+                }
+            }
+            safeSetItem(MARKER, '1');
+            if (removedAny) {
+                console.log('[Repository] v19 本地缓存迁移完成：已清掉带云端 id 的旧评论/投稿副本');
+            }
+        } catch(e) {
+            console.warn('[Repository] v19 本地缓存迁移失败（可安全忽略，下次加载自动重试）:', e.message);
+        }
+    }
+
+    /**
      * 首次云端连接时，将本地种子数据同步到云端
      */
     function seedCloudIfEmpty() {
@@ -927,6 +991,9 @@
         /* 种子 */
         ensureSeedData: ensureSeedData,
 
+        /* v19 一次性本地缓存迁移（去 AI 化改写落地用，暴露以便手动重跑/排查） */
+        clearLocalCloudCommentsOnce: clearLocalCloudCommentsOnce,
+
         /* 归档 */
         exportData: exportData,
         importData: importData,
@@ -934,5 +1001,13 @@
         /* 事件 */
         on: on
     };
+
+    /* ================================================================
+     * 模块加载即执行：v19 本地缓存一次性迁移
+     * 必须早于任何 getComments / getSubmissions 调用，
+     * 否则「本地文本优先」会让老访客继续看到改写前的旧文本。
+     * 有 fxre_content_v19 标记时自动跳过，重复加载无副作用。
+     * ================================================================ */
+    clearLocalCloudCommentsOnce();
 
 })();

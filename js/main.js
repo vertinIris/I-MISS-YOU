@@ -2155,24 +2155,28 @@
         ]
     };
 
-    var SEED_VERSION = 'v9.2';
+    var SEED_VERSION = 'v10.1';
 
     /* ===== Seed Submissions (Community pre-population) =====
      * v9.2: 按站点拆分 realm
-     *   - flying-edelweiss: 飞行雪绒站，仅保留爱弥斯/飞行雪绒自身内容 + 其他角色对她的评价
+     *   - flying-edelweiss: 飞行雪绒站
      *   - startorch: 星炬学院主论坛，存放其他角色自身故事、互动及世界观创作
+     * v10.1: 飞行雪绒站收敛为「爱弥斯本人频道」——官方种子内容仅保留
+     *        飞行雪绒/爱弥斯 自己发布的动态；其他角色（漂泊者、漂泊者信使、
+     *        琳奈…）对她的记述统一迁往星炬学院主论坛（见 forum/js/forum-data.js）。
+     *        访客投稿（id 前缀 sub_）不受此限制，仍正常展示。
      */
     var SEED_SUBMISSIONS = [
-        /* —— 飞行雪绒论坛（flying-edelweiss）—— */
+        /* —— 飞行雪绒论坛（flying-edelweiss）：仅爱弥斯本人 —— */
         {
             id: 'seed_3', name: '漂泊者', type: 'text', title: '来自黑海岸的信号',
-            realm: 'flying-edelweiss', tags: ['漂泊者', '爱弥斯', '飞行雪绒'],
+            realm: 'startorch', tags: ['漂泊者', '爱弥斯', '飞行雪绒'],
             content: '在黑海岸值夜的时候，收到了一段不明信号。\n\n频率：9072Hz\n持续时间：0.3秒\n间隔：不规律\n\n信号内容被噪音覆盖了大半，但有一段能勉强辨识——像是一个人唱歌的声音。不是完整的旋律，只有几个音符，反复出现。\n\n我把那几个音符记了下来。如果你在星炬学院听到有人哼同样的调子，请告诉我。\n\n我在找一个声音的主人。也许她不知道自己被听见了。',
             timeStr: '2026-07-01 02:40', likes: 19, liked: false, color: '#A8D8FF'
         },
         {
             id: 'seed_6', name: '漂泊者信使', type: 'story', title: '信号塔守望者',
-            realm: 'flying-edelweiss', tags: ['漂泊者', '爱弥斯', '飞行雪绒'],
+            realm: 'startorch', tags: ['漂泊者', '爱弥斯', '飞行雪绒'],
             content: '我在信号塔上等了三个小时。\n\n不是因为职责。是因为她说「今晚的星星会很亮」。后来信号塔的灯真的亮了，但那不是星星，是有人在模拟舱里偷偷调的天文台投影。\n\n我知道是谁。只有她会把星星的频率调到9072。\n\n我没有上去找她。有些歌，只有在没有人听的时候才唱得出来。有些星星，只有在没有人看的时候才亮得起来。\n\n我只是在塔下站了一会儿，抬头看了看那片假星空。\n\n——虽然不是真的，但很美。\n\n谢谢你让我看到了。',
             timeStr: '2026-06-28 23:15', likes: 27, liked: false, color: '#FFD700'
         },
@@ -2196,7 +2200,7 @@
         },
         {
             id: 'seed_11', name: '琳奈', type: 'story', title: '关于爱弥斯同学的一些事',
-            realm: 'flying-edelweiss', tags: ['琳奈', '爱弥斯', '飞行雪绒'],
+            realm: 'startorch', tags: ['琳奈', '爱弥斯', '飞行雪绒'],
             content: '我是星炬学院拉贝尔学部的学生，和爱弥斯同学同班。\n\n我想写一些关于她的事，因为她已经不在了。\n\n爱弥斯同学很开朗。真的很开朗。不是那种硬撑出来的开朗，是那种——好像世界上所有的好事都会发生一样的开朗。她会在走廊上跟所有人打招呼，包括不认识的。她会在别人的生日会上唱最大声的歌，虽然跑调跑得离谱。\n\n她送过我一个隧者手办。很小的那种，自己做的，用的材料我认不出来。她说："琳奈，总有一天我们一起去看真正的星空。"\n\n我说好呀。\n\n然后她就失踪了。\n\n校长洛瑟菈女士把她的档案调走了。我问过辅导员，辅导员说"不清楚"。我问过同班的千咲，千咲说她最后一次见爱弥斯是在隧者训练场，那天爱弥斯说要去试一个新的共鸣模态。\n\n后来我在网上看到一个叫"飞行雪绒"的歌手。声音很像她。歌里有一些只有我们班才知道的梗——比如"渐湖的冰面下面有鱼"。\n\n我不确定是不是她。但如果真的是的话：\n\n爱弥斯同学，星空还在。你看到了吗？',
             timeStr: '2026-07-03 18:30', likes: 29, liked: false, color: '#D4A0FF'
         },
@@ -3178,11 +3182,28 @@
         });
     }
 
-    /* v9.2: 判断投稿是否归属飞行雪绒论坛 */
+    /* v9.2: 判断投稿是否归属飞行雪绒论坛
+     * v10.1: 官方种子内容（id 以 seed_ 开头）只允许「飞行雪绒 / 爱弥斯」本人的动态；
+     *        其余角色的种子帖一律视为主论坛内容，不在本站渲染。
+     *        该判定为运行时过滤，因此老用户 localStorage 里的旧种子也会被正确剔除，
+     *        无需依赖 SEED_VERSION 重新播种。
+     */
+    var FE_CANON_AUTHORS = { '飞行雪绒': 1, '爱弥斯': 1 };
+
+    function isSeedRecord(s) {
+        return !!(s && typeof s.id === 'string' && s.id.indexOf('seed_') === 0);
+    }
+
     function belongsToFlyingEdelweiss(s) {
         if (!s) return false;
-        if (s.realm === 'flying-edelweiss') return true;
         if (s.realm && s.realm !== 'flying-edelweiss') return false;
+
+        /* 官方种子：只保留爱弥斯本人频道 */
+        if (isSeedRecord(s)) return !!FE_CANON_AUTHORS[s.name];
+
+        /* 访客投稿：显式标记 realm 的直接归属本站 */
+        if (s.realm === 'flying-edelweiss') return true;
+
         // 对旧数据做推断：作者为飞行雪绒、含爱弥斯/飞行雪绒标签、或标题正文出现关键标识
         if (s.name === '飞行雪绒') return true;
         if (s.tags && Array.isArray(s.tags)) {

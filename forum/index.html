@@ -143,8 +143,10 @@
                     <span class="stf-chat-online" id="stf-chat-online">星域公共频道</span>
                 </div>
                 <div class="stf-chat-messages" id="stf-chat-messages" role="log" aria-live="polite" aria-atomic="false" aria-label="聊天消息"></div>
+                <div class="stf-chat-typing" id="stf-chat-typing" aria-live="polite" hidden></div>
                 <form class="stf-chat-form" id="stf-chat-form">
                     <input type="text" class="stf-chat-input" id="stf-chat-input" placeholder="输入消息，按 Enter 发送…" maxlength="200" autocomplete="off" aria-label="聊天消息">
+                    <span class="stf-chat-counter" id="stf-chat-counter" aria-hidden="true">0/200</span>
                     <button type="submit" class="stf-chat-send" id="stf-chat-send" aria-label="发送">发送</button>
                 </form>
             </div>
@@ -821,6 +823,7 @@
         </div>
     </div>
 
+    <script src="js/forum-import-data.js"></script>
     <script src="js/forum-data.js"></script>
     <script src="../js/security-shield.js"></script>
     <script src="../js/rate-limiter-client.js"></script>

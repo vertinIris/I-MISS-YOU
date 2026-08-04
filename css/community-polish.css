@@ -47,24 +47,46 @@
 }
 .community-pagination button:hover { transform: translateY(-2px); }
 
-/* 页脚： discreet 论坛入口（不破坏飞行雪绒沉浸感） */
-.footer-forum-link {
-    display: inline-block;
-    margin-top: 8px;
-    color: var(--drifter-blue-light, #A8D8FF);
-    opacity: .82;
-    font-size: 13px;
-    text-decoration: none;
-    transition: opacity .25s ease, color .25s ease;
+/* 顶部导航：星炬学院主论坛入口（v10.1 从页脚上移） */
+.nav-link-forum {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px !important;
+    border-radius: 999px;
+    border: 1px solid rgba(168, 216, 255, .32);
+    background: linear-gradient(120deg, rgba(107, 138, 255, .14), rgba(255, 107, 157, .12));
+    color: var(--drifter-blue-light, #A8D8FF) !important;
+    line-height: 1;
+    transition: border-color .25s ease, background .25s ease, color .25s ease, transform .25s ease;
 }
-.footer-forum-link:hover { opacity: 1; color: var(--aimisi-pink); }
+.nav-link-forum::after { display: none !important; }
+.nav-link-forum-icon {
+    width: 15px;
+    height: 15px;
+    flex: 0 0 auto;
+}
+.nav-link-forum:hover,
+.nav-link-forum:focus-visible {
+    color: #fff !important;
+    border-color: rgba(255, 107, 157, .55);
+    background: linear-gradient(120deg, rgba(107, 138, 255, .28), rgba(255, 107, 157, .26));
+    transform: translateY(-1px);
+}
+.nav-link-forum:focus-visible { outline: 2px solid var(--aimisi-pink, #FF6B9D); outline-offset: 2px; }
+
+@media (max-width: 768px) {
+    .nav-link-forum { padding: 4px 10px !important; }
+    .nav-link-forum-icon { width: 13px; height: 13px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
     .community-card,
     .community-filter-btn,
     .tag-chip,
     .community-pagination button,
-    .footer-forum-link,
+    .nav-link-forum,
     .community-empty.show { animation: none !important; transition: opacity .2s ease !important; }
     .community-card:hover { transform: none !important; }
+    .nav-link-forum:hover { transform: none !important; }
 }

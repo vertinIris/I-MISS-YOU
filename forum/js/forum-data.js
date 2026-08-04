@@ -5,7 +5,7 @@
 (function () {
     'use strict';
 
-    var SEED_VERSION = 'v1.1';
+    var SEED_VERSION = 'v1.2';
 
     var SEED_SUBMISSIONS = [
         {
@@ -92,11 +92,11 @@
     }
 
     /**
-     * v1.1: 改为「增量合并」播种
-     * 旧实现是 all-or-nothing —— 只要 stf_submissions 已存在就整体跳过，
-     * 导致 bump SEED_VERSION 后新增的官方帖永远不会出现在老用户浏览器里。
-     * 现在按 id 逐条补齐缺失的种子，既不覆盖用户数据，也不会漏掉新内容。
-     * 用户/版主删除过的种子 id 会记入 stf_seed_removed 墓碑表，不再复活。
+     * v1.2: 在 v1.1「增量合并」基础上，额外合并《论坛内容》二创库导入种子
+     * （forum-import-data.js → window.StarTorchImportSeed，由 scripts/build-forum-import.cjs 生成）。
+     * 导入种子用 imp_ 前缀，与官方 stf_ 种子互不冲突。
+     * 注意：导入种子仅作为「本地种子」写入 stf_submissions，渲染时可见；
+     *       云端播种（ensureCloudSeed）仍只推送官方 12 条，避免 573 次 upsert。
      */
     function readJSON(key, fallback) {
         try {
@@ -105,6 +105,13 @@
             var parsed = JSON.parse(raw);
             return parsed == null ? fallback : parsed;
         } catch (e) { return fallback; }
+    }
+
+    function getImportSeed() {
+        try {
+            var s = (typeof window !== 'undefined') && window.StarTorchImportSeed;
+            return (s && Array.isArray(s)) ? s : [];
+        } catch (e) { return []; }
     }
 
     function ensureSeedData() {
@@ -129,8 +136,9 @@
             tombstones.forEach(function (id) { removed[id] = true; });
         }
 
+        var allSeeds = SEED_SUBMISSIONS.concat(getImportSeed());
         var added = 0;
-        SEED_SUBMISSIONS.forEach(function (s) {
+        allSeeds.forEach(function (s) {
             if (known[s.id] || removed[s.id]) return;
             existing.push(s);
             added++;
