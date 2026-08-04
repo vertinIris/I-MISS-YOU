@@ -30,10 +30,12 @@
     var realtimeOk = false;
     var chatTableMissing = false;
     var lastSentAt = 0;
-    var sentIds = {};                 // 去重：防止自己发的消息被重复渲染
+    var sentIds = {};                 // 去重：已渲染过的消息 id（含系统去重 key）
+    var pendingByTemp = {};            // tempId -> { content, name, user_id, time } 乐观消息待合并
     var participants = {};             // name -> 最近活跃时间戳（在线人数统计）
     var typingPeers = {};              // name -> 时间戳（正在输入指示）
     var bc = null;                     // BroadcastChannel 实例
+    var PENDING_MATCH_MS = 120000;     // 乐观消息与服务端回显的匹配窗口
 
     function $(id) { return document.getElementById(id); }
 
@@ -104,7 +106,17 @@
         if (user && user.name) return user.name;
         var saved = '';
         try { saved = localStorage.getItem('stf_chat_nick') || ''; } catch (e) {}
-        return saved || '匿名信号';
+        return saved || '匿名信号源';
+    }
+    function currentUserKey() {
+        var user = currentUser();
+        return user && user.key ? user.key : null;
+    }
+    function isMinePayload(r) {
+        if (!r) return false;
+        var key = currentUserKey();
+        if (key && r.user_id && String(r.user_id) === String(key)) return true;
+        return false;
     }
     function getSenderColor() {
         var user = currentUser();
@@ -186,42 +198,114 @@
         }
     }
 
-    function addSystem(text) {
-        var sysId = 'sys_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+    /** 按稳定 key 去重系统提示（同 session 只出现一次） */
+    function addSystem(text, dedupeKey) {
+        var sysId = dedupeKey ? ('sys_' + dedupeKey) : ('sys_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6));
+        if (sentIds[sysId]) return;
+        sentIds[sysId] = true;
         messages.push({ id: sysId, system: true, text: text });
         if (messages.length > HISTORY_LIMIT + 5) messages = messages.slice(messages.length - (HISTORY_LIMIT + 5));
         renderMessages();
     }
 
+    /** 在 pending 乐观消息中匹配服务端回显 */
+    function findPendingTempId(r) {
+        if (!r) return null;
+        var keys = Object.keys(pendingByTemp);
+        var best = null;
+        var bestDelta = Infinity;
+        for (var i = 0; i < keys.length; i++) {
+            var tid = keys[i];
+            var p = pendingByTemp[tid];
+            if (!p) continue;
+            if (p.content !== r.content || p.name !== r.name) continue;
+            if (p.user_id && r.user_id && String(p.user_id) !== String(r.user_id)) continue;
+            var delta = Math.abs((r.time || 0) - (p.time || 0));
+            if (delta <= PENDING_MATCH_MS && delta < bestDelta) {
+                bestDelta = delta;
+                best = tid;
+            }
+        }
+        return best;
+    }
+
+    /**
+     * 将服务端消息合并进已有乐观气泡（tempId → serverId），避免左右各一条。
+     * @returns {boolean} 已处理（合并或已存在）则为 true，调用方勿再 append
+     */
+    function mergeOrMarkServerMessage(r, forceSelf) {
+        if (!r || !r.id) return true;
+        if (sentIds[r.id]) return true;
+
+        var tempId = findPendingTempId(r);
+        var mine = forceSelf || isMinePayload(r) || !!tempId;
+
+        if (tempId) {
+            for (var i = 0; i < messages.length; i++) {
+                if (messages[i].id === tempId) {
+                    delete sentIds[tempId];
+                    messages[i].id = r.id;
+                    messages[i].time = r.time || messages[i].time;
+                    messages[i].user_id = r.user_id;
+                    messages[i].isSelf = true;
+                    messages[i].status = 'delivered';
+                    if (r.color) messages[i].color = r.color;
+                    sentIds[r.id] = true;
+                    delete pendingByTemp[tempId];
+                    renderMessages();
+                    return true;
+                }
+            }
+            /* 乐观条目已被裁剪掉：只登记 server id，避免再插一条 */
+            delete pendingByTemp[tempId];
+            sentIds[r.id] = true;
+            return true;
+        }
+
+        if (mine && !tempId) {
+            /* 无匹配乐观条目但仍是自己：按自己消息插入（例如多标签页） */
+            addMessage({
+                id: r.id, name: r.name, color: r.color, content: r.content,
+                time: r.time || Date.now(), user_id: r.user_id,
+                isSelf: true, status: 'delivered'
+            }, true);
+            return true;
+        }
+
+        return false;
+    }
+
     /* ---------- 历史 / 云端 ---------- */
-    function loadHistory() {
+    function loadHistory(opts) {
+        opts = opts || {};
         var c = cloud();
         if (!c || !c.pullChat) { setStatus('offline', '本地模式'); return; }
-        setStatus('syncing', '连接中…');
+        if (!opts.silent) setStatus('syncing', '连接中…');
         c.pullChat(HISTORY_LIMIT, function (rows, err) {
             if (err && err.code === 'PGRST205') {
                 chatTableMissing = true;
                 setStatus('nomissing', '聊天表待创建');
-                addSystem('聊天表尚未在云端创建，当前为本地会话 · 消息仅本机可见');
+                addSystem('聊天表尚未在云端创建，当前为本地会话 · 消息仅本机可见', 'chat_table_missing');
                 return;
             }
             if (rows && rows.length) {
                 rows.forEach(function (r) {
-                    if (!sentIds[r.id]) {
-                        sentIds[r.id] = true;
-                        messages.push({
-                            id: r.id, name: r.name, color: r.color, content: r.content,
-                            time: r.time, isSelf: false
-                        });
-                        touchParticipant(r.name);
-                    }
+                    if (sentIds[r.id]) return;
+                    if (mergeOrMarkServerMessage(r, false)) return;
+                    sentIds[r.id] = true;
+                    messages.push({
+                        id: r.id, name: r.name, color: r.color, content: r.content,
+                        time: r.time, user_id: r.user_id,
+                        isSelf: isMinePayload(r)
+                    });
+                    touchParticipant(r.name);
                 });
                 renderMessages();
             }
             if (cloudChatReady()) {
                 setStatus('ok', '实时连接中');
-                addSystem('已接入星域公共频道 · 全球即时同步');
-            } else {
+                addSystem('已接入星域公共频道 · 全球即时同步', 'channel_joined');
+            } else if (!opts.silent) {
                 setStatus('offline', '本地模式');
             }
         });
@@ -261,19 +345,32 @@
         var user = currentUser();
         var name = getSenderName();
         var color = getSenderColor();
+        var userKey = user ? user.key : null;
         var tempId = 'local_' + now + '_' + Math.random().toString(36).slice(2, 7);
         var msg = {
             id: tempId, name: name, color: color, content: text,
-            time: now, isSelf: true, status: cloudChatReady() ? 'sending' : 'local'
+            time: now, user_id: userKey, isSelf: true,
+            status: cloudChatReady() ? 'sending' : 'local'
+        };
+
+        pendingByTemp[tempId] = {
+            content: text, name: name, user_id: userKey, time: now
         };
 
         // 乐观渲染（自己立即看到）
         addMessage(msg, true);
-        sentIds[tempId] = true;
 
         // 同浏览器多标签页即时
         if (bc) {
-            try { bc.postMessage({ t: 'msg', msg: { id: tempId, name: name, color: color, content: text, time: now, isSelf: false } }); } catch (e) {}
+            try {
+                bc.postMessage({
+                    t: 'msg',
+                    msg: {
+                        id: tempId, name: name, color: color, content: text,
+                        time: now, user_id: userKey, isSelf: false
+                    }
+                });
+            } catch (e) {}
         }
 
         // 上云
@@ -282,17 +379,26 @@
             if (chatTableMissing) setStatus('nomissing', '聊天表待创建');
             else setStatus('offline', '本地模式 · 消息未同步');
             if (window.StarTorchForum && window.StarTorchForum.toast) window.StarTorchForum.toast('当前为本地模式，消息仅本机可见');
+            delete pendingByTemp[tempId];
         } else {
             c.pushChat({
-                name: name, user_id: user ? user.key : null, color: color, content: text
-            }, function (ok, err) {
-                msg.status = ok ? 'delivered' : 'local';
-                if (err && err.code === 'PGRST205') {
-                    chatTableMissing = true;
-                    setStatus('nomissing', '聊天表待创建');
-                    addSystem('云端聊天表尚未创建，已切换为本地会话');
+                name: name, user_id: userKey, color: color, content: text
+            }, function (ok, err, row) {
+                if (ok && row && row.id) {
+                    mergeOrMarkServerMessage(row, true);
+                } else if (ok) {
+                    msg.status = 'delivered';
+                    renderMessages();
+                } else {
+                    msg.status = 'local';
+                    delete pendingByTemp[tempId];
+                    if (err && err.code === 'PGRST205') {
+                        chatTableMissing = true;
+                        setStatus('nomissing', '聊天表待创建');
+                        addSystem('云端聊天表尚未创建，已切换为本地会话', 'chat_table_missing');
+                    }
+                    renderMessages();
                 }
-                renderMessages();
             });
         }
 
@@ -307,11 +413,17 @@
     /* ---------- Realtime 回调 ---------- */
     function onRealtimeMessage(r) {
         realtimeOk = true;
+        if (!r || !r.id) return;
         if (sentIds[r.id]) return;
-        var user = currentUser();
+        if (mergeOrMarkServerMessage(r, false)) {
+            setStatus('ok', '实时连接中');
+            refreshPresence();
+            return;
+        }
         addMessage({
             id: r.id, name: r.name, color: r.color, content: r.content,
-            time: r.time || Date.now(), isSelf: false
+            time: r.time || Date.now(), user_id: r.user_id,
+            isSelf: isMinePayload(r)
         }, document.hidden);
         setStatus('ok', '实时连接中');
         refreshPresence();
@@ -321,7 +433,15 @@
         var data = e.data;
         if (!data || !data.t) return;
         if (data.t === 'msg' && data.msg) {
-            addMessage(data.msg, document.hidden);
+            var m = data.msg;
+            if (sentIds[m.id]) return;
+            /* 本端发出的 BC 带 local_ id；若同内容已有自己的乐观消息则跳过 */
+            if (m.id && String(m.id).indexOf('local_') === 0 && findPendingTempId(m)) return;
+            addMessage({
+                id: m.id, name: m.name, color: m.color, content: m.content,
+                time: m.time || Date.now(), user_id: m.user_id,
+                isSelf: isMinePayload(m)
+            }, document.hidden);
         } else if (data.t === 'typing' && data.name) {
             if (data.name !== getSenderName()) markPeerTyping(data.name);
         } else if (data.t === 'hello' && data.name) {
@@ -334,7 +454,7 @@
         if (pollTimer) clearInterval(pollTimer);
         pollTimer = setInterval(function () {
             if (realtimeOk || chatTableMissing) return;
-            loadHistory();
+            loadHistory({ silent: true });
         }, POLL_MS);
     }
 

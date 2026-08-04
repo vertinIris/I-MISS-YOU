@@ -452,16 +452,18 @@
                 color: sanitizeColor(msg.color),
                 content: msg.content
             };
-            var res = await client.from('forum_chat').insert(row);
+            /* select 回传服务端 id，供客户端 tempId → serverId 合并去重 */
+            var res = await client.from('forum_chat').insert(row).select('*');
             if (res.error) throw res.error;
             chatTableMissing = false;
-            return cb && cb(true, null);
+            var inserted = (res.data && res.data[0]) ? chatRowToLocal(res.data[0]) : null;
+            return cb && cb(true, null, inserted);
         } catch (e) {
             console.warn('[forum-cloud] 发送聊天失败', e);
             if (e && (e.code === 'PGRST205' || (e.message && /could not find the table/i.test(e.message)))) {
                 chatTableMissing = true;
             }
-            return cb && cb(false, e);
+            return cb && cb(false, e, null);
         }
     }
     function onChatRealtime(cb) {
