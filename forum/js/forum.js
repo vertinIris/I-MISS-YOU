@@ -1126,11 +1126,11 @@
         /* 登录态变化 → 刷新两个表单的署名控件 */
         if (window.StarTorchAuth) window.StarTorchAuth.onChange(syncAuthUI);
 
-        /* 调谐台彩蛋入口 + 左下角浮钮双态 */
-        initTuner();
-        initTunerCollapse();
-        initTunerFab();
-        initArchiveOrbit();
+        /* 调谐台彩蛋入口 + 左下角浮钮双态；各自隔离，避免一处抛错阻断角色环 */
+        try { initTuner(); } catch (err) { console.error('[StarTorchForum] initTuner failed', err); }
+        try { initTunerCollapse(); } catch (err) { console.error('[StarTorchForum] initTunerCollapse failed', err); }
+        try { initTunerFab(); } catch (err) { console.error('[StarTorchForum] initTunerFab failed', err); }
+        try { initArchiveOrbit(); } catch (err) { console.error('[StarTorchForum] initArchiveOrbit failed', err); }
     }
 
     /* ============ 左下角浮钮 + 调频台收展 ============
@@ -1365,7 +1365,8 @@
         var compactFreqEl = document.getElementById('stf-tuner-compact-freq');
         var compactInput = document.getElementById('stf-tuner-compact-input');
         var compactLed = document.querySelector('#stf-tuner-compact .stf-tuner-compact-led');
-        var frame = document.getElementById('stf-tuner-frame');
+        /* 勿命名为 frame：会遮蔽下方 rAF 回调 function onTunerFrame，导致 initArchiveOrbit 从未执行 */
+        var frameEl = document.getElementById('stf-tuner-frame');
 
         var TARGET_CODE = '9072';
         var TARGET_FREQ = 9072;
@@ -1485,7 +1486,7 @@
                 ledEl.classList.toggle('is-tuned', !locked && pct >= 40);
             }
             /* W4：临近锁定时微响应（金弧信号，不染粉）；设定：调频 9072 深夜广播 */
-            if (frame) frame.classList.toggle('is-close', !locked && pct >= 78);
+            if (frameEl) frameEl.classList.toggle('is-close', !locked && pct >= 78);
         }
 
         /* 输入变化 → 立刻重算真实值并给出即时反馈（不等动画） */
@@ -1509,7 +1510,7 @@
         }
 
         /* 接收机噪声：信号越弱抖得越厉害，锁定后完全稳定 */
-        function frame(ts) {
+        function onTunerFrame(ts) {
             rafId = null;
             if (!visible) return;
             if (ts - lastFrame < 60) { startLoop(); return; }   /* ~16fps，够真实也不烧 CPU */
@@ -1534,7 +1535,7 @@
 
         function startLoop() {
             if (rafId !== null || reduceMotion || !visible) return;
-            rafId = requestAnimationFrame(frame);
+            rafId = requestAnimationFrame(onTunerFrame);
         }
 
         function stopLoop() {
@@ -1552,7 +1553,7 @@
                 paintDigits();
                 if (stateEl) stateEl.textContent = '已锁定 · 9072';
                 if (ledEl) { ledEl.classList.add('is-locked'); ledEl.classList.remove('is-tuned'); }
-                if (frame) frame.classList.remove('is-close');
+                if (frameEl) frameEl.classList.remove('is-close');
                 /* 设定：调频 9072 第一次广播曾收到「收到了。」反馈 */
                 if (hintEl) { hintEl.textContent = '信号锁定 —— 收到了。正在接通深夜电台…'; lastHint = hintEl.textContent; }
                 if (compactInput) {
