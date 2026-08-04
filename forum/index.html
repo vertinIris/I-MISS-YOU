@@ -12,10 +12,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/donation.css">
     <link rel="stylesheet" href="forum.css">
     <link rel="stylesheet" href="forum-easter.css">
     <link rel="stylesheet" href="forum-theme.css">
-    <link rel="stylesheet" href="../css/donation.css">
     <script>
         /* 沿用主站主题偏好，仅做视觉同步；不影响功能独立性 */
         (function () {
@@ -501,12 +501,17 @@
         </div>
     </section>
 
-    <!-- 深夜电台调谐台：默认可收成小按钮，点击放大还原完整拨频 UI -->
+    <!-- 深夜电台调谐台：默认可收成频率胶囊，点击放大还原完整拨频 UI -->
     <section class="stf-tuner is-collapsed" id="stf-tuner" aria-labelledby="stf-tuner-title">
         <button type="button" class="stf-tuner-compact" id="stf-tuner-compact" aria-expanded="false" aria-controls="stf-tuner-frame">
-            <span class="stf-tuner-compact-led" aria-hidden="true"></span>
-            <span class="stf-tuner-compact-text">深夜电台 · 调频台</span>
-            <span class="stf-tuner-compact-hint">点击展开</span>
+            <span class="stf-tuner-compact-shell" aria-hidden="true">
+                <span class="stf-tuner-compact-led"></span>
+                <span class="stf-tuner-compact-freq" id="stf-tuner-compact-freq">----</span>
+            </span>
+            <span class="stf-tuner-compact-copy">
+                <span class="stf-tuner-compact-text">深夜电台</span>
+                <span class="stf-tuner-compact-hint">展开调谐</span>
+            </span>
         </button>
         <div class="stf-tuner-frame" id="stf-tuner-frame" hidden>
             <div class="stf-tuner-head">
@@ -737,19 +742,26 @@
         </div>
     </div>
 
-    <!-- 星炬学院通行证 -->
+    <!-- 星炬学院通行证（证件化浮层） -->
     <div class="stf-modal stf-account-modal" id="stf-account-modal" role="dialog" aria-modal="true" aria-labelledby="stf-account-title" hidden>
         <div class="stf-modal-backdrop" data-account-close></div>
-        <div class="stf-modal-panel glass">
-            <div class="stf-modal-header">
-                <h3 id="stf-account-title">星炬学院通行证</h3>
+        <div class="stf-modal-panel stf-passport-panel">
+            <div class="stf-modal-header stf-passport-header">
+                <div class="stf-passport-brand">
+                    <span class="stf-passport-seal" aria-hidden="true"></span>
+                    <div class="stf-passport-titles">
+                        <p class="stf-passport-eyebrow">星炬学院 · ADMISSION PASS</p>
+                        <h3 id="stf-account-title">星炬学院通行证</h3>
+                    </div>
+                </div>
                 <button type="button" class="stf-modal-close" data-account-close aria-label="关闭">×</button>
             </div>
 
-            <div id="stf-account-guest">
+            <div id="stf-account-guest" class="stf-passport-body stf-passport--guest">
+                <p class="stf-passport-status" aria-hidden="true"><span class="stf-passport-status-dot"></span>状态 · 未签发</p>
                 <div class="stf-auth-modules" role="tablist" aria-label="登录或注册">
                     <div class="stf-auth-module is-active" data-auth-module="login">
-                        <button type="button" class="stf-auth-tab active" data-auth-tab="login" role="tab" aria-selected="true">登录</button>
+                        <button type="button" class="stf-auth-tab active" data-auth-tab="login" role="tab" aria-selected="true">核验登录</button>
                         <form class="stf-auth-form" id="stf-login-form">
                             <div class="stf-auth-mode" role="group" aria-label="登录方式">
                                 <button type="button" class="stf-auth-mode-btn active" data-mode-scope="login" data-mode="email" aria-pressed="true">邮箱登录</button>
@@ -772,12 +784,12 @@
                             <p class="stf-auth-mode-hint" id="stf-login-mode-hint">用注册时填写的真实邮箱登录，与飞行雪绒主站共用同一账号。</p>
                             <p class="stf-auth-error" id="stf-login-error" role="alert" hidden></p>
                             <div class="form-actions">
-                                <button type="submit" class="btn-primary magnetic"><span>登录</span></button>
+                                <button type="submit" class="btn-primary magnetic stf-passport-cta"><span>核验通行证</span></button>
                             </div>
                         </form>
                     </div>
                     <div class="stf-auth-module" data-auth-module="register">
-                        <button type="button" class="stf-auth-tab" data-auth-tab="register" role="tab" aria-selected="false">注册</button>
+                        <button type="button" class="stf-auth-tab" data-auth-tab="register" role="tab" aria-selected="false">申请签发</button>
                         <form class="stf-auth-form" id="stf-register-form" hidden>
                             <div class="stf-auth-mode" role="group" aria-label="注册方式">
                                 <button type="button" class="stf-auth-mode-btn active" data-mode-scope="register" data-mode="email" aria-pressed="true">邮箱注册</button>
@@ -810,7 +822,7 @@
                             <p class="stf-auth-mode-hint" id="stf-register-mode-hint">邮箱账号可找回口令，并与飞行雪绒主站共用同一套身份。</p>
                             <p class="stf-auth-error" id="stf-register-error" role="alert" hidden></p>
                             <div class="form-actions">
-                                <button type="submit" class="btn-primary magnetic"><span>签发通行证</span></button>
+                                <button type="submit" class="btn-primary magnetic stf-passport-cta"><span>签发通行证</span></button>
                             </div>
                         </form>
                     </div>
@@ -822,7 +834,8 @@
                 </p>
             </div>
 
-            <div id="stf-account-user" hidden>
+            <div id="stf-account-user" class="stf-passport-body stf-passport--holder" hidden>
+                <p class="stf-passport-status" aria-hidden="true"><span class="stf-passport-status-dot is-live"></span>状态 · 已持证</p>
                 <div class="stf-account-card">
                     <span class="stf-account-card-avatar" id="stf-account-card-avatar" aria-hidden="true">?</span>
                     <span class="stf-account-card-text">
@@ -838,7 +851,7 @@
                     </div>
                     <p class="stf-auth-error" id="stf-nick-error" role="alert" hidden></p>
                     <div class="form-actions">
-                        <button type="submit" class="btn-primary magnetic"><span>保存显示名</span></button>
+                        <button type="submit" class="btn-primary magnetic stf-passport-cta"><span>保存显示名</span></button>
                     </div>
                 </form>
                 <p class="stf-auth-note">已登录状态下发帖将使用通行证署名，匿名身份选择器会自动停用。设置请用顶栏通行证入口。</p>

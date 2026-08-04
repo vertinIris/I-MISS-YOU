@@ -301,8 +301,8 @@
         var commentCount = (StarTorchData.getComments(s.id) || []).length;
         var title = displayTitle(s);
         var fullLen = (s.content || '').length;
-        var needsExpand = fullLen > 160;
-        var preview = escapeHTML(previewText(s.content, 160));
+        var needsExpand = fullLen > 90;
+        var preview = escapeHTML(previewText(s.content, 90));
 
         var tagsHtml = '';
         if (s.tags && s.tags.length) {
@@ -1289,6 +1289,8 @@
         var numEl = document.getElementById('stf-tuner-signal-num');
         var hintEl = document.getElementById('stf-tuner-hint');
         var waveEl = document.getElementById('stf-tuner-wave');
+        var compactFreqEl = document.getElementById('stf-tuner-compact-freq');
+        var compactLed = document.querySelector('#stf-tuner-compact .stf-tuner-compact-led');
 
         var TARGET_CODE = '9072';
         var TARGET_FREQ = 9072;
@@ -1352,13 +1354,20 @@
                 : '载波在更低的频率上 —— 往下拨 ▼';
         }
 
-        /* 逐位反馈：拨对一位就立刻点亮那一位 */
+        /* 逐位反馈：拨对一位就立刻点亮那一位；同步收起态频率胶囊 */
         function paintDigits() {
             var code = readCode();
             for (var i = 0; i < 4; i++) {
                 if (!inputs[i]) continue;
                 inputs[i].classList.toggle('is-hit', !locked && code.charAt(i) === TARGET_CODE.charAt(i));
                 inputs[i].classList.toggle('is-locked', locked);
+            }
+            if (compactFreqEl) {
+                compactFreqEl.textContent = code.slice(0, 2) + '·' + code.slice(2);
+            }
+            if (compactLed) {
+                compactLed.classList.toggle('is-tuned', !locked && trueSnr >= 40);
+                compactLed.classList.toggle('is-locked', locked);
             }
         }
 
@@ -1497,7 +1506,7 @@
         updateSignal();
     }
 
-    /* ============ 角色档案：3D 竖环（正面朝向）/ 移动端静态网格 ============ */
+    /* ============ 角色档案：3D 竖环（正面朝向）/ 移动端横向 snap 卡带 ============ */
     function initArchiveOrbit() {
         var grid = document.getElementById('archive-album-grid');
         var orbit = document.getElementById('archive-orbit');

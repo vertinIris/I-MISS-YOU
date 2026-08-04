@@ -225,25 +225,25 @@ body {
 .stf-feed {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 8px;
     max-width: none;
-    margin: 20px 0 0;
+    margin: 16px 0 0;
     position: relative;
     padding-left: 0;
 }
 .stf-timeline::before { display: none; }
 .stf-node { display: none; }
 
-/* ---------- 3. 帖流卡（可读摘要 + 展开全文，替代立体翻转） ---------- */
+/* ---------- 3. 帖流卡（紧凑扫读 + 展开全文） ---------- */
 .stf-feed .stf-card,
 .stf-timeline .stf-card {
     display: block;
     position: relative;
-    background: rgba(255,255,255,.04);
-    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.035);
+    border: 1px solid rgba(255,255,255,.07);
     border-left: 3px solid var(--char, var(--stf-brand));
-    padding: 18px 20px 14px;
-    border-radius: 16px;
+    padding: 12px 14px 10px;
+    border-radius: 12px;
     box-shadow: none;
     overflow: visible;
     cursor: default;
@@ -252,9 +252,9 @@ body {
 .stf-feed .stf-card:hover,
 .stf-timeline .stf-card:hover {
     transform: none;
-    background: rgba(255,255,255,.055);
-    border-color: rgba(168,216,255,.18);
-    box-shadow: 0 10px 28px rgba(0,0,0,.22);
+    background: rgba(255,255,255,.05);
+    border-color: rgba(168,216,255,.14);
+    box-shadow: 0 4px 14px rgba(0,0,0,.14);
 }
 .stf-feed .stf-card:focus-visible,
 .stf-timeline .stf-card:focus-visible {
@@ -287,11 +287,11 @@ body {
 .stf-card.is-expanded .stf-card-back { display: block; }
 
 .stf-card-preview {
-    font-size: 14px;
-    line-height: 1.75;
-    color: rgba(240,244,255,.74);
-    white-space: pre-line;
-    margin-bottom: 10px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: rgba(240,244,255,.68);
+    white-space: normal;
+    margin-bottom: 6px;
 }
 .stf-card-tags--preview { margin-bottom: 8px; }
 .stf-card-front-actions {
@@ -420,4 +420,28 @@ body {
         transform: none !important;
         transition: none !important;
     }
+}
+
+/* ---------- 论坛页捐赠 FAB：蓝金描边降权，避免粉边抢学院主色 ---------- */
+.donate-fab {
+    opacity: 0.72;
+    border-color: rgba(107, 138, 255, 0.32);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.32), 0 0 0 1px rgba(232, 197, 106, 0.08);
+}
+.donate-fab:hover {
+    opacity: 0.95;
+    border-color: rgba(232, 197, 106, 0.4);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4), 0 0 14px rgba(107, 138, 255, 0.16);
+}
+.donate-fab:focus-visible {
+    outline-color: var(--stf-brand-light, #A8D8FF);
+}
+.donate-fab-icon {
+    border-color: rgba(107, 138, 255, 0.4);
+    background: linear-gradient(135deg, rgba(107, 138, 255, 0.2), rgba(232, 197, 106, 0.14));
+}
+.donate-fab:hover .donate-fab-icon {
+    background: linear-gradient(135deg, rgba(107, 138, 255, 0.34), rgba(232, 197, 106, 0.22));
+    box-shadow: 0 0 14px rgba(107, 138, 255, 0.28);
+    transform: scale(1.06);
 }

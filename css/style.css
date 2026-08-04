@@ -4453,23 +4453,24 @@ article, section, nav, footer, header {
     gap: 10px;
     padding: 8px 14px 8px 10px;
     border-radius: 24px;
-    background: rgba(20, 20, 35, 0.92);
+    background: rgba(14, 18, 34, 0.92);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(107, 138, 255, 0.35);
+    border: 1px solid rgba(107, 138, 255, 0.42);
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
-    opacity: 0.85;
+    opacity: 0.88;
     user-select: none;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
-    transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(232, 197, 106, 0.12);
+    transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     max-width: calc(100vw - 32px);
 }
 .forum-entry-fab:hover {
     opacity: 1;
     transform: translateY(-2px);
-    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.45), 0 0 18px rgba(107, 138, 255, 0.18);
+    border-color: rgba(232, 197, 106, 0.45);
+    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.45), 0 0 20px rgba(107, 138, 255, 0.22), 0 0 12px rgba(232, 197, 106, 0.12);
 }
 .forum-entry-fab:active { transform: translateY(0) scale(0.98); }
 .forum-entry-fab:focus-visible {
@@ -4481,8 +4482,8 @@ article, section, nav, footer, header {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    border: 1px solid rgba(107, 138, 255, 0.45);
-    background: rgba(107, 138, 255, 0.18);
+    border: 1px solid rgba(232, 197, 106, 0.4);
+    background: linear-gradient(135deg, rgba(107, 138, 255, 0.28), rgba(232, 197, 106, 0.18));
     color: #fff;
     display: inline-flex;
     align-items: center;
@@ -4490,7 +4491,7 @@ article, section, nav, footer, header {
     transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 .forum-entry-fab:hover .forum-entry-fab-icon {
-    background: rgba(107, 138, 255, 0.35);
+    background: linear-gradient(135deg, rgba(107, 138, 255, 0.42), rgba(232, 197, 106, 0.28));
     transform: scale(1.08);
     box-shadow: 0 0 16px rgba(107, 138, 255, 0.4);
 }
