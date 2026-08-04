@@ -429,25 +429,32 @@
 .archive-album-grid .archive-float:nth-child(7) { animation-delay: 2.4s; }
 @keyframes card-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
 
+/* W1 · 展柜台座：深蓝金属边 + 底部光池；去掉廉价 135° 斜纹 */
 .archive-album {
     position: relative;
     margin-top: 36px;
-    padding: 30px 24px 34px;
-    border-radius: 30px;
+    padding: 36px 28px 48px;
+    border-radius: 22px;
     background:
-        linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.02)),
-        repeating-linear-gradient(135deg, rgba(255,255,255,.02) 0 12px, transparent 12px 24px);
-    border: 1px solid rgba(255,255,255,.09);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 24px 60px rgba(0,0,0,.3);
+        linear-gradient(165deg, rgba(18, 24, 44, 0.92), rgba(8, 10, 20, 0.96)),
+        radial-gradient(ellipse 70% 40% at 50% 100%, rgba(107, 138, 255, 0.12), transparent 70%);
+    border: 1px solid rgba(168, 216, 255, 0.18);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -1px 0 rgba(107, 138, 255, 0.06),
+        0 0 0 1px rgba(10, 12, 22, 0.6),
+        0 28px 64px rgba(0, 0, 0, 0.42);
 }
 .archive-album-shelf {
     position: absolute;
-    left: 24px; right: 24px;
-    bottom: 14px;
-    height: 6px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, transparent, rgba(168,216,255,.25), transparent);
-    filter: blur(1px);
+    left: 12%;
+    right: 12%;
+    bottom: 18px;
+    height: 28px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(107, 138, 255, 0.28), rgba(232, 197, 106, 0.06) 45%, transparent 72%);
+    filter: blur(8px);
+    pointer-events: none;
 }
 /* 统一响应式栅格（桌面环关闭时）/ 移动端横向 snap 卡带 */
 .archive-album-grid {
@@ -481,12 +488,13 @@
 .archive-orbit { display: none; }
 .archive-orbit-stage {
     position: relative;
-    width: min(860px, 100%);
-    height: 520px;
+    width: min(980px, 100%);
+    height: 560px;
     margin: 8px auto 0;
-    perspective: 1400px;
-    perspective-origin: 50% 42%;
+    perspective: 1600px;
+    perspective-origin: 50% 38%;
 }
+/* W2 · 整环倾斜；卡片保持 billboard（JS 只写 translate3d，不 rotateY） */
 .archive-orbit-ring {
     position: absolute;
     inset: 0;
@@ -494,10 +502,14 @@
     width: 100%;
     height: 100%;
     transform-style: preserve-3d;
+    transform: rotateX(20deg);
+    transform-origin: 50% 58%;
+    transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
     will-change: transform;
 }
-.archive-orbit-ring.is-paused .archive-float.is-orbit-item {
-    /* 暂停由 JS 停止 rAF；此处仅作语义类 */
+.archive-orbit-ring.is-paused {
+    /* hover / focus：略放正，便于阅读 */
+    transform: rotateX(8deg);
 }
 .archive-orbit-ring .archive-float.is-orbit-item {
     position: absolute;
@@ -562,7 +574,10 @@ html.archive-orbit-active .archive-album-grid.is-orbit-source {
 html.archive-orbit-active .archive-orbit {
     display: block;
 }
-html.archive-orbit-active .archive-album-shelf { display: none; }
+/* W1：台座光池在环模式下保留 */
+html.archive-orbit-active .archive-album-shelf {
+    display: block;
+}
 
 /* 移动端 / 减动效：横向 snap 卡带，替代生硬网格 */
 @media (max-width: 899px), (prefers-reduced-motion: reduce) {

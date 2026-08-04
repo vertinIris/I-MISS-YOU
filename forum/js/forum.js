@@ -1371,6 +1371,7 @@
         var waveEl = document.getElementById('stf-tuner-wave');
         var compactFreqEl = document.getElementById('stf-tuner-compact-freq');
         var compactLed = document.querySelector('#stf-tuner-compact .stf-tuner-compact-led');
+        var frame = document.getElementById('stf-tuner-frame');
 
         var TARGET_CODE = '9072';
         var TARGET_FREQ = 9072;
@@ -1462,6 +1463,8 @@
                 ledEl.classList.toggle('is-locked', locked);
                 ledEl.classList.toggle('is-tuned', !locked && pct >= 40);
             }
+            /* W4：临近锁定时微响应（金弧信号，不染粉）；设定：调频 9072 深夜广播 */
+            if (frame) frame.classList.toggle('is-close', !locked && pct >= 78);
         }
 
         /* 输入变化 → 立刻重算真实值并给出即时反馈（不等动画） */
@@ -1528,7 +1531,9 @@
                 paintDigits();
                 if (stateEl) stateEl.textContent = '已锁定 · 9072';
                 if (ledEl) { ledEl.classList.add('is-locked'); ledEl.classList.remove('is-tuned'); }
-                if (hintEl) { hintEl.textContent = '信号锁定 —— 正在接通深夜电台…'; lastHint = hintEl.textContent; }
+                if (frame) frame.classList.remove('is-close');
+                /* 设定：调频 9072 第一次广播曾收到「收到了。」反馈 */
+                if (hintEl) { hintEl.textContent = '信号锁定 —— 收到了。正在接通深夜电台…'; lastHint = hintEl.textContent; }
                 stopLoop();
                 if (window.playTransition) setTimeout(window.playTransition, 480);
             }
@@ -1588,7 +1593,7 @@
         updateSignal();
     }
 
-    /* ============ 角色档案：3D 竖环（正面朝向）/ 移动端横向 snap 卡带 ============ */
+    /* ============ 角色档案：倾斜 3D 竖环（billboard）/ 移动端横向 snap ============ */
     function initArchiveOrbit() {
         var grid = document.getElementById('archive-album-grid');
         var orbit = document.getElementById('archive-orbit');
@@ -1604,12 +1609,13 @@
         var paused = false;
         var rafId = 0;
         var baseAngle = 0;
-        var DEG_PER_MS = 360 / 56000;
+        var DEG_PER_MS = 360 / 58000;
 
         function layoutMetrics() {
             var w = orbit.clientWidth || 720;
-            var radius = Math.min(300, Math.max(200, Math.floor(w * 0.34)));
-            return { radius: radius, yLift: -12 };
+            /* W2 重标定：倾斜后半径略增、yLift 上移，避免卡片挤中 */
+            var radius = Math.min(340, Math.max(220, Math.floor(w * 0.36)));
+            return { radius: radius, yLift: -28 };
         }
 
         function paint(angleDeg) {
@@ -1618,13 +1624,13 @@
             var step = 360 / n;
             cards.forEach(function (card, i) {
                 var a = (angleDeg + step * i) * Math.PI / 180;
-                /* XZ 平面绕 Y 公转；卡片本身不旋转 → 始终正面朝向镜头 */
+                /* XZ 绕 Y 公转；卡片本身不 rotateY → 始终正面朝向镜头（billboard） */
                 var x = Math.sin(a) * m.radius;
                 var z = Math.cos(a) * m.radius;
                 var depth = (z + m.radius) / (2 * m.radius);
-                var scale = 0.76 + depth * 0.3;
-                var opacity = 0.42 + depth * 0.58;
-                var bright = 0.62 + depth * 0.42;
+                var scale = 0.74 + depth * 0.32;
+                var opacity = 0.4 + depth * 0.6;
+                var bright = 0.6 + depth * 0.44;
                 card.style.transform =
                     'translate(-50%, -50%) translate3d(' + x.toFixed(1) + 'px,' + m.yLift + 'px,' + z.toFixed(1) + 'px) scale(' + scale.toFixed(3) + ')';
                 card.style.zIndex = String(100 + Math.round(depth * 100));

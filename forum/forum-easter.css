@@ -383,12 +383,90 @@
 .character-archive-cta svg { width: 16px; height: 16px; transition: transform .3s; }
 .character-archive-card:hover .character-archive-cta svg { transform: translateX(4px); }
 
+/* W4–W5 · 走廊三十七 / 构型切换 / 静默提示 */
+.stf-corridor-mark {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: rgba(168, 216, 255, 0.35);
+    font: inherit;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 999px;
+    transition: color 0.25s, background 0.25s;
+}
+.stf-corridor-mark:hover,
+.stf-corridor-mark:focus-visible {
+    color: rgba(232, 197, 106, 0.85);
+    background: rgba(107, 138, 255, 0.08);
+    outline: none;
+}
+.stf-corridor-mark.is-found {
+    color: rgba(255, 107, 157, 0.75);
+}
+.stf-easter-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 14%;
+    transform: translateX(-50%) translateY(10px);
+    z-index: var(--stf-z-easter, 1400);
+    max-width: min(90vw, 380px);
+    padding: 12px 18px;
+    border-radius: 12px;
+    background: rgba(10, 12, 22, 0.92);
+    border: 1px solid rgba(168, 216, 255, 0.28);
+    color: rgba(240, 244, 255, 0.9);
+    font-size: 0.88rem;
+    letter-spacing: 0.04em;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+.stf-easter-toast.is-visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+.archive-float--featured .character-archive-icon {
+    position: relative;
+    transition: transform 0.45s ease, filter 0.45s ease;
+}
+.archive-float--featured .character-archive-icon.is-mecha-form {
+    transform: scale(1.08) rotate(-6deg);
+    filter: drop-shadow(0 0 10px rgba(168, 216, 255, 0.45));
+}
+.archive-float--featured .character-archive-icon.is-mecha-form svg {
+    stroke: #A8D8FF;
+}
+
+/* 调频 9072 临近微响应 */
+.stf-tuner-frame.is-close .stf-tuner-wave {
+    box-shadow: 0 0 24px rgba(232, 197, 106, 0.18);
+}
+.stf-tuner-frame.is-close .stf-tuner-led {
+    box-shadow: 0 0 12px rgba(232, 197, 106, 0.55);
+}
+.stf-dial-input.is-hit {
+    animation: stf-dial-hit 0.35s ease;
+}
+@keyframes stf-dial-hit {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.06); }
+    100% { transform: scale(1); }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .stf-easter-overlay, .stf-easter-ring, .stf-easter-particle,
     .stf-resonance, .stf-resonance-wave, .stf-resonance-halo, .stf-resonance-flake,
     .stf-freq-display, .stf-easter-hint,
     .character-archive-card, .character-archive-card::after,
     .archive-float, .stf-hidden-trigger,
-    .stf-welcome, .stf-welcome-panel, .stf-welcome-dot { animation: none !important; transition: opacity .2s ease !important; }
+    .stf-welcome, .stf-welcome-panel, .stf-welcome-dot,
+    .stf-dial-input.is-hit { animation: none !important; transition: opacity .2s ease !important; }
     .character-archive-card:hover, .stf-hidden-trigger:hover, .archive-float:hover .character-archive-card { transform: none !important; }
+    .stf-easter-toast { transition: opacity 0.15s ease !important; }
+    .archive-float--featured .character-archive-icon { transition: none !important; }
 }

@@ -175,11 +175,113 @@
         });
     }
 
+    /**
+     * 走廊「三十七」连点彩蛋（论坛档案区）
+     * 设定依据：characters/aimisi —「学院走廊里三十七个人和她擦肩，没有一个人转头」。
+     * 连点档案区隐蔽触发点满 37 次；输入框内不累计。
+     */
+    function initCorridorThirtySeven() {
+        var mark = document.getElementById('stf-corridor-mark');
+        if (!mark) return;
+        var count = 0;
+        var unlocked = false;
+        var resetTimer = null;
+        var toast = document.getElementById('stf-easter-toast');
+
+        function say(msg) {
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'stf-easter-toast';
+                toast.className = 'stf-easter-toast';
+                toast.setAttribute('role', 'status');
+                document.body.appendChild(toast);
+            }
+            toast.textContent = msg;
+            toast.classList.add('is-visible');
+            clearTimeout(say._t);
+            say._t = setTimeout(function () { toast.classList.remove('is-visible'); }, 3600);
+        }
+
+        mark.addEventListener('click', function (e) {
+            if (unlocked) return;
+            e.preventDefault();
+            count += 1;
+            clearTimeout(resetTimer);
+            resetTimer = setTimeout(function () { count = 0; }, 28000);
+            if (count === 10 || count === 20 || count === 30) say('走廊回声… (' + count + '/37)');
+            if (count >= 37) {
+                unlocked = true;
+                say('第三十七个人转头了。——电子幽灵在看你。');
+                mark.classList.add('is-found');
+            }
+        });
+    }
+
+    /**
+     * 构型切换：爱弥斯档案卡剪影 crossfade
+     * 设定依据：characters/aimisi — 爱弥斯形态 / 机兵形态「构型切换」。
+     * 双击或长按爱弥斯卡图标；不拦截普通单击跳转（长按/双击专用）。
+     */
+    function initAimisiFormSwitch() {
+        var card = document.querySelector('.archive-float--featured .character-archive-card.is-featured');
+        if (!card) return;
+        var icon = card.querySelector('.character-archive-icon');
+        if (!icon) return;
+
+        var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+        var mecha = false;
+        var longTimer = null;
+        var toast = null;
+
+        function say(msg) {
+            toast = toast || document.getElementById('stf-easter-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'stf-easter-toast';
+                toast.className = 'stf-easter-toast';
+                toast.setAttribute('role', 'status');
+                document.body.appendChild(toast);
+            }
+            toast.textContent = msg;
+            toast.classList.add('is-visible');
+            clearTimeout(say._t);
+            say._t = setTimeout(function () { toast.classList.remove('is-visible'); }, 2800);
+        }
+
+        function toggle(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            mecha = !mecha;
+            icon.classList.toggle('is-mecha-form', mecha);
+            if (reduceMotion) icon.style.transition = 'none';
+            say(mecha ? '构型切换 · 机兵形态' : '构型切换 · 爱弥斯形态');
+        }
+
+        icon.addEventListener('dblclick', toggle);
+        icon.addEventListener('pointerdown', function (e) {
+            if (e.pointerType === 'mouse' && e.button !== 0) return;
+            longTimer = setTimeout(function () {
+                longTimer = null;
+                toggle(e);
+            }, 650);
+        });
+        function clearLong() {
+            if (longTimer) { clearTimeout(longTimer); longTimer = null; }
+        }
+        icon.addEventListener('pointerup', clearLong);
+        icon.addEventListener('pointerleave', clearLong);
+        icon.addEventListener('pointercancel', clearLong);
+    }
+
     ready(function () {
         document.addEventListener('keydown', onKey);
         var trigger = document.getElementById('stf-hidden-trigger');
         if (trigger) trigger.addEventListener('click', onTriggerClick);
         initWelcome();
+        initCorridorThirtySeven();
+        initAimisiFormSwitch();
     });
 
     /* 供论坛主逻辑（调谐台）调用 */

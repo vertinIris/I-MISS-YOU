@@ -66,10 +66,25 @@
     --char: #FF6B9D;
 }
 
-/* ---------- 连续深空背景 + 薄膜噪点（无 grain SVG 时用 data-URI 降级） ---------- */
+/* ---------- W1 · 三层景深背景（远景星点/星轨 · 中景档案室 vignette · 近景实底留给内容） ----------
+   蓝金学院调；禁止粉星云铺底（粉仅角色卡局部 --char） */
 body {
+    /* 远景星点 + 极淡金弧星轨 + 中景 vignette 叠入同一背景，避免伪元素盖住内容 */
     background:
-        radial-gradient(1100px 560px at 50% -10%, rgba(107, 138, 255, 0.1), transparent 58%),
+        radial-gradient(ellipse 85% 70% at 50% 45%, transparent 38%, rgba(4, 6, 14, 0.52) 100%),
+        radial-gradient(1.2px 1.2px at 12% 18%, rgba(240, 244, 255, 0.55), transparent),
+        radial-gradient(1px 1px at 28% 42%, rgba(168, 216, 255, 0.4), transparent),
+        radial-gradient(1.4px 1.4px at 47% 12%, rgba(240, 244, 255, 0.35), transparent),
+        radial-gradient(1px 1px at 63% 28%, rgba(168, 216, 255, 0.45), transparent),
+        radial-gradient(1.2px 1.2px at 78% 16%, rgba(240, 244, 255, 0.4), transparent),
+        radial-gradient(1px 1px at 88% 38%, rgba(168, 216, 255, 0.32), transparent),
+        radial-gradient(1px 1px at 18% 68%, rgba(240, 244, 255, 0.28), transparent),
+        radial-gradient(1.3px 1.3px at 55% 72%, rgba(168, 216, 255, 0.3), transparent),
+        radial-gradient(1px 1px at 92% 62%, rgba(240, 244, 255, 0.25), transparent),
+        radial-gradient(1px 1px at 35% 88%, rgba(168, 216, 255, 0.22), transparent),
+        radial-gradient(ellipse 120% 40% at 50% -8%, transparent 42%, rgba(232, 197, 106, 0.045) 48%, transparent 56%),
+        radial-gradient(ellipse 90% 28% at 70% 8%, transparent 50%, rgba(232, 197, 106, 0.03) 56%, transparent 64%),
+        radial-gradient(1100px 560px at 50% -10%, rgba(107, 138, 255, 0.09), transparent 58%),
         linear-gradient(180deg,
             var(--stf-bg-top) 0%,
             var(--stf-bg-mid) 42%,
@@ -78,13 +93,14 @@ body {
     background-attachment: fixed;
     color: var(--stf-text);
 }
+/* 近景之上：薄膜噪点（pointer-events 穿透） */
 body::after {
     content: "";
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 50;
-    opacity: 0.035;
+    opacity: 0.04;
     mix-blend-mode: soft-light;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
     background-size: 180px 180px;
@@ -667,25 +683,48 @@ body.forum-page .donate-btn-primary {
     z-index: var(--stf-z-edge) !important;
 }
 
-/* ---------- B4 · 角色环深度光 / 爱弥斯点缀不染整区 ---------- */
+/* ---------- B4 / W1–W2 · 展柜光池 + 倾斜环深度光 / 爱弥斯点缀不染整区 ---------- */
 .archive-orbit-stage {
-    perspective: 1500px;
+    perspective: 1600px;
+    width: min(980px, 100%);
+    height: 560px;
 }
 .archive-orbit-stage::before {
     content: "";
     position: absolute;
     left: 50%;
-    top: 58%;
-    width: min(520px, 78%);
-    height: 48px;
-    transform: translate(-50%, -50%);
-    background: radial-gradient(ellipse, rgba(107, 138, 255, 0.18), transparent 70%);
-    filter: blur(10px);
+    bottom: 6%;
+    width: min(640px, 88%);
+    height: 72px;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse, rgba(107, 138, 255, 0.32), rgba(232, 197, 106, 0.06) 42%, transparent 72%);
+    filter: blur(12px);
     pointer-events: none;
     z-index: 0;
 }
+.archive-orbit-stage::after {
+    content: "";
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: 4%;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, rgba(168, 216, 255, 0.35), rgba(232, 197, 106, 0.2), rgba(168, 216, 255, 0.35), transparent);
+    box-shadow: 0 0 18px rgba(107, 138, 255, 0.2);
+    pointer-events: none;
+    z-index: 0;
+}
+.archive-orbit-ring {
+    transform: rotateX(20deg);
+    transform-origin: 50% 58%;
+    transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.archive-orbit-ring.is-paused {
+    transform: rotateX(8deg);
+}
 .archive-orbit-ring .archive-float.is-orbit-item {
-    transition: filter 0.35s ease, opacity 0.35s ease, brightness 0.35s ease;
+    transition: filter 0.35s ease, opacity 0.35s ease;
 }
 .archive-orbit-ring .archive-float.is-orbit-item .character-archive-card {
     border-radius: 12px;
@@ -694,7 +733,7 @@ body.forum-page .donate-btn-primary {
         inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 .archive-orbit-ring.is-paused .archive-float.is-orbit-item {
-    filter: brightness(0.92);
+    filter: brightness(0.96);
 }
 .character-archive-card.is-featured {
     background: linear-gradient(180deg, rgba(255, 107, 157, 0.1), rgba(255, 255, 255, 0.035));
@@ -809,6 +848,11 @@ body.forum-page .donate-btn-primary {
     .stf-dial-input.is-locked,
     .stf-tuner.is-expanded .stf-dial {
         animation: none !important;
+    }
+    .archive-orbit-ring,
+    .archive-orbit-ring.is-paused {
+        transform: none !important;
+        transition: none !important;
     }
     .stf-card,
     .stf-card-inner,

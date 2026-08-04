@@ -265,7 +265,7 @@
                         <span class="loc-name">拉贝尔学部</span>
                         <span class="loc-desc">隧者适格者的训练与研究</span>
                     </div>
-                    <div class="location-option" data-location="拉海洛" data-desc="故乡的冰雪与极光">
+                    <div class="location-option" data-location="拉海洛" data-desc="故乡的冰雪与极光" data-easter-lake>
                         <svg class="loc-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/><circle cx="12" cy="12" r="3"/></svg>
                         <span class="loc-name">拉海洛</span>
                         <span class="loc-desc">故乡的冰雪与极光</span>
@@ -414,6 +414,8 @@
                         <span class="status-dot"></span>
                     </div>
                 </div>
+                <!-- 设定：构型切换 · 爱弥斯/机兵；双击或长按剪影 crossfade -->
+                <div class="aimisi-form-stage" data-aimisi-form-switch></div>
 
                 <div class="profile-info">
                     <div class="profile-name-row">
@@ -436,7 +438,7 @@
                         <span class="tag tag-pink">#飞行雪绒</span>
                         <span class="tag tag-purple">#星炬学院</span>
                         <span class="tag tag-blue">#电子幽灵</span>
-                        <span class="tag tag-white">#拉海洛</span>
+                        <span class="tag tag-white" data-easter-lake title="渐湖记忆">#拉海洛</span>
                         <span class="tag tag-pink">#隧者兵装</span>
                         <span class="tag tag-purple">#调频9072</span>
                     </div>
@@ -1776,6 +1778,7 @@
     <script defer src="js/particles.js"></script>
     <div id="secret-portal-root"></div>
     <script defer src="js/secret-portal.js"></script>
+    <script defer src="js/snow-easter.js"></script>
     <script defer src="js/main.js"></script>
     <!-- 管理员登录 Modal（替代原生 prompt，移动端友好） -->
     <div class="admin-modal-overlay" id="admin-login-modal" hidden>
