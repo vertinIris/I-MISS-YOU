@@ -103,7 +103,15 @@
 
     function getSenderName() {
         var user = currentUser();
-        if (user && user.name) return user.name;
+        if (user && user.name) {
+            var n = String(user.name).trim();
+            /* 与 StarTorchAuth 对齐：占位默认名不当作真实署名 */
+            if (n && n !== '匿名信号源') return n;
+            if (user.displayEmail) return String(user.displayEmail).split('@')[0];
+            if (user.email && String(user.email).indexOf('@startorch.example.com') === -1) {
+                return String(user.email).split('@')[0];
+            }
+        }
         var saved = '';
         try { saved = localStorage.getItem('stf_chat_nick') || ''; } catch (e) {}
         return saved || '匿名信号源';
@@ -483,6 +491,52 @@
                 broadcastTyping();
             });
         }
+        if (els.expand) {
+            els.expand.addEventListener('click', function () { toggleChatExpand(); });
+        }
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && els.card && els.card.classList.contains('is-chat-expanded')) {
+                setChatExpanded(false);
+            }
+        });
+    }
+
+    function ensureBackdrop() {
+        var bd = document.getElementById('stf-chat-backdrop');
+        if (bd) return bd;
+        bd = document.createElement('div');
+        bd.id = 'stf-chat-backdrop';
+        bd.className = 'stf-chat-backdrop';
+        bd.hidden = true;
+        bd.addEventListener('click', function () { setChatExpanded(false); });
+        document.body.appendChild(bd);
+        return bd;
+    }
+
+    function setChatExpanded(on) {
+        if (!els.card) return;
+        var bd = ensureBackdrop();
+        els.card.classList.toggle('is-chat-expanded', !!on);
+        document.body.classList.toggle('stf-chat-expanded-open', !!on);
+        bd.hidden = !on;
+        if (els.expand) {
+            els.expand.setAttribute('aria-expanded', on ? 'true' : 'false');
+            els.expand.textContent = on ? '收起' : '放大';
+            els.expand.title = on ? '收起回侧栏' : '放大聊天面板';
+        }
+        /* 放大时确保侧栏面板可见，便于同一 DOM 展示 */
+        var panel = $('stf-chat-panel');
+        var entry = $('stf-chat-entry');
+        if (on && panel) {
+            panel.hidden = false;
+            if (entry) entry.setAttribute('aria-expanded', 'true');
+        }
+        requestAnimationFrame(scrollToBottom);
+    }
+
+    function toggleChatExpand() {
+        if (!els.card) return;
+        setChatExpanded(!els.card.classList.contains('is-chat-expanded'));
     }
 
     function setupBroadcast() {
@@ -504,11 +558,21 @@
         els.online = $('stf-chat-online');
         els.typing = $('stf-chat-typing');
         els.counter = $('stf-chat-counter');
+        els.card = $('stf-chat-card');
+        els.expand = $('stf-chat-expand');
         if (!els.list) return;
 
         bindEvents();
         setupBroadcast();
         touchParticipant(getSenderName());
+
+        /* 登录态变化时刷新在线署名提示（不改历史消息） */
+        if (window.StarTorchAuth && window.StarTorchAuth.onChange) {
+            window.StarTorchAuth.onChange(function () {
+                touchParticipant(getSenderName());
+                refreshPresence();
+            });
+        }
 
         var c = cloud();
         if (c && c.onChatRealtime) {

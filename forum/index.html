@@ -175,6 +175,11 @@
                         </button>
                     </div>
 
+                    <div class="stf-staff-bar" id="stf-staff-bar" hidden role="status">
+                        <span class="stf-staff-badge" id="stf-staff-role">管理员模式</span>
+                        <span class="stf-staff-hint">帖子/评论右下角可「隐藏」；写操作由云端 RLS 校验。</span>
+                    </div>
+
                     <div class="stf-tag-bar" aria-label="角色标签筛选">
                         <span class="tag-category-label">角色</span>
                         <button type="button" class="stf-tag-chip" data-tag="爱弥斯">爱弥斯</button>
@@ -330,10 +335,13 @@
                             </span>
                         </button>
                         <div class="stf-chat-panel" id="stf-chat-panel" hidden>
-                            <div class="stf-chat-card">
+                            <div class="stf-chat-card" id="stf-chat-card">
                                 <div class="stf-chat-header">
                                     <span class="stf-chat-online" id="stf-chat-online">星域公共频道</span>
                                     <span class="stf-aside-meta" id="stf-stat-online" hidden>0</span>
+                                    <div class="stf-chat-header-actions">
+                                        <button type="button" class="stf-chat-expand" id="stf-chat-expand" aria-expanded="false" title="放大聊天面板">放大</button>
+                                    </div>
                                 </div>
                                 <div class="stf-chat-messages" id="stf-chat-messages" role="log" aria-live="polite" aria-atomic="false" aria-label="聊天消息"></div>
                                 <div class="stf-chat-typing" id="stf-chat-typing" aria-live="polite" hidden></div>
@@ -362,20 +370,32 @@
             <div class="archive-album">
                 <div class="archive-album-shelf" aria-hidden="true"></div>
 
-                <!-- 爱弥斯（主卡 / 最高优先级） -->
-                <div class="archive-float archive-float--featured">
-                    <a class="character-archive-card is-featured glass" href="../characters/aimisi/index.html" style="--char: var(--aimisi-pink);">
-                        <span class="character-archive-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                        </span>
-                        <span class="character-archive-name">爱弥斯</span>
-                        <span class="character-archive-alias">飞行雪绒 · 电子幽灵</span>
-                        <span class="character-archive-line">星炬学院拉贝尔学部隧者共鸣者，秘密歌手，调频 9072 的主人。失踪之后，以「飞行雪绒」的身份在深夜电波里唱歌 —— 只要抬头，那颗星总能找到你。</span>
-                        <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
-                    </a>
-                </div>
-
                 <div class="archive-album-grid">
+
+                    <!-- 爱弥斯：栅格内强调（span 宽列），不破坏响应式 -->
+                    <div class="archive-float archive-float--featured">
+                        <a class="character-archive-card is-featured glass" href="../characters/aimisi/index.html" style="--char: var(--aimisi-pink);">
+                            <span class="character-archive-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            </span>
+                            <span class="character-archive-name">爱弥斯</span>
+                            <span class="character-archive-alias">飞行雪绒 · 电子幽灵</span>
+                            <span class="character-archive-line">星炬学院拉贝尔学部隧者共鸣者，秘密歌手，调频 9072 的主人。失踪之后，以「飞行雪绒」的身份在深夜电波里唱歌 —— 只要抬头，那颗星总能找到你。</span>
+                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                        </a>
+                    </div>
+
+                    <div class="archive-float">
+                        <a class="character-archive-card glass" href="../characters/drifter/index.html" style="--char: var(--drifter-blue);">
+                            <span class="character-archive-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                            </span>
+                            <span class="character-archive-name">漂泊者</span>
+                            <span class="character-archive-alias">异乡的御者 · 玩家化身</span>
+                            <span class="character-archive-line">从异乡而来的频率旅人，拉海洛的御者，爱弥斯眼中的家人；学院暗面调查的同行者。</span>
+                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                        </a>
+                    </div>
 
                     <div class="archive-float">
                         <a class="character-archive-card glass" href="../characters/denia/index.html" style="--char: var(--denia-lavender);">
@@ -418,8 +438,8 @@
                             <span class="character-archive-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
                             </span>
-                        <span class="character-archive-name">莫宁</span>
-                        <span class="character-archive-alias">星枢演构 · 深空学者</span>
+                            <span class="character-archive-name">莫宁</span>
+                            <span class="character-archive-alias">星枢演构 · 深空学者</span>
                             <span class="character-archive-line">深空联合学者，星炬学院隧者工学部教授，热熔长刃共鸣者。</span>
                             <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
                         </a>

@@ -101,6 +101,15 @@
             try {
                 var res = await client.auth.getSession();
                 if (res && res.data && res.data.session) return res.data.session;
+
+                /* 已有真实通行证镜像时，勿抢先匿名登录覆盖共享会话（竞态窗口） */
+                var authUser = (window.StarTorchAuth && window.StarTorchAuth.getUser)
+                    ? window.StarTorchAuth.getUser() : null;
+                if (authUser && authUser.email && String(authUser.email).indexOf('@startorch.example.com') === -1) {
+                    var retry = await client.auth.getSession();
+                    if (retry && retry.data && retry.data.session) return retry.data.session;
+                }
+
                 var anon = await client.auth.signInAnonymously();
                 if (anon && anon.data && anon.data.user) {
                     try {
@@ -116,6 +125,9 @@
             } catch (e) {
                 console.warn('[forum-cloud] ensureSession 失败', e);
                 return null;
+            } finally {
+                /* 允许下次重新探测（会话可能已由主站登录刷新） */
+                setTimeout(function () { sessionPromise = null; }, 0);
             }
         })();
         return sessionPromise;

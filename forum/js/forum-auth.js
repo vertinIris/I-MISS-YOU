@@ -190,7 +190,7 @@ window.StarTorchAuth = (function () {
         });
     }
 
-    function publicView(uid, name, color, joined, posts, email, authMode) {
+    function publicView(uid, name, color, joined, posts, email, authMode, role) {
         return {
             key: uid,
             name: name,
@@ -201,7 +201,9 @@ window.StarTorchAuth = (function () {
             /* 'email' = 真实邮箱身份；'nickname' = 昵称/匿名口令身份 */
             authMode: authMode || (isSyntheticEmail(email) ? 'nickname' : (email ? 'email' : null)),
             /* 合成邮箱不对外展示（避免用户误以为那是自己的邮箱） */
-            displayEmail: (email && !isSyntheticEmail(email)) ? email : null
+            displayEmail: (email && !isSyntheticEmail(email)) ? email : null,
+            /* profiles.role：user / moderator / admin（论坛管理 UI 用） */
+            role: role || 'user'
         };
     }
 
@@ -209,11 +211,28 @@ window.StarTorchAuth = (function () {
     function loadMirror() { try { return JSON.parse(safeGet(SESSION_MIRROR_KEY)); } catch (e) { return null; } }
     function clearMirror() { safeRemove(SESSION_MIRROR_KEY); }
 
+    /* 主站注册未采集昵称时，profiles.nickname 默认为「匿名信号源」——不得当作真实展示名 */
+    function isPlaceholderName(n) {
+        var s = String(n || '').trim();
+        if (!s) return true;
+        return s === '匿名信号源' || s === '星炬学院访客';
+    }
+
+    function pickDisplayName(profile, meta, email, synthetic) {
+        if (profile && !isPlaceholderName(profile.nickname)) return String(profile.nickname).trim();
+        if (meta && !isPlaceholderName(meta.nickname)) return String(meta.nickname).trim();
+        if (meta && !isPlaceholderName(meta.full_name)) return String(meta.full_name).trim();
+        if (email && !synthetic) {
+            var local = String(email).split('@')[0];
+            if (local && !isPlaceholderName(local)) return local;
+        }
+        return '星炬学院访客';
+    }
+
     /**
      * 两条身份路径的唯一数据出口。
-     * 昵称账号在 profiles 表里通常没有对应行（触发器只覆盖主站注册），
-     * 因此必须回落到 user_metadata，否则展示名会退化成合成邮箱前缀 stf_xxxx。
-     * 优先级：profiles 表 > user_metadata > 邮箱前缀 > 兜底文案
+     * 优先级：有效 profiles.nickname > 有效 user_metadata > 邮箱前缀 > 兜底文案
+     * （显式跳过「匿名信号源」等占位默认值，避免主站真实登录后论坛仍显示匿名）
      */
     function applyUser(user, profile) {
         var meta = (user && user.user_metadata) || {};
@@ -221,19 +240,16 @@ window.StarTorchAuth = (function () {
         var synthetic = isSyntheticEmail(email);
         var authMode = meta.auth_mode || (synthetic ? 'nickname' : (email ? 'email' : null));
 
-        var name = (profile && profile.nickname)
-            || meta.nickname
-            || (email && !synthetic ? String(email).split('@')[0] : '')
-            || '星炬学院访客';
-
+        var name = pickDisplayName(profile, meta, email, synthetic);
         var color = sanitizeColor((profile && profile.avatar_color) || meta.avatar_color);
+        var role = (profile && profile.role) || meta.role || 'user';
 
         var joined = (profile && profile.created_at) ? Date.parse(profile.created_at)
             : (user && user.created_at) ? Date.parse(user.created_at)
             : (current ? current.joined : Date.now());
 
         var v = publicView(user.id, name, color, joined,
-            current ? current.posts : 0, email, authMode);
+            current ? current.posts : 0, email, authMode, role);
         current = v;
         saveMirror(v);
         emit();
@@ -243,9 +259,13 @@ window.StarTorchAuth = (function () {
     function loadSession() {
         var mirror = loadMirror();
         if (mirror && mirror.key) {
-            /* 带上 email / authMode，避免刷新瞬间管理员按钮闪断 */
+            /* 带上 email / authMode / role，避免刷新瞬间管理员按钮闪断 */
             current = publicView(mirror.key, mirror.name, mirror.color, mirror.joined,
-                mirror.posts, mirror.email, mirror.authMode);
+                mirror.posts, mirror.email, mirror.authMode, mirror.role);
+            /* 镜像若仍是占位名，等待云端 hydrate 纠正 */
+            if (isPlaceholderName(current.name) && mirror.email && !isSyntheticEmail(mirror.email)) {
+                current.name = String(mirror.email).split('@')[0] || current.name;
+            }
         } else {
             current = null;
         }
@@ -270,8 +290,27 @@ window.StarTorchAuth = (function () {
         client.auth.getSession().then(function (res) {
             if (res && res.data && res.data.session && res.data.session.user) {
                 hydrate(client, res.data.session.user);
+            } else if (current && current.email && !isSyntheticEmail(current.email)) {
+                /* 有邮箱镜像但云端无会话：清镜像，避免伪登录态 */
+                clearMirror();
+                current = null;
+                emit();
             }
         }).catch(function () { /* 无会话则保持本地镜像 */ });
+
+        /* 监听主站 / 本页登录态变化，实时刷新顶栏与聊天署名 */
+        if (client.auth.onAuthStateChange && !refreshFromCloud._bound) {
+            refreshFromCloud._bound = true;
+            client.auth.onAuthStateChange(function (event, session) {
+                if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
+                    if (session && session.user) hydrate(client, session.user);
+                } else if (event === 'SIGNED_OUT') {
+                    clearMirror();
+                    current = null;
+                    emit();
+                }
+            });
+        }
     }
 
     /* ---------- 核心：注册 / 登录 / 登出（双轨身份，共用解析层） ---------- */
@@ -279,7 +318,7 @@ window.StarTorchAuth = (function () {
     /* 登录成功后统一拉取 profiles 补全资料，失败则回落 user_metadata */
     function hydrate(client, user) {
         return client.from('profiles')
-            .select('nickname, avatar_color, created_at')
+            .select('nickname, avatar_color, created_at, role')
             .eq('id', user.id).single()
             .then(function (p) { return applyUser(user, (p && p.data) ? p.data : null); })
             .catch(function () { return applyUser(user, null); });
@@ -373,15 +412,19 @@ window.StarTorchAuth = (function () {
     function onChange(fn) { if (typeof fn === 'function') listeners.push(fn); }
 
     /**
-     * 多管理员判定（仅用于 UI 显隐，真正权限由 Supabase RLS 的 is_forum_admin() 裁定）。
-     * 昵称身份走合成邮箱，域名固定为保留域，结构上不可能出现在 forum_admins 中，
-     * 这里再显式拦一道，避免任何伪造 email 字段的尝试影响界面。
+     * 管理员 / 版主判定（仅用于 UI 显隐；写操作由 Supabase RLS 裁定）。
+     * - forum_admins 邮箱命中 → admin
+     * - profiles.role 为 moderator / admin → 同等管理 UI
+     * 昵称身份走合成邮箱，结构上不可能出现在 forum_admins。
      */
-    function isForumAdmin() {
-        if (!current || !current.email) return false;
-        if (isSyntheticEmail(current.email)) return false;
+    function isForumStaff() {
+        if (!current) return false;
+        var role = String(current.role || '').toLowerCase();
+        if (role === 'admin' || role === 'moderator') return true;
+        if (!current.email || isSyntheticEmail(current.email)) return false;
         return FORUM_ADMIN_EMAILS.indexOf(String(current.email).toLowerCase()) !== -1;
     }
+    function isForumAdmin() { return isForumStaff(); }
 
     /* ---------- UI（以下逻辑保持不变） ---------- */
     function $(id) { return document.getElementById(id); }
@@ -660,6 +703,7 @@ window.StarTorchAuth = (function () {
         logout: logout,
         onChange: onChange,
         isForumAdmin: isForumAdmin,
+        isForumStaff: isForumStaff,
         bumpPostCount: bumpPostCount,
         openPanel: openPanel,
         /* 身份层工具（供调试 / 未来复用；昵称→邮箱为纯函数，可离线推算） */

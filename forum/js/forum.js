@@ -140,7 +140,7 @@
         }
     }
 
-    /* 登录态变化时，实时刷新两个表单的署名控件 */
+    /* 登录态变化时，实时刷新署名控件 + 管理按钮可见性 */
     function syncAuthUI() {
         ['stf-composer', 'stf-submit'].forEach(function (prefix) {
             if (document.getElementById(prefix + '-nickname')) restoreNickname(prefix);
@@ -151,6 +151,29 @@
             trigger.textContent = user
                 ? (user.name + '，说点什么…')
                 : '说点什么，或分享你的鸣潮同人…';
+        }
+        updateStaffBar();
+        /* 登录后补上隐藏按钮；登出后移除 */
+        try { renderCommunity(); } catch (e) { /* 尚未初始化时忽略 */ }
+    }
+
+    function isStaff() {
+        return !!(window.StarTorchAuth && (
+            (window.StarTorchAuth.isForumStaff && window.StarTorchAuth.isForumStaff()) ||
+            (window.StarTorchAuth.isForumAdmin && window.StarTorchAuth.isForumAdmin())
+        ));
+    }
+
+    function updateStaffBar() {
+        var bar = document.getElementById('stf-staff-bar');
+        if (!bar) return;
+        var on = isStaff();
+        bar.hidden = !on;
+        var roleEl = document.getElementById('stf-staff-role');
+        if (roleEl && on) {
+            var u = currentUser();
+            var role = (u && u.role) || 'admin';
+            roleEl.textContent = role === 'moderator' ? '版主模式' : '管理员模式';
         }
     }
 
@@ -328,7 +351,7 @@
                     '<svg viewBox="0 0 24 24" fill="' + (s.bookmarked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>' +
                     '<span>收藏</span>' +
                 '</button>' +
-                (window.StarTorchAuth && window.StarTorchAuth.isForumAdmin() ? '<button type="button" class="stf-card-action stf-admin-hide" data-action="admin-hide" title="管理员：隐藏该帖">' +
+                (isStaff() ? '<button type="button" class="stf-card-action stf-admin-hide" data-action="admin-hide" title="版主/管理员：隐藏该帖">' +
                     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>' +
                     '<span>隐藏</span>' +
                 '</button>' : '') +
@@ -380,7 +403,7 @@
                 '<span class="stf-comment-name" style="color:' + sanitizeColor(c.color) + '">' + escapeHTML(c.name) + '</span>' +
                 '<span class="stf-comment-text">' + escapeHTML(c.text) + '</span>' +
                 '<span class="stf-comment-time">' + escapeHTML(c.timeStr) + '</span>' +
-                (window.StarTorchAuth && window.StarTorchAuth.isForumAdmin() ? '<button type="button" class="stf-comment-hide" data-action="admin-hide-comment" data-hide-sub="' + targetId + '" data-hide-name="' + escapeHTML(c.name) + '" data-hide-text="' + escapeHTML(c.text) + '" title="管理员：隐藏该评论">✕</button>' : '') +
+                (isStaff() ? '<button type="button" class="stf-comment-hide" data-action="admin-hide-comment" data-hide-sub="' + targetId + '" data-hide-name="' + escapeHTML(c.name) + '" data-hide-text="' + escapeHTML(c.text) + '" title="版主/管理员：隐藏该评论">✕</button>' : '') +
             '</div>';
         }).join('');
     }
@@ -521,19 +544,21 @@
         }
     }
 
-    /* 管理员操作（多管理员，权限平等；UI 显隐由 isForumAdmin 控制，实际删除由 RLS 裁定） */
+    /* 版主/管理员操作（UI 由 isStaff 控制；云端由 is_forum_admin()/profiles.role 裁定） */
     function hideSubmission(id) {
-        if (!window.StarTorchAuth || !window.StarTorchAuth.isForumAdmin()) return;
+        if (!isStaff()) return;
+        if (!window.confirm('确认隐藏该帖？隐藏后普通访客将不可见。')) return;
         var s = updateSubmission(id, function (item) { item.is_hidden = true; });
         if (s) {
             if (window.StarTorchCloud) window.StarTorchCloud.updateSubmission(s, function () {});
             renderCommunity();
-            showToast('已隐藏该帖（管理员操作）');
+            showToast('已隐藏该帖');
         }
     }
 
     function hideComment(targetId, name, text) {
-        if (!window.StarTorchAuth || !window.StarTorchAuth.isForumAdmin()) return;
+        if (!isStaff()) return;
+        if (!window.confirm('确认隐藏该评论？')) return;
         var list = StarTorchData.getComments(targetId);
         var updated = (list || []).map(function (c) {
             if (c.name === name && c.text === text) c.is_hidden = true;
@@ -542,7 +567,7 @@
         StarTorchData.saveComments(targetId, updated);
         if (window.StarTorchCloud) window.StarTorchCloud.hideComment(targetId, name, text, function () {});
         renderComments(targetId);
-        showToast('已隐藏该评论（管理员操作）');
+        showToast('已隐藏该评论');
     }
 
     function toggleComments(id) {
