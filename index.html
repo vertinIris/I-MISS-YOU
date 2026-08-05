@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="飞行雪绒 — 星炬学院的日常。一个打破第四面墙的沉浸式同人创作项目。">
     <meta name="author" content="同人创作">
-    <meta name="theme-color" content="#FF6B9D">
+    <meta name="theme-color" content="#100810">
     <!-- Open Graph / 分享预览 -->
     <meta property="og:type" content="website">
     <meta property="og:locale" content="zh_CN">
@@ -37,9 +37,10 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
 
     <!-- Styles -->
+    <link rel="stylesheet" href="css/tokens-snow.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/secret-portal.css">
     <link rel="stylesheet" href="css/community-polish.css">
@@ -283,25 +284,29 @@
                 </div>
             </div>
             <h1 class="hero-title">
-                <span class="gradient-text">飞行雪绒</span>
+                <span class="hero-title-mark">飞行雪绒</span>
             </h1>
             <p class="hero-tagline">星炬学院的日常</p>
-            <p class="hero-subtitle">爱弥斯的秘密频道 · 粉白星光深夜电台</p>
+            <p class="hero-subtitle">深夜调频 · 粉白雪绒里的秘密频道</p>
+            <p class="hero-freq" aria-hidden="true">
+                <span class="sn-freq-pulse"></span>
+                <span>FREQ · 87.7 · ON AIR</span>
+            </p>
             <div class="hero-actions">
                 <a href="#timeline" class="btn-primary magnetic">
-                    <span>查看动态</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+                    <span>收听动态</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon" aria-hidden="true">
                         <line x1="5" y1="12" x2="19" y2="12"/>
                         <polyline points="12 5 19 12 12 19"/>
                     </svg>
                 </a>
                 <a href="#music" class="btn-music magnetic">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon" aria-hidden="true">
                         <path d="M9 18V5l12-2v13"/>
                         <circle cx="6" cy="18" r="3"/>
                         <circle cx="18" cy="16" r="3"/>
                     </svg>
-                    <span>我的音乐</span>
+                    <span>打开歌单</span>
                 </a>
             </div>
         </div>

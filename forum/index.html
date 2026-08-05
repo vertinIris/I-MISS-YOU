@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>鸣潮同人论坛 · 星炬学院</title>
+    <title>星炬学院 · 公共研讨频段</title>
     <meta name="description" content="星炬学院主论坛 —— 鸣潮角色档案、世界观考据、同人创作与社区讨论的独立聚合站。">
-    <meta name="theme-color" content="#0B0E1A">
+    <meta name="theme-color" content="#0A101C">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="zh_CN">
     <meta property="og:site_name" content="星炬学院论坛">
@@ -18,12 +18,14 @@
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/tokens-stf.css">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/donation.css">
     <link rel="stylesheet" href="forum.css">
     <link rel="stylesheet" href="forum-easter.css">
     <link rel="stylesheet" href="forum-theme.css">
+    <link rel="stylesheet" href="forum-visual.css">
     <script>
         /* 沿用主站主题偏好，仅做视觉同步；不影响功能独立性 */
         (function () {
@@ -42,12 +44,11 @@
         <div class="nav-container">
             <a href="#top" class="nav-logo">
                 <svg class="nav-logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <g stroke="#A8D8FF" stroke-width="2" stroke-linecap="round" opacity="0.9">
-                        <line x1="20" y1="4" x2="20" y2="36"/><line x1="4" y1="12" x2="36" y2="28"/><line x1="4" y1="28" x2="36" y2="12"/>
-                    </g>
-                    <circle cx="20" cy="20" r="4" fill="#FFFFFF" opacity="0.9"/>
+                    <path d="M20 4v28" stroke="#A8C4F0" stroke-width="2.2" stroke-linecap="round"/>
+                    <path d="M20 8l10 6v4L20 24 10 18v-4L20 8z" fill="#C9A227" opacity="0.9"/>
+                    <circle cx="20" cy="6" r="2.2" fill="#E4C86A"/>
                 </svg>
-                <span>鸣潮同人论坛</span>
+                <span>星炬学院</span>
             </a>
             <div class="nav-links" id="nav-links">
                 <a href="#top" class="nav-link">首页</a>
@@ -67,11 +68,12 @@
 
     <header class="forum-hero">
         <div class="forum-hero-content">
-            <span class="forum-hero-label">STARTORCH · 主论坛</span>
-            <h1 class="forum-hero-title">鸣潮同人论坛</h1>
+            <span class="forum-hero-label">STARTORCH · ARCHIVE</span>
+            <h1 class="forum-hero-brand">星炬学院</h1>
+            <p class="forum-hero-title">公共研讨频段</p>
             <p class="forum-hero-sub">
-                星炬学院的创作集合 —— 所有鸣潮同好的核心聚集地。<br>
-                翻阅角色档案、考据世界观、在讨论区发帖、加入话题。
+                档案室灯还亮着。翻阅共鸣者注疏、考据世界观、在讨论区留下你的频率。<br>
+                这里是学院的公共频道 —— 不是深夜私语，是白板上的星图。
             </p>
             <div class="forum-hero-quicknav" role="navigation" aria-label="核心入口">
                 <a class="hero-pill" href="#stf-community">

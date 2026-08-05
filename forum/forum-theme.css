@@ -6,15 +6,15 @@
 
 /* ---------- B1 · 统一蓝金令牌 + surface 三档 ---------- */
 :root {
-    --stf-brand: #6B8AFF;
-    --stf-brand-light: #A8D8FF;
-    --stf-gold: #E8C56A;
-    --stf-gold-soft: #F3E0A3;
-    --stf-bg-top: #0A0C14;
-    --stf-bg-mid: #0B0E1A;
-    --stf-bg-bottom: #080A12;
-    --stf-text: #F0F4FF;
-    --stf-text-muted: rgba(240, 244, 255, 0.65);
+    --stf-brand: #6d8fd6;
+    --stf-brand-light: #a8c4f0;
+    --stf-gold: #c9a227;
+    --stf-gold-soft: #e4c86a;
+    --stf-bg-top: #0A101C;
+    --stf-bg-mid: #0C1220;
+    --stf-bg-bottom: #080E18;
+    --stf-text: #EEF3FB;
+    --stf-text-muted: rgba(238, 243, 251, 0.65);
 
     /* surface 三档 */
     --stf-surface-0: rgba(10, 12, 22, 0.96);           /* 正文实底 */

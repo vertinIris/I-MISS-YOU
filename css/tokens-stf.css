@@ -1,0 +1,81 @@
+/* Hallmark · genre: modern-minimal × academic · macrostructure: Ecosystem Index
+ * theme: custom Star-Torch Navy · vibe: "academy blue-gold seminar pass"
+ * paper: oklch(14% 0.03 250) · accent: oklch(68% 0.12 255) · gold: oklch(78% 0.12 85)
+ * display: Noto Serif SC · axes: dark / roman-serif-cjk / cool-blue · nav: N6 · footer: Ft1
+ * pre-emit critique: P5 H5 E4 S5 R5 V5
+ */
+
+:root {
+  --stf-paper: oklch(14% 0.03 250);
+  --stf-paper-2: oklch(18% 0.035 250);
+  --stf-paper-3: oklch(22% 0.04 252);
+  --stf-ink: oklch(95% 0.015 250);
+  --stf-ink-2: oklch(78% 0.03 250);
+  --stf-ink-3: oklch(62% 0.03 250);
+
+  --stf-brand: #6d8fd6;
+  --stf-brand-light: #a8c4f0;
+  --stf-brand-deep: #3d5aa8;
+  --stf-gold: #c9a227;
+  --stf-gold-soft: #e4c86a;
+  --stf-bg-top: #0a101c;
+  --stf-bg-mid: #0c1220;
+  --stf-bg-bottom: #080e18;
+  --stf-text: #eef3fb;
+  --stf-text-muted: oklch(78% 0.03 250 / 0.68);
+
+  --stf-surface-0: oklch(14% 0.03 250 / 0.96);
+  --stf-surface-1: oklch(96% 0.01 250 / 0.04);
+  --stf-surface-2: oklch(96% 0.01 250 / 0.08);
+  --stf-edge: oklch(78% 0.06 250 / 0.16);
+  --stf-edge-strong: oklch(78% 0.06 250 / 0.3);
+  --stf-inset: inset 0 1px 0 oklch(96% 0.01 250 / 0.08);
+  --stf-metal: 0 0 0 1px oklch(78% 0.06 250 / 0.14), var(--stf-inset);
+  --stf-focus: 0 0 0 2px oklch(14% 0.03 250 / 0.95), 0 0 0 4px oklch(78% 0.06 250 / 0.55);
+
+  --stf-z-nav: 900;
+  --stf-z-fab-tuner: 960;
+  --stf-z-fab-donate: 970;
+  --stf-z-edge: 980;
+  --stf-z-chat-backdrop: 1090;
+  --stf-z-chat-expand: 1100;
+  --stf-z-modal: 1200;
+  --stf-z-toast: 1300;
+  --stf-z-easter: 1400;
+
+  /* Override pink legacy tokens → academy blue (forum only) */
+  --aimisi-pink: #6d8fd6;
+  --aimisi-pink-light: #a8c4f0;
+  --aimisi-pink-soft: #8aa8e0;
+  --aimisi-pink-deep: #3d5aa8;
+  --color-pink: #6d8fd6;
+  --color-pink-light: #a8c4f0;
+  --color-pink-soft: #8aa8e0;
+  --color-pink-deep: #3d5aa8;
+  --c-primary: #6d8fd6;
+  --c-primary-strong: #3d5aa8;
+  --c-primary-soft: #a8c4f0;
+  --c-primary-dim: oklch(68% 0.12 255 / 0.14);
+  --surface-accent: oklch(68% 0.12 255 / 0.14);
+  --surface-accent-border: oklch(68% 0.12 255 / 0.35);
+  --shadow-glow: 0 0 22px oklch(68% 0.12 255 / 0.12);
+  --focus-ring: oklch(78% 0.06 250 / 0.55);
+
+  --font-display: "Noto Serif SC", "Source Han Serif SC", serif;
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", serif;
+  --font-sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --stf-radius-sm: 6px;
+  --stf-radius-md: 10px;
+  --stf-radius-lg: 14px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 140ms;
+  --dur-base: 240ms;
+}
+
+html, body {
+  overflow-x: clip;
+  color-scheme: dark;
+}

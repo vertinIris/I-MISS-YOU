@@ -1,0 +1,92 @@
+/* Hallmark · genre: atmospheric · macrostructure: Letter × Marquee Hero
+ * theme: custom Midnight-Rose · vibe: "night radio soft pink snow longing"
+ * paper: oklch(12% 0.02 350) · accent: oklch(72% 0.14 350) · display: ZCOOL XiaoWei + Noto Serif SC
+ * axes: dark / soft-serif-cjk / warm-rose · nav: N9 · footer: Ft5
+ * pre-emit critique: P5 H5 E4 S5 R4 V5
+ */
+
+:root {
+  /* Paper / ink */
+  --sn-paper: oklch(12% 0.02 350);
+  --sn-paper-2: oklch(16% 0.025 350);
+  --sn-paper-3: oklch(20% 0.03 348);
+  --sn-ink: oklch(96% 0.01 350);
+  --sn-ink-2: oklch(82% 0.02 350);
+  --sn-ink-3: oklch(68% 0.025 350);
+  --sn-rule: oklch(40% 0.04 350 / 0.35);
+
+  /* Accent — 雪绒粉（非紫） */
+  --sn-accent: oklch(72% 0.14 350);
+  --sn-accent-strong: oklch(64% 0.16 348);
+  --sn-accent-soft: oklch(84% 0.08 350);
+  --sn-mist: oklch(92% 0.03 350);
+  --sn-ice: oklch(78% 0.06 230);
+
+  /* Map into legacy tokens used across style.css */
+  --c-primary: #e879a8;
+  --c-primary-strong: #d4548c;
+  --c-primary-soft: #f5c0d8;
+  --c-primary-dim: oklch(72% 0.14 350 / 0.14);
+  --c-core-white: #f7f0f4;
+  --c-core-blue: #8eb4e8;
+  --c-core-blue-light: #c5dff8;
+
+  --color-pink: #e879a8;
+  --color-pink-light: #f5c0d8;
+  --color-pink-soft: #efa0c0;
+  --color-pink-deep: #d4548c;
+  --aimisi-pink: #e879a8;
+  --aimisi-pink-light: #f5c0d8;
+  --aimisi-pink-soft: #efa0c0;
+  --aimisi-pink-deep: #d4548c;
+  --aimisi-white: #faf4f7;
+
+  --bg-primary: #100810;
+  --bg-secondary: #161018;
+  --bg-tertiary: #1c141c;
+  --bg-gradient-1: #100810;
+  --bg-gradient-2: #180e16;
+  --bg-gradient-3: #0e0a12;
+
+  --text-primary: #faf4f7;
+  --text-secondary: #dcc8d4;
+  --text-tertiary: #a8909e;
+
+  --glass-bg: oklch(96% 0.01 350 / 0.04);
+  --glass-bg-hover: oklch(96% 0.01 350 / 0.07);
+  --glass-border: oklch(96% 0.01 350 / 0.1);
+  --glass-border-hover: oklch(72% 0.14 350 / 0.4);
+  --glass-blur: blur(12px) saturate(120%);
+
+  --surface-card: oklch(96% 0.01 350 / 0.045);
+  --surface-card-border: oklch(96% 0.01 350 / 0.1);
+  --surface-inset: oklch(96% 0.01 350 / 0.03);
+  --surface-accent: var(--c-primary-dim);
+  --surface-accent-border: oklch(72% 0.14 350 / 0.35);
+
+  --shadow-glow: 0 0 28px oklch(72% 0.14 350 / 0.12);
+  --focus-ring: oklch(72% 0.14 350 / 0.55);
+  --nav-bg: oklch(12% 0.02 350 / 0.82);
+
+  --font-display: "ZCOOL XiaoWei", "Noto Serif SC", "Source Han Serif SC", serif;
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", serif;
+  --font-sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
+  --dur-fast: 160ms;
+  --dur-base: 280ms;
+  --dur-slow: 520ms;
+
+  --sn-focus: 0 0 0 2px oklch(12% 0.02 350 / 0.95), 0 0 0 4px oklch(72% 0.14 350 / 0.55);
+}
+
+html, body {
+  overflow-x: clip;
+  color-scheme: dark;
+}

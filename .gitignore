@@ -8,3 +8,10 @@ node_modules/
 .supabase_dump/
 聊天记录/
 论坛内容/
+# 本地安装的设计 Skills（不入库）
+.cursor/skills/hallmark/
+.cursor/skills/front-end-checklist/
+.cursor/skills/ui-ux-pro-max/
+# 本地大预览图
+_preview-*.png
+*_preview*.png
