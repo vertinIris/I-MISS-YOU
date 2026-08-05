@@ -315,7 +315,26 @@
         });
     }
 
-    /* ============ Location Selector ============ */
+    /* ============ Location Selector（地址 / realm 同步论坛） ============ */
+    var LOCATION_REALM_FALLBACK = {
+        '星炬学院': 'startorch',
+        '拉贝尔学部': 'labelle',
+        '拉海洛': 'lahairo',
+        '雪原小屋': 'snow-cabin',
+        '电子海': 'digital-sea'
+    };
+
+    function applySnowRealm(loc, realm) {
+        var slug = realm || LOCATION_REALM_FALLBACK[loc] || 'startorch';
+        try {
+            document.documentElement.setAttribute('data-realm', slug);
+            if (document.body) document.body.setAttribute('data-realm', slug);
+        } catch (e) { /* ignore */ }
+        safeSetItem('snowfluff-location', loc || '星炬学院');
+        safeSetItem('snowfluff-realm', slug);
+        return slug;
+    }
+
     function initLocationSelector() {
         var selector = document.getElementById('location-selector');
         var dropdown = document.getElementById('location-dropdown');
@@ -323,36 +342,56 @@
         if (!selector || !dropdown || !current) return;
 
         var storedLoc = safeGetItem('snowfluff-location');
+        var options = dropdown.querySelectorAll('.location-option');
+
+        function setActive(opt) {
+            var loc = opt.getAttribute('data-location');
+            var realm = opt.getAttribute('data-realm');
+            current.textContent = '在线 · ' + loc;
+            for (var j = 0; j < options.length; j++) options[j].classList.remove('active');
+            opt.classList.add('active');
+            applySnowRealm(loc, realm);
+        }
 
         selector.addEventListener('click', function(e) {
             if (e.target.closest('.location-option')) return;
             e.stopPropagation();
             selector.classList.toggle('open');
+            var hero = document.getElementById('hero');
+            if (hero) hero.classList.toggle('loc-menu-open', selector.classList.contains('open'));
         });
 
         document.addEventListener('click', function(e) {
-            if (!selector.contains(e.target)) selector.classList.remove('open');
+            if (!selector.contains(e.target)) {
+                selector.classList.remove('open');
+                var heroClose = document.getElementById('hero');
+                if (heroClose) heroClose.classList.remove('loc-menu-open');
+            }
         });
 
-        var options = dropdown.querySelectorAll('.location-option');
         for (var i = 0; i < options.length; i++) {
             (function(opt) {
                 opt.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    var loc = opt.getAttribute('data-location');
-                    current.textContent = '在线 · ' + loc;
-                    for (var j = 0; j < options.length; j++) options[j].classList.remove('active');
-                    opt.classList.add('active');
+                    setActive(opt);
                     selector.classList.remove('open');
-                    safeSetItem('snowfluff-location', loc);
+                    var heroEl = document.getElementById('hero');
+                    if (heroEl) heroEl.classList.remove('loc-menu-open');
                 });
-                if (storedLoc && opt.getAttribute('data-location') === storedLoc) {
-                    current.textContent = '在线 · ' + storedLoc;
-                    for (var j = 0; j < options.length; j++) options[j].classList.remove('active');
-                    opt.classList.add('active');
-                }
             })(options[i]);
         }
+
+        var restored = null;
+        if (storedLoc) {
+            for (var k = 0; k < options.length; k++) {
+                if (options[k].getAttribute('data-location') === storedLoc) {
+                    restored = options[k];
+                    break;
+                }
+            }
+        }
+        if (restored) setActive(restored);
+        else if (options[0]) setActive(options[0]);
     }
 
     /* ============ Sparkle Particles ============ */

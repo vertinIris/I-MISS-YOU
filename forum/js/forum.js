@@ -2286,6 +2286,80 @@
         });
     }
 
+    /* ============ 主站地址 / realm 视觉同步 ============ */
+    var REALM_COPY = {
+        startorch: {
+            label: 'STARTORCH · ARCHIVE',
+            title: '公共研讨频段',
+            sub: '档案室灯还亮着。翻阅共鸣者注疏、考据世界观、在讨论区留下你的频率。<br>这里是学院的公共频道 —— 不是深夜私语，是白板上的星图。'
+        },
+        labelle: {
+            label: 'LABELLE · TRAINING',
+            title: '学部训练频段',
+            sub: '拉贝尔学部的黑板还没擦干净。隧者适格、共鸣笔记与训练记录，在这里继续往下写。'
+        },
+        lahairo: {
+            label: 'LAHAIRO · AURORA',
+            title: '冰原回响频段',
+            sub: '极光落在雪线上。故乡的风声、冰层下的震动，都会被这枚频段轻轻接住。'
+        },
+        'snow-cabin': {
+            label: 'SNOW CABIN · HOME',
+            title: '小屋暖炉频段',
+            sub: '雪原小屋的炉火还旺着。家人的冬天、短短的信，与学院之外的那一点温暖。'
+        },
+        'digital-sea': {
+            label: 'DIGITAL SEA · SIGNAL',
+            title: '电子海漂流频段',
+            sub: '信号在电子海里起伏。幽灵频道、未署名的回声 —— 仍能被听见的那一段。'
+        }
+    };
+
+    function applyForumRealm(loc, realm) {
+        var slug = realm || 'startorch';
+        var locationName = loc || '星炬学院';
+        try {
+            document.documentElement.setAttribute('data-realm', slug);
+            document.documentElement.setAttribute('data-location', locationName);
+            if (document.body) {
+                document.body.setAttribute('data-realm', slug);
+                document.body.setAttribute('data-location', locationName);
+            }
+        } catch (e) { /* ignore */ }
+
+        var chip = document.getElementById('stf-realm-label');
+        if (chip) chip.textContent = '在线 · ' + locationName;
+
+        var copy = REALM_COPY[slug] || REALM_COPY.startorch;
+        var labelEl = document.getElementById('forum-hero-label');
+        var titleEl = document.getElementById('forum-hero-title');
+        var subEl = document.getElementById('forum-hero-sub');
+        if (labelEl) labelEl.textContent = copy.label;
+        if (titleEl) titleEl.textContent = copy.title;
+        if (subEl) subEl.innerHTML = copy.sub;
+    }
+
+    function initRealmFromMainSite() {
+        var LOC_REALM = {
+            '星炬学院': 'startorch',
+            '拉贝尔学部': 'labelle',
+            '拉海洛': 'lahairo',
+            '雪原小屋': 'snow-cabin',
+            '电子海': 'digital-sea'
+        };
+        var boot = window.__STF_REALM__ || {};
+        var loc = boot.location;
+        var realm = boot.realm;
+        try {
+            if (!loc) loc = localStorage.getItem('snowfluff-location') || '星炬学院';
+            if (!realm) realm = localStorage.getItem('snowfluff-realm') || LOC_REALM[loc] || 'startorch';
+        } catch (e) {
+            loc = loc || '星炬学院';
+            realm = realm || 'startorch';
+        }
+        applyForumRealm(loc, realm);
+    }
+
     /* ============ Init ============ */
     function init() {
         if (!window.StarTorchData) {
@@ -2296,6 +2370,7 @@
         if (typeof SecurityShield !== 'undefined' && SecurityShield.init) {
             try { SecurityShield.init(); } catch (e) { console.warn('[StarTorchForum] SecurityShield.init failed', e); }
         }
+        initRealmFromMainSite();
         StarTorchData.ensureSeedData();
         bindEvents();
         updateFilterUI();

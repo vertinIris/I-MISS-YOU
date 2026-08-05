@@ -67,26 +67,27 @@ body.forum-page .nav-link:focus-visible {
   background: oklch(68% 0.12 255 / 0.16) !important;
 }
 
-/* —— Hero：品牌「星炬学院」优先 · 全出血档案室光 —— */
+/* —— Hero：品牌「星炬学院」优先 · 居中稳住视觉重心 —— */
 .forum-hero {
   min-height: min(88vh, 820px) !important;
   padding: 120px 24px 72px !important;
-  text-align: left !important;
-  align-items: flex-end !important;
-  justify-content: flex-start !important;
+  text-align: center !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 .forum-hero::before {
   background:
-    radial-gradient(circle at 18% 22%, oklch(68% 0.12 255 / 0.18), transparent 48%),
-    radial-gradient(circle at 82% 18%, oklch(78% 0.12 85 / 0.07), transparent 42%),
-    linear-gradient(105deg, oklch(14% 0.03 250 / 0.2) 0%, transparent 55%),
-    radial-gradient(circle at 40% 100%, oklch(68% 0.12 255 / 0.1), transparent 55%) !important;
+    radial-gradient(circle at 50% 28%, oklch(68% 0.12 255 / 0.18), transparent 52%),
+    radial-gradient(circle at 78% 18%, oklch(78% 0.12 85 / 0.07), transparent 42%),
+    linear-gradient(180deg, oklch(14% 0.03 250 / 0.12) 0%, transparent 55%),
+    radial-gradient(circle at 50% 100%, oklch(68% 0.12 255 / 0.1), transparent 55%) !important;
   animation: none !important;
 }
 .forum-hero-content {
   max-width: 720px !important;
-  margin: 0 !important;
-  text-align: left !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+  width: 100%;
 }
 .forum-hero-label {
   font-family: var(--font-mono);
@@ -97,6 +98,7 @@ body.forum-page .nav-link:focus-visible {
   border-radius: var(--stf-radius-sm) !important;
   background: oklch(78% 0.12 85 / 0.06) !important;
   padding: 5px 12px !important;
+  display: inline-block;
 }
 .forum-hero-brand {
   font-family: var(--font-display);
@@ -106,20 +108,22 @@ body.forum-page .nav-link:focus-visible {
   line-height: 1.05;
   letter-spacing: 0.08em;
   color: var(--stf-ink, #eef3fb);
-  margin: 0 0 0.35rem;
+  margin: 0.5rem auto 0.35rem;
   overflow-wrap: anywhere;
   min-width: 0;
   position: relative;
   display: inline-block;
+  padding-bottom: 0.2em;
 }
 .forum-hero-brand::after {
   content: "";
   position: absolute;
-  left: 0;
-  bottom: 0.08em;
+  left: 50%;
+  bottom: 0;
   width: 2.4em;
   height: 3px;
-  background: linear-gradient(90deg, var(--stf-gold), transparent);
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, var(--stf-gold), transparent);
   animation: stf-torch-glow 3.8s var(--ease-out, ease) infinite;
 }
 @keyframes stf-torch-glow {
@@ -142,13 +146,15 @@ body.forum-page .nav-link:focus-visible {
 .forum-hero-sub {
   color: var(--stf-text-muted) !important;
   max-width: 34em;
+  margin-left: auto !important;
+  margin-right: auto !important;
   font-size: 0.95rem !important;
   line-height: 1.75 !important;
   letter-spacing: 0.02em;
 }
 .forum-hero-quicknav {
-  justify-content: flex-start !important;
-  margin: 1.5rem 0 1.25rem !important;
+  justify-content: center !important;
+  margin: 1.5rem auto 1.25rem !important;
 }
 .hero-pill {
   border-radius: 0 !important;
@@ -158,6 +164,7 @@ body.forum-page .nav-link:focus-visible {
   box-shadow: none !important;
   min-width: 0;
   padding: 8px 14px !important;
+  text-align: left;
 }
 .hero-pill:hover {
   border-color: var(--stf-gold) !important;
@@ -169,7 +176,7 @@ body.forum-page .nav-link:focus-visible {
   font-style: normal;
 }
 .forum-hero-actions {
-  justify-content: flex-start !important;
+  justify-content: center !important;
 }
 .forum-hero-actions .btn-primary {
   border-radius: var(--stf-radius-md) !important;
@@ -182,6 +189,65 @@ body.forum-page .nav-link:focus-visible {
   border-radius: var(--stf-radius-md) !important;
   border-color: var(--stf-edge-strong) !important;
   color: var(--stf-brand-light) !important;
+}
+
+/* —— 顶栏地址胶囊（与主站 location 同步） —— */
+body.forum-page .nav-container {
+  justify-content: flex-start;
+}
+body.forum-page .nav-links {
+  margin-left: 20px;
+  margin-right: auto;
+}
+.stf-realm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 10px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid oklch(78% 0.06 250 / 0.35);
+  background: oklch(14% 0.03 250 / 0.94);
+  color: oklch(94% 0.01 250 / 0.96);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px oklch(0% 0 0 / 0.28);
+}
+.stf-realm-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--stf-brand-light, #8eb6ff);
+  box-shadow: 0 0 0 0 oklch(68% 0.12 255 / 0.4);
+}
+
+/* —— 主站地址 → 论坛 data-realm 主题/文案氛围 —— */
+html[data-realm="labelle"] body.forum-page,
+body.forum-page[data-realm="labelle"] {
+  --stf-brand: #7aa0ef;
+  --stf-brand-light: #b7cfff;
+  --stf-gold: #d4b45a;
+}
+html[data-realm="lahairo"] body.forum-page,
+body.forum-page[data-realm="lahairo"] {
+  --stf-brand: #7ec8e8;
+  --stf-brand-light: #c7e9f7;
+  --stf-gold: #e8f0ff;
+}
+html[data-realm="snow-cabin"] body.forum-page,
+body.forum-page[data-realm="snow-cabin"] {
+  --stf-brand: #e8a0b8;
+  --stf-brand-light: #f5c9d8;
+  --stf-gold: #f0d7a0;
+}
+html[data-realm="digital-sea"] body.forum-page,
+body.forum-page[data-realm="digital-sea"] {
+  --stf-brand: #6ad0d8;
+  --stf-brand-light: #b6f0f4;
+  --stf-gold: #9ad0ff;
 }
 
 /* —— 分区：学院档案室节奏 —— */
@@ -305,7 +371,7 @@ body.forum-page .btn-primary::after {
 
 @media (max-width: 768px) {
   .forum-hero {
-    text-align: left !important;
+    text-align: center !important;
     padding: 100px 18px 56px !important;
     min-height: min(78vh, 680px) !important;
   }
@@ -318,9 +384,13 @@ body.forum-page .btn-primary::after {
   }
   .forum-hero-quicknav {
     gap: 8px !important;
+    justify-content: center !important;
   }
   .hero-pill {
     min-width: calc(50% - 8px);
+  }
+  .stf-realm-chip {
+    display: none;
   }
 }
 

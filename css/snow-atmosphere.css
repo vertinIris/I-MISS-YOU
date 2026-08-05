@@ -127,14 +127,23 @@ body {
   padding: 0 1.25rem;
 }
 .hero-badge {
-  opacity: 0.55;
-  transform: scale(0.94);
+  /* 勿用整块 opacity：会让展开菜单半透明叠在大标题上 */
+  opacity: 1;
+  transform: none;
   margin-bottom: 1.1rem;
-  border-color: oklch(72% 0.14 350 / 0.22) !important;
-  background: oklch(96% 0.01 350 / 0.03) !important;
+  border-color: oklch(72% 0.14 350 / 0.42) !important;
+  background: oklch(14% 0.025 350 / 0.94) !important;
+  color: oklch(94% 0.02 350 / 0.96);
+  box-shadow: 0 8px 24px oklch(0% 0 0 / 0.35), inset 0 1px 0 oklch(96% 0.01 350 / 0.08);
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.14em;
+  z-index: 40;
+}
+.hero-badge .location-current,
+.hero-badge .location-arrow {
+  color: oklch(94% 0.02 350 / 0.96);
+  opacity: 1;
 }
 .hero-title {
   font-family: var(--font-display);
@@ -147,8 +156,9 @@ body {
   margin: 0;
   overflow-wrap: anywhere;
   min-width: 0;
+  transition: opacity 0.22s var(--ease-out), filter 0.22s var(--ease-out);
 }
-/* 去掉 AI 感 gradient-text；实色 + 下划线地标 */
+/* 去掉 AI 感 gradient-text；实色 + 字下方装饰线（绝不穿字） */
 .hero-title .gradient-text,
 .hero-title-mark {
   background: none !important;
@@ -158,6 +168,7 @@ body {
   animation: none !important;
   position: relative;
   display: inline-block;
+  padding-bottom: 0.22em;
 }
 .hero-title-mark::after,
 .hero-title .gradient-text::after {
@@ -165,12 +176,44 @@ body {
   position: absolute;
   left: 12%;
   right: 12%;
-  bottom: 0.06em;
+  top: auto;
+  bottom: 0;
   height: 2px;
   background: linear-gradient(90deg, transparent, var(--sn-accent), transparent);
   opacity: 0.85;
   transform-origin: center;
+  pointer-events: none;
   animation: sn-brand-breathe 4.8s var(--ease-in-out) infinite;
+}
+/* 菜单展开：大字退后，禁止水印压选项 */
+.hero:has(.location-selector.open) .hero-title,
+.hero:has(.location-selector.open) .hero-tagline,
+.hero:has(.location-selector.open) .hero-subtitle,
+.hero:has(.location-selector.open) .hero-freq,
+.hero.loc-menu-open .hero-title,
+.hero.loc-menu-open .hero-tagline,
+.hero.loc-menu-open .hero-subtitle,
+.hero.loc-menu-open .hero-freq {
+  opacity: 0.06;
+  filter: blur(1px);
+  pointer-events: none;
+}
+.location-selector.open {
+  z-index: 60;
+}
+.location-selector.open .location-dropdown {
+  opacity: 1;
+  background: oklch(12% 0.02 350 / 0.98) !important;
+  border-color: oklch(72% 0.14 350 / 0.4) !important;
+  box-shadow: 0 18px 48px oklch(0% 0 0 / 0.55);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.location-selector.open .loc-name {
+  color: oklch(96% 0.01 350 / 0.98);
+}
+.location-selector.open .loc-desc {
+  color: oklch(82% 0.03 350 / 0.78);
 }
 @keyframes sn-brand-breathe {
   0%, 100% { opacity: 0.55; transform: scaleX(0.92); }
