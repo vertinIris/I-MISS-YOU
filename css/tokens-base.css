@@ -9,7 +9,7 @@
      Snow Rose #E879A8 · Ice Signal #8EB4E8 · Mist Edge (alpha)
    Type: display 场景各自保留性格；body Noto Sans SC；utility mono
    Layout: Letter 夜电台 × Ecosystem 学院档案，共享节奏
-   Signature: 星轨频率盘 .sig-startrack（全站唯一记忆点）
+   Signature: 频率刻度条 .sig-freqbar（短横线 + 刻度，非椭圆环）
    Anti-slop: 非奶油衬线陶土 / 非酸绿朱红近黑 / 非报纸细线零圆角
    ============================================================ */
 
@@ -78,61 +78,37 @@
   outline-offset: var(--focus-ring-offset);
 }
 
-/* Signature: 星轨频率盘 — orbital tick dial under brand */
-.sig-startrack {
-  --sig-w: min(14rem, 72vw);
-  position: relative;
-  display: block;
+/* Signature: 频率刻度条 — 短横 + 刻度，刻意不做椭圆/圆环 */
+.sig-freqbar {
+  --sig-w: min(13rem, 68vw);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.55rem;
   width: var(--sig-w);
-  height: 1.65rem;
+  height: 1.1rem;
   margin: 0.55rem auto 0;
   pointer-events: none;
   color: var(--sig-accent);
 }
-.sig-startrack svg {
+.sig-freqbar-tick {
   display: block;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
+  width: 1px;
+  height: 0.45rem;
+  background: currentColor;
+  opacity: 0.42;
 }
-.sig-startrack .sig-orbit {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.1;
-  opacity: 0.55;
+.sig-freqbar-tick--major {
+  height: 0.72rem;
+  opacity: 0.88;
+  background: var(--sig-accent-strong);
+  width: 1.5px;
 }
-.sig-startrack .sig-tick {
-  stroke: currentColor;
-  stroke-width: 1.2;
-  stroke-linecap: round;
-  opacity: 0.45;
-}
-.sig-startrack .sig-tick--major {
-  opacity: 0.85;
-  stroke: var(--sig-accent-strong);
-  stroke-width: 1.6;
-}
-.sig-startrack .sig-core {
-  fill: var(--sig-accent-strong);
-  opacity: 0.95;
-}
-.sig-startrack .sig-pulse-ring {
-  fill: none;
-  stroke: var(--sig-accent-strong);
-  stroke-width: 1;
-  opacity: 0.35;
-  transform-origin: 120px 14px;
-  animation: sig-orbit-breathe 4.6s var(--ease-in-out) infinite;
-}
-
-@keyframes sig-orbit-breathe {
-  0%, 100% { opacity: 0.22; transform: scale(0.92); }
-  50% { opacity: 0.55; transform: scale(1); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sig-startrack .sig-pulse-ring {
-    animation: none !important;
-    opacity: 0.4;
-  }
+.sig-freqbar-rule {
+  flex: 1 1 auto;
+  align-self: center;
+  height: 1px;
+  max-width: 2.75rem;
+  background: color-mix(in srgb, var(--sig-accent-strong) 55%, transparent);
+  opacity: 0.7;
 }

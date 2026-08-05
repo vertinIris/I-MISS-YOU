@@ -92,12 +92,12 @@
 /* ???????????????? */
 .forum-entry--primary {
     border-top-color: var(--stf-brand, #6B8AFF);
-    background: linear-gradient(180deg, rgba(107,138,255,.10), rgba(255,255,255,.04));
-    box-shadow: 0 0 0 1px rgba(107,138,255,.18), 0 18px 44px rgba(107,138,255,.10);
+    background: rgba(107, 138, 255, 0.06);
+    box-shadow: 0 0 0 1px rgba(107, 138, 255, 0.12);
 }
 .forum-entry--primary:hover {
-    border-color: rgba(107,138,255,.6);
-    box-shadow: 0 0 0 1px rgba(107,138,255,.35), 0 26px 56px rgba(107,138,255,.20);
+    border-color: rgba(107, 138, 255, 0.45);
+    box-shadow: 0 0 0 1px rgba(107, 138, 255, 0.22), 0 14px 36px rgba(0, 0, 0, 0.28);
 }
 .forum-entry-ribbon {
     position: absolute;
@@ -106,10 +106,10 @@
     font-size: 11px;
     letter-spacing: .1em;
     padding: 4px 10px;
-    border-radius: 999px;
-    color: #fff;
-    background: linear-gradient(100deg, var(--stf-brand, #6B8AFF), var(--stf-gold, #E8C56A));
-    box-shadow: 0 6px 16px rgba(107,138,255,.3);
+    border-radius: 6px;
+    color: #1a1a22;
+    background: var(--stf-gold, #E8C56A);
+    box-shadow: none;
 }
 .forum-section--overview { padding-top: 50px; }
 
@@ -429,7 +429,7 @@
 .archive-album-grid .archive-float:nth-child(7) { animation-delay: 2.4s; }
 @keyframes card-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
 
-/* W1 ? ?????????? + ????????? 135° ?? */
+/* W1 ? ?????????? + ????????? 135? ?? */
 .archive-album {
     position: relative;
     margin-top: 36px;
@@ -751,7 +751,12 @@ html.archive-orbit-active .archive-album-shelf {
 .forum-entry-icon svg { width: 26px; height: 26px; }
 .forum-entry-title {
     font-family: "Noto Serif SC", serif;
-    font-size: 21px; font-weight: 700; margin: 4px 0 0;
+    font-size: clamp(1.55rem, 2.4vw, 1.85rem);
+    font-weight: 700;
+    margin: 6px 0 0;
+    letter-spacing: 0.1em;
+    line-height: 1.25;
+    color: var(--stf-ink, #eef3fb);
 }
 .forum-entry-desc { font-size: 14px; color: rgba(240,244,255,.7); line-height: 1.7; margin: 0; }
 .forum-entry-cta {
@@ -2873,7 +2878,7 @@ body.stf-chat-expanded-open .stf-chat-card.is-chat-expanded .stf-chat-meta {
     .stf-feed .stf-card.is-new { animation: none; }
 }
 
-/* ---- ??????????? / ?ö???? / ??????? ---- */
+/* ---- ??????????? / ?????? / ??????? ---- */
 .stf-card-badge[data-type="pinned"] {
     background: rgba(232, 197, 106, 0.22);
     color: #E8C56A;

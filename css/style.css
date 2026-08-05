@@ -1436,17 +1436,8 @@ button {
     font-size: var(--fs-subtitle);
     font-weight: var(--fw-subtitle);
     color: var(--text-secondary);
-    margin-bottom: var(--space-2);
+    margin-bottom: 0;
     line-height: var(--lh-subtitle);
-}
-
-.hero-subtitle {
-    font-family: var(--font-sans);
-    font-size: var(--fs-caption);
-    font-weight: var(--fw-caption);
-    color: var(--text-tertiary);
-    margin-bottom: var(--space-5);
-    line-height: var(--lh-caption);
 }
 
 .hero-actions {
@@ -6477,6 +6468,121 @@ textarea:focus-visible,
     background: rgba(107,138,255,0.08);
     border-left: 3px solid rgba(168,216,255,0.55);
     border-radius: 0 10px 10px 0;
+}
+
+/* 来源层级徽标 · 信物 · 官方锚点（长文档案） */
+.source-tier {
+    display: inline-block;
+    margin-right: 0.35em;
+    padding: 0.08em 0.45em;
+    border-radius: 4px;
+    font-family: var(--font-mono, "IBM Plex Mono", ui-monospace, monospace);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    vertical-align: 0.08em;
+    white-space: nowrap;
+}
+.source-tier--official {
+    color: oklch(88% 0.06 145);
+    background: oklch(45% 0.08 145 / 0.28);
+    border: 1px solid oklch(70% 0.1 145 / 0.35);
+}
+.source-tier--consensus {
+    color: oklch(88% 0.06 250);
+    background: oklch(45% 0.08 250 / 0.28);
+    border: 1px solid oklch(70% 0.1 250 / 0.35);
+}
+.source-tier--original {
+    color: oklch(88% 0.08 350);
+    background: oklch(45% 0.1 350 / 0.28);
+    border: 1px solid oklch(70% 0.12 350 / 0.35);
+}
+.archive-timeline-text .source-tier,
+.archive-trait-item .source-tier,
+.archive-ability-value .source-tier,
+.archive-relation-desc .source-tier {
+    margin-bottom: 0.15em;
+}
+.archive-relic-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+.archive-relic {
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    border: 1px solid oklch(96% 0.01 350 / 0.1);
+    background: oklch(96% 0.01 350 / 0.03);
+}
+.archive-relic-name {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+    color: var(--char, #e879a8);
+}
+.archive-relic-desc {
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.75;
+    color: oklch(88% 0.02 350 / 0.88);
+}
+.archive-anchor-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+.archive-anchor {
+    display: grid;
+    grid-template-columns: minmax(5.5rem, 7rem) 1fr;
+    gap: 0.5rem 0.85rem;
+    padding: 0.65rem 0;
+    border-bottom: 1px solid oklch(96% 0.01 350 / 0.08);
+    font-size: 0.9rem;
+    line-height: 1.65;
+}
+.archive-anchor:last-child { border-bottom: none; }
+.archive-anchor-key {
+    font-family: var(--font-mono, "IBM Plex Mono", ui-monospace, monospace);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: oklch(72% 0.06 350 / 0.75);
+}
+.archive-anchor-val { color: oklch(90% 0.02 350 / 0.9); }
+.archive-subdetails {
+    margin: 0.75rem 0 0;
+    border: 1px solid oklch(96% 0.01 350 / 0.08);
+    border-radius: 8px;
+    background: oklch(0% 0 0 / 0.15);
+}
+.archive-subdetails > summary {
+    cursor: pointer;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: oklch(85% 0.04 350);
+    list-style: none;
+}
+.archive-subdetails > summary::-webkit-details-marker { display: none; }
+.archive-subdetails[open] > summary {
+    border-bottom: 1px solid oklch(96% 0.01 350 / 0.08);
+}
+.archive-subdetails .archive-subbody {
+    padding: 0.85rem 0.9rem 1rem;
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: oklch(88% 0.02 350 / 0.88);
+}
+.archive-quote-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.archive-quote-item {
+    padding: 0.85rem 1rem;
+    border-left: 3px solid color-mix(in srgb, var(--char, #e879a8) 55%, transparent);
+    background: oklch(96% 0.01 350 / 0.03);
+    border-radius: 0 8px 8px 0;
 }
 
 /* ============ 管理员登录 Modal（替代原生 prompt，移动端友好） ============ */

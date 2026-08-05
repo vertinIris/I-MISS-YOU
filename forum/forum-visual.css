@@ -104,14 +104,14 @@ body.forum-page .nav-link:focus-visible {
   display: inline-block;
   padding-bottom: 0;
 }
-/* 签名交给 .sig-startrack，不再用第二条下划线 */
+/* 签名交给 .sig-freqbar，不再用第二条下划线 */
 .forum-hero-brand::after {
   content: none !important;
   display: none !important;
   animation: none !important;
 }
-.forum-hero .sig-startrack {
-  margin: 0.25rem auto 0.85rem;
+.forum-hero .sig-freqbar {
+  margin: 0.35rem auto 0.9rem;
 }
 .forum-hero-title {
   /* 副标题角色：不再用渐变字 */
@@ -141,9 +141,9 @@ body.forum-page .nav-link:focus-visible {
 }
 .forum-hero-actions .btn-primary {
   border-radius: var(--stf-radius-md) !important;
-  background: linear-gradient(135deg, var(--stf-brand-deep), var(--stf-brand)) !important;
+  background: var(--stf-brand-deep) !important;
   background-size: 100% 100% !important;
-  box-shadow: 0 10px 28px oklch(68% 0.12 255 / 0.3), var(--stf-inset) !important;
+  box-shadow: 0 6px 18px oklch(68% 0.12 255 / 0.18), var(--stf-inset) !important;
   letter-spacing: 0.08em;
 }
 .forum-hero-actions .btn-ghost {
@@ -152,14 +152,17 @@ body.forum-page .nav-link:focus-visible {
   color: var(--stf-brand-light) !important;
 }
 
-/* 导览区：原 hero 快链下沉，避免第一视口卡片/胶囊堆 */
+/* 导览区：学院排版字阶，非对称主次，不做三等分胶囊玻璃 */
 .forum-quicknav-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 18px;
+  align-items: flex-end;
+  gap: 0.35rem 1.75rem;
   justify-content: center;
-  margin: 0.5rem auto 1.75rem;
-  max-width: 40rem;
+  margin: 0.35rem auto 2rem;
+  max-width: 44rem;
+  padding: 0.25rem 0 0.15rem;
+  border-bottom: 1px solid oklch(68% 0.08 255 / 0.14);
 }
 .forum-quicknav-row .hero-pill {
   border-radius: 0 !important;
@@ -168,26 +171,46 @@ body.forum-page .nav-link:focus-visible {
   background: transparent !important;
   box-shadow: none !important;
   min-width: 0;
-  padding: 8px 14px !important;
+  padding: 0.55rem 0.85rem 0.75rem !important;
   text-align: left;
   text-decoration: none;
   color: inherit;
+  transition: border-color 0.2s var(--ease-out), background 0.2s var(--ease-out);
 }
 .forum-quicknav-row .hero-pill:hover,
 .forum-quicknav-row .hero-pill:focus-visible {
   border-color: var(--stf-gold) !important;
-  background: oklch(68% 0.12 255 / 0.06) !important;
+  background: oklch(68% 0.12 255 / 0.05) !important;
   outline: none;
+  transform: none !important;
 }
 .forum-quicknav-row .hero-pill b {
   display: block;
   font-family: var(--font-display);
   font-style: normal;
+  font-size: clamp(1.35rem, 2.6vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
   color: var(--stf-ink);
+  margin-bottom: 0.28rem;
 }
 .forum-quicknav-row .hero-pill span {
-  font-size: 0.75rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
   color: var(--stf-text-muted);
+  line-height: 1.4;
+}
+/* 讨论区主入口：字阶更大，打破三列均质 */
+.forum-quicknav-row .hero-pill--lead {
+  border-left-width: 3px !important;
+  border-left-color: var(--stf-gold) !important;
+  padding-right: 1.35rem !important;
+}
+.forum-quicknav-row .hero-pill--lead b {
+  font-size: clamp(1.65rem, 3.2vw, 2.25rem);
+  letter-spacing: 0.14em;
+  font-weight: 900;
 }
 
 /* —— 顶栏地址胶囊（与主站 location 同步） —— */
@@ -381,12 +404,27 @@ body.forum-page[data-realm="digital-sea"] {
   box-shadow: var(--stf-metal) !important;
 }
 .forum-entry--primary {
-  background: linear-gradient(180deg, oklch(68% 0.12 255 / 0.12), var(--stf-surface-1)) !important;
+  background: oklch(68% 0.12 255 / 0.06) !important;
 }
 .forum-entry-ribbon {
   border-radius: var(--stf-radius-sm) !important;
-  background: linear-gradient(100deg, var(--stf-brand), var(--stf-gold)) !important;
+  background: var(--stf-gold) !important;
+  color: oklch(14% 0.03 250) !important;
+  box-shadow: none !important;
   animation: none !important;
+}
+.forum-entry-title {
+  font-family: var(--font-display) !important;
+  font-size: clamp(1.55rem, 2.4vw, 1.9rem) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  line-height: 1.25 !important;
+  color: var(--stf-ink) !important;
+  margin: 0.35rem 0 0 !important;
+}
+.forum-entry--primary .forum-entry-title {
+  font-size: clamp(1.7rem, 2.8vw, 2.1rem) !important;
+  letter-spacing: 0.12em !important;
 }
 
 /* —— 信息流：锐利列表，非软卡堆 —— */
@@ -523,7 +561,6 @@ body.forum-page .btn-primary::after {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sig-startrack .sig-pulse-ring,
   .stf-tuner-led,
   .stf-tuner-compact-led {
     animation: none !important;

@@ -2,7 +2,7 @@
  * theme: custom Star-Torch Navy · vibe: "academy blue-gold seminar pass"
  * paper: oklch(14% 0.03 250) · accent: oklch(68% 0.12 255) · gold: oklch(78% 0.12 85)
  * display: Noto Serif SC · axes: dark / roman-serif-cjk / cool-blue · nav: N6 · footer: Ft1
- * signature: 星轨频率盘 (--sig-*) · shared base: tokens-base.css
+ * signature: 频率刻度条 .sig-freqbar (--sig-*) · shared base: tokens-base.css
  * pre-emit critique: P5 H5 E4 S5 R5 V5
  */
 

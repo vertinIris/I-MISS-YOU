@@ -2,7 +2,7 @@
  * theme: custom Midnight-Rose · vibe: "night radio soft pink snow longing"
  * paper: oklch(12% 0.02 350) · accent: oklch(72% 0.14 350) · display: ZCOOL XiaoWei + Noto Serif SC
  * axes: dark / soft-serif-cjk / warm-rose · nav: N9 · footer: Ft5
- * signature: 星轨频率盘 (--sig-*) · shared base: tokens-base.css
+ * signature: 频率刻度条 .sig-freqbar (--sig-*) · shared base: tokens-base.css
  * pre-emit critique: P5 H5 E4 S5 R4 V5
  */
 
