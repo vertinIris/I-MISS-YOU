@@ -159,13 +159,6 @@ body::after {
     0%, 100% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
 }
-.forum-hero-label {
-    color: var(--stf-brand-light);
-    border-color: var(--stf-edge-strong);
-    letter-spacing: 0.28em;
-    background: rgba(107, 138, 255, 0.06);
-    box-shadow: var(--stf-inset);
-}
 .forum-hero-sub {
     color: rgba(240, 244, 255, 0.72);
     letter-spacing: 0.01em;

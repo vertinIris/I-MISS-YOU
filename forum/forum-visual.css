@@ -89,17 +89,6 @@ body.forum-page .nav-link:focus-visible {
   text-align: center !important;
   width: 100%;
 }
-.forum-hero-label {
-  font-family: var(--font-mono);
-  font-size: 0.7rem !important;
-  letter-spacing: 0.32em !important;
-  color: var(--stf-gold-soft) !important;
-  border: 1px solid oklch(78% 0.12 85 / 0.35) !important;
-  border-radius: var(--stf-radius-sm) !important;
-  background: oklch(78% 0.12 85 / 0.06) !important;
-  padding: 5px 12px !important;
-  display: inline-block;
-}
 .forum-hero-brand {
   font-family: var(--font-display);
   font-style: normal;
@@ -108,7 +97,7 @@ body.forum-page .nav-link:focus-visible {
   line-height: 1.05;
   letter-spacing: 0.08em;
   color: var(--stf-ink, #eef3fb);
-  margin: 0.5rem auto 0.35rem;
+  margin: 0 auto 0.35rem;
   overflow-wrap: anywhere;
   min-width: 0;
   position: relative;
@@ -204,9 +193,9 @@ body.forum-page .nav-links {
   align-items: center;
   gap: 8px;
   margin-right: 10px;
-  padding: 5px 12px;
+  padding: 4px 12px;
   border-radius: 999px;
-  border: 1px solid oklch(78% 0.06 250 / 0.35);
+  border: 1px solid oklch(78% 0.12 85 / 0.32);
   background: oklch(14% 0.03 250 / 0.94);
   color: oklch(94% 0.01 250 / 0.96);
   font-family: var(--font-mono);
@@ -215,6 +204,29 @@ body.forum-page .nav-links {
   white-space: nowrap;
   flex-shrink: 0;
   box-shadow: 0 4px 14px oklch(0% 0 0 / 0.28);
+  max-width: min(280px, 36vw);
+}
+.stf-realm-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  line-height: 1.25;
+}
+.stf-realm-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: oklch(94% 0.01 250 / 0.88);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.stf-realm-code {
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stf-gold-soft, #e8c56a);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .stf-realm-dot {
   width: 7px;
@@ -222,6 +234,7 @@ body.forum-page .nav-links {
   border-radius: 50%;
   background: var(--stf-brand-light, #8eb6ff);
   box-shadow: 0 0 0 0 oklch(68% 0.12 255 / 0.4);
+  flex-shrink: 0;
 }
 
 /* —— 主站地址 → 论坛 data-realm 主题/文案氛围 —— */
@@ -389,8 +402,20 @@ body.forum-page .btn-primary::after {
   .hero-pill {
     min-width: calc(50% - 8px);
   }
+  /* 窄屏仍保留顶栏地址体现，仅压缩；勿回 hero 中间 */
   .stf-realm-chip {
+    display: inline-flex;
+    padding: 3px 8px;
+    margin-right: 6px;
+    max-width: min(148px, 42vw);
+    gap: 6px;
+  }
+  .stf-realm-label {
     display: none;
+  }
+  .stf-realm-code {
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
   }
 }
 

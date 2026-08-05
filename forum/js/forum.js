@@ -2331,10 +2331,11 @@
         if (chip) chip.textContent = '在线 · ' + locationName;
 
         var copy = REALM_COPY[slug] || REALM_COPY.startorch;
-        var labelEl = document.getElementById('forum-hero-label');
+        /* 地址英文徽章改在顶栏胶囊，避免抢 hero「星炬学院」主视觉 */
+        var codeEl = document.getElementById('stf-realm-code');
         var titleEl = document.getElementById('forum-hero-title');
         var subEl = document.getElementById('forum-hero-sub');
-        if (labelEl) labelEl.textContent = copy.label;
+        if (codeEl) codeEl.textContent = copy.label;
         if (titleEl) titleEl.textContent = copy.title;
         if (subEl) subEl.innerHTML = copy.sub;
     }
