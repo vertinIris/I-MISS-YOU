@@ -8,7 +8,7 @@ body[data-char] {
     radial-gradient(520px 360px at 88% 18%, oklch(70% 0.05 230 / 0.06), transparent 55%),
     linear-gradient(180deg, #100810 0%, #0c0a12 48%, #0a0e18 100%);
   color: var(--text-primary, #faf4f7);
-  font-family: var(--font-sans, "Noto Sans SC", system-ui, sans-serif);
+  font-family: var(--font-sans, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif);
   min-height: 100vh;
 }
 
@@ -171,5 +171,15 @@ body[data-char] {
 @media (prefers-reduced-motion: reduce) {
   .zone-hero-badge {
     box-shadow: 0 0 0 1px color-mix(in srgb, var(--char, #e879a8) 35%, transparent) !important;
+  }
+  .zone-topbar,
+  .zone-switch a,
+  .zone-home,
+  .module,
+  .module summary,
+  .archive-subdetails,
+  .archive-subdetails > summary {
+    transition: none !important;
+    animation: none !important;
   }
 }

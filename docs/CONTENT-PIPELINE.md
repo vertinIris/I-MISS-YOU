@@ -42,6 +42,7 @@ Supabase forum_* 表
    - 论坛基础：`020` 表 → `021` RLS → `022` Realtime → `023` 聊天  
    - 种子/清理：`024`…`027` 按需  
    - **本批**：`028` 置顶 + 楼中楼 → `db/migration-028-forum-pin-replies.sql`  
+   - **Production 收口（用户确认已跑）**：`027`（profiles nickname RLS）+ `028`（`is_pinned` + `parent_id`）。自查 SQL 见 `docs/STATUS.md`；勿反复催重跑。  
    - **禁止**再跑废弃的 `migration-020-forum-chat.sql`（已改名为 `DEPRECATED-migration-020-forum-chat.sql`）
 
 5. **推上云**  

@@ -3,10 +3,11 @@
     "date": "2026-08-05",
     "macrostructure": "Letter × Marquee Hero",
     "theme": "custom Midnight-Rose",
-    "enrichment": "E-atmosphere CSS blooms (no photo)",
+    "enrichment": "E-atmosphere CSS blooms + og-cover photo wash",
     "brief": "飞行雪绒 night radio redesign",
     "theme_axes": "dark / soft-serif-cjk / warm-rose",
-    "vibe": "night radio soft pink snow longing"
+    "vibe": "night radio soft pink snow longing",
+    "signature": "sig-startrack frequency dial"
   },
   {
     "date": "2026-08-05",
@@ -15,6 +16,16 @@
     "enrichment": "none",
     "brief": "星炬学院 academy forum redesign",
     "theme_axes": "dark / roman-serif-cjk / cool-blue",
-    "vibe": "academy blue-gold seminar pass"
+    "vibe": "academy blue-gold seminar pass",
+    "signature": "sig-startrack torch ticks"
+  },
+  {
+    "date": "2026-08-05",
+    "macrostructure": "Shared Token Base × Dual Scene Layers",
+    "theme": "Star-Track Dial unification",
+    "enrichment": "zone-atmosphere for character pages",
+    "brief": "systematic UI refactor — shared tokens + signature + orbit polish",
+    "theme_axes": "dark / dual-display / rose×navy",
+    "vibe": "academy order + night-radio intimacy on one dial"
   }
 ]

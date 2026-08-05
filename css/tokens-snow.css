@@ -74,10 +74,11 @@
   --focus-ring: oklch(72% 0.14 350 / 0.55);
   --nav-bg: oklch(12% 0.02 350 / 0.82);
 
-  --font-display: "ZCOOL XiaoWei", "Noto Serif SC", "Source Han Serif SC", serif;
-  --font-serif: "Noto Serif SC", "Source Han Serif SC", serif;
-  --font-sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  /* Google Fonts 可选；断网/屏蔽时走系统 CJK 栈，角色页与主站一致 */
+  --font-display: "ZCOOL XiaoWei", "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
+  --font-sans: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "Cascadia Code", ui-monospace, "Consolas", monospace;
 
   --radius-sm: 10px;
   --radius-md: 18px;

@@ -1,5 +1,12 @@
 name: Static Checks
 
+# 默认门禁：smoke-check + extreme-audit（始终跑，勿改成依赖 Playwright）。
+# 可选浏览器探针：仓库 Settings → Secrets and variables → Actions → Variables
+#   新建 PLAYWRIGHT_PROBE = 1 后启用下方 browser-probe job；删变量或改非 1 即跳过。
+# 本地等价：
+#   node scripts/smoke-check.mjs && node scripts/extreme-audit.mjs
+#   npx serve -l 8848 . &  node scripts/browser-probe.mjs http://127.0.0.1:8848
+
 on:
   push:
     branches: [main, master]
@@ -19,7 +26,7 @@ jobs:
       - name: Extreme audit
         run: node scripts/extreme-audit.mjs
 
-  # Optional: set repo Actions variable PLAYWRIGHT_PROBE=1 to enable
+  # Optional job — skipped unless PLAYWRIGHT_PROBE=1 (does not block default smoke)
   browser-probe:
     name: browser-probe (optional)
     runs-on: ubuntu-latest

@@ -67,10 +67,11 @@
   --shadow-glow: 0 0 22px oklch(68% 0.12 255 / 0.12);
   --focus-ring: oklch(78% 0.06 250 / 0.55);
 
-  --font-display: "Noto Serif SC", "Source Han Serif SC", serif;
-  --font-serif: "Noto Serif SC", "Source Han Serif SC", serif;
-  --font-sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  /* Google Fonts 可选；断网/屏蔽时走系统 CJK 栈 */
+  --font-display: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
+  --font-sans: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Code", ui-monospace, "Consolas", monospace;
 
   --stf-radius-sm: 6px;
   --stf-radius-md: 10px;
