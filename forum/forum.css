@@ -492,9 +492,9 @@
     height: 560px;
     margin: 8px auto 0;
     perspective: 1600px;
-    perspective-origin: 50% 38%;
+    perspective-origin: 50% 28%;
 }
-/* W2 · 整环倾斜；卡片保持 billboard（JS 只写 translate3d，不 rotateY） */
+/* W2 · 整环向下倾斜；卡片保持 billboard（JS 只写 translate3d，不 rotateY） */
 .archive-orbit-ring {
     position: absolute;
     inset: 0;
@@ -502,14 +502,14 @@
     width: 100%;
     height: 100%;
     transform-style: preserve-3d;
-    transform: rotateX(20deg);
-    transform-origin: 50% 58%;
+    transform: rotateX(-16deg);
+    transform-origin: 50% 52%;
     transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
     will-change: transform;
 }
 .archive-orbit-ring.is-paused {
-    /* hover / focus：略放正，便于阅读 */
-    transform: rotateX(8deg);
+    /* hover / focus：略抬正，便于阅读 */
+    transform: rotateX(-7deg);
 }
 .archive-orbit-ring .archive-float.is-orbit-item {
     position: absolute;
@@ -998,8 +998,10 @@ html.archive-orbit-active .archive-album-shelf {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+    align-items: center;
 }
-.stf-comment-form input {
+.stf-comment-form input,
+.stf-comment-form select {
     appearance: none;
     border: 1px solid rgba(255,255,255,.1);
     background: rgba(0,0,0,.2);
@@ -1008,9 +1010,57 @@ html.archive-orbit-active .archive-album-shelf {
     border-radius: 999px;
     font-size: 13px;
 }
+.stf-comment-form select {
+    max-width: 140px;
+    cursor: pointer;
+    padding-right: 28px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='rgba(240,244,255,0.7)' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-color: rgba(0,0,0,.2);
+}
 .stf-comment-form input::placeholder { color: rgba(240,244,255,.45); }
-.stf-comment-form .stf-comment-name { width: 100px; }
+.stf-comment-form .stf-comment-name-input { width: 110px; }
+.stf-comment-form .stf-comment-name-input.is-anonymous {
+    background: rgba(107,138,255,.06);
+    border-color: rgba(168,216,255,.25);
+    color: rgba(240,244,255,.8);
+}
+.stf-comment-form .stf-comment-identity.is-anonymous {
+    background-color: rgba(107,138,255,.08);
+    border-color: rgba(168,216,255,.35);
+}
 .stf-comment-form .stf-comment-input { flex: 1; min-width: 140px; }
+.stf-comment-signed {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    color: rgba(232, 197, 106, 0.92);
+    background: rgba(232, 197, 106, 0.08);
+    border: 1px solid rgba(232, 197, 106, 0.28);
+    white-space: nowrap;
+}
+.stf-comment-form.is-signed .stf-comment-input { flex: 1; min-width: 160px; }
+.stf-signed-as {
+    margin: 0;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    color: rgba(232, 197, 106, 0.95);
+    background: rgba(232, 197, 106, 0.08);
+    border: 1px solid rgba(232, 197, 106, 0.28);
+}
+.form-input.is-signed {
+    background: rgba(232, 197, 106, 0.06);
+    border-color: rgba(232, 197, 106, 0.3);
+    color: rgba(240, 244, 255, 0.88);
+    cursor: default;
+}
+.form-input.is-signed[readonly] {
+    opacity: 1;
+    -webkit-text-fill-color: rgba(240, 244, 255, 0.88);
+}
 .stf-comment-submit {
     appearance: none;
     border: none;
@@ -1195,7 +1245,9 @@ html.archive-orbit-active .archive-album-shelf {
 @media (max-width: 640px) {
     .stf-toolbar { flex-direction: column; align-items: stretch; }
     .stf-community-grid { grid-template-columns: 1fr; }
-    .stf-comment-form .stf-comment-name { width: 100%; }
+    .stf-comment-form .stf-comment-name-input,
+    .stf-comment-form .stf-comment-identity,
+    .stf-comment-form .stf-comment-signed { width: 100%; max-width: none; }
     .stf-comment-form .stf-comment-input { width: 100%; }
     .stf-comment-submit { width: 100%; }
 }

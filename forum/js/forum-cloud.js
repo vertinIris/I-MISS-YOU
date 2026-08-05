@@ -239,7 +239,8 @@
                     text: r.content,
                     color: r.author_color || '#A8D8FF',
                     timeStr: fmtTimeStr(r.created_at),
-                    is_hidden: !!r.is_hidden
+                    is_hidden: !!r.is_hidden,
+                    author: r.author_id || null
                 });
             });
             Object.keys(bySub).forEach(function (sid) {
@@ -390,7 +391,7 @@
             var row = {
                 id: 'stf_c_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
                 submission_id: subId,
-                author_id: null,
+                author_id: comment.author || null,
                 author_name: comment.name,
                 author_color: comment.color || '#A8D8FF',
                 content: comment.text,

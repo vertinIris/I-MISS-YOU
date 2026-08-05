@@ -718,12 +718,12 @@ body.forum-page .donate-btn-primary {
     z-index: 0;
 }
 .archive-orbit-ring {
-    transform: rotateX(20deg);
-    transform-origin: 50% 58%;
+    transform: rotateX(-16deg);
+    transform-origin: 50% 52%;
     transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .archive-orbit-ring.is-paused {
-    transform: rotateX(8deg);
+    transform: rotateX(-7deg);
 }
 .archive-orbit-ring .archive-float.is-orbit-item {
     transition: filter 0.35s ease, opacity 0.35s ease;

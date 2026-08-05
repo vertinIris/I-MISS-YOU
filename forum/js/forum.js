@@ -89,37 +89,83 @@
         return (window.StarTorchAuth && window.StarTorchAuth.getUser) ? window.StarTorchAuth.getUser() : null;
     }
 
+    function setNicknameLabel(nameInput, text) {
+        if (!nameInput || !nameInput.id) return;
+        var label = document.querySelector('label[for="' + nameInput.id + '"]');
+        if (label) label.textContent = text;
+    }
+
+    function ensureSignedHint(nameInput) {
+        if (!nameInput || !nameInput.parentNode) return null;
+        var hint = nameInput.parentNode.querySelector('.stf-signed-as');
+        if (!hint) {
+            hint = document.createElement('p');
+            hint.className = 'stf-signed-as';
+            hint.setAttribute('aria-live', 'polite');
+            nameInput.parentNode.appendChild(hint);
+        }
+        return hint;
+    }
+
     function syncIdentityControls(prefix, identityId) {
         var nameInput = document.getElementById(prefix + '-nickname');
         var identitySelect = document.getElementById(prefix + '-identity');
         if (!nameInput || !identitySelect) return;
 
         var user = currentUser();
+        var signedHint = ensureSignedHint(nameInput);
         if (user) {
-            /* 已登录：署名锁定为通行证名称，匿名身份停用 */
+            /* 已登录：隐藏手填框，只读展示「以 xxx 发布」；提交以通行证名为准 */
             nameInput.value = user.name;
-            nameInput.disabled = true;
+            nameInput.readOnly = true;
+            nameInput.disabled = false;
+            nameInput.hidden = true;
+            nameInput.removeAttribute('required');
+            nameInput.placeholder = '';
             nameInput.classList.add('is-signed');
             nameInput.classList.remove('is-anonymous');
+            nameInput.setAttribute('aria-label', '以 ' + user.name + ' 发布');
+            setNicknameLabel(nameInput, '署名');
+            if (signedHint) {
+                signedHint.hidden = false;
+                signedHint.textContent = '以 ' + user.name + ' 发布';
+            }
             identitySelect.value = '';
             identitySelect.disabled = true;
             identitySelect.classList.remove('is-anonymous');
             identitySelect.classList.add('is-signed');
+            var identityWrap = identitySelect.closest('.form-group');
+            if (identityWrap) identityWrap.hidden = true;
             return;
         }
 
+        if (signedHint) {
+            signedHint.hidden = true;
+            signedHint.textContent = '';
+        }
+        nameInput.hidden = false;
         identitySelect.disabled = false;
         identitySelect.classList.remove('is-signed');
         nameInput.classList.remove('is-signed');
+        nameInput.readOnly = false;
+        nameInput.disabled = false;
+        nameInput.setAttribute('required', '');
+        nameInput.placeholder = '署名（未登录）';
+        nameInput.removeAttribute('aria-label');
+        setNicknameLabel(nameInput, '署名');
+        var guestIdentityWrap = identitySelect.closest('.form-group');
+        if (guestIdentityWrap) guestIdentityWrap.hidden = false;
         identitySelect.value = identityId || '';
         var info = ANONYMOUS_IDENTITIES[identityId];
         if (info) {
             nameInput.value = info.name;
             nameInput.disabled = true;
+            nameInput.removeAttribute('required');
             nameInput.classList.add('is-anonymous');
             identitySelect.classList.add('is-anonymous');
         } else {
             nameInput.disabled = false;
+            nameInput.setAttribute('required', '');
             nameInput.classList.remove('is-anonymous');
             identitySelect.classList.remove('is-anonymous');
         }
@@ -358,13 +404,72 @@
             '</div>' +
             '<div class="stf-card-comments" id="stf-comments-' + s.id + '">' +
                 '<div class="stf-comment-list" id="stf-comment-list-' + s.id + '"></div>' +
-                '<form class="stf-comment-form" data-target="' + s.id + '">' +
-                    '<input type="text" class="stf-comment-name" placeholder="昵称" maxlength="20" required>' +
-                    '<input type="text" class="stf-comment-input" placeholder="写下你的评论……" maxlength="500" required>' +
-                    '<button type="submit" class="stf-comment-submit">发送</button>' +
-                '</form>' +
+                buildCommentFormHTML(s.id) +
             '</div>' +
         '</article>';
+    }
+
+    function buildCommentIdentityOptions() {
+        var html = '<option value="">自定义署名</option>';
+        Object.keys(ANONYMOUS_IDENTITIES).forEach(function (id) {
+            html += '<option value="' + id + '">' + escapeHTML(ANONYMOUS_IDENTITIES[id].name) + '</option>';
+        });
+        return html;
+    }
+
+    /** 评论表单：已登录只用通行证名；未登录保留拟名 + 匿名身份选择 */
+    function buildCommentFormHTML(targetId) {
+        var user = currentUser();
+        if (user) {
+            return '<form class="stf-comment-form is-signed" data-target="' + escapeHTML(targetId) + '">' +
+                '<span class="stf-comment-signed" aria-live="polite">以 ' + escapeHTML(user.name) + ' 发布</span>' +
+                '<input type="text" class="stf-comment-input" placeholder="写下你的评论……" maxlength="500" required>' +
+                '<button type="submit" class="stf-comment-submit">发送</button>' +
+            '</form>';
+        }
+        return '<form class="stf-comment-form" data-target="' + escapeHTML(targetId) + '">' +
+            '<select class="stf-comment-identity" aria-label="匿名身份">' + buildCommentIdentityOptions() + '</select>' +
+            '<input type="text" class="stf-comment-name-input" placeholder="署名（未登录）" maxlength="60" required>' +
+            '<input type="text" class="stf-comment-input" placeholder="写下你的评论……" maxlength="500" required>' +
+            '<button type="submit" class="stf-comment-submit">发送</button>' +
+        '</form>';
+    }
+
+    function syncCommentFormIdentity(form, identityId) {
+        if (!form || form.classList.contains('is-signed')) return;
+        var nameInput = form.querySelector('.stf-comment-name-input');
+        var identitySelect = form.querySelector('.stf-comment-identity');
+        if (!nameInput || !identitySelect) return;
+        identitySelect.value = identityId || '';
+        var info = ANONYMOUS_IDENTITIES[identityId];
+        if (info) {
+            nameInput.value = info.name;
+            nameInput.disabled = true;
+            nameInput.removeAttribute('required');
+            nameInput.classList.add('is-anonymous');
+            identitySelect.classList.add('is-anonymous');
+        } else {
+            nameInput.disabled = false;
+            nameInput.setAttribute('required', '');
+            nameInput.classList.remove('is-anonymous');
+            identitySelect.classList.remove('is-anonymous');
+        }
+    }
+
+    function restoreCommentForms() {
+        var user = currentUser();
+        if (user) return;
+        var saved = StarTorchData.getNickname();
+        var identityId = detectIdentityFromName(saved);
+        document.querySelectorAll('.stf-comment-form:not(.is-signed)').forEach(function (form) {
+            if (identityId) {
+                syncCommentFormIdentity(form, identityId);
+            } else {
+                syncCommentFormIdentity(form, '');
+                var nameInput = form.querySelector('.stf-comment-name-input');
+                if (nameInput && saved) nameInput.value = saved;
+            }
+        });
     }
 
     function renderPinned() {
@@ -490,12 +595,7 @@
 
         grid.innerHTML = pageItems.map(buildCardHTML).join('');
 
-        // restore nickname
-        var nickname = StarTorchData.getNickname();
-        grid.querySelectorAll('.stf-comment-name').forEach(function (input) {
-            if (nickname) input.value = nickname;
-        });
-
+        restoreCommentForms();
         pageItems.forEach(function (s) { renderComments(s.id); });
     }
 
@@ -586,25 +686,33 @@
         if (btn) btn.textContent = expanded ? '收起' : '展开全文';
     }
 
-    function addComment(targetId, name, text) {
-        if (!name || !text) return;
+    function addComment(targetId, name, text, opts) {
+        var user = currentUser();
+        var identityId = opts && opts.identityId;
+        var identity = (!user && identityId) ? ANONYMOUS_IDENTITIES[identityId] : null;
+        var displayName = user ? user.name : (identity ? identity.name : name);
+        if (!displayName || !text) return;
         var comments = StarTorchData.getComments(targetId);
         var now = new Date();
-        comments.push({
-            name: name,
+        var entry = {
+            name: displayName,
             text: text,
-            color: '#A8D8FF',
+            color: user
+                ? sanitizeColor(user.color)
+                : (identity ? identity.color : ((opts && opts.color) || '#A8D8FF')),
             timeStr: (now.getMonth() + 1) + '月' + now.getDate() + '日 ' +
                 String(now.getHours()).padStart(2, '0') + ':' +
-                String(now.getMinutes()).padStart(2, '0')
-        });
+                String(now.getMinutes()).padStart(2, '0'),
+            author: user ? user.key : null
+        };
+        comments.push(entry);
         StarTorchData.saveComments(targetId, comments);
         if (window.StarTorchCloud) {
             window.StarTorchCloud.pushComment(targetId, comments[comments.length - 1], function (ok) {
                 if (!ok) console.warn('[forum] 评论上云失败，已转入离线队列');
             });
         }
-        StarTorchData.setNickname(name);
+        if (!user) StarTorchData.setNickname(displayName);
         renderComments(targetId);
         showToast('评论已发送 ✨');
     }
@@ -744,10 +852,15 @@
         showToast('发帖成功，已发布到讨论区 ✨');
     }
 
-    /* 统一字段校验：标题可选，正文必填 */
+    /* 统一字段校验：标题可选，正文必填；已登录时 name 由通行证注入 */
     function validateFields(name, title, content) {
-        if (!name || !content) { showToast('请填写昵称和正文'); return false; }
-        if (name.length > LIMIT_NAME) { showToast('昵称限 ' + LIMIT_NAME + ' 字'); return false; }
+        var user = currentUser();
+        var displayName = user ? user.name : name;
+        if (!displayName || !content) {
+            showToast(user ? '请填写正文' : '请填写署名和正文');
+            return false;
+        }
+        if (displayName.length > LIMIT_NAME) { showToast('署名限 ' + LIMIT_NAME + ' 字'); return false; }
         if (title && title.length > LIMIT_TITLE) { showToast('标题限 ' + LIMIT_TITLE + ' 字'); return false; }
         if (content.length > LIMIT_CONTENT) { showToast('内容限 ' + LIMIT_CONTENT + ' 字'); return false; }
         return true;
@@ -993,11 +1106,32 @@
                 if (!form) return;
                 e.preventDefault();
                 var targetId = form.getAttribute('data-target');
-                var name = form.querySelector('.stf-comment-name').value.trim();
-                var text = form.querySelector('.stf-comment-input').value.trim();
-                if (!name || !text) { showToast('请填写昵称和评论'); return; }
-                addComment(targetId, name, text);
-                form.querySelector('.stf-comment-input').value = '';
+                var user = currentUser();
+                var textEl = form.querySelector('.stf-comment-input');
+                var text = textEl ? textEl.value.trim() : '';
+                var name = '';
+                var identityId = '';
+                if (user) {
+                    name = user.name;
+                } else {
+                    var identitySelect = form.querySelector('.stf-comment-identity');
+                    identityId = identitySelect ? identitySelect.value : '';
+                    var nameInput = form.querySelector('.stf-comment-name-input');
+                    name = nameInput ? nameInput.value.trim() : '';
+                }
+                if (!name || !text) {
+                    showToast(user ? '请填写评论' : '请填写署名和评论');
+                    return;
+                }
+                addComment(targetId, name, text, { identityId: identityId });
+                if (textEl) textEl.value = '';
+            });
+
+            grid.addEventListener('change', function (e) {
+                var sel = e.target.closest('.stf-comment-identity');
+                if (!sel) return;
+                var form = sel.closest('.stf-comment-form');
+                syncCommentFormIdentity(form, sel.value);
             });
 
             /* 管理员：隐藏评论 */
@@ -1711,7 +1845,8 @@
             var w = orbit.clientWidth || 720;
             /* W2 重标定：倾斜后半径略增、yLift 上移，避免卡片挤中 */
             var radius = Math.min(340, Math.max(220, Math.floor(w * 0.36)));
-            return { radius: radius, yLift: -28 };
+            /* 负 rotateX 俯视：相对旧值略减上抬，卡片仍避开底部光池 */
+            return { radius: radius, yLift: -22 };
         }
 
         function paint(angleDeg) {
