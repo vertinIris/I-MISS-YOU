@@ -3284,10 +3284,24 @@
         }
         return '';
     }
+    function sanitizeColor(c, fallback) {
+        if (typeof SecurityShield !== 'undefined' && SecurityShield.sanitizeColor) {
+            return SecurityShield.sanitizeColor(c, fallback || 'var(--color-pink)');
+        }
+        fallback = fallback || 'var(--color-pink)';
+        if (!c) return fallback;
+        var s = String(c).trim();
+        if (/^#[0-9A-Fa-f]{3,8}$/.test(s)) return s;
+        if (/^var\(--[\w-]+\)$/.test(s)) return s;
+        if (/^rgba?\([\d\s.,%/]+\)$/.test(s)) return s;
+        if (/^hsla?\([\d\s.,%/]+\)$/.test(s)) return s;
+        return fallback;
+    }
+
     function buildSubmissionCardHTML(s) {
         var typeLabels = { text: '文字', story: '故事', poem: '诗歌', art: '插画', music: '音乐' };
         var initial = s.name.charAt(0).toUpperCase();
-        var bgColor = s.color || 'var(--color-pink)';
+        var bgColor = sanitizeColor(s.color, 'var(--color-pink)');
         var contentClass = 'community-card-content';
         var previewText = (typeof ContentUtils !== 'undefined')
             ? ContentUtils.previewText(s.content, 300)
@@ -3295,6 +3309,9 @@
         var imgUrl = (typeof ContentUtils !== 'undefined')
             ? ContentUtils.extractImageUrl(s.content)
             : null;
+        if (imgUrl && typeof SecurityShield !== 'undefined' && SecurityShield.isSafeUrl && !SecurityShield.isSafeUrl(imgUrl)) {
+            imgUrl = null;
+        }
         var expandBtn = '';
         if (s.content.length > 300) {
             expandBtn = '<button class="community-card-expand" data-action="expand">展开全文</button>';
@@ -3313,7 +3330,7 @@
             : '';
         var cardCharColor = charColorForSubmission(s);
         var cardCharStyle = cardCharColor ? ' style="--char:' + cardCharColor + '"' : '';
-        return '<article class="community-card" data-id="' + s.id + '"' + cardCharStyle + '>' +
+        return '<article class="community-card" data-id="' + escapeHTML(s.id) + '"' + cardCharStyle + '>' +
             '<div class="community-card-header">' +
             '<div class="community-card-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
             '<div class="community-card-info">' +

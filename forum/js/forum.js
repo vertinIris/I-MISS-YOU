@@ -60,6 +60,9 @@
     }
 
     function sanitizeColor(c) {
+        if (typeof SecurityShield !== 'undefined' && SecurityShield.sanitizeColor) {
+            return SecurityShield.sanitizeColor(c, '#6B8AFF');
+        }
         if (!c) return '#6B8AFF';
         var s = String(c).trim();
         if (/^#[0-9A-Fa-f]{3,8}$/.test(s)) return s;
@@ -67,6 +70,17 @@
         if (/^rgb(a?)\([\d\s,.%/]+\)$/.test(s)) return s;
         if (/^hsl(a?)\([\d\s,.%/]+\)$/.test(s)) return s;
         return '#6B8AFF';
+    }
+
+    /** 封面/附件 URL：仅允许安全 scheme，避免 javascript: 等经 src 执行 */
+    function safeMediaUrl(url) {
+        if (!url) return '';
+        if (typeof SecurityShield !== 'undefined' && SecurityShield.isSafeUrl) {
+            return SecurityShield.isSafeUrl(url) ? String(url).trim() : '';
+        }
+        var s = String(url).trim();
+        if (/^https?:\/\//i.test(s) || /^blob:/i.test(s) || /^data:image\//i.test(s) || s.indexOf('/') === 0) return s;
+        return '';
     }
 
     function charColorForSubmission(s) {
@@ -357,15 +371,16 @@
                 '</div>';
         }
 
-        var coverHtml = s.image
-            ? '<img class="stf-card-cover" src="' + escapeHTML(s.image) + '" alt="" loading="lazy">'
+        var safeImg = safeMediaUrl(s.image);
+        var coverHtml = safeImg
+            ? '<img class="stf-card-cover" src="' + escapeHTML(safeImg) + '" alt="" loading="lazy">'
             : '';
 
         var essenceBadge = isEssencePost(s)
             ? '<span class="stf-card-badge" data-type="essence" title="精华">精华</span>'
             : '';
 
-        return '<article class="stf-card" data-id="' + s.id + '"' + cardCharStyle + '>' +
+        return '<article class="stf-card" data-id="' + escapeHTML(s.id) + '"' + cardCharStyle + '>' +
             '<div class="stf-card-header">' +
                 '<div class="stf-card-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
                 '<div class="stf-card-info">' +
@@ -824,8 +839,11 @@
         return tags;
     }
 
+    var submitBusy = false;
+
     function handleSubmit(e) {
         e.preventDefault();
+        if (submitBusy) return;
         var modal = document.getElementById('stf-submit-modal');
         if (!modal) return;
 
@@ -841,15 +859,20 @@
         var attachment = window.StarTorchUpload ? window.StarTorchUpload.getAttachment('stf-submit') : null;
         var newSub = buildSubmission(rawName, type, rawTitle, rawContent, selectedTags, identityId, attachment);
 
-        if (!persistNewSubmission(newSub)) return;
+        submitBusy = true;
+        try {
+            if (!persistNewSubmission(newSub)) return;
 
-        modal.querySelector('form').reset();
-        modal.querySelectorAll('.select-tag.active').forEach(function (c) { c.classList.remove('active'); });
-        if (window.StarTorchUpload) window.StarTorchUpload.clear('stf-submit');
-        syncIdentityControls('stf-submit', '');
-        updateCounter('stf-submit');
-        closeSubmitModal();
-        showToast('发帖成功，已发布到讨论区 ✨');
+            modal.querySelector('form').reset();
+            modal.querySelectorAll('.select-tag.active').forEach(function (c) { c.classList.remove('active'); });
+            if (window.StarTorchUpload) window.StarTorchUpload.clear('stf-submit');
+            syncIdentityControls('stf-submit', '');
+            updateCounter('stf-submit');
+            closeSubmitModal();
+            showToast('发帖成功，已发布到讨论区 ✨');
+        } finally {
+            submitBusy = false;
+        }
     }
 
     /* 统一字段校验：标题可选，正文必填；已登录时 name 由通行证注入 */
@@ -869,6 +892,7 @@
     /* 快捷发布框（feed 内常驻）提交 */
     function handleQuickSubmit(e) {
         e.preventDefault();
+        if (submitBusy) return;
         var form = document.getElementById('stf-composer-form');
         if (!form) return;
 
@@ -884,15 +908,20 @@
         var attachment = window.StarTorchUpload ? window.StarTorchUpload.getAttachment('stf-composer') : null;
         var newSub = buildSubmission(rawName, type, rawTitle, rawContent, selectedTags, identityId, attachment);
 
-        if (!persistNewSubmission(newSub)) return;
+        submitBusy = true;
+        try {
+            if (!persistNewSubmission(newSub)) return;
 
-        form.reset();
-        form.querySelectorAll('.select-tag.active').forEach(function (c) { c.classList.remove('active'); });
-        if (window.StarTorchUpload) window.StarTorchUpload.clear('stf-composer');
-        syncIdentityControls('stf-composer', '');
-        updateCounter('stf-composer');
-        closeComposer();
-        showToast('已发布到讨论区 ✨');
+            form.reset();
+            form.querySelectorAll('.select-tag.active').forEach(function (c) { c.classList.remove('active'); });
+            if (window.StarTorchUpload) window.StarTorchUpload.clear('stf-composer');
+            syncIdentityControls('stf-composer', '');
+            updateCounter('stf-composer');
+            closeComposer();
+            showToast('已发布到讨论区 ✨');
+        } finally {
+            submitBusy = false;
+        }
     }
 
     /* ============ 字数计数 / 草稿 ============ */
@@ -1105,6 +1134,7 @@
                 var form = e.target.closest('.stf-comment-form');
                 if (!form) return;
                 e.preventDefault();
+                if (form.dataset.stfBusy === '1') return;
                 var targetId = form.getAttribute('data-target');
                 var user = currentUser();
                 var textEl = form.querySelector('.stf-comment-input');
@@ -1123,8 +1153,13 @@
                     showToast(user ? '请填写评论' : '请填写署名和评论');
                     return;
                 }
-                addComment(targetId, name, text, { identityId: identityId });
-                if (textEl) textEl.value = '';
+                form.dataset.stfBusy = '1';
+                try {
+                    addComment(targetId, name, text, { identityId: identityId });
+                    if (textEl) textEl.value = '';
+                } finally {
+                    form.dataset.stfBusy = '0';
+                }
             });
 
             grid.addEventListener('change', function (e) {
@@ -1950,6 +1985,10 @@
         if (!window.StarTorchData) {
             console.warn('[StarTorchForum] Data layer not loaded');
             return;
+        }
+        /* 与主站一致：启用 DOM/表单/存储纵深防护（此前论坛只加载了脚本未 init） */
+        if (typeof SecurityShield !== 'undefined' && SecurityShield.init) {
+            try { SecurityShield.init(); } catch (e) { console.warn('[StarTorchForum] SecurityShield.init failed', e); }
         }
         StarTorchData.ensureSeedData();
         bindEvents();

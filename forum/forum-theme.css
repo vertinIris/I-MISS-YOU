@@ -807,14 +807,16 @@ body.forum-page .donate-btn-primary {
 .stf-chat-send {
     background: linear-gradient(135deg, var(--stf-brand), color-mix(in srgb, var(--stf-brand) 65%, var(--stf-gold))) !important;
 }
-/* 放大态：实色底 + 禁止 blur；z 高于遮罩、低于 modal */
+/* 放大态：实色底 + 禁止 blur/translate；z 高于遮罩、低于 modal */
 .stf-chat-card.is-chat-expanded {
     z-index: var(--stf-z-chat-expand) !important;
     background: #0b1020 !important;
+    transform: none !important;
     filter: none !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     isolation: isolate;
+    -webkit-font-smoothing: antialiased;
 }
 .stf-chat-card.is-chat-expanded .stf-chat-messages,
 .stf-chat-card.is-chat-expanded .stf-chat-header,

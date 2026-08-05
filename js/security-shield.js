@@ -101,12 +101,28 @@ var SecurityShield = (function() {
     function isSafeUrl(url) {
         if (!url || typeof url !== 'string') return false;
         url = url.trim();
+        if (!url || DANGEROUS_URL.test(url)) return false;
+        /* 允许：绝对 http(s)、协议相对、同源相对路径、blob、图片 data URI */
         if (url.indexOf('//') === 0) return true;
         if (/^https?:\/\//i.test(url)) return true;
         if (url.indexOf('/') === 0) return true;
         if (/^blob:/i.test(url)) return true;
-        if (/^data:image\//i.test(url)) return true;
-        return !DANGEROUS_URL.test(url);
+        if (/^data:image\/(png|jpe?g|gif|webp|svg\+xml);/i.test(url)) return true;
+        /* 相对资源路径（禁止 .. 与控制字符） */
+        if (/^[a-zA-Z0-9][\w./%-]*$/.test(url) && url.indexOf('..') === -1) return true;
+        return false;
+    }
+
+    /** 内联 style 用的颜色白名单，防止 background CSS 注入 */
+    function sanitizeColor(c, fallback) {
+        fallback = fallback || '#6B8AFF';
+        if (!c) return fallback;
+        var s = String(c).trim();
+        if (/^#[0-9A-Fa-f]{3,8}$/.test(s)) return s;
+        if (/^var\(--[\w-]+\)$/.test(s)) return s;
+        if (/^rgba?\([\d\s.,%/]+\)$/.test(s)) return s;
+        if (/^hsla?\([\d\s.,%/]+\)$/.test(s)) return s;
+        return fallback;
     }
 
     function safeParseJSON(raw, fallback) {
@@ -249,8 +265,11 @@ var SecurityShield = (function() {
         };
     }
 
+    var inited = false;
+
     function init() {
-        if (typeof document === 'undefined') return;
+        if (typeof document === 'undefined' || inited) return;
+        inited = true;
         document.addEventListener('submit', onFormSubmit, true);
         document.addEventListener('click', onClickCapture, true);
         window.addEventListener('securitypolicyviolation', onCSPViolation);
@@ -269,7 +288,9 @@ var SecurityShield = (function() {
         sanitizeText: sanitizeText,
         detectThreat: detectThreat,
         isSafeUrl: isSafeUrl,
+        sanitizeColor: sanitizeColor,
         safeParseJSON: safeParseJSON,
+        logViolation: logViolation,
         getViolationCount: function() { return violationCount; }
     };
 })();

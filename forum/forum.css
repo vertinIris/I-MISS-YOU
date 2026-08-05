@@ -2551,21 +2551,22 @@ html.archive-orbit-active .archive-album-shelf {
     border-color: rgba(107, 138, 255, 0.4);
     color: #fff;
 }
-/* 放大态：挂到 body，实色底、无 blur，避免父级 filter/backdrop 把文字糊掉 */
+/* 放大态：挂到 body，实色底、无 blur；禁用 translateX 居中以免亚像素糊字 */
 .stf-chat-card.is-chat-expanded {
     position: fixed !important;
     inset: max(2vh, 8px) max(2vw, 8px) max(2vh, 8px) max(2vw, 8px);
-    left: 50% !important;
-    right: auto !important;
+    left: max(2vw, 8px) !important;
+    right: max(2vw, 8px) !important;
     top: max(2vh, 8px) !important;
     bottom: max(2vh, 8px) !important;
-    transform: translateX(-50%);
+    transform: none !important;
     /* 须高于 .stf-chat-backdrop；与 forum-theme --stf-z-chat-* 对齐 */
     z-index: var(--stf-z-chat-expand, 1100) !important;
     width: min(1100px, calc(100vw - 16px));
     max-width: none;
     height: min(92vh, 900px);
-    margin: 0;
+    margin-left: auto !important;
+    margin-right: auto !important;
     border-radius: 20px;
     border: 1px solid rgba(107, 138, 255, 0.35);
     background: #0b1020 !important;
@@ -2579,6 +2580,8 @@ html.archive-orbit-active .archive-album-shelf {
     opacity: 1 !important;
     color: #f0f4ff;
     isolation: isolate;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
 }
 .stf-chat-card.is-chat-expanded .stf-chat-header {
     flex: none;
