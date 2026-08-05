@@ -2345,6 +2345,21 @@
         if (trigger) trigger.setAttribute('aria-label', '当前地址：' + locationName + '，点击切换');
     }
 
+    function syncRealmOptionsFromCatalog(dropdown) {
+        if (!dropdown || !window.SnowRealm || !window.SnowRealm.LOCATIONS) return;
+        var list = window.SnowRealm.LOCATIONS;
+        var html = '';
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            html += '<button type="button" class="stf-realm-option" role="option" aria-selected="false"'
+                + ' data-location="' + item.location + '" data-realm="' + item.realm + '">'
+                + '<span class="stf-realm-opt-name">' + item.location + '</span>'
+                + '<span class="stf-realm-opt-desc">' + (item.desc || '') + '</span>'
+                + '</button>';
+        }
+        dropdown.innerHTML = html;
+    }
+
     function closeRealmMenu() {
         var chipEl = document.getElementById('stf-realm-chip');
         var trigger = document.getElementById('stf-realm-trigger');
@@ -2358,6 +2373,7 @@
         var dropdown = document.getElementById('stf-realm-dropdown');
         if (!chipEl || !trigger || !dropdown) return;
 
+        syncRealmOptionsFromCatalog(dropdown);
         var options = dropdown.querySelectorAll('.stf-realm-option');
         var applyingRemote = false;
 
@@ -2428,8 +2444,8 @@
                 ? window.SnowRealm.resolve(boot.location || state.location, boot.realm || state.realm)
                 : { location: boot.location || state.location, realm: boot.realm || state.realm };
         }
-        applyForumRealm(state.location, state.realm, { silent: true });
         initForumRealmSelector();
+        applyForumRealm(state.location, state.realm, { silent: true });
     }
 
     /* ============ Init ============ */
