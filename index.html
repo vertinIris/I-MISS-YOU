@@ -40,6 +40,7 @@
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
 
     <!-- Styles -->
+    <link rel="stylesheet" href="css/tokens-base.css">
     <link rel="stylesheet" href="css/tokens-snow.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/secret-portal.css">
@@ -136,7 +137,7 @@
             </a>
 
             <div class="nav-links" id="nav-links">
-                <a href="#profile" class="nav-link">资料</a>
+                <a href="#profile" class="nav-link">档案</a>
                 <a href="#music" class="nav-link">音乐</a>
                 <a href="#timeline" class="nav-link">动态</a>
                 <a href="#diary" class="nav-link">日志</a>
@@ -286,11 +287,26 @@
             <h1 class="hero-title">
                 <span class="hero-title-mark">飞行雪绒</span>
             </h1>
+            <div class="sig-startrack" aria-hidden="true">
+                <svg viewBox="0 0 240 28" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse class="sig-orbit" cx="120" cy="14" rx="108" ry="8"/>
+                    <circle class="sig-pulse-ring" cx="120" cy="14" r="11"/>
+                    <line class="sig-tick sig-tick--major" x1="12" y1="14" x2="12" y2="6"/>
+                    <line class="sig-tick" x1="36" y1="14" x2="36" y2="9"/>
+                    <line class="sig-tick" x1="60" y1="14" x2="60" y2="9"/>
+                    <line class="sig-tick sig-tick--major" x1="84" y1="14" x2="84" y2="5"/>
+                    <line class="sig-tick" x1="156" y1="14" x2="156" y2="9"/>
+                    <line class="sig-tick" x1="180" y1="14" x2="180" y2="9"/>
+                    <line class="sig-tick sig-tick--major" x1="204" y1="14" x2="204" y2="5"/>
+                    <line class="sig-tick" x1="228" y1="14" x2="228" y2="9"/>
+                    <circle class="sig-core" cx="120" cy="14" r="2.4"/>
+                </svg>
+            </div>
             <p class="hero-tagline">星炬学院的日常</p>
             <p class="hero-subtitle">深夜调频 · 粉白雪绒里的秘密频道</p>
             <p class="hero-freq" aria-hidden="true">
                 <span class="sn-freq-pulse"></span>
-                <span>FREQ · 87.7 · ON AIR</span>
+                <span>FREQ · 9072 · ON AIR</span>
             </p>
             <div class="hero-actions">
                 <a href="#timeline" class="btn-primary magnetic">
@@ -322,7 +338,7 @@
     <section class="section" id="profile">
         <div class="section-header reveal">
             <span class="section-label">PROFILE</span>
-            <h2 class="section-title">个人资料</h2>
+            <h2 class="section-title">电台档案</h2>
         </div>
 
         <div class="profile-card glass reveal">
@@ -347,7 +363,7 @@
                             <defs>
                                 <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
                                     <stop offset="0%" stop-color="#FF6B9D"/>
-                                    <stop offset="50%" stop-color="#B66BFF"/>
+                                    <stop offset="55%" stop-color="#8EB4E8"/>
                                     <stop offset="100%" stop-color="#6B8AFF"/>
                                 </linearGradient>
                                 <linearGradient id="hairGrad" x1="0" y1="0" x2="0" y2="1">
@@ -393,8 +409,8 @@
                             <rect x="7" y="11" width="2" height="1" fill="#FFFFFF"/>
                             <rect x="7" y="11" width="1" height="1" fill="#A8D8FF"/>
                             <!-- Machine-form energy line (dual form hint) -->
-                            <rect x="4" y="10" width="1" height="1" fill="#B66BFF" opacity="0.6"/>
-                            <rect x="11" y="10" width="1" height="1" fill="#B66BFF" opacity="0.6"/>
+                            <rect x="4" y="10" width="1" height="1" fill="#8EB4E8" opacity="0.6"/>
+                            <rect x="11" y="10" width="1" height="1" fill="#8EB4E8" opacity="0.6"/>
                             <!-- Arms -->
                             <rect x="2" y="10" width="1" height="3" fill="#FF8FB0"/>
                             <rect x="13" y="10" width="1" height="3" fill="#FF8FB0"/>
@@ -411,7 +427,7 @@
                             <rect x="14" y="3" width="1" height="1" fill="#FFFFFF" opacity="0.8"/>
                             <rect x="1" y="8" width="1" height="1" fill="#FFB6D9" opacity="0.6"/>
                             <rect x="14" y="9" width="1" height="1" fill="#A8D8FF" opacity="0.6"/>
-                            <rect x="0" y="5" width="1" height="1" fill="#B66BFF" opacity="0.4"/>
+                            <rect x="0" y="5" width="1" height="1" fill="#8EB4E8" opacity="0.4"/>
                             <rect x="15" y="6" width="1" height="1" fill="#FFD700" opacity="0.4"/>
                             <rect x="14" y="9" width="1" height="1" fill="#A8D8FF" opacity="0.6"/>
                         </svg>
@@ -1597,7 +1613,7 @@
                         <button type="button" class="bookmarks-delete-col-btn" id="collection-delete-btn">删除收藏夹</button>
                     </div>
                     <ul class="bookmarks-list" id="bookmarks-list"></ul>
-                    <p class="bookmarks-empty" id="bookmarks-empty" hidden>还没有收藏任何作品</p>
+                    <p class="bookmarks-empty" id="bookmarks-empty" hidden>收藏夹是空的。浏览投稿时点星标即可收进这里。</p>
                 </div>
             </div>
 
@@ -1607,7 +1623,7 @@
                         <path d="M32 8 L40 24 L56 26 L44 38 L48 54 L32 46 L16 54 L20 38 L8 26 L24 24 Z"/>
                     </svg>
                 </div>
-                <p class="community-empty-text">还没有人投稿呢，来成为第一个创作者吧！</p>
+                <p class="community-empty-text">讨论区还安静着。来发第一条投稿吧。</p>
                 <a href="#submit" class="btn-ghost magnetic community-empty-btn">
                     <span>去投稿</span>
                 </a>

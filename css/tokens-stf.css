@@ -2,6 +2,7 @@
  * theme: custom Star-Torch Navy · vibe: "academy blue-gold seminar pass"
  * paper: oklch(14% 0.03 250) · accent: oklch(68% 0.12 255) · gold: oklch(78% 0.12 85)
  * display: Noto Serif SC · axes: dark / roman-serif-cjk / cool-blue · nav: N6 · footer: Ft1
+ * signature: 星轨频率盘 (--sig-*) · shared base: tokens-base.css
  * pre-emit critique: P5 H5 E4 S5 R5 V5
  */
 
@@ -33,15 +34,20 @@
   --stf-metal: 0 0 0 1px oklch(78% 0.06 250 / 0.14), var(--stf-inset);
   --stf-focus: 0 0 0 2px oklch(14% 0.03 250 / 0.95), 0 0 0 4px oklch(78% 0.06 250 / 0.55);
 
-  --stf-z-nav: 900;
-  --stf-z-fab-tuner: 960;
-  --stf-z-fab-donate: 970;
-  --stf-z-edge: 980;
-  --stf-z-chat-backdrop: 1090;
-  --stf-z-chat-expand: 1100;
-  --stf-z-modal: 1200;
-  --stf-z-toast: 1300;
-  --stf-z-easter: 1400;
+  /* Scene → signature */
+  --sig-accent: var(--stf-brand-light);
+  --sig-accent-strong: var(--stf-gold);
+  --sig-ink: var(--stf-ink);
+
+  --stf-z-nav: var(--z-nav, 900);
+  --stf-z-fab-tuner: var(--z-fab-tuner, 960);
+  --stf-z-fab-donate: var(--z-fab-donate, 970);
+  --stf-z-edge: var(--z-edge, 980);
+  --stf-z-chat-backdrop: var(--z-chat-backdrop, 1090);
+  --stf-z-chat-expand: var(--z-chat-expand, 1100);
+  --stf-z-modal: var(--z-modal, 1200);
+  --stf-z-toast: var(--z-toast, 1300);
+  --stf-z-easter: var(--z-easter, 1400);
 
   /* Override pink legacy tokens → academy blue (forum only) */
   --aimisi-pink: #6d8fd6;

@@ -1546,7 +1546,7 @@
                 var empty = document.createElement('div');
                 empty.className = 'comment-empty';
                 empty.textContent = (list.id && list.id.indexOf('cc-list-') === 0)
-                    ? '还没有评论 ~' : '还没有评论，来第一个留言吧 ~';
+                    ? '还没有评论' : '还没有评论。来留第一条吧。';
                 list.appendChild(empty);
             }
             return;
@@ -2634,7 +2634,7 @@
                 var list = document.getElementById('comment-list-' + targetId);
                 var remaining = list ? list.querySelectorAll('.comment-item').length : 0;
                 if (list && remaining === 0) {
-                    list.innerHTML = '<div class="comment-empty">还没有评论，来第一个留言吧 ~</div>';
+                    list.innerHTML = '<div class="comment-empty">还没有评论。来留第一条吧。</div>';
                 }
                 updatePostCommentCount(targetId, Math.max(0, remaining));
             }, 300);
@@ -2730,7 +2730,7 @@
                         var list = document.getElementById('comment-list-' + targetId);
                         var remaining = list ? list.querySelectorAll('.comment-item').length : 0;
                         if (list && remaining === 0) {
-                            list.innerHTML = '<div class="comment-empty">还没有评论，来第一个留言吧 ~</div>';
+                            list.innerHTML = '<div class="comment-empty">还没有评论。来留第一条吧。</div>';
                         }
                         /* 博文评论计数 -1 */
                         updatePostCommentCount(targetId, Math.max(0, remaining));

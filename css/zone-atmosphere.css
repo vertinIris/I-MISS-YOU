@@ -1,0 +1,175 @@
+/* ============================================================
+   角色专区 · 氛围层（对齐主站/学院 token，克制神秘亲密）
+   ============================================================ */
+
+body[data-char] {
+  background:
+    radial-gradient(900px 480px at 50% -8%, color-mix(in srgb, var(--char, var(--c-primary, #e879a8)) 18%, transparent), transparent 58%),
+    radial-gradient(520px 360px at 88% 18%, oklch(70% 0.05 230 / 0.06), transparent 55%),
+    linear-gradient(180deg, #100810 0%, #0c0a12 48%, #0a0e18 100%);
+  color: var(--text-primary, #faf4f7);
+  font-family: var(--font-sans, "Noto Sans SC", system-ui, sans-serif);
+  min-height: 100vh;
+}
+
+.zone-topbar {
+  background: oklch(12% 0.02 350 / 0.88) !important;
+  border-bottom: 1px solid oklch(96% 0.01 350 / 0.08) !important;
+  backdrop-filter: blur(10px) saturate(115%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(115%) !important;
+}
+.zone-topbar .zone-home {
+  font-family: var(--font-display, "ZCOOL XiaoWei", "Noto Serif SC", serif) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.06em;
+  color: var(--sn-ink, #faf4f7) !important;
+}
+.zone-topbar .zone-home:focus-visible {
+  outline: none;
+  box-shadow: var(--sn-focus, 0 0 0 2px #100810, 0 0 0 4px oklch(72% 0.14 350 / 0.55));
+  border-radius: var(--radius-sm, 8px);
+}
+.zone-switch a,
+.zone-switch span {
+  border-radius: var(--radius-sm, 8px) !important;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+.zone-switch a:focus-visible {
+  outline: none;
+  box-shadow: var(--sn-focus, 0 0 0 2px #100810, 0 0 0 4px oklch(72% 0.14 350 / 0.55));
+}
+
+.zone-hero {
+  position: relative;
+  isolation: isolate;
+  padding: 4rem 1.25rem 2.75rem !important;
+  min-height: min(52vh, 420px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.zone-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 28%, color-mix(in srgb, var(--char, #e879a8) 16%, transparent), transparent 70%),
+    linear-gradient(180deg, transparent 50%, oklch(12% 0.02 350 / 0.55) 100%);
+}
+.zone-hero > * {
+  position: relative;
+  z-index: 1;
+}
+.zone-hero-badge {
+  width: 72px !important;
+  height: 72px !important;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--char, #e879a8) 78%, #1a1020) !important;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--char, #e879a8) 35%, transparent),
+    0 12px 28px oklch(0% 0 0 / 0.35) !important;
+}
+.zone-hero-name {
+  font-family: var(--font-display, "ZCOOL XiaoWei", "Noto Serif SC", serif) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.12em;
+  font-size: clamp(2.2rem, 7vw, 3.2rem) !important;
+}
+.zone-hero-alias {
+  font-family: var(--font-mono, "IBM Plex Mono", ui-monospace, monospace);
+  font-size: 0.78rem !important;
+  letter-spacing: 0.2em;
+  text-transform: none;
+  color: color-mix(in srgb, var(--char, #e879a8) 70%, #fff) !important;
+  margin-top: 0.55rem !important;
+}
+.zone-hero-tagline {
+  max-width: 28em !important;
+  margin-top: 1rem !important;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: oklch(78% 0.03 350 / 0.78) !important;
+  letter-spacing: 0.03em;
+}
+
+.zone-breadcrumb {
+  color: oklch(70% 0.03 350 / 0.65) !important;
+}
+.zone-breadcrumb a:hover,
+.zone-breadcrumb a:focus-visible {
+  color: var(--sn-accent-soft, #f5c0d8);
+}
+
+.zone-stats {
+  max-width: 880px;
+  margin: 1.25rem auto 0;
+  padding: 0 1.2rem;
+  display: grid;
+  gap: 0.65rem;
+}
+.zone-stat {
+  border-radius: var(--radius-md, 12px) !important;
+  border: 1px solid oklch(96% 0.01 350 / 0.1) !important;
+  background: oklch(96% 0.01 350 / 0.035) !important;
+  box-shadow: none !important;
+}
+.zone-stat-label {
+  font-family: var(--font-mono, "IBM Plex Mono", ui-monospace, monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: oklch(72% 0.08 350 / 0.7);
+}
+.zone-stat-value {
+  color: var(--sn-ink, #faf4f7);
+}
+
+.zone-modules .module {
+  border-radius: var(--radius-md, 12px) !important;
+  border: 1px solid oklch(96% 0.01 350 / 0.1) !important;
+  background: oklch(96% 0.01 350 / 0.04) !important;
+  box-shadow: 0 12px 32px oklch(0% 0 0 / 0.28) !important;
+}
+.zone-modules .module summary {
+  font-family: var(--font-display, "ZCOOL XiaoWei", "Noto Serif SC", serif);
+  letter-spacing: 0.06em;
+}
+.zone-modules .module summary:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--char, #e879a8) 55%, transparent);
+}
+
+.zone-source {
+  max-width: 880px;
+  margin: 2.5rem auto 3rem;
+  padding: 1rem 1.2rem;
+  border-top: 1px solid oklch(96% 0.01 350 / 0.08);
+  font-size: 0.78rem;
+  line-height: 1.7;
+  color: oklch(68% 0.03 350 / 0.7);
+}
+
+/* 爱弥斯：夜电台亲密，略增粉雾 */
+[data-char="aimisi"] .zone-hero-alias::before {
+  content: "FREQ · 9072 · ";
+  opacity: 0.55;
+}
+
+@media (max-width: 640px) {
+  .zone-hero {
+    min-height: 0;
+    padding: 3rem 1rem 2rem !important;
+  }
+  .zone-switch {
+    max-width: 62vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zone-hero-badge {
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--char, #e879a8) 35%, transparent) !important;
+  }
+}

@@ -1,9 +1,9 @@
 /* ============================================================
-   鸣潮同人论坛 · 聚合主页（加法式论坛主体）
-   复用全局 style.css 令牌与玻璃拟态语言；本文件仅承载
-   论坛专属布局：hero / 板块入口卡 / 世界观考据卡 / 社区。
-   角色档案已独立内嵌于本论坛（#characters-archive），
-   飞行雪绒沉浸站仅通过隐藏彩蛋入口单向跳转，两站核心功能独立。
+   ?????? ? ?????????????
+   ???? style.css ????????????????
+   ???????hero / ????? / ?????? / ???
+   ??????????????#characters-archive??
+   ??????????????????????????????
    ============================================================ */
 
 .forum-hero {
@@ -54,7 +54,7 @@
 }
 @keyframes forum-flow { to { background-position: 300% 0; } }
 
-/* Hero 核心入口快捷胶囊 —— 强化入口辨识度 */
+/* Hero ???????? ?? ??????? */
 .forum-hero-quicknav {
     display: flex;
     gap: 12px;
@@ -89,7 +89,7 @@
     box-shadow: 0 14px 30px rgba(0,0,0,.35);
 }
 
-/* 功能分区导览：核心卡视觉权重更高 */
+/* ???????????????? */
 .forum-entry--primary {
     border-top-color: var(--stf-brand, #6B8AFF);
     background: linear-gradient(180deg, rgba(107,138,255,.10), rgba(255,255,255,.04));
@@ -113,7 +113,7 @@
 }
 .forum-section--overview { padding-top: 50px; }
 
-/* 实时聊天室 */
+/* ????? */
 .forum-section--chat { position: relative; }
 .forum-section--chat::before {
     content: "";
@@ -164,7 +164,7 @@
     background: #FFE08A;
     animation: chat-dot-pulse 1s ease-in-out infinite;
 }
-/* 云端聊天表尚未创建（db/migration-023 未执行）：琥珀慢脉冲，与"离线"区分 */
+/* ??????????db/migration-023 ????????????"??"?? */
 .stf-chat-dot.nomissing {
     background: #FFC46B;
     box-shadow: 0 0 10px rgba(255, 196, 107, 0.5);
@@ -179,7 +179,7 @@
     color: rgba(168, 216, 255, 0.9);
     letter-spacing: 0.02em;
 }
-/* 正在输入指示 */
+/* ?????? */
 .stf-chat-typing {
     display: flex;
     align-items: center;
@@ -205,7 +205,7 @@
     0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
     30% { transform: translateY(-4px); opacity: 1; }
 }
-/* 系统提示行 */
+/* ????? */
 .stf-chat-system {
     align-self: center;
     max-width: 90%;
@@ -218,7 +218,7 @@
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.06);
 }
-/* 消息状态勾 */
+/* ????? */
 .stf-chat-tick {
     font-size: 0.7rem;
     line-height: 1;
@@ -227,7 +227,7 @@
 .stf-chat-tick.delivered { color: #7CFFB2; }
 .stf-chat-tick.local { color: rgba(255, 182, 182, 0.8); }
 @keyframes chat-spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
-/* 字数计数器 */
+/* ????? */
 .stf-chat-counter {
     flex: 0 0 auto;
     align-self: center;
@@ -358,7 +358,7 @@
     .stf-chat-message, .stf-chat-dot, .stf-chat-typing-dots i, .stf-chat-tick.sending { animation: none !important; }
 }
 
-/* 核心互动区标识 */
+/* ??????? */
 .forum-section--core { position: relative; }
 .forum-section--core::before {
     content: "";
@@ -368,7 +368,7 @@
     pointer-events: none;
 }
 
-/* 社区统计 */
+/* ???? */
 .stf-stats {
     display: flex;
     gap: 14px;
@@ -398,7 +398,7 @@
 }
 .stf-stat span { font-size: 12px; color: rgba(240,244,255,.6); letter-spacing: .08em; }
 
-/* 排序 */
+/* ?? */
 .stf-sort { display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); }
 .stf-sort-btn {
     appearance: none;
@@ -414,7 +414,7 @@
 .stf-sort-btn:hover { color: #fff; }
 .stf-sort-btn.active { background: linear-gradient(100deg, rgba(107,138,255,.35), rgba(232,197,106,.28)); color: #fff; }
 
-/* 收纳册 + 浮动卡片 */
+/* ??? + ???? */
 .archive-float {
     animation: card-float 5.5s ease-in-out infinite;
     min-width: 0;
@@ -429,7 +429,7 @@
 .archive-album-grid .archive-float:nth-child(7) { animation-delay: 2.4s; }
 @keyframes card-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
 
-/* W1 · 展柜台座：深蓝金属边 + 底部光池；去掉廉价 135° 斜纹 */
+/* W1 ? ?????????? + ????????? 135� ?? */
 .archive-album {
     position: relative;
     margin-top: 36px;
@@ -456,7 +456,7 @@
     filter: blur(8px);
     pointer-events: none;
 }
-/* 统一响应式栅格（桌面环关闭时）/ 移动端横向 snap 卡带 */
+/* ???????????????/ ????? snap ?? */
 .archive-album-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -484,7 +484,7 @@
     border-color: color-mix(in srgb, var(--char, #FF6B9D) 55%, transparent);
 }
 
-/* 桌面 3D 竖环：卡片始终正面朝向观众（billboard），绕 Y 轴公转 */
+/* ?? 3D ??????????????billboard??? Y ??? */
 .archive-orbit { display: none; }
 .archive-orbit-stage {
     position: relative;
@@ -494,7 +494,7 @@
     perspective: 1600px;
     perspective-origin: 50% 28%;
 }
-/* W2 · 整环向下倾斜；卡片保持 billboard（JS 只写 translate3d，不 rotateY） */
+/* W2 ? ??????????? billboard?JS ?? translate3d?? rotateY? */
 .archive-orbit-ring {
     position: absolute;
     inset: 0;
@@ -508,7 +508,7 @@
     will-change: transform;
 }
 .archive-orbit-ring.is-paused {
-    /* hover / focus：略抬正，便于阅读 */
+    /* hover / focus????????? */
     transform: rotateX(-7deg);
 }
 .archive-orbit-ring .archive-float.is-orbit-item {
@@ -520,7 +520,7 @@
     animation: none;
     transform-style: preserve-3d;
     transform-origin: center center;
-    /* JS 写入：translate3d(x,y,z) — 不旋转卡片本身，保证始终正面朝向屏幕 */
+    /* JS ???translate3d(x,y,z) ? ?????????????????? */
     transition: filter .35s ease, opacity .35s ease;
 }
 .archive-orbit-ring .archive-float.is-orbit-item .character-archive-card {
@@ -533,7 +533,7 @@
     box-shadow: 0 14px 32px rgba(0, 0, 0, .42);
     border-top-width: 3px;
 }
-/* 环上降噪：主名 / 别名 / 色边；长文案默认隐藏 */
+/* ??????? / ?? / ?????????? */
 .archive-orbit-ring .archive-float.is-orbit-item .character-archive-line,
 .archive-orbit-ring .archive-float.is-orbit-item .character-archive-cta,
 .archive-orbit-ring .archive-float.is-orbit-item .card-featured-ribbon {
@@ -574,12 +574,12 @@ html.archive-orbit-active .archive-album-grid.is-orbit-source {
 html.archive-orbit-active .archive-orbit {
     display: block;
 }
-/* W1：台座光池在环模式下保留 */
+/* W1???????????? */
 html.archive-orbit-active .archive-album-shelf {
     display: block;
 }
 
-/* 移动端 / 减动效：横向 snap 卡带，替代生硬网格 */
+/* ??? / ?????? snap ????????? */
 @media (max-width: 899px), (prefers-reduced-motion: reduce) {
     .archive-orbit { display: none !important; }
     html.archive-orbit-active .archive-album-grid.is-orbit-source {
@@ -625,7 +625,7 @@ html.archive-orbit-active .archive-album-shelf {
     .archive-album-shelf { display: none; }
 }
 
-/* 主卡（爱弥斯）：栅格内强调，高度与邻卡协调 */
+/* ????????????????????? */
 .character-archive-card.is-featured {
     height: 100%;
     padding: 26px 24px 22px;
@@ -651,7 +651,7 @@ html.archive-orbit-active .archive-album-shelf {
     box-shadow: 0 6px 16px rgba(255,107,157,.28);
 }
 
-/* 移动端导航切换 */
+/* ??????? */
 .nav-toggle {
     display: none;
     flex-direction: column;
@@ -702,7 +702,7 @@ html.archive-orbit-active .archive-album-shelf {
 }
 .forum-hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
-/* 板块入口网格 */
+/* ?????? */
 .forum-section { padding: 80px 24px; }
 .forum-section-inner { max-width: 1120px; margin: 0 auto; }
 .forum-grid {
@@ -762,12 +762,49 @@ html.archive-orbit-active .archive-album-shelf {
 .forum-entry-cta svg { width: 16px; height: 16px; transition: transform .3s; }
 .forum-entry:hover .forum-entry-cta svg { transform: translateX(4px); }
 
-/* 世界观考据 */
+/* ????? */
+.lore-priority-note {
+    margin: 18px 0 0;
+    font-size: 13px;
+    color: rgba(240,244,255,.55);
+    line-height: 1.7;
+}
+.lore-priority-note a {
+    color: rgba(168,216,255,.9);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.lore-tier {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: .04em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin: 0 4px 0 0;
+    vertical-align: middle;
+    border: 1px solid transparent;
+}
+.lore-card > .lore-tier { margin: 0 0 10px; }
+.lore-tier-official {
+    color: #9ec5ff;
+    background: rgba(80,130,220,.14);
+    border-color: rgba(110,160,240,.28);
+}
+.lore-tier-fanon {
+    color: #b8e0c0;
+    background: rgba(70,140,90,.14);
+    border-color: rgba(100,170,120,.28);
+}
+.lore-tier-orig {
+    color: #f0c9a0;
+    background: rgba(180,120,60,.14);
+    border-color: rgba(200,140,80,.28);
+}
 .lore-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 20px;
-    margin-top: 36px;
+    margin-top: 28px;
 }
 .lore-card {
     padding: 26px 24px;
@@ -790,7 +827,7 @@ html.archive-orbit-active .archive-album-shelf {
 }
 
 /* ============================================================
-   星炬学院社区：投稿 / 筛选 / 卡片 / 评论 / 弹窗
+   ????????? / ?? / ?? / ?? / ??
    ============================================================ */
 
 .stf-toolbar {
@@ -1155,7 +1192,7 @@ html.archive-orbit-active .archive-album-shelf {
 .stf-community-empty.show { display: flex; }
 .stf-community-empty svg { width: 56px; height: 56px; opacity: .6; }
 
-/* 投稿弹窗 */
+/* ???? */
 .stf-modal {
     position: fixed;
     inset: 0;
@@ -1210,7 +1247,7 @@ html.archive-orbit-active .archive-album-shelf {
 
 .stf-submit-form .form-actions { margin-top: 8px; }
 
-/* 匿名身份选择器状态 */
+/* ????????? */
 .form-select.is-anonymous {
     background: rgba(107,138,255,.08);
     border-color: rgba(168,216,255,.35);
@@ -1253,10 +1290,10 @@ html.archive-orbit-active .archive-album-shelf {
 }
 
 /* ============================================================
-   新增组件样式：账号按钮 / 通行证弹窗 / 搜索 / 附件 / 草稿 / 调谐台
+   ??????????? / ????? / ?? / ?? / ?? / ???
    ============================================================ */
 
-/* 导航栏账号按钮 */
+/* ??????? */
 .stf-account-btn {
     display: inline-flex;
     align-items: center;
@@ -1292,7 +1329,7 @@ html.archive-orbit-active .archive-album-shelf {
     background: linear-gradient(135deg, rgba(107,138,255,.55), rgba(232,197,106,.4));
 }
 
-/* 通行证弹窗内部：登录 / 注册拆分为两个竖向独立模块 */
+/* ?????????? / ????????????? */
 .stf-auth-modules {
     display: flex;
     flex-direction: column;
@@ -1337,7 +1374,7 @@ html.archive-orbit-active .archive-album-shelf {
     outline: 2px solid var(--stf-brand, #6B8AFF);
     outline-offset: -2px;
 }
-/* 登录 / 签发：学院蓝金 */
+/* ?? / ??????? */
 .stf-auth-module[data-auth-module="login"] .stf-auth-tab.active {
     background: linear-gradient(135deg, rgba(107,138,255,.22), rgba(107,138,255,.08));
 }
@@ -1350,12 +1387,12 @@ html.archive-orbit-active .archive-album-shelf {
     gap: 12px;
     padding: 0 16px 16px;
 }
-/* 修复：form 本身带 hidden 时 flex 会覆盖 UA 默认 display:none */
+/* ???form ??? hidden ? flex ??? UA ?? display:none */
 .stf-auth-form[hidden] { display: none !important; }
 .stf-auth-form .form-actions { margin-top: 2px; }
 .stf-auth-error { margin: 0; font-size: 13px; color: #FF8DAA; }
 
-/* 身份方式切换：邮箱 / 昵称（登录与注册各一组） */
+/* ????????? / ???????????? */
 .stf-auth-mode {
     display: inline-flex;
     align-self: flex-start;
@@ -1390,7 +1427,7 @@ html.archive-orbit-active .archive-album-shelf {
     font-size: 12px; line-height: 1.6;
     color: rgba(240,244,255,.45);
 }
-/* form-group 等内部字段在 hidden 时强制隐藏 */
+/* form-group ?????? hidden ????? */
 .stf-auth-form [hidden] { display: none !important; }
 .stf-auth-note {
     margin: 12px 0 0;
@@ -1420,7 +1457,7 @@ html.archive-orbit-active .archive-album-shelf {
 .stf-account-card-text b { font-size: 17px; font-family: "Noto Serif SC", serif; color: #fff; }
 .stf-account-card-text span { font-size: 12.5px; color: rgba(240,244,255,.6); }
 
-/* 通行证证件化壳层 */
+/* ???????? */
 .stf-passport-panel {
     width: min(480px, 100%);
     padding: 0;
@@ -1535,7 +1572,7 @@ html.archive-orbit-active .archive-album-shelf {
     border-color: rgba(255, 255, 255, 0.12);
 }
 
-/* 通行证：显示名表单与保存按钮间距（避免输入框与按钮视觉重叠） */
+/* ?????????????????????????????? */
 #stf-account-user {
     display: flex;
     flex-direction: column;
@@ -1582,7 +1619,7 @@ html.archive-orbit-active .archive-album-shelf {
     margin: 0;
 }
 
-/* 社区搜索 */
+/* ???? */
 .stf-search {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 9px 14px;
@@ -1607,7 +1644,7 @@ html.archive-orbit-active .archive-album-shelf {
 }
 .stf-search-clear:hover { color: #fff; }
 
-/* 附件上传区 */
+/* ????? */
 .stf-upload-zone {
     display: flex; flex-direction: column; align-items: center; gap: 6px;
     padding: 18px;
@@ -1661,13 +1698,13 @@ html.archive-orbit-active .archive-album-shelf {
 }
 .stf-upload-remove:hover { background: rgba(255,107,157,.2); }
 
-/* 草稿提示 */
+/* ???? */
 .stf-draft-hint {
     font-size: 12.5px; color: rgba(168,216,255,.85);
     margin-left: auto; align-self: center;
 }
 
-/* 调谐台：深夜电台频率入口（收起胶囊可直接输入四位频率） */
+/* ??????????????????????????? */
 .stf-tuner {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     padding: 48px 24px 12px; gap: 14px;
@@ -1894,7 +1931,7 @@ html.archive-orbit-active .archive-album-shelf {
     box-shadow: 0 0 0 3px rgba(107,138,255,.16), inset 0 0 18px rgba(107,138,255,.12);
     background: rgba(107,138,255,.08);
 }
-/* 逐位即时反馈：这一位拨对了 */
+/* ????????????? */
 .stf-dial-input.is-hit {
     border-color: rgba(127, 217, 158, .75);
     background: rgba(127, 217, 158, .10);
@@ -1903,7 +1940,7 @@ html.archive-orbit-active .archive-album-shelf {
 .stf-dial-input.is-hit:focus {
     box-shadow: 0 0 0 4px rgba(127, 217, 158, .20), 0 0 14px rgba(127, 217, 158, .28) inset;
 }
-/* 四位全中：锁定态 */
+/* ???????? */
 .stf-dial-input.is-locked {
     border-color: rgba(255, 215, 0, .8);
     background: rgba(255, 215, 0, .10);
@@ -1936,7 +1973,7 @@ html.archive-orbit-active .archive-album-shelf {
     display: block; height: 100%; width: 0%;
     border-radius: 999px;
     background: linear-gradient(90deg, #6B8AFF, #A8D8FF, rgba(232,197,106,.85));
-    /* 表针要跟手：JS 已做平滑，这里只留极短的插值，避免拖影 */
+    /* ??????JS ??????????????????? */
     transition: width .08s linear;
 }
 .stf-tuner-signal-num {
@@ -1962,7 +1999,7 @@ html.archive-orbit-active .archive-album-shelf {
     .stf-account-btn:hover, .stf-upload-zone:hover { transform: none !important; }
 }
 
-/* ============ 同步状态栏（实时监测 / 主动同步 / 自动同步） ============ */
+/* ============ ?????????? / ???? / ????? ============ */
 .stf-sync-bar {
     display: flex;
     align-items: center;
@@ -2034,7 +2071,7 @@ html.archive-orbit-active .archive-album-shelf {
 }
 .stf-sync-btn:active { transform: translateY(0) scale(0.97); }
 
-/* ===== 右下角悬浮边缘同步指示器（与飞行雪绒主站一致 · 蓝金学院配色） ===== */
+/* ===== ?????????????????????? ? ??????? ===== */
 .stf-edge-indicator {
     position: fixed;
     right: 20px;
@@ -2141,7 +2178,7 @@ html.archive-orbit-active .archive-album-shelf {
     .stf-edge-btn { transition: none !important; }
 }
 
-/* ===== 左下角浮钮：调频台引导 / 设置快捷入口（与右下角同步按钮同款 · 蓝金学院配色） ===== */
+/* ===== ??????????? / ????????????????? ? ??????? ===== */
 .stf-back-home {
     position: fixed;
     left: 20px;
@@ -2172,7 +2209,7 @@ html.archive-orbit-active .archive-album-shelf {
 }
 .stf-back-home.is-settings,
 .stf-back-home.is-home {
-    /* 飞雪频道互链：粉光暗示，与学院蓝金分家 */
+    /* ??????????????????? */
     border-color: rgba(255, 107, 157, 0.42);
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 107, 157, 0.1), 0 0 18px rgba(255, 107, 157, 0.12);
 }
@@ -2238,7 +2275,7 @@ html.archive-orbit-active .archive-album-shelf {
     .stf-back-home { transition: none !important; }
 }
 
-/* ===== 管理员操作（多管理员，权限平等） ===== */
+/* ===== ???????????????? ===== */
 .stf-admin-hide {
     color: #ff8a8a;
 }
@@ -2289,7 +2326,7 @@ html.archive-orbit-active .archive-album-shelf {
 }
 
 /* ============================================================
-   讨论区信息流改版：双栏布局 / 置顶 / 侧栏 / 帖流卡
+   ????????????? / ?? / ?? / ???
    ============================================================ */
 
 .stf-discuss-layout {
@@ -2529,7 +2566,7 @@ html.archive-orbit-active .archive-album-shelf {
 .stf-aside-chat .stf-chat-input { font-size: 13px; }
 .stf-aside-chat .stf-chat-send { padding: 8px 12px; font-size: 13px; }
 
-/* 公共频段 · 放大面板（同一 DOM，保留去重与实时状态） */
+/* ???? ? ??????? DOM??????????? */
 .stf-chat-header-actions {
     display: inline-flex;
     align-items: center;
@@ -2551,7 +2588,7 @@ html.archive-orbit-active .archive-album-shelf {
     border-color: rgba(107, 138, 255, 0.4);
     color: #fff;
 }
-/* 放大态：挂到 body，实色底、无 blur；禁用 translateX 居中以免亚像素糊字 */
+/* ?????? body?????? blur??? translateX ????????? */
 .stf-chat-card.is-chat-expanded {
     position: fixed !important;
     inset: max(2vh, 8px) max(2vw, 8px) max(2vh, 8px) max(2vw, 8px);
@@ -2560,7 +2597,7 @@ html.archive-orbit-active .archive-album-shelf {
     top: max(2vh, 8px) !important;
     bottom: max(2vh, 8px) !important;
     transform: none !important;
-    /* 须高于 .stf-chat-backdrop；与 forum-theme --stf-z-chat-* 对齐 */
+    /* ??? .stf-chat-backdrop?? forum-theme --stf-z-chat-* ?? */
     z-index: var(--stf-z-chat-expand, 1100) !important;
     width: min(1100px, calc(100vw - 16px));
     max-width: none;
@@ -2650,7 +2687,7 @@ html.archive-orbit-active .archive-album-shelf {
     position: fixed;
     inset: 0;
     z-index: var(--stf-z-chat-backdrop, 1090);
-    /* 实色遮罩，不用 backdrop-filter，避免整页（含面板）发糊；须低于聊天卡 */
+    /* ??????? backdrop-filter??????????????????? */
     background: rgba(4, 8, 20, 0.88);
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
@@ -2677,7 +2714,7 @@ body.stf-chat-expanded-open .stf-chat-card.is-chat-expanded .stf-chat-meta {
     }
 }
 
-/* 帖子信息流：紧凑扫读 + 按需展开 */
+/* ?????????? + ???? */
 .stf-feed {
     display: flex;
     flex-direction: column;
@@ -2836,7 +2873,7 @@ body.stf-chat-expanded-open .stf-chat-card.is-chat-expanded .stf-chat-meta {
     .stf-feed .stf-card.is-new { animation: none; }
 }
 
-/* ---- ����������� / �ö��Ǳ� / һ��¥��¥ ---- */
+/* ---- ??????????? / ?�???? / ??????? ---- */
 .stf-card-badge[data-type="pinned"] {
     background: rgba(232, 197, 106, 0.22);
     color: #E8C56A;

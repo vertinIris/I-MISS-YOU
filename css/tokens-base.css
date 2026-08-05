@@ -1,0 +1,138 @@
+/* ============================================================
+   Snow · Shared Token Base
+   双品牌共用底座：色阶角色、间距、动效、焦点、z 轴
+   场景气质由 tokens-snow / tokens-stf 覆盖，不另开两套 CSS 宇宙
+
+   Design plan (pass-1 → pass-2 自检后锁定)
+   Palette:
+     Midnight Paper #0A0E18 · Cold Moon #EEF3FB · Torch Amber #C9A227
+     Snow Rose #E879A8 · Ice Signal #8EB4E8 · Mist Edge (alpha)
+   Type: display 场景各自保留性格；body Noto Sans SC；utility mono
+   Layout: Letter 夜电台 × Ecosystem 学院档案，共享节奏
+   Signature: 星轨频率盘 .sig-startrack（全站唯一记忆点）
+   Anti-slop: 非奶油衬线陶土 / 非酸绿朱红近黑 / 非报纸细线零圆角
+   ============================================================ */
+
+:root {
+  /* —— Shared named hues (scene layers remint accents) —— */
+  --hue-midnight: #0a0e18;
+  --hue-moon: #eef3fb;
+  --hue-torch: #c9a227;
+  --hue-torch-soft: #e4c86a;
+  --hue-rose: #e879a8;
+  --hue-rose-soft: #f5c0d8;
+  --hue-ice: #8eb4e8;
+  --hue-ice-soft: #c5dff8;
+
+  /* —— Motion (site-wide) —— */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
+  --dur-fast: 150ms;
+  --dur-base: 260ms;
+  --dur-slow: 520ms;
+
+  /* —— Space —— */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+  --content-max: 72rem;
+  --hero-max: 42rem;
+
+  /* —— Radius (restrained; no capsule clusters) —— */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  /* —— Focus —— */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+
+  /* —— Signature tint (overridden per scene) —— */
+  --sig-accent: var(--hue-ice);
+  --sig-accent-strong: var(--hue-torch);
+  --sig-ink: var(--hue-moon);
+
+  /* —— Z ladder —— */
+  --z-bg: 0;
+  --z-content: 1;
+  --z-nav: 900;
+  --z-fab-tuner: 960;
+  --z-fab-donate: 970;
+  --z-edge: 980;
+  --z-chat-backdrop: 1090;
+  --z-chat-expand: 1100;
+  --z-modal: 1200;
+  --z-toast: 1300;
+  --z-easter: 1400;
+}
+
+/* Keyboard focus floor — visible on interactive chrome */
+:where(a, button, input, textarea, select, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: var(--focus-ring-width) solid color-mix(in srgb, var(--sig-accent) 70%, white);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Signature: 星轨频率盘 — orbital tick dial under brand */
+.sig-startrack {
+  --sig-w: min(14rem, 72vw);
+  position: relative;
+  display: block;
+  width: var(--sig-w);
+  height: 1.65rem;
+  margin: 0.55rem auto 0;
+  pointer-events: none;
+  color: var(--sig-accent);
+}
+.sig-startrack svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.sig-startrack .sig-orbit {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.1;
+  opacity: 0.55;
+}
+.sig-startrack .sig-tick {
+  stroke: currentColor;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  opacity: 0.45;
+}
+.sig-startrack .sig-tick--major {
+  opacity: 0.85;
+  stroke: var(--sig-accent-strong);
+  stroke-width: 1.6;
+}
+.sig-startrack .sig-core {
+  fill: var(--sig-accent-strong);
+  opacity: 0.95;
+}
+.sig-startrack .sig-pulse-ring {
+  fill: none;
+  stroke: var(--sig-accent-strong);
+  stroke-width: 1;
+  opacity: 0.35;
+  transform-origin: 120px 14px;
+  animation: sig-orbit-breathe 4.6s var(--ease-in-out) infinite;
+}
+
+@keyframes sig-orbit-breathe {
+  0%, 100% { opacity: 0.22; transform: scale(0.92); }
+  50% { opacity: 0.55; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sig-startrack .sig-pulse-ring {
+    animation: none !important;
+    opacity: 0.4;
+  }
+}

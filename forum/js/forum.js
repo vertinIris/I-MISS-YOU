@@ -557,7 +557,7 @@
         if (!list) return;
         var comments = (StarTorchData.getComments(targetId) || []).filter(function (c) { return !c.is_hidden; });
         if (!comments.length) {
-            list.innerHTML = '<p class="stf-comments-empty">还没有评论</p>';
+            list.innerHTML = '<p class="stf-comments-empty">还没有评论。来留第一条吧。</p>';
             return;
         }
         var roots = [];
@@ -880,7 +880,7 @@
         list.setAttribute('data-target', targetId);
         var comments = (StarTorchData.getComments(targetId) || []).filter(function (c) { return !c.is_hidden; });
         if (!comments.length) {
-            list.innerHTML = '<p class="stf-comments-empty">还没有评论</p>';
+            list.innerHTML = '<p class="stf-comments-empty">还没有评论。来留第一条吧。</p>';
             return;
         }
         var roots = [];
@@ -2294,7 +2294,7 @@
         return {
             label: 'STARTORCH · ARCHIVE',
             title: '公共研讨频段',
-            sub: '研讨厅已开门。共鸣者注疏、世界观考据与训练笔记，都在讨论区公开沉淀。<br>这里是学院公共频道 —— 白板上的星图，欢迎接续标注。'
+            sub: '研讨厅已开门。共鸣者注疏与训练笔记，在讨论区公开沉淀。'
         };
     }
 

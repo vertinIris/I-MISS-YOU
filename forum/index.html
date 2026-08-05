@@ -19,6 +19,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/tokens-base.css">
     <link rel="stylesheet" href="../css/tokens-stf.css">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/donation.css">
@@ -128,22 +129,25 @@
     <header class="forum-hero">
         <div class="forum-hero-content">
             <h1 class="forum-hero-brand">星炬学院</h1>
+            <div class="sig-startrack" aria-hidden="true">
+                <svg viewBox="0 0 240 28" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse class="sig-orbit" cx="120" cy="14" rx="108" ry="8"/>
+                    <circle class="sig-pulse-ring" cx="120" cy="14" r="11"/>
+                    <line class="sig-tick sig-tick--major" x1="12" y1="14" x2="12" y2="6"/>
+                    <line class="sig-tick" x1="36" y1="14" x2="36" y2="9"/>
+                    <line class="sig-tick" x1="60" y1="14" x2="60" y2="9"/>
+                    <line class="sig-tick sig-tick--major" x1="84" y1="14" x2="84" y2="5"/>
+                    <line class="sig-tick" x1="156" y1="14" x2="156" y2="9"/>
+                    <line class="sig-tick" x1="180" y1="14" x2="180" y2="9"/>
+                    <line class="sig-tick sig-tick--major" x1="204" y1="14" x2="204" y2="5"/>
+                    <line class="sig-tick" x1="228" y1="14" x2="228" y2="9"/>
+                    <circle class="sig-core" cx="120" cy="14" r="2.4"/>
+                </svg>
+            </div>
             <p class="forum-hero-title" id="forum-hero-title">公共研讨频段</p>
             <p class="forum-hero-sub" id="forum-hero-sub">
-                研讨厅已开门。共鸣者注疏、世界观考据与训练笔记，都在讨论区公开沉淀。<br>
-                这里是学院公共频道 —— 白板上的星图，欢迎接续标注。
+                研讨厅已开门。共鸣者注疏与训练笔记，在讨论区公开沉淀。
             </p>
-            <div class="forum-hero-quicknav" role="navigation" aria-label="核心入口">
-                <a class="hero-pill" href="#stf-community">
-                    <b>讨论区</b><span>帖子 · 话题 · 互动</span>
-                </a>
-                <a class="hero-pill" href="#characters-archive">
-                    <b>档案</b><span>官方角色考据</span>
-                </a>
-                <a class="hero-pill" href="#worldview">
-                    <b>世界观</b><span>星炬学院考据</span>
-                </a>
-            </div>
             <div class="forum-hero-actions">
                 <a href="#stf-community" class="btn-primary magnetic"><span>进入讨论区</span></a>
                 <a href="#characters-archive" class="btn-ghost magnetic"><span>浏览档案</span></a>
@@ -158,6 +162,17 @@
                 <span class="section-label">SECTIONS</span>
                 <h2 class="section-title">功能区导览</h2>
                 <p class="section-desc">从一个入口，走到鸣潮的每一个角落</p>
+            </div>
+            <div class="forum-quicknav-row" role="navigation" aria-label="核心入口">
+                <a class="hero-pill" href="#stf-community">
+                    <b>讨论区</b><span>帖子 · 话题 · 互动</span>
+                </a>
+                <a class="hero-pill" href="#characters-archive">
+                    <b>档案</b><span>官方角色考据</span>
+                </a>
+                <a class="hero-pill" href="#worldview">
+                    <b>世界观</b><span>星炬学院考据</span>
+                </a>
             </div>
             <div class="forum-grid">
 
@@ -366,7 +381,7 @@
                         <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M32 8 L40 24 L56 26 L44 38 L48 54 L32 46 L16 54 L20 38 L8 26 L24 24 Z"/>
                         </svg>
-                        <p>还没有帖子，来发第一条讨论吧！</p>
+                        <p>讨论区还安静着。点右上角发帖，留下第一条讨论。</p>
                         <button type="button" class="btn-ghost magnetic" data-action="open-submit"><span>去发帖</span></button>
                     </div>
                 </div>
@@ -555,28 +570,87 @@
             <div class="section-header reveal">
                 <span class="section-label">LORE</span>
                 <h2 class="section-title">世界观考据</h2>
-                <p class="section-desc">读懂鸣潮，才懂星炬学院为何而闪耀</p>
+                <p class="section-desc">官方优先 · 同人共识补白 · 本站原创另标 —— 读懂索拉里斯，再读星炬学院</p>
             </div>
+            <p class="lore-priority-note reveal">
+                资料层级：<span class="lore-tier lore-tier-official">官方</span>
+                <span class="lore-tier lore-tier-fanon">同人共识</span>
+                <span class="lore-tier lore-tier-orig">项目原创</span>
+                · 详尽总典见 <a href="../docs/WORLDVIEW.md">docs/WORLDVIEW.md</a>
+                · 术语表 <a href="../docs/worldview-glossary.json">worldview-glossary.json</a>
+            </p>
             <div class="lore-grid">
 
                 <article class="lore-card" style="--char: var(--drifter-blue);">
-                    <h3>星炬学院</h3>
-                    <p>拉海洛的学园都市，下设隧者工学、拉贝尔开发、光矩能源、虚质科学四学部。爱弥斯曾是最高的隧者适格者，也是全校的英雄。</p>
+                    <span class="lore-tier lore-tier-official">官方</span>
+                    <h3>索拉里斯 · Sol-3</h3>
+                    <p>太阳星系第三颗星球。第一声「悲鸣」起，旧日法则失效，异象肆虐；人类在毁灭与新生并存的世界里，守住文明星火。</p>
+                </article>
+
+                <article class="lore-card" style="--char: var(--sigrica-green);">
+                    <span class="lore-tier lore-tier-official">官方</span>
+                    <h3>悲鸣与海蚀</h3>
+                    <p>悲鸣是灾变态势的统称。海蚀现象涵盖无音区、残象潮、黑石等侵蚀异象；在黎那汐塔，同类侵蚀常被称为「黑潮」。</p>
                 </article>
 
                 <article class="lore-card" style="--char: var(--denia-lavender);">
+                    <span class="lore-tier lore-tier-official">官方</span>
+                    <h3>频率 · 残响 · 声骸</h3>
+                    <p>物质与信息可还原为频率。残响是衰减残余，回音是完整可封存形态；残象被击溃后留下的残响，经盘古终端可转化为声骸。</p>
+                </article>
+
+                <article class="lore-card" style="--char: var(--drifter-blue-light);">
+                    <span class="lore-tier lore-tier-official">官方</span>
+                    <h3>共鸣者与残象</h3>
+                    <p>共鸣者凭体表声痕感知并操控频率。残象是混乱频率构成的类生命体，具声核，本能吞噬频率以维系自身。</p>
+                </article>
+
+                <article class="lore-card" style="--char: var(--lucilla-gold);">
+                    <span class="lore-tier lore-tier-official">官方</span>
+                    <h3>岁主与鸣式</h3>
+                    <p>岁主与文明同寿，授识、渡灾、晓示预言。鸣式伴随悲鸣而生，折射集体意志的隐忧，是毁灭性的残象灾害。</p>
+                </article>
+
+                <article class="lore-card" style="--char: var(--drifter-blue);">
+                    <span class="lore-tier lore-tier-official">官方</span>
+                    <h3>瑝珑 · 今州</h3>
+                    <p>瑝珑属地共一庭六州。今州是边塞重城与残象潮前线；城池湖中而建，夜归将士镇守北方。</p>
+                </article>
+
+                <article class="lore-card" style="--char: var(--drifter-blue-light);">
+                    <span class="lore-tier lore-tier-official">官方</span>
+                    <h3>黑海岸</h3>
+                    <p>风暴海上的黑石群岛组织，借助泰缇斯系统观测悲鸣，与各国深度合作。抵达需认可或指引。</p>
+                </article>
+
+                <article class="lore-card" style="--char: var(--denia-lavender);">
+                    <span class="lore-tier lore-tier-official">官方</span>
+                    <h3>黎那汐塔</h3>
+                    <p>「声骸之国」：多城邦岛国，以公共声骸技术闻名。拉古那与七丘等城邦高度独立，海蚀在此称黑潮。</p>
+                </article>
+
+                <article class="lore-card" style="--char: var(--denia-lavender);">
+                    <span class="lore-tier lore-tier-official">官方</span>
                     <h3>残星会</h3>
                     <p>对立阵营的隐秘势力。部分角色身负双重身份，立场复杂 —— 考据时请以官方剧情为准，不轻易下定论。</p>
                 </article>
 
-                <article class="lore-card" style="--char: var(--drifter-blue-light);">
-                    <h3>拉海洛</h3>
-                    <p>罗伊冰原之下的故乡，冰雪与极光之地。这里有雪原小屋，也有与家人共度的冬天 —— 飞行雪绒最深的眷恋。</p>
+                <article class="lore-card" style="--char: var(--drifter-blue);">
+                    <span class="lore-tier lore-tier-official">官方</span>
+                    <h3>拉海洛 · 星炬学院</h3>
+                    <p>3.x 舞台。星炬学院为官方公开学园；爱弥斯曾是拉贝尔学部隧者适格者，现为电子幽灵。拉海洛地理细考见事实卷宗卷三。</p>
                 </article>
 
                 <article class="lore-card" style="--char: var(--lucilla-gold);">
+                    <span class="lore-tier lore-tier-fanon">同人共识</span>
                     <h3>深空联合</h3>
-                    <p>无国界科研同盟，星炬学院的母体。在前沿研究与「换日仪式」的阴影下，串联起整个鸣潮的宏大叙事。</p>
+                    <p>官方角色介绍中出现的研究同盟表述（如深空联合学者）。完整组织法理待官方补全；社群常将其与星炬学院研究体系并读，不作定论。</p>
+                </article>
+
+                <article class="lore-card" style="--char: var(--aimisi-pink, #FF6B9D);">
+                    <span class="lore-tier lore-tier-orig">项目原创</span>
+                    <h3>飞行雪绒 · 调频 9072</h3>
+                    <p>官方确认爱弥斯的歌手化名「飞行雪绒」。本站频道结构与深夜频率 9072 为同人演绎 —— 用官方「频率」语言叙事，不改写索拉里斯物理法则。</p>
                 </article>
 
             </div>

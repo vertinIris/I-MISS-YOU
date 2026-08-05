@@ -2,6 +2,7 @@
  * theme: custom Midnight-Rose · vibe: "night radio soft pink snow longing"
  * paper: oklch(12% 0.02 350) · accent: oklch(72% 0.14 350) · display: ZCOOL XiaoWei + Noto Serif SC
  * axes: dark / soft-serif-cjk / warm-rose · nav: N9 · footer: Ft5
+ * signature: 星轨频率盘 (--sig-*) · shared base: tokens-base.css
  * pre-emit critique: P5 H5 E4 S5 R4 V5
  */
 
@@ -15,12 +16,17 @@
   --sn-ink-3: oklch(68% 0.025 350);
   --sn-rule: oklch(40% 0.04 350 / 0.35);
 
-  /* Accent — 雪绒粉（非紫） */
+  /* Accent — 雪绒粉（非紫辉光） */
   --sn-accent: oklch(72% 0.14 350);
   --sn-accent-strong: oklch(64% 0.16 348);
   --sn-accent-soft: oklch(84% 0.08 350);
   --sn-mist: oklch(92% 0.03 350);
   --sn-ice: oklch(78% 0.06 230);
+
+  /* Scene → signature */
+  --sig-accent: var(--hue-rose, #e879a8);
+  --sig-accent-strong: var(--hue-ice, #8eb4e8);
+  --sig-ink: var(--sn-ink);
 
   /* Map into legacy tokens used across style.css */
   --c-primary: #e879a8;

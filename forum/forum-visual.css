@@ -67,7 +67,7 @@ body.forum-page .nav-link:focus-visible {
   background: oklch(68% 0.12 255 / 0.16) !important;
 }
 
-/* —— Hero：品牌「星炬学院」优先 · 居中稳住视觉重心 —— */
+/* —— Hero：品牌「星炬学院」优先 · 居中稳住视觉重心 · 预算克制 —— */
 .forum-hero {
   min-height: min(88vh, 820px) !important;
   padding: 120px 24px 72px !important;
@@ -97,27 +97,21 @@ body.forum-page .nav-link:focus-visible {
   line-height: 1.05;
   letter-spacing: 0.08em;
   color: var(--stf-ink, #eef3fb);
-  margin: 0 auto 0.35rem;
+  margin: 0 auto 0.15rem;
   overflow-wrap: anywhere;
   min-width: 0;
   position: relative;
   display: inline-block;
-  padding-bottom: 0.2em;
+  padding-bottom: 0;
 }
+/* 签名交给 .sig-startrack，不再用第二条下划线 */
 .forum-hero-brand::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  width: 2.4em;
-  height: 3px;
-  transform: translateX(-50%);
-  background: linear-gradient(90deg, transparent, var(--stf-gold), transparent);
-  animation: stf-torch-glow 3.8s var(--ease-out, ease) infinite;
+  content: none !important;
+  display: none !important;
+  animation: none !important;
 }
-@keyframes stf-torch-glow {
-  0%, 100% { opacity: 0.55; width: 2.2em; }
-  50% { opacity: 1; width: 2.8em; }
+.forum-hero .sig-startrack {
+  margin: 0.25rem auto 0.85rem;
 }
 .forum-hero-title {
   /* 副标题角色：不再用渐变字 */
@@ -141,31 +135,9 @@ body.forum-page .nav-link:focus-visible {
   line-height: 1.75 !important;
   letter-spacing: 0.02em;
 }
-.forum-hero-quicknav {
-  justify-content: center !important;
-  margin: 1.5rem auto 1.25rem !important;
-}
-.hero-pill {
-  border-radius: 0 !important;
-  border: none !important;
-  border-left: 2px solid var(--stf-edge-strong) !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  min-width: 0;
-  padding: 8px 14px !important;
-  text-align: left;
-}
-.hero-pill:hover {
-  border-color: var(--stf-gold) !important;
-  background: oklch(68% 0.12 255 / 0.06) !important;
-  transform: none;
-}
-.hero-pill b {
-  font-family: var(--font-display);
-  font-style: normal;
-}
 .forum-hero-actions {
   justify-content: center !important;
+  margin-top: 1.5rem;
 }
 .forum-hero-actions .btn-primary {
   border-radius: var(--stf-radius-md) !important;
@@ -178,6 +150,44 @@ body.forum-page .nav-link:focus-visible {
   border-radius: var(--stf-radius-md) !important;
   border-color: var(--stf-edge-strong) !important;
   color: var(--stf-brand-light) !important;
+}
+
+/* 导览区：原 hero 快链下沉，避免第一视口卡片/胶囊堆 */
+.forum-quicknav-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  justify-content: center;
+  margin: 0.5rem auto 1.75rem;
+  max-width: 40rem;
+}
+.forum-quicknav-row .hero-pill {
+  border-radius: 0 !important;
+  border: none !important;
+  border-left: 2px solid var(--stf-edge-strong) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  min-width: 0;
+  padding: 8px 14px !important;
+  text-align: left;
+  text-decoration: none;
+  color: inherit;
+}
+.forum-quicknav-row .hero-pill:hover,
+.forum-quicknav-row .hero-pill:focus-visible {
+  border-color: var(--stf-gold) !important;
+  background: oklch(68% 0.12 255 / 0.06) !important;
+  outline: none;
+}
+.forum-quicknav-row .hero-pill b {
+  display: block;
+  font-family: var(--font-display);
+  font-style: normal;
+  color: var(--stf-ink);
+}
+.forum-quicknav-row .hero-pill span {
+  font-size: 0.75rem;
+  color: var(--stf-text-muted);
 }
 
 /* —— 顶栏地址胶囊（与主站 location 同步） —— */
@@ -203,7 +213,7 @@ body.forum-page .nav-links {
   gap: 8px;
   margin: 0;
   padding: 4px 12px;
-  border-radius: 999px;
+  border-radius: var(--stf-radius-sm, 6px);
   border: 1px solid oklch(78% 0.12 85 / 0.32);
   background: oklch(14% 0.03 250 / 0.94);
   color: oklch(94% 0.01 250 / 0.96);
@@ -481,11 +491,11 @@ body.forum-page .btn-primary::after {
   .forum-hero-title {
     letter-spacing: 0.1em !important;
   }
-  .forum-hero-quicknav {
+  .forum-quicknav-row {
     gap: 8px !important;
     justify-content: center !important;
   }
-  .hero-pill {
+  .forum-quicknav-row .hero-pill {
     min-width: calc(50% - 8px);
   }
   /* 窄屏仍保留顶栏地址体现，仅压缩；勿回 hero 中间 */
@@ -513,9 +523,39 @@ body.forum-page .btn-primary::after {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .forum-hero-brand::after,
+  .sig-startrack .sig-pulse-ring,
   .stf-tuner-led,
   .stf-tuner-compact-led {
     animation: none !important;
   }
+}
+
+/* —— 角色墙 orbit：深度可读、暂停态清晰 —— */
+html.archive-orbit-active .archive-orbit-stage {
+  perspective: 1100px;
+  perspective-origin: 50% 42%;
+}
+html.archive-orbit-active .archive-orbit-ring {
+  transform-style: preserve-3d;
+  transform: rotateX(-8deg);
+}
+html.archive-orbit-active .archive-orbit-ring.is-paused {
+  /* pause-on-hover：JS 停转；深度 transform 由 paint() 保留 */
+  filter: none;
+}
+html.archive-orbit-active .archive-float.is-orbit-item .character-archive-card {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: oklch(14% 0.03 250 / 0.92);
+  border: 1px solid var(--stf-edge, oklch(78% 0.06 250 / 0.2));
+  box-shadow: var(--stf-metal, 0 0 0 1px oklch(78% 0.06 250 / 0.14));
+}
+html.archive-orbit-active .archive-float.is-orbit-item .character-archive-name {
+  font-family: var(--font-display);
+  letter-spacing: 0.06em;
+  color: var(--stf-ink, #eef3fb);
+}
+html.archive-orbit-active .archive-album-shelf {
+  opacity: 0.35;
+  background: radial-gradient(ellipse 60% 40% at 50% 100%, oklch(78% 0.12 85 / 0.12), transparent 70%);
 }

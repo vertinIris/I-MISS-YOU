@@ -1,0 +1,197 @@
+{
+  "meta": {
+    "title": "Snow × 鸣潮世界观术语表",
+    "updated": "2026-08-05",
+    "priority": ["official", "fanon_consensus", "project_original"],
+    "notes": "official 优先；fanon_consensus 仅填官方空白；project_original 不得覆盖宇宙规则"
+  },
+  "terms": [
+    {
+      "id": "solaris-3",
+      "zh": "索拉里斯",
+      "en": "Solaris-3 / Sol-3",
+      "tier": "official",
+      "summary": "太阳星系第三颗星球，故事主舞台。从第一声悲鸣起法则动摇，人类在毁灭与新生中求存。",
+      "sources": [
+        "https://www.wegame.com.cn/act/wegame/mcOrder/?adtag=wg",
+        "https://wutheringwaves.kurogames.com/en/main"
+      ]
+    },
+    {
+      "id": "lament",
+      "zh": "悲鸣",
+      "en": "Lament",
+      "tier": "official",
+      "summary": "索拉里斯一切灾变态势的统称；浪潮不止，悲鸣永不停歇。",
+      "sources": ["https://www.wegame.com.cn/act/wegame/mcOrder/?adtag=wg"]
+    },
+    {
+      "id": "waveworn",
+      "zh": "海蚀现象",
+      "en": "Waveworn Phenomenon",
+      "tier": "official",
+      "summary": "悲鸣下的侵蚀异象总称，含无音区、残象潮、黑石等。",
+      "sources": ["https://www.wegame.com.cn/act/wegame/mcOrder/?adtag=wg"]
+    },
+    {
+      "id": "tacet-field",
+      "zh": "无音区",
+      "en": "Tacet Field",
+      "tier": "official",
+      "summary": "残象诞生区域；倒悬之海、十字声痕、白色声弦连接未知空间。",
+      "sources": ["https://www.wegame.com.cn/act/wegame/mcOrder/?adtag=wg"]
+    },
+    {
+      "id": "tacet-discord",
+      "zh": "残象",
+      "en": "Tacet Discord",
+      "tier": "official",
+      "summary": "混乱频率构成的类生命体，具声核，吞噬频率以维生进化。",
+      "sources": ["https://www.wegame.com.cn/act/wegame/mcOrder/?adtag=wg"]
+    },
+    {
+      "id": "reverberation",
+      "zh": "残响",
+      "en": "Reverberation",
+      "tier": "official",
+      "summary": "衰减中的频率残余；回音衰减为残响不可逆。",
+      "sources": ["https://www.wegame.com.cn/act/wegame/mcOrder/?adtag=wg"]
+    },
+    {
+      "id": "remnant",
+      "zh": "回音",
+      "en": "Remnant",
+      "tier": "official",
+      "summary": "完整可封存的频率信息；黑石可承载；富集空间称索诺拉。",
+      "sources": ["https://www.wegame.com.cn/act/wegame/mcOrder/?adtag=wg"]
+    },
+    {
+      "id": "echo",
+      "zh": "声骸",
+      "en": "Echo",
+      "tier": "official",
+      "summary": "残响经盘古终端转化后可供共鸣者使用的频率力量。",
+      "sources": ["https://baike.baidu.com/item/%E9%B8%A3%E6%BD%AE/60900055"]
+    },
+    {
+      "id": "resonator",
+      "zh": "共鸣者",
+      "en": "Resonator",
+      "tier": "official",
+      "summary": "感知并操控频率的人类，凭声痕施展共鸣能力。",
+      "sources": ["https://www.wegame.com.cn/act/wegame/mcOrder/?adtag=wg"]
+    },
+    {
+      "id": "sentinel",
+      "zh": "岁主",
+      "en": "Sentinel",
+      "tier": "official",
+      "summary": "与文明同寿的引导者与记录者，授识、渡灾、晓示预言。",
+      "sources": ["https://baike.baidu.com/item/%E9%B8%A3%E6%BD%AE/60900055"]
+    },
+    {
+      "id": "threnodian",
+      "zh": "鸣式",
+      "en": "Threnodian",
+      "tier": "official",
+      "summary": "伴随悲鸣、以人类崩塌意志为食粮的毁灭性残象。",
+      "sources": ["https://baike.baidu.com/item/%E9%B8%A3%E6%BD%AE/60900055"]
+    },
+    {
+      "id": "dark-tide",
+      "zh": "黑潮",
+      "en": "Dark Tide",
+      "tier": "official",
+      "summary": "黎那汐塔对海蚀侵蚀作用的称呼。",
+      "sources": ["https://baike.baidu.com/item/%E9%B8%A3%E6%BD%AE/60900055"]
+    },
+    {
+      "id": "huanglong",
+      "zh": "瑝珑",
+      "en": "Huanglong",
+      "tier": "official",
+      "summary": "一庭六州大国；岁主对应东方七宿。",
+      "sources": ["https://www.wegame.com.cn/act/wegame/mcOrder/?adtag=wg"]
+    },
+    {
+      "id": "jinzhou",
+      "zh": "今州",
+      "en": "Jinzhou",
+      "tier": "official",
+      "summary": "瑝珑边塞重城，残象潮前线关隘。",
+      "sources": ["https://www.wegame.com.cn/act/wegame/mcOrder/?adtag=wg"]
+    },
+    {
+      "id": "black-shores",
+      "zh": "黑海岸",
+      "en": "Black Shores",
+      "tier": "official",
+      "summary": "风暴海上黑石群岛组织，观测悲鸣，与各国合作。",
+      "sources": ["https://baike.baidu.com/item/%E9%B8%A3%E6%BD%AE/60900055"]
+    },
+    {
+      "id": "rinascita",
+      "zh": "黎那汐塔",
+      "en": "Rinascita",
+      "tier": "official",
+      "summary": "声骸之国；多城邦岛国；公共声骸技术发达。",
+      "sources": ["https://baike.baidu.com/item/%E9%B8%A3%E6%BD%AE/60900055"]
+    },
+    {
+      "id": "fractsidus",
+      "zh": "残星会",
+      "en": "Fractsidus",
+      "tier": "official",
+      "summary": "对立隐秘势力；考据以官方主线为准。",
+      "sources": ["https://baike.baidu.com/item/%E9%B8%A3%E6%BD%AE/60900055"]
+    },
+    {
+      "id": "startorch",
+      "zh": "星炬学院",
+      "en": "Startorch Academy",
+      "tier": "official",
+      "summary": "拉海洛相关学园；隧者适格与虚质科学等学部公开于角色档案。",
+      "sources": ["https://baike.baidu.com/item/%E7%88%B1%E5%BC%A5%E6%96%AF/67090098"]
+    },
+    {
+      "id": "lahairo",
+      "zh": "拉海洛",
+      "en": "Lahai-Roi / Lahairo",
+      "tier": "official",
+      "summary": "3.x 舞台；罗伊冰原与地下绿洲、隧者与星炬学院语境。",
+      "sources": ["https://baike.baidu.com/item/%E9%B8%A3%E6%BD%AE/60900055"]
+    },
+    {
+      "id": "flying-edelweiss",
+      "zh": "飞行雪绒",
+      "en": "Flying Edelweiss",
+      "tier": "project_original",
+      "summary": "爱弥斯歌手化名及本站频道品牌；官方有歌手身份，站体结构为同人原创。",
+      "sources": ["characters/aimisi/index.html", "docs/WORLDVIEW.md#五"]
+    },
+    {
+      "id": "freq-9072",
+      "zh": "调频9072",
+      "en": "Frequency 9072",
+      "tier": "project_original",
+      "summary": "本站深夜广播频率叙事；使用官方频率语言，不改宇宙法则。",
+      "sources": ["docs/WORLDVIEW.md#五"]
+    },
+    {
+      "id": "bond-partner",
+      "zh": "结契人",
+      "en": "Bond Partner (AO3)",
+      "tier": "project_original",
+      "summary": "AO3 同人关系概念，非官方；引用必须标注。",
+      "sources": ["characters/aimisi/index.html"]
+    },
+    {
+      "id": "deep-space-union",
+      "zh": "深空联合",
+      "en": "Deep Space Union",
+      "tier": "fanon_consensus",
+      "summary": "官方角色介绍出现「深空联合」研究同盟表述；完整组织法理待官方补全，社群常将其与星炬学院母体关联。",
+      "sources": ["https://baike.baidu.com/item/%E9%B8%A3%E6%BD%AE/60900055"]
+    }
+  ]
+}

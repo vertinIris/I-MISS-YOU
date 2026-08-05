@@ -100,7 +100,7 @@ body {
   border-radius: 6px;
 }
 
-/* —— Hero：品牌优先 · 全出血氛围 · Letter 亲密口吻 —— */
+/* —— Hero：品牌优先 · 全出血氛围 · Letter 亲密口吻 · 真实图锚点 —— */
 .hero {
   position: relative;
   min-height: min(94vh, 900px);
@@ -119,6 +119,22 @@ body {
   background:
     radial-gradient(ellipse 70% 55% at 50% 38%, oklch(72% 0.14 350 / 0.12), transparent 70%),
     linear-gradient(180deg, transparent 55%, oklch(12% 0.02 350 / 0.55) 100%);
+}
+/* 本地 og-cover 作为主视觉锚（低不透明度 + 遮罩，不抢品牌字） */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    url("../assets/og-cover.png") center 28% / cover no-repeat;
+  opacity: 0.22;
+  -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 40%, #000 20%, transparent 72%);
+  mask-image: radial-gradient(ellipse 75% 65% at 50% 40%, #000 20%, transparent 72%);
+}
+.hero .sig-startrack {
+  margin-top: 0.35rem;
 }
 .hero-content {
   position: relative;
@@ -158,7 +174,7 @@ body {
   min-width: 0;
   transition: opacity 0.22s var(--ease-out), filter 0.22s var(--ease-out);
 }
-/* 去掉 AI 感 gradient-text；实色 + 字下方装饰线（绝不穿字） */
+/* 去掉 AI 感 gradient-text；实色品牌字；签名交给 .sig-startrack */
 .hero-title .gradient-text,
 .hero-title-mark {
   background: none !important;
@@ -168,22 +184,12 @@ body {
   animation: none !important;
   position: relative;
   display: inline-block;
-  padding-bottom: 0.22em;
+  padding-bottom: 0;
 }
 .hero-title-mark::after,
 .hero-title .gradient-text::after {
-  content: "";
-  position: absolute;
-  left: 12%;
-  right: 12%;
-  top: auto;
-  bottom: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--sn-accent), transparent);
-  opacity: 0.85;
-  transform-origin: center;
-  pointer-events: none;
-  animation: sn-brand-breathe 4.8s var(--ease-in-out) infinite;
+  content: none !important;
+  display: none !important;
 }
 /* 菜单展开：大字退后，禁止水印压选项 */
 .hero:has(.location-selector.open) .hero-title,
@@ -457,7 +463,8 @@ body {
   .music-disc,
   .hero-title-mark::after,
   .hero-title .gradient-text::after,
-  .sn-freq-pulse {
+  .sn-freq-pulse,
+  .sig-startrack .sig-pulse-ring {
     animation: none !important;
   }
   #particle-canvas,
