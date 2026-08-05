@@ -189,10 +189,19 @@ body.forum-page .nav-links {
   margin-right: auto;
 }
 .stf-realm-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 10px;
+  flex-shrink: 0;
+  max-width: min(280px, 36vw);
+  z-index: 220;
+}
+.stf-realm-trigger {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-right: 10px;
+  margin: 0;
   padding: 4px 12px;
   border-radius: 999px;
   border: 1px solid oklch(78% 0.12 85 / 0.32);
@@ -202,9 +211,18 @@ body.forum-page .nav-links {
   font-size: 0.72rem;
   letter-spacing: 0.1em;
   white-space: nowrap;
-  flex-shrink: 0;
   box-shadow: 0 4px 14px oklch(0% 0 0 / 0.28);
-  max-width: min(280px, 36vw);
+  max-width: 100%;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.stf-realm-trigger:hover,
+.stf-realm-trigger:focus-visible,
+.stf-realm-chip.open .stf-realm-trigger {
+  border-color: oklch(78% 0.12 85 / 0.55);
+  box-shadow: 0 6px 18px oklch(0% 0 0 / 0.36);
+  outline: none;
 }
 .stf-realm-text {
   display: flex;
@@ -235,6 +253,74 @@ body.forum-page .nav-links {
   background: var(--stf-brand-light, #8eb6ff);
   box-shadow: 0 0 0 0 oklch(68% 0.12 255 / 0.4);
   flex-shrink: 0;
+}
+.stf-realm-arrow {
+  flex-shrink: 0;
+  opacity: 0.65;
+  transition: transform 0.2s ease;
+}
+.stf-realm-chip.open .stf-realm-arrow {
+  transform: rotate(180deg);
+}
+.stf-realm-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  left: auto;
+  min-width: 260px;
+  max-width: min(320px, calc(100vw - 24px));
+  padding: 8px;
+  border-radius: 12px;
+  border: 1px solid oklch(78% 0.12 85 / 0.35);
+  background: oklch(12% 0.03 250 / 0.98);
+  box-shadow: 0 16px 40px oklch(0% 0 0 / 0.45);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px) scale(0.97);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+  z-index: 230;
+  white-space: normal;
+}
+.stf-realm-chip.open .stf-realm-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+.stf-realm-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  margin: 0;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+}
+.stf-realm-option:hover,
+.stf-realm-option:focus-visible {
+  background: oklch(28% 0.04 250 / 0.55);
+  outline: none;
+}
+.stf-realm-option.active {
+  background: oklch(32% 0.06 250 / 0.55);
+  box-shadow: inset 0 0 0 1px oklch(78% 0.12 85 / 0.35);
+}
+.stf-realm-opt-name {
+  font-size: 0.78rem;
+  color: oklch(96% 0.01 250 / 0.95);
+}
+.stf-realm-opt-desc {
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: oklch(78% 0.03 250 / 0.72);
+  line-height: 1.35;
 }
 
 /* —— 主站地址 → 论坛 data-realm 主题/文案氛围 —— */
@@ -405,9 +491,11 @@ body.forum-page .btn-primary::after {
   /* 窄屏仍保留顶栏地址体现，仅压缩；勿回 hero 中间 */
   .stf-realm-chip {
     display: inline-flex;
-    padding: 3px 8px;
     margin-right: 6px;
-    max-width: min(148px, 42vw);
+    max-width: min(168px, 48vw);
+  }
+  .stf-realm-trigger {
+    padding: 3px 8px;
     gap: 6px;
   }
   .stf-realm-label {
@@ -416,6 +504,11 @@ body.forum-page .btn-primary::after {
   .stf-realm-code {
     font-size: 0.55rem;
     letter-spacing: 0.1em;
+  }
+  .stf-realm-dropdown {
+    right: 0;
+    left: auto;
+    min-width: min(260px, calc(100vw - 16px));
   }
 }
 

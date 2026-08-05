@@ -74,13 +74,47 @@
                 <a href="#characters-archive" class="nav-link">角色档案</a>
                 <a href="#worldview" class="nav-link">世界观</a>
             </div>
-            <span class="stf-realm-chip" id="stf-realm-chip" aria-live="polite" title="当前地址频段">
-                <span class="stf-realm-dot" aria-hidden="true"></span>
-                <span class="stf-realm-text">
-                    <span class="stf-realm-label" id="stf-realm-label">在线 · 星炬学院</span>
-                    <span class="stf-realm-code" id="stf-realm-code">STARTORCH · ARCHIVE</span>
-                </span>
-            </span>
+            <div class="stf-realm-chip" id="stf-realm-chip" title="切换地址频段">
+                <button type="button" class="stf-realm-trigger" id="stf-realm-trigger"
+                        aria-haspopup="listbox" aria-expanded="false" aria-controls="stf-realm-dropdown"
+                        aria-label="当前地址：星炬学院，点击切换">
+                    <span class="stf-realm-dot" aria-hidden="true"></span>
+                    <span class="stf-realm-text">
+                        <span class="stf-realm-label" id="stf-realm-label">在线 · 星炬学院</span>
+                        <span class="stf-realm-code" id="stf-realm-code">STARTORCH · ARCHIVE</span>
+                    </span>
+                    <svg class="stf-realm-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </button>
+                <div class="stf-realm-dropdown" id="stf-realm-dropdown" role="listbox" aria-label="选择地址">
+                    <button type="button" class="stf-realm-option active" role="option" aria-selected="true"
+                            data-location="星炬学院" data-realm="startorch">
+                        <span class="stf-realm-opt-name">星炬学院</span>
+                        <span class="stf-realm-opt-desc">拉贝尔学部所在地 · 日常训练与学习</span>
+                    </button>
+                    <button type="button" class="stf-realm-option" role="option" aria-selected="false"
+                            data-location="拉贝尔学部" data-realm="labelle">
+                        <span class="stf-realm-opt-name">拉贝尔学部</span>
+                        <span class="stf-realm-opt-desc">隧者适格者的训练与研究</span>
+                    </button>
+                    <button type="button" class="stf-realm-option" role="option" aria-selected="false"
+                            data-location="拉海洛" data-realm="lahairo">
+                        <span class="stf-realm-opt-name">拉海洛</span>
+                        <span class="stf-realm-opt-desc">故乡的冰雪与极光</span>
+                    </button>
+                    <button type="button" class="stf-realm-option" role="option" aria-selected="false"
+                            data-location="雪原小屋" data-realm="snow-cabin">
+                        <span class="stf-realm-opt-name">雪原小屋</span>
+                        <span class="stf-realm-opt-desc">拉海洛冰原上的小屋 · 与家人共度的冬天</span>
+                    </button>
+                    <button type="button" class="stf-realm-option" role="option" aria-selected="false"
+                            data-location="电子海" data-realm="digital-sea">
+                        <span class="stf-realm-opt-name">电子海</span>
+                        <span class="stf-realm-opt-desc">电子幽灵的游荡之处</span>
+                    </button>
+                </div>
+            </div>
             <button type="button" class="stf-account-btn" id="stf-account-btn" aria-haspopup="dialog" aria-expanded="false" aria-label="登录或注册星炬学院通行证">
                 <span class="stf-account-avatar" id="stf-account-avatar" aria-hidden="true">＋</span>
                 <span class="stf-account-name" id="stf-account-name">登录</span>
@@ -96,8 +130,8 @@
             <h1 class="forum-hero-brand">星炬学院</h1>
             <p class="forum-hero-title" id="forum-hero-title">公共研讨频段</p>
             <p class="forum-hero-sub" id="forum-hero-sub">
-                档案室灯还亮着。翻阅共鸣者注疏、考据世界观、在讨论区留下你的频率。<br>
-                这里是学院的公共频道 —— 不是深夜私语，是白板上的星图。
+                研讨厅已开门。共鸣者注疏、世界观考据与训练笔记，都在讨论区公开沉淀。<br>
+                这里是学院公共频道 —— 白板上的星图，欢迎接续标注。
             </p>
             <div class="forum-hero-quicknav" role="navigation" aria-label="核心入口">
                 <a class="hero-pill" href="#stf-community">
@@ -984,6 +1018,7 @@
 
     <script src="js/forum-import-data.js"></script>
     <script src="js/forum-data.js"></script>
+    <script src="../js/snow-realm.js"></script>
     <script src="../js/security-shield.js"></script>
     <script src="../js/rate-limiter-client.js"></script>
     <script src="js/forum-auth.js"></script>

@@ -315,17 +315,14 @@
         });
     }
 
-    /* ============ Location Selector（地址 / realm 同步论坛） ============ */
-    var LOCATION_REALM_FALLBACK = {
-        '星炬学院': 'startorch',
-        '拉贝尔学部': 'labelle',
-        '拉海洛': 'lahairo',
-        '雪原小屋': 'snow-cabin',
-        '电子海': 'digital-sea'
-    };
-
-    function applySnowRealm(loc, realm) {
-        var slug = realm || LOCATION_REALM_FALLBACK[loc] || 'startorch';
+    /* ============ Location Selector（地址 / realm · 与论坛 SnowRealm 同源联动） ============ */
+    function applySnowRealm(loc, realm, options) {
+        var SR = window.SnowRealm;
+        if (SR && SR.write) {
+            var state = SR.write(loc, realm, options || {});
+            return state.realm;
+        }
+        var slug = realm || 'startorch';
         try {
             document.documentElement.setAttribute('data-realm', slug);
             if (document.body) document.body.setAttribute('data-realm', slug);
@@ -341,16 +338,36 @@
         var current = document.getElementById('location-current');
         if (!selector || !dropdown || !current) return;
 
-        var storedLoc = safeGetItem('snowfluff-location');
         var options = dropdown.querySelectorAll('.location-option');
+        var applyingRemote = false;
 
-        function setActive(opt) {
+        function findOption(loc) {
+            for (var k = 0; k < options.length; k++) {
+                if (options[k].getAttribute('data-location') === loc) return options[k];
+            }
+            return null;
+        }
+
+        function setActive(opt, writeOpts) {
+            if (!opt) return;
             var loc = opt.getAttribute('data-location');
             var realm = opt.getAttribute('data-realm');
             current.textContent = '在线 · ' + loc;
             for (var j = 0; j < options.length; j++) options[j].classList.remove('active');
             opt.classList.add('active');
-            applySnowRealm(loc, realm);
+            applySnowRealm(loc, realm, writeOpts);
+        }
+
+        function syncFromState(state, writeOpts) {
+            if (!state) return;
+            var opt = findOption(state.location);
+            if (!opt) return;
+            applyingRemote = true;
+            try {
+                setActive(opt, writeOpts || { fromRemote: true, silent: true });
+            } finally {
+                applyingRemote = false;
+            }
         }
 
         selector.addEventListener('click', function(e) {
@@ -373,6 +390,7 @@
             (function(opt) {
                 opt.addEventListener('click', function(e) {
                     e.stopPropagation();
+                    if (applyingRemote) return;
                     setActive(opt);
                     selector.classList.remove('open');
                     var heroEl = document.getElementById('hero');
@@ -381,17 +399,19 @@
             })(options[i]);
         }
 
-        var restored = null;
-        if (storedLoc) {
-            for (var k = 0; k < options.length; k++) {
-                if (options[k].getAttribute('data-location') === storedLoc) {
-                    restored = options[k];
-                    break;
-                }
-            }
+        var boot = window.SnowRealm ? window.SnowRealm.read() : {
+            location: safeGetItem('snowfluff-location') || '星炬学院',
+            realm: safeGetItem('snowfluff-realm') || 'startorch'
+        };
+        var restored = findOption(boot.location) || options[0];
+        if (restored) setActive(restored, { silent: true });
+
+        if (window.SnowRealm && window.SnowRealm.subscribe) {
+            window.SnowRealm.subscribe(function (payload) {
+                if (!payload || payload.source === 'local') return;
+                syncFromState(payload, { fromRemote: true, silent: true, skipAttrs: false });
+            });
         }
-        if (restored) setActive(restored);
-        else if (options[0]) setActive(options[0]);
     }
 
     /* ============ Sparkle Particles ============ */
