@@ -59,6 +59,17 @@
 
 ---
 
+## 论坛挂载与上云边界（结构补丁 · 与世界观轮同步）
+
+| 约定 | 说明 |
+|------|------|
+| 入口 | 仅 `forum/index.html#characters-archive` → `characters/*/index.html` |
+| 扩展层字段 | 页内 `source-tier`（官方 / 同人共识 / 本站原创）；**不**写入 `forum_submissions` |
+| 与世界观区 | 宇宙规则长文在 `#worldview` / `docs/WORLDVIEW.md`；档案页不重复地理总典 |
+| 美术 | 保持现有档案卡 / orbit；不新增与玫夜·蓝金令牌冲突的分区皮肤 |
+| 讨论区卡片文案 | 入口短句可为剧情摘要；完整分层以角色页为准（如达妮娅威胁口径） |
+
+
 ## 本轮新查 / 复核 URL
 
 | URL | 用途 | 层级 |

@@ -3,7 +3,13 @@
     "title": "Snow × 鸣潮世界观术语表",
     "updated": "2026-08-06",
     "priority": ["official", "fanon_consensus", "project_original"],
-    "notes": "official 优先；fanon_consensus 仅填官方空白；project_original 不得覆盖宇宙规则。本轮对齐 docs/WORLDVIEW.md 全索拉里斯重搜版。",
+    "notes": "official 优先；fanon_consensus 仅填官方空白；project_original 不得覆盖宇宙规则。论坛落位：术语供 #worldview 与角色页引用，禁止当作 forum_submissions 字段。结构总图见 docs/WORLDVIEW.md §〇 / §七。",
+    "forum_ia": {
+      "discuss": "#stf-community",
+      "archive": "#characters-archive",
+      "worldview": "#worldview",
+      "not_seed": true
+    },
     "primary_sources": [
       "https://www.wegame.com.cn/act/wegame/mcOrder/?adtag=wg",
       "https://baike.baidu.com/item/%E9%B8%A3%E6%BD%AE/60900055",

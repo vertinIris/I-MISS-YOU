@@ -2,7 +2,7 @@
 
 > 单一事实源：**本地离线源稿** `论坛内容/`（gitignore，不进仓库、不进 Pages）  
 > 可部署产物：`forum/js/forum-import-data.js`（已跟踪）  
-> 云端真相：Supabase `forum_submissions` / `forum_comments`（需跑 migration）
+> 云端真相：Supabase `forum_submissions` / `forum_comments`（schema 以 STATUS 为准；Production **027/028 已确认**）
 
 ## 路径一览
 
@@ -40,9 +40,9 @@ Supabase forum_* 表
 
 4. **云端 schema（按序）**  
    - 论坛基础：`020` 表 → `021` RLS → `022` Realtime → `023` 聊天  
-   - 种子/清理：`024`…`027` 按需  
-   - **本批**：`028` 置顶 + 楼中楼 → `db/migration-028-forum-pin-replies.sql`  
-   - **Production 收口（用户确认已跑）**：`027`（profiles nickname RLS）+ `028`（`is_pinned` + `parent_id`）。自查 SQL 见 `docs/STATUS.md`；勿反复催重跑。  
+   - 种子/清理：`024`…`026` 按需  
+   - **Production 已确认**：`027`（profiles nickname RLS）+ `028`（`is_pinned` + `parent_id` 置顶 / 一层楼中楼）。自查 SQL 见 `docs/STATUS.md`；**勿再写「待跑 028」、勿反复催重跑**。  
+   - **分区边界**：讨论区种子 / 云端帖 ≠ 世界观 lore 卡 ≠ 角色档案 HTML。扩展资料勿混入错误表。  
    - **禁止**再跑废弃的 `migration-020-forum-chat.sql`（已改名为 `DEPRECATED-migration-020-forum-chat.sql`）
 
 5. **推上云**  

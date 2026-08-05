@@ -805,6 +805,21 @@ html.archive-orbit-active .archive-album-shelf {
     background: rgba(180,120,60,.14);
     border-color: rgba(200,140,80,.28);
 }
+/* lore ?????????????????????????? */
+.lore-group {
+    margin-top: 32px;
+}
+.lore-group-title {
+    font-family: "Noto Serif SC", "Songti SC", serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: rgba(200, 214, 240, 0.88);
+    margin: 0 0 4px;
+}
+.lore-group .lore-grid {
+    margin-top: 14px;
+}
 .lore-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));

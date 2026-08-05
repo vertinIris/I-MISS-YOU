@@ -164,10 +164,10 @@
                     <b>讨论区</b><span>帖子 · 话题 · 互动</span>
                 </a>
                 <a class="hero-pill" href="#characters-archive">
-                    <b>档案</b><span>官方角色考据</span>
+                    <b>角色档案</b><span>官方角色考据</span>
                 </a>
                 <a class="hero-pill" href="#worldview">
-                    <b>世界观</b><span>星炬学院考据</span>
+                    <b>世界观</b><span>索拉里斯考据卡</span>
                 </a>
             </div>
             <div class="forum-grid">
@@ -196,7 +196,7 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                     </span>
                     <span class="forum-entry-title">世界观</span>
-                    <span class="forum-entry-desc">星炬学院、残星会、拉海洛、深空联合 —— 考据鸣潮世界的每一个角落。</span>
+                    <span class="forum-entry-desc">索拉里斯规则与地理势力考据卡 —— 角色履历请走「角色档案」，同人长帖请走「讨论区」。</span>
                     <span class="forum-entry-cta">考据世界 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
                 </a>
 
@@ -210,7 +210,7 @@
             <div class="section-header reveal">
                 <span class="section-label">DISCUSS · FEED</span>
                 <h2 class="section-title">讨论区</h2>
-                <p class="section-desc">异步帖流 · 发帖、筛选、点赞评论收藏 —— 比即时聊天更适合沉淀话题</p>
+                <p class="section-desc">云端帖流 · 筛选 / 置顶 / 帖子详情 / 一层楼中楼 · 世界观卡与角色档案不进本区种子</p>
             </div>
 
             <div class="stf-discuss-layout">
@@ -455,7 +455,7 @@
             <div class="section-header reveal">
                 <span class="section-label">ARCHIVE</span>
                 <h2 class="section-title">星炬学院档案库</h2>
-                <p class="section-desc">鸣潮官方角色设定考据 · 收纳册中的每一张卡片都独立浮动</p>
+                <p class="section-desc">角色页入口 · 官方 / 同人共识 / 本站原创分层标注 · 宇宙规则考据请回「世界观」区</p>
                 <!-- 设定：走廊里三十七人擦肩无人转头；连点满 37 触发彩蛋，勿作导航 -->
                 <button type="button" class="stf-corridor-mark" id="stf-corridor-mark" title="走廊回声" aria-label="走廊计数彩蛋">走廊 · 三十七</button>
             </div>
@@ -566,95 +566,98 @@
             <div class="section-header reveal">
                 <span class="section-label">LORE</span>
                 <h2 class="section-title">世界观考据</h2>
-                <p class="section-desc">官方优先 · 同人共识补白 · 本站原创另标 —— 读懂索拉里斯，再读星炬学院</p>
+                <p class="section-desc">论坛三区之一 · 只放宇宙规则与地理势力摘要卡 · 角色履历见「角色档案」· 同人长帖见「讨论区」</p>
             </div>
             <p class="lore-priority-note reveal">
                 资料层级：<span class="lore-tier lore-tier-official">官方</span>
                 <span class="lore-tier lore-tier-fanon">同人共识</span>
                 <span class="lore-tier lore-tier-orig">项目原创</span>
-                · 详尽总典见 <a href="../docs/WORLDVIEW.md">docs/WORLDVIEW.md</a>
-                · 术语表 <a href="../docs/worldview-glossary.json">worldview-glossary.json</a>
+                · 结构总图与落位表见 <a href="../docs/WORLDVIEW.md">docs/WORLDVIEW.md §〇</a>
+                · 术语机读 <a href="../docs/worldview-glossary.json">worldview-glossary.json</a>
+                · 顶栏地址 = SnowRealm（与飞行雪绒频道同源）
             </p>
-            <div class="lore-grid">
 
-                <article class="lore-card" style="--char: var(--drifter-blue);">
-                    <span class="lore-tier lore-tier-official">官方</span>
-                    <h3>索拉里斯 · Sol-3</h3>
-                    <p>太阳星系第三颗星球。第一声「悲鸣」起，旧日法则失效，异象肆虐；人类在毁灭与新生并存的世界里，守住文明星火。</p>
-                </article>
+            <div class="lore-group reveal" aria-labelledby="lore-group-cosmos">
+                <h3 class="lore-group-title" id="lore-group-cosmos">宇宙与规则 · 总典卷一～二</h3>
+                <div class="lore-grid">
+                    <article class="lore-card" style="--char: var(--drifter-blue);">
+                        <span class="lore-tier lore-tier-official">官方</span>
+                        <h3>索拉里斯 · Sol-3</h3>
+                        <p>太阳星系第三颗星球。第一声「悲鸣」起，旧日法则失效，异象肆虐；人类在毁灭与新生并存的世界里，守住文明星火。</p>
+                    </article>
+                    <article class="lore-card" style="--char: var(--sigrica-green);">
+                        <span class="lore-tier lore-tier-official">官方</span>
+                        <h3>悲鸣与海蚀</h3>
+                        <p>悲鸣是灾变态势的统称。海蚀涵盖无音区、残象潮、黑石；黎那汐塔称「黑潮」，拉海洛常表现为「虚质磁暴」。</p>
+                    </article>
+                    <article class="lore-card" style="--char: var(--denia-lavender);">
+                        <span class="lore-tier lore-tier-official">官方</span>
+                        <h3>频率 · 残响 · 声骸</h3>
+                        <p>物质与信息可还原为频率。残响是衰减残余，回音是完整可封存形态；残象被击溃后留下的残响，经盘古终端可转化为声骸。</p>
+                    </article>
+                    <article class="lore-card" style="--char: var(--drifter-blue-light);">
+                        <span class="lore-tier lore-tier-official">官方</span>
+                        <h3>共鸣者与残象</h3>
+                        <p>共鸣者凭体表声痕感知并操控频率。残象是混乱频率构成的类生命体，具声核，本能吞噬频率以维系自身。</p>
+                    </article>
+                    <article class="lore-card" style="--char: var(--lucilla-gold);">
+                        <span class="lore-tier lore-tier-official">官方</span>
+                        <h3>岁主与鸣式</h3>
+                        <p>岁主与文明同寿，授识、渡灾、晓示预言。鸣式伴随悲鸣而生，折射集体意志的隐忧，是毁灭性的残象灾害。</p>
+                    </article>
+                </div>
+            </div>
 
-                <article class="lore-card" style="--char: var(--sigrica-green);">
-                    <span class="lore-tier lore-tier-official">官方</span>
-                    <h3>悲鸣与海蚀</h3>
-                    <p>悲鸣是灾变态势的统称。海蚀涵盖无音区、残象潮、黑石；黎那汐塔称「黑潮」，拉海洛常表现为「虚质磁暴」。</p>
-                </article>
+            <div class="lore-group reveal" aria-labelledby="lore-group-geo">
+                <h3 class="lore-group-title" id="lore-group-geo">地理与势力 · 总典卷三</h3>
+                <div class="lore-grid">
+                    <article class="lore-card" style="--char: var(--drifter-blue);">
+                        <span class="lore-tier lore-tier-official">官方</span>
+                        <h3>瑝珑 · 今州</h3>
+                        <p>瑝珑属地共一庭六州。今州是边塞重城与残象潮前线；城池湖中而建，夜归将士镇守北方。</p>
+                    </article>
+                    <article class="lore-card" style="--char: var(--drifter-blue-light);">
+                        <span class="lore-tier lore-tier-official">官方</span>
+                        <h3>黑海岸</h3>
+                        <p>风暴海上的黑石群岛组织，借助泰缇斯系统观测悲鸣，与各国深度合作。抵达需认可或指引。</p>
+                    </article>
+                    <article class="lore-card" style="--char: var(--denia-lavender);">
+                        <span class="lore-tier lore-tier-official">官方</span>
+                        <h3>黎那汐塔</h3>
+                        <p>「声骸之国」：多城邦岛国，以公共声骸技术闻名。拉古那与七丘等城邦高度独立，海蚀在此称黑潮。</p>
+                    </article>
+                    <article class="lore-card" style="--char: var(--denia-lavender);">
+                        <span class="lore-tier lore-tier-official">官方</span>
+                        <h3>残星会</h3>
+                        <p>对立阵营的隐秘势力。部分角色身负双重身份，立场复杂 —— 考据时请以官方剧情为准，不轻易下定论。</p>
+                    </article>
+                    <article class="lore-card" style="--char: var(--drifter-blue);">
+                        <span class="lore-tier lore-tier-official">官方</span>
+                        <h3>拉海洛 · 星炬学院</h3>
+                        <p>3.x 舞台：罗伊冰原下的地下绿洲，地域海蚀常表现为虚质磁暴。星炬学院为官方学园；爱弥斯曾是拉贝尔学部隧者适格者，现为电子幽灵。细考见总典 §3.6（本地卷宗卷三仅维护用，不进 Pages）。</p>
+                    </article>
+                    <article class="lore-card" style="--char: var(--lucilla-gold);">
+                        <span class="lore-tier lore-tier-official">官方</span>
+                        <h3>深空联合 · 换日</h3>
+                        <p>官方确认的跨国科研同盟：研究院 + 创立星炬学院；发起拉海洛先行计划。换日计划为 3.0 主线硬文本。完整条约法理仍标待核实，勿写死「母体编制表」。</p>
+                    </article>
+                    <article class="lore-card" style="--char: var(--sigrica-green);">
+                        <span class="lore-tier lore-tier-official">官方</span>
+                        <h3>隧者 · 炉芯 · 阿列夫一</h3>
+                        <p>拉海洛核心造物与鸣式威胁语境：隧者、炉芯监视阿列夫一；适格者可显化隧者兵装。九子细表不在此卡写死。</p>
+                    </article>
+                </div>
+            </div>
 
-                <article class="lore-card" style="--char: var(--denia-lavender);">
-                    <span class="lore-tier lore-tier-official">官方</span>
-                    <h3>频率 · 残响 · 声骸</h3>
-                    <p>物质与信息可还原为频率。残响是衰减残余，回音是完整可封存形态；残象被击溃后留下的残响，经盘古终端可转化为声骸。</p>
-                </article>
-
-                <article class="lore-card" style="--char: var(--drifter-blue-light);">
-                    <span class="lore-tier lore-tier-official">官方</span>
-                    <h3>共鸣者与残象</h3>
-                    <p>共鸣者凭体表声痕感知并操控频率。残象是混乱频率构成的类生命体，具声核，本能吞噬频率以维系自身。</p>
-                </article>
-
-                <article class="lore-card" style="--char: var(--lucilla-gold);">
-                    <span class="lore-tier lore-tier-official">官方</span>
-                    <h3>岁主与鸣式</h3>
-                    <p>岁主与文明同寿，授识、渡灾、晓示预言。鸣式伴随悲鸣而生，折射集体意志的隐忧，是毁灭性的残象灾害。</p>
-                </article>
-
-                <article class="lore-card" style="--char: var(--drifter-blue);">
-                    <span class="lore-tier lore-tier-official">官方</span>
-                    <h3>瑝珑 · 今州</h3>
-                    <p>瑝珑属地共一庭六州。今州是边塞重城与残象潮前线；城池湖中而建，夜归将士镇守北方。</p>
-                </article>
-
-                <article class="lore-card" style="--char: var(--drifter-blue-light);">
-                    <span class="lore-tier lore-tier-official">官方</span>
-                    <h3>黑海岸</h3>
-                    <p>风暴海上的黑石群岛组织，借助泰缇斯系统观测悲鸣，与各国深度合作。抵达需认可或指引。</p>
-                </article>
-
-                <article class="lore-card" style="--char: var(--denia-lavender);">
-                    <span class="lore-tier lore-tier-official">官方</span>
-                    <h3>黎那汐塔</h3>
-                    <p>「声骸之国」：多城邦岛国，以公共声骸技术闻名。拉古那与七丘等城邦高度独立，海蚀在此称黑潮。</p>
-                </article>
-
-                <article class="lore-card" style="--char: var(--denia-lavender);">
-                    <span class="lore-tier lore-tier-official">官方</span>
-                    <h3>残星会</h3>
-                    <p>对立阵营的隐秘势力。部分角色身负双重身份，立场复杂 —— 考据时请以官方剧情为准，不轻易下定论。</p>
-                </article>
-
-                <article class="lore-card" style="--char: var(--drifter-blue);">
-                    <span class="lore-tier lore-tier-official">官方</span>
-                    <h3>拉海洛 · 星炬学院</h3>
-                    <p>3.x 舞台：罗伊冰原下的地下绿洲，地域海蚀常表现为虚质磁暴。星炬学院为官方学园；爱弥斯曾是拉贝尔学部隧者适格者，现为电子幽灵。地理细考见事实卷宗卷三。</p>
-                </article>
-
-                <article class="lore-card" style="--char: var(--lucilla-gold);">
-                    <span class="lore-tier lore-tier-official">官方</span>
-                    <h3>深空联合 · 换日</h3>
-                    <p>官方确认的跨国科研同盟：研究院 + 创立星炬学院；发起拉海洛先行计划。换日计划为 3.0 主线硬文本。完整条约法理仍标待核实，勿写死「母体编制表」。</p>
-                </article>
-
-                <article class="lore-card" style="--char: var(--sigrica-green);">
-                    <span class="lore-tier lore-tier-official">官方</span>
-                    <h3>隧者 · 炉芯 · 阿列夫一</h3>
-                    <p>拉海洛核心造物与鸣式威胁语境：隧者、炉芯监视阿列夫一；适格者可显化隧者兵装。九子细表不在此卡写死。</p>
-                </article>
-
-                <article class="lore-card" style="--char: var(--aimisi-pink, #FF6B9D);">
-                    <span class="lore-tier lore-tier-orig">项目原创</span>
-                    <h3>飞行雪绒 · 调频 9072</h3>
-                    <p>官方确认爱弥斯的歌手化名「飞行雪绒」。本站频道结构与深夜频率 9072 为同人演绎 —— 用官方「频率」语言叙事，不改写索拉里斯物理法则。</p>
-                </article>
-
+            <div class="lore-group reveal" aria-labelledby="lore-group-bridge">
+                <h3 class="lore-group-title" id="lore-group-bridge">双站桥接 · 总典卷六（非角色档案）</h3>
+                <div class="lore-grid">
+                    <article class="lore-card" style="--char: var(--aimisi-pink, #FF6B9D);">
+                        <span class="lore-tier lore-tier-orig">项目原创</span>
+                        <h3>飞行雪绒 · 调频 9072</h3>
+                        <p>官方确认爱弥斯的歌手化名「飞行雪绒」。频道页与深夜频率 9072 为同人演绎（左下角浮钮可打开频道）—— 用官方「频率」语言叙事，不改写索拉里斯物理法则；角色履历仍归「角色档案」。</p>
+                    </article>
+                </div>
             </div>
         </div>
     </section>
@@ -955,7 +958,7 @@
                                 <label class="form-label" for="stf-login-pwd">口令</label>
                                 <input type="password" class="form-input" id="stf-login-pwd" maxlength="64" minlength="6" autocomplete="current-password" placeholder="至少 6 位" required>
                             </div>
-                            <p class="stf-auth-mode-hint" id="stf-login-mode-hint">用注册时填写的真实邮箱登录，与飞行雪绒主站共用同一账号。</p>
+                            <p class="stf-auth-mode-hint" id="stf-login-mode-hint">用注册时填写的真实邮箱登录，与飞行雪绒频道共用同一账号。</p>
                             <p class="stf-auth-error" id="stf-login-error" role="alert" hidden></p>
                             <div class="form-actions">
                                 <button type="submit" class="btn-primary magnetic stf-passport-cta"><span>核验通行证</span></button>
@@ -993,7 +996,7 @@
                                     <input type="password" class="form-input" id="stf-register-pwd2" maxlength="64" minlength="6" autocomplete="new-password" placeholder="再输入一次" required>
                                 </div>
                             </div>
-                            <p class="stf-auth-mode-hint" id="stf-register-mode-hint">邮箱账号可找回口令，并与飞行雪绒主站共用同一套身份。</p>
+                            <p class="stf-auth-mode-hint" id="stf-register-mode-hint">邮箱账号可找回口令，并与飞行雪绒频道共用同一套身份。</p>
                             <p class="stf-auth-error" id="stf-register-error" role="alert" hidden></p>
                             <div class="form-actions">
                                 <button type="submit" class="btn-primary magnetic stf-passport-cta"><span>签发通行证</span></button>
