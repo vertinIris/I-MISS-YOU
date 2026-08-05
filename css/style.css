@@ -297,35 +297,34 @@ button {
 .pink-galaxy::before {
     content: '';
     position: absolute;
-    top: -10%;
-    left: -5%;
-    width: 60%;
-    height: 60%;
+    top: -18%;
+    left: -12%;
+    width: 72%;
+    height: 72%;
+    /* P0：用更大软渐变替代 filter:blur(40px)，避免全屏层持续合成卡顿 */
     background: radial-gradient(ellipse at center,
-        rgba(255, 107, 157, 0.12) 0%,
-        rgba(255, 143, 176, 0.07) 30%,
-        rgba(182, 107, 255, 0.05) 50%,
-        transparent 70%
+        rgba(255, 107, 157, 0.14) 0%,
+        rgba(255, 143, 176, 0.07) 28%,
+        rgba(182, 107, 255, 0.04) 48%,
+        transparent 72%
     );
-    filter: blur(40px);
-    animation: galaxyDrift 20s ease-in-out infinite;
+    animation: galaxyDrift 28s ease-in-out infinite;
 }
 
 .pink-galaxy::after {
     content: '';
     position: absolute;
-    bottom: -10%;
-    right: -5%;
-    width: 70%;
-    height: 70%;
+    bottom: -18%;
+    right: -12%;
+    width: 80%;
+    height: 80%;
     background: radial-gradient(ellipse at center,
-        rgba(107, 138, 255, 0.12) 0%,
-        rgba(168, 216, 255, 0.07) 30%,
-        rgba(182, 107, 255, 0.05) 50%,
-        transparent 70%
+        rgba(107, 138, 255, 0.13) 0%,
+        rgba(168, 216, 255, 0.06) 28%,
+        rgba(182, 107, 255, 0.04) 48%,
+        transparent 72%
     );
-    filter: blur(40px);
-    animation: galaxyDrift 25s ease-in-out infinite reverse;
+    animation: galaxyDrift 34s ease-in-out infinite reverse;
 }
 
 /* Ult Energy Core — Emis' ultimate burst: central pulsing star core */
@@ -345,17 +344,16 @@ button {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 800px;
-    height: 800px;
+    width: 960px;
+    height: 960px;
     background: radial-gradient(circle,
-        rgba(255, 107, 157, 0.10) 0%,
-        rgba(107, 138, 255, 0.08) 25%,
-        rgba(182, 107, 255, 0.05) 45%,
-        transparent 70%
+        rgba(255, 107, 157, 0.11) 0%,
+        rgba(107, 138, 255, 0.07) 28%,
+        rgba(182, 107, 255, 0.04) 48%,
+        transparent 72%
     );
     transform: translate(-50%, -50%);
-    filter: blur(60px);
-    animation: ultCorePulse 8s ease-in-out infinite;
+    animation: ultCorePulse 10s ease-in-out infinite;
 }
 
 .ult-energy-core::after {
@@ -363,16 +361,15 @@ button {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 400px;
-    height: 400px;
+    width: 520px;
+    height: 520px;
     background: radial-gradient(circle,
         rgba(255, 255, 255, 0.06) 0%,
-        rgba(168, 216, 255, 0.05) 20%,
-        transparent 60%
+        rgba(168, 216, 255, 0.045) 22%,
+        transparent 62%
     );
     transform: translate(-50%, -50%);
-    filter: blur(30px);
-    animation: ultCorePulse 6s ease-in-out infinite reverse;
+    animation: ultCorePulse 8s ease-in-out infinite reverse;
 }
 
 @keyframes ultCorePulse {
@@ -487,19 +484,18 @@ button {
     top: 15%;
     left: -30%;
     width: 160%;
-    height: 30%;
+    height: 42%;
     background: linear-gradient(105deg,
         transparent 0%,
-        rgba(255, 107, 157, 0.025) 15%,
-        rgba(182, 107, 255, 0.04) 30%,
-        rgba(107, 138, 255, 0.035) 50%,
-        rgba(168, 216, 255, 0.025) 70%,
-        rgba(255, 182, 217, 0.015) 85%,
+        rgba(255, 107, 157, 0.03) 15%,
+        rgba(182, 107, 255, 0.045) 30%,
+        rgba(107, 138, 255, 0.04) 50%,
+        rgba(168, 216, 255, 0.03) 70%,
+        rgba(255, 182, 217, 0.02) 85%,
         transparent 100%
     );
-    filter: blur(30px);
     transform: rotate(-8deg);
-    animation: riverFlow1 38s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    animation: riverFlow1 48s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .galaxy-river::after {
@@ -508,17 +504,16 @@ button {
     bottom: 10%;
     right: -30%;
     width: 160%;
-    height: 25%;
+    height: 36%;
     background: linear-gradient(75deg,
         transparent 0%,
-        rgba(168, 216, 255, 0.025) 20%,
-        rgba(107, 138, 255, 0.035) 40%,
-        rgba(255, 107, 157, 0.025) 60%,
+        rgba(168, 216, 255, 0.03) 20%,
+        rgba(107, 138, 255, 0.04) 40%,
+        rgba(255, 107, 157, 0.03) 60%,
         transparent 100%
     );
-    filter: blur(35px);
     transform: rotate(5deg);
-    animation: riverFlow2 45s cubic-bezier(0.4, 0, 0.6, 1) infinite reverse;
+    animation: riverFlow2 56s cubic-bezier(0.4, 0, 0.6, 1) infinite reverse;
 }
 
 @keyframes riverFlow1 {
@@ -632,8 +627,8 @@ button {
     position: absolute;
     top: 50%;
     right: 0;
-    width: 80px;
-    height: 2px;
+    width: var(--trail-w, 80px);
+    height: var(--trail-h, 2px);
     background: linear-gradient(to left,
         rgba(255, 255, 255, 0.9) 0%,
         rgba(255, 182, 217, 0.6) 30%,
@@ -707,7 +702,7 @@ button {
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 16px rgba(168, 216, 255, 0.25);
     animation: cssSnowFall linear infinite;
     user-select: none;
-    will-change: transform, opacity;
+    /* P0：避免常驻 will-change 占合成层；离屏雪花靠 content 自然降载 */
 }
 
 .css-snowflake[data-layer="ethereal"] {
@@ -6229,9 +6224,9 @@ textarea:focus-visible,
     justify-content: space-between;
     gap: 1rem;
     padding: 0.8rem 1.2rem;
-    background: rgba(10, 12, 24, 0.82);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
+    background: rgba(10, 12, 24, 0.9);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 .zone-topbar .zone-home {
@@ -6242,11 +6237,17 @@ textarea:focus-visible,
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
+    flex: none;
 }
 .zone-switch {
     display: flex;
     gap: 0.5rem;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: min(70vw, 560px);
+    padding-bottom: 2px;
+    scrollbar-width: thin;
 }
 .zone-switch a,
 .zone-switch span {
@@ -6256,6 +6257,8 @@ textarea:focus-visible,
     text-decoration: none;
     color: rgba(255, 255, 255, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.12);
+    white-space: nowrap;
+    flex: none;
 }
 .zone-switch a:hover {
     color: #fff;
@@ -6347,6 +6350,7 @@ textarea:focus-visible,
     border: 1px solid var(--surface-card-border);
     border-radius: 14px;
     padding: 0.9rem 1rem;
+    min-width: 0;
 }
 .zone-stat-label {
     font-size: 0.72rem;
@@ -6358,6 +6362,8 @@ textarea:focus-visible,
     color: #fff;
     margin-top: 0.3rem;
     line-height: 1.5;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 .zone-modules {
@@ -6367,12 +6373,18 @@ textarea:focus-visible,
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 900px;
 }
 .module {
     background: var(--surface-card);
     border: 1px solid var(--surface-card-border);
     border-radius: 16px;
     overflow: hidden;
+    transition: border-color 0.25s ease;
+}
+.module[open] {
+    border-color: color-mix(in srgb, var(--char, #F4729B) 40%, rgba(255,255,255,0.12));
 }
 .module > summary {
     list-style: none;

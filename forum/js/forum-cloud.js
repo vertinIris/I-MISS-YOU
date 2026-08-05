@@ -175,6 +175,7 @@
             color: sanitizeColor(r.author_color),
             identity: r.identity || null,
             is_hidden: !!r.is_hidden,
+            is_pinned: !!r.is_pinned,
             author: r.author_id || null
         };
     }
@@ -194,6 +195,7 @@
             realm: 'startorch',
             likes: sub.likes || 0,
             is_hidden: sub.is_hidden || false,
+            is_pinned: !!sub.is_pinned,
             created_at: sub.time ? new Date(sub.time).toISOString() : new Date().toISOString(),
             updated_at: new Date().toISOString()
         };
@@ -235,11 +237,13 @@
             var bySub = {};
             (res.data || []).forEach(function (r) {
                 (bySub[r.submission_id] = bySub[r.submission_id] || []).push({
+                    id: r.id,
                     name: r.author_name,
                     text: r.content,
                     color: r.author_color || '#A8D8FF',
                     timeStr: fmtTimeStr(r.created_at),
                     is_hidden: !!r.is_hidden,
+                    parent_id: r.parent_id || null,
                     author: r.author_id || null
                 });
             });
@@ -378,7 +382,12 @@
         if (!client) return false;
         try {
             var { error } = await client.from('forum_submissions')
-                .update({ likes: sub.likes || 0, is_hidden: !!sub.is_hidden, updated_at: new Date().toISOString() })
+                .update({
+                    likes: sub.likes || 0,
+                    is_hidden: !!sub.is_hidden,
+                    is_pinned: !!sub.is_pinned,
+                    updated_at: new Date().toISOString()
+                })
                 .eq('id', sub.id);
             if (error) throw error;
             return true;
@@ -389,12 +398,13 @@
         try {
             await ensureSession();
             var row = {
-                id: 'stf_c_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+                id: comment.id || ('stf_c_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8)),
                 submission_id: subId,
                 author_id: comment.author || null,
                 author_name: comment.name,
                 author_color: comment.color || '#A8D8FF',
                 content: comment.text,
+                parent_id: comment.parent_id || null,
                 created_at: new Date().toISOString()
             };
             var { error } = await client.from('forum_comments').insert(row);

@@ -10,29 +10,53 @@
     --snow-mist: rgba(255, 182, 217, 0.12);
 }
 
-/* 签名层：粉星云 + 轻雪；无关层压低 */
+/* 签名层：粉星云 + 轻雪；无关层压低
+   P0：去掉整层 filter/blur（与 style.css 伪元素 blur 叠乘是主站卡顿主因之一） */
 .ult-energy-core,
 .hex-shield,
 .data-rain {
-    opacity: 0.1;
-    filter: saturate(0.55) blur(0.4px);
+    opacity: 0.08;
 }
 .galaxy-river {
-    opacity: 0.28;
-    filter: saturate(0.9) hue-rotate(-8deg);
+    opacity: 0.22;
 }
 .pink-galaxy {
-    opacity: 0.88;
-    filter: saturate(1.05);
+    opacity: 0.82;
 }
 #particle-canvas {
-    opacity: 0.42;
+    opacity: 0.36;
 }
 .css-snow-container {
-    opacity: 0.72;
+    opacity: 0.62;
 }
 .shooting-star-container {
-    opacity: 0.55;
+    opacity: 0.45;
+}
+
+/* 标签页隐藏 / 低功耗：暂停昂贵无限动画，保留静态气质 */
+body.fxre-anim-paused .pink-galaxy::before,
+body.fxre-anim-paused .pink-galaxy::after,
+body.fxre-anim-paused .ult-energy-core::before,
+body.fxre-anim-paused .ult-energy-core::after,
+body.fxre-anim-paused .galaxy-river::before,
+body.fxre-anim-paused .galaxy-river::after,
+body.fxre-anim-paused .hex-shield,
+body.fxre-anim-paused .data-rain,
+body.fxre-anim-paused .css-snowflake,
+body.fxre-anim-paused .sparkle,
+body.fxre-anim-paused .gradient-text {
+    animation-play-state: paused !important;
+}
+
+/* 首屏以下区块跳过离屏布局/绘制 */
+main > .section:not(.hero),
+#timeline,
+#music,
+#diary,
+#community,
+#egg {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 640px;
 }
 
 /* 主站底色偏粉夜，避免串论坛蓝金深空 */

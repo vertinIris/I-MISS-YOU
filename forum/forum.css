@@ -2835,3 +2835,151 @@ body.stf-chat-expanded-open .stf-chat-card.is-chat-expanded .stf-chat-meta {
 @media (prefers-reduced-motion: reduce) {
     .stf-feed .stf-card.is-new { animation: none; }
 }
+
+/* ---- 长文详情面板 / 置顶角标 / 一层楼中楼 ---- */
+.stf-card-badge[data-type="pinned"] {
+    background: rgba(232, 197, 106, 0.22);
+    color: #E8C56A;
+}
+.stf-card-title-btn {
+    all: unset;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+    font-weight: inherit;
+}
+.stf-card-title-btn:hover { color: #A8D8FF; }
+.stf-card-detail-link {
+    display: inline-block;
+    margin: 6px 0 4px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #A8D8FF;
+    font-size: 0.82rem;
+    cursor: pointer;
+}
+.stf-card-detail-link:hover { text-decoration: underline; }
+
+.stf-comment-thread { margin-bottom: 8px; }
+.stf-comment-replies {
+    margin: 6px 0 0 18px;
+    padding-left: 12px;
+    border-left: 2px solid rgba(107, 138, 255, 0.28);
+}
+.stf-comment.is-reply { opacity: 0.95; }
+.stf-comment-reply {
+    margin-left: 8px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: rgba(168, 216, 255, 0.75);
+    font-size: 11px;
+    cursor: pointer;
+}
+.stf-comment-reply:hover { color: #fff; }
+.stf-reply-hint {
+    width: 100%;
+    margin: 0 0 6px;
+    font-size: 12px;
+    color: rgba(240, 244, 255, 0.65);
+}
+.stf-reply-cancel {
+    border: 0;
+    background: none;
+    color: #A8D8FF;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.stf-post-detail {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+}
+.stf-post-detail[hidden] { display: none !important; }
+.stf-post-detail-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(6, 8, 16, 0.72);
+}
+.stf-post-detail-panel {
+    position: relative;
+    z-index: 1;
+    width: min(720px, 100%);
+    margin: 0 auto;
+    background: #0e1220;
+    border-left: 1px solid rgba(255,255,255,0.08);
+    border-right: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    flex-direction: column;
+    max-height: 100vh;
+    overflow: hidden;
+    box-shadow: 0 0 48px rgba(0,0,0,0.45);
+}
+.stf-post-detail-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex: none;
+}
+.stf-post-detail-back {
+    border: 1px solid rgba(168, 216, 255, 0.35);
+    background: rgba(107, 138, 255, 0.12);
+    color: #E8F0FF;
+    border-radius: 999px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+.stf-post-detail-heading {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: rgba(240, 244, 255, 0.7);
+}
+.stf-post-detail-body {
+    flex: 1;
+    overflow: auto;
+    padding: 20px 22px 40px;
+    -webkit-overflow-scrolling: touch;
+}
+.stf-detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 0.82rem;
+}
+.stf-detail-title {
+    font-size: clamp(1.25rem, 3vw, 1.7rem);
+    line-height: 1.35;
+    margin: 0 0 16px;
+    color: #FAF8FF;
+}
+.stf-detail-cover {
+    width: 100%;
+    max-height: 360px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+.stf-detail-content {
+    white-space: normal;
+    line-height: 1.75;
+    color: rgba(240, 244, 255, 0.88);
+    font-size: 0.98rem;
+    word-break: break-word;
+    margin-bottom: 28px;
+}
+.stf-detail-comments-title {
+    font-size: 1rem;
+    margin: 0 0 12px;
+    color: #A8D8FF;
+}
+body.stf-detail-open { overflow: hidden; }

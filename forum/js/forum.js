@@ -274,16 +274,22 @@
     function getPinnedCandidates(pool) {
         var tagged = [];
         var hot = [];
+        var fieldPins = [];
         (pool || []).forEach(function (s) {
+            if (s.is_pinned) {
+                fieldPins.push(s);
+                return;
+            }
             var hasPinTag = s.tags && s.tags.some(function (t) {
                 return t === '置顶' || t === '公告' || t === '精华';
             });
             if (hasPinTag) tagged.push(s);
             else if ((s.likes || 0) >= ESSENCE_LIKE_MIN) hot.push(s);
         });
+        fieldPins.sort(function (a, b) { return (b.likes || 0) - (a.likes || 0); });
         tagged.sort(function (a, b) { return (b.likes || 0) - (a.likes || 0); });
         hot.sort(function (a, b) { return (b.likes || 0) - (a.likes || 0); });
-        var merged = tagged.concat(hot);
+        var merged = fieldPins.concat(tagged).concat(hot);
         var seen = {};
         var out = [];
         for (var i = 0; i < merged.length && out.length < PINNED_MAX; i++) {
@@ -292,6 +298,10 @@
             out.push(merged[i]);
         }
         return out;
+    }
+
+    function pinSortKey(s) {
+        return s && s.is_pinned ? 1 : 0;
     }
 
     /* ============ Rendering ============ */
@@ -316,23 +326,31 @@
             });
         }
 
+        function withPinFirst(cmp) {
+            return function (a, b) {
+                var pd = pinSortKey(b) - pinSortKey(a);
+                if (pd !== 0) return pd;
+                return cmp(a, b);
+            };
+        }
+
         if (communitySort === 'essence') {
             filtered = filtered.filter(isEssencePost);
-            return filtered.sort(function (a, b) {
+            return filtered.sort(withPinFirst(function (a, b) {
                 var la = a.likes || 0, lb = b.likes || 0;
                 if (lb !== la) return lb - la;
                 return (b.time || 0) - (a.time || 0);
-            });
+            }));
         }
 
         if (communitySort === 'hot') {
-            return filtered.sort(function (a, b) {
+            return filtered.sort(withPinFirst(function (a, b) {
                 var la = a.likes || 0, lb = b.likes || 0;
                 if (lb !== la) return lb - la;
                 return (b.time || 0) - (a.time || 0);
-            });
+            }));
         }
-        return filtered.sort(function (a, b) { return (b.time || 0) - (a.time || 0); });
+        return filtered.sort(withPinFirst(function (a, b) { return (b.time || 0) - (a.time || 0); }));
     }
 
     /* ============ Stats ============ */
@@ -379,6 +397,9 @@
         var essenceBadge = isEssencePost(s)
             ? '<span class="stf-card-badge" data-type="essence" title="精华">精华</span>'
             : '';
+        var pinBadge = s.is_pinned
+            ? '<span class="stf-card-badge" data-type="pinned" title="置顶">置顶</span>'
+            : '';
 
         return '<article class="stf-card" data-id="' + escapeHTML(s.id) + '"' + cardCharStyle + '>' +
             '<div class="stf-card-header">' +
@@ -387,17 +408,18 @@
                     '<div class="stf-card-author">' + escapeHTML(s.name) + '</div>' +
                     '<div class="stf-card-time">' + escapeHTML(s.timeStr) + '</div>' +
                 '</div>' +
+                pinBadge +
                 essenceBadge +
                 '<span class="stf-card-badge" data-type="' + s.type + '">' + (typeLabels[s.type] || s.type) + '</span>' +
             '</div>' +
-            '<h3 class="stf-card-title">' + escapeHTML(title) + '</h3>' +
+            '<h3 class="stf-card-title"><button type="button" class="stf-card-title-btn" data-action="open-detail">' + escapeHTML(title) + '</button></h3>' +
             coverHtml +
             '<div class="stf-card-preview">' + preview + '</div>' +
             '<div class="stf-card-content">' + escapeHTML(s.content) + '</div>' +
             (needsExpand
-                ? '<button type="button" class="stf-card-expand-btn" data-action="expand">' +
-                    (needsExpand ? '展开全文' : '') + '</button>'
+                ? '<button type="button" class="stf-card-expand-btn" data-action="expand">展开全文</button>'
                 : '') +
+            '<button type="button" class="stf-card-detail-link" data-action="open-detail">阅读详情</button>' +
             tagsHtml +
             '<div class="stf-card-actions">' +
                 '<button type="button" class="stf-card-action' + (s.liked ? ' liked' : '') + '" data-action="like" title="点赞">' +
@@ -412,6 +434,9 @@
                     '<svg viewBox="0 0 24 24" fill="' + (s.bookmarked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>' +
                     '<span>收藏</span>' +
                 '</button>' +
+                (isStaff() ? '<button type="button" class="stf-card-action stf-admin-pin" data-action="admin-pin" title="版主/管理员：切换置顶">' +
+                    '<span>' + (s.is_pinned ? '取消置顶' : '置顶') + '</span>' +
+                '</button>' : '') +
                 (isStaff() ? '<button type="button" class="stf-card-action stf-admin-hide" data-action="admin-hide" title="版主/管理员：隐藏该帖">' +
                     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>' +
                     '<span>隐藏</span>' +
@@ -500,7 +525,8 @@
         }
         wrap.hidden = false;
         list.innerHTML = pins.map(function (s) {
-            var badge = (s.tags && s.tags.indexOf('公告') !== -1) ? '公告'
+            var badge = s.is_pinned ? '置顶'
+                : (s.tags && s.tags.indexOf('公告') !== -1) ? '公告'
                 : (s.tags && s.tags.indexOf('置顶') !== -1) ? '置顶' : '精华';
             return '<li><button type="button" class="stf-pinned-item" data-pin-id="' + escapeHTML(s.id) + '">' +
                 '<span class="stf-pinned-badge">' + badge + '</span>' +
@@ -510,20 +536,46 @@
         }).join('');
     }
 
+    function commentKey(c) {
+        return (c && (c.id || (c.name + '\0' + c.text))) || '';
+    }
+
+    function buildCommentItemHTML(c, targetId, isReply) {
+        var replyBtn = isReply ? '' :
+            '<button type="button" class="stf-comment-reply" data-action="reply-comment" data-parent-key="' + escapeHTML(commentKey(c)) + '" data-reply-name="' + escapeHTML(c.name) + '">回复</button>';
+        return '<div class="stf-comment' + (isReply ? ' is-reply' : '') + '" data-comment-key="' + escapeHTML(commentKey(c)) + '">' +
+            '<span class="stf-comment-name" style="color:' + sanitizeColor(c.color) + '">' + escapeHTML(c.name) + '</span>' +
+            '<span class="stf-comment-text">' + escapeHTML(c.text) + '</span>' +
+            '<span class="stf-comment-time">' + escapeHTML(c.timeStr) + '</span>' +
+            replyBtn +
+            (isStaff() ? '<button type="button" class="stf-comment-hide" data-action="admin-hide-comment" data-hide-sub="' + targetId + '" data-hide-name="' + escapeHTML(c.name) + '" data-hide-text="' + escapeHTML(c.text) + '" title="版主/管理员：隐藏该评论">✕</button>' : '') +
+        '</div>';
+    }
+
     function renderComments(targetId) {
         var list = document.getElementById('stf-comment-list-' + targetId);
         if (!list) return;
-        var comments = StarTorchData.getComments(targetId);
+        var comments = (StarTorchData.getComments(targetId) || []).filter(function (c) { return !c.is_hidden; });
         if (!comments.length) {
             list.innerHTML = '<p class="stf-comments-empty">还没有评论</p>';
             return;
         }
-        list.innerHTML = comments.filter(function (c) { return !c.is_hidden; }).map(function (c) {
-            return '<div class="stf-comment">' +
-                '<span class="stf-comment-name" style="color:' + sanitizeColor(c.color) + '">' + escapeHTML(c.name) + '</span>' +
-                '<span class="stf-comment-text">' + escapeHTML(c.text) + '</span>' +
-                '<span class="stf-comment-time">' + escapeHTML(c.timeStr) + '</span>' +
-                (isStaff() ? '<button type="button" class="stf-comment-hide" data-action="admin-hide-comment" data-hide-sub="' + targetId + '" data-hide-name="' + escapeHTML(c.name) + '" data-hide-text="' + escapeHTML(c.text) + '" title="版主/管理员：隐藏该评论">✕</button>' : '') +
+        var roots = [];
+        var children = {};
+        comments.forEach(function (c) {
+            if (c.parent_id) {
+                (children[c.parent_id] = children[c.parent_id] || []).push(c);
+            } else {
+                roots.push(c);
+            }
+        });
+        list.innerHTML = roots.map(function (c) {
+            var key = commentKey(c);
+            var replies = children[key] || children[c.id] || [];
+            var nest = replies.map(function (r) { return buildCommentItemHTML(r, targetId, true); }).join('');
+            return '<div class="stf-comment-thread">' +
+                buildCommentItemHTML(c, targetId, false) +
+                (nest ? '<div class="stf-comment-replies">' + nest + '</div>' : '') +
             '</div>';
         }).join('');
     }
@@ -701,6 +753,23 @@
         if (btn) btn.textContent = expanded ? '收起' : '展开全文';
     }
 
+    function togglePin(id) {
+        if (!isStaff()) return;
+        updateSubmission(id, function (s) {
+            s.is_pinned = !s.is_pinned;
+            return s;
+        });
+        var sub = findSubmission(id);
+        if (sub && window.StarTorchCloud && window.StarTorchCloud.updateSubmission) {
+            window.StarTorchCloud.updateSubmission(sub, function () {});
+        }
+        renderCommunity();
+        showToast(sub && sub.is_pinned ? '已置顶' : '已取消置顶');
+        if (document.getElementById('stf-post-detail') && !document.getElementById('stf-post-detail').hidden) {
+            openPostDetail(id, { skipHistory: true });
+        }
+    }
+
     function addComment(targetId, name, text, opts) {
         var user = currentUser();
         var identityId = opts && opts.identityId;
@@ -709,7 +778,19 @@
         if (!displayName || !text) return;
         var comments = StarTorchData.getComments(targetId);
         var now = new Date();
+        var parentId = opts && opts.parentId ? String(opts.parentId) : null;
+        /* 仅允许一层：若父评论已有 parent_id，则拒绝再嵌套 */
+        if (parentId) {
+            var parent = (comments || []).find(function (c) {
+                return commentKey(c) === parentId || c.id === parentId;
+            });
+            if (parent && parent.parent_id) {
+                showToast('仅支持一层回复');
+                return;
+            }
+        }
         var entry = {
+            id: 'stf_c_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
             name: displayName,
             text: text,
             color: user
@@ -718,7 +799,8 @@
             timeStr: (now.getMonth() + 1) + '月' + now.getDate() + '日 ' +
                 String(now.getHours()).padStart(2, '0') + ':' +
                 String(now.getMinutes()).padStart(2, '0'),
-            author: user ? user.key : null
+            author: user ? user.key : null,
+            parent_id: parentId || null
         };
         comments.push(entry);
         StarTorchData.saveComments(targetId, comments);
@@ -729,7 +811,148 @@
         }
         if (!user) StarTorchData.setNickname(displayName);
         renderComments(targetId);
-        showToast('评论已发送 ✨');
+        var detailList = document.getElementById('stf-detail-comment-list');
+        if (detailList && detailList.getAttribute('data-target') === targetId) {
+            renderDetailComments(targetId);
+        }
+        showToast(parentId ? '回复已发送 ✨' : '评论已发送 ✨');
+    }
+
+    function setReplyTarget(form, parentKey, replyName) {
+        if (!form) return;
+        if (parentKey) {
+            form.dataset.replyParent = parentKey;
+            var hint = form.querySelector('.stf-reply-hint');
+            if (!hint) {
+                hint = document.createElement('p');
+                hint.className = 'stf-reply-hint';
+                form.insertBefore(hint, form.firstChild);
+            }
+            hint.innerHTML = '回复 <b>' + escapeHTML(replyName || '') + '</b> · <button type="button" class="stf-reply-cancel" data-action="cancel-reply">取消</button>';
+            var input = form.querySelector('.stf-comment-input');
+            if (input) {
+                input.placeholder = '回复 ' + (replyName || '') + '……';
+                input.focus();
+            }
+        } else {
+            delete form.dataset.replyParent;
+            var h = form.querySelector('.stf-reply-hint');
+            if (h) h.remove();
+            var inp = form.querySelector('.stf-comment-input');
+            if (inp) inp.placeholder = '写下你的评论……';
+        }
+    }
+
+    /* ============ 长文详情面板（?post= / #post=） ============ */
+    function getPostQueryId() {
+        try {
+            var q = new URLSearchParams(window.location.search || '');
+            var fromQ = q.get('post');
+            if (fromQ) return fromQ;
+        } catch (e) {}
+        var hash = (window.location.hash || '').replace(/^#/, '');
+        if (hash.indexOf('post=') === 0) return decodeURIComponent(hash.slice(5));
+        if (hash.indexOf('post/') === 0) return decodeURIComponent(hash.slice(5));
+        return '';
+    }
+
+    function setPostUrl(id) {
+        try {
+            var url = new URL(window.location.href);
+            if (id) {
+                url.searchParams.set('post', id);
+                url.hash = '';
+            } else {
+                url.searchParams.delete('post');
+            }
+            history.replaceState(null, '', url.pathname + url.search + url.hash);
+        } catch (e) {
+            try {
+                if (id) window.location.hash = 'post=' + encodeURIComponent(id);
+                else if ((window.location.hash || '').indexOf('post') !== -1) window.location.hash = '';
+            } catch (err) {}
+        }
+    }
+
+    function renderDetailComments(targetId) {
+        var list = document.getElementById('stf-detail-comment-list');
+        if (!list) return;
+        list.setAttribute('data-target', targetId);
+        var comments = (StarTorchData.getComments(targetId) || []).filter(function (c) { return !c.is_hidden; });
+        if (!comments.length) {
+            list.innerHTML = '<p class="stf-comments-empty">还没有评论</p>';
+            return;
+        }
+        var roots = [];
+        var children = {};
+        comments.forEach(function (c) {
+            if (c.parent_id) (children[c.parent_id] = children[c.parent_id] || []).push(c);
+            else roots.push(c);
+        });
+        list.innerHTML = roots.map(function (c) {
+            var key = commentKey(c);
+            var replies = children[key] || children[c.id] || [];
+            var nest = replies.map(function (r) { return buildCommentItemHTML(r, targetId, true); }).join('');
+            return '<div class="stf-comment-thread">' +
+                buildCommentItemHTML(c, targetId, false) +
+                (nest ? '<div class="stf-comment-replies">' + nest + '</div>' : '') +
+            '</div>';
+        }).join('');
+    }
+
+    function openPostDetail(id, opts) {
+        opts = opts || {};
+        var panel = document.getElementById('stf-post-detail');
+        var body = document.getElementById('stf-post-detail-body');
+        if (!panel || !body) return;
+        var s = findSubmission(id) || StarTorchData.getSubmissions().find(function (x) { return x.id === id; });
+        if (!s || s.is_hidden) {
+            showToast('帖子不存在或已隐藏');
+            closePostDetail();
+            return;
+        }
+        var safeImg = safeMediaUrl(s.image);
+        var commentForm = buildCommentFormHTML(s.id).replace('stf-comment-form', 'stf-comment-form stf-detail-comment-form');
+        body.innerHTML =
+            '<div class="stf-detail-meta">' +
+                '<span class="stf-detail-author" style="color:' + sanitizeColor(s.color) + '">' + escapeHTML(s.name) + '</span>' +
+                '<span class="stf-detail-time">' + escapeHTML(s.timeStr) + '</span>' +
+                (s.is_pinned ? '<span class="stf-card-badge" data-type="pinned">置顶</span>' : '') +
+                '<span class="stf-card-badge" data-type="' + s.type + '">' + escapeHTML(typeLabels[s.type] || s.type) + '</span>' +
+            '</div>' +
+            '<h2 class="stf-detail-title">' + escapeHTML(displayTitle(s)) + '</h2>' +
+            (safeImg ? '<img class="stf-detail-cover" src="' + escapeHTML(safeImg) + '" alt="" loading="lazy">' : '') +
+            '<div class="stf-detail-content">' + escapeHTML(s.content).replace(/\n/g, '<br>') + '</div>' +
+            '<div class="stf-detail-comments">' +
+                '<h3 class="stf-detail-comments-title">评论</h3>' +
+                '<div class="stf-comment-list" id="stf-detail-comment-list" data-target="' + escapeHTML(s.id) + '"></div>' +
+                commentForm +
+            '</div>';
+        panel.hidden = false;
+        panel.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('stf-detail-open');
+        renderDetailComments(s.id);
+        restoreCommentForms();
+        if (!opts.skipHistory) setPostUrl(s.id);
+        var closeBtn = document.getElementById('stf-post-detail-close');
+        if (closeBtn) {
+            try { closeBtn.focus({ preventScroll: true }); } catch (e) { closeBtn.focus(); }
+        }
+    }
+
+    function closePostDetail() {
+        var panel = document.getElementById('stf-post-detail');
+        if (!panel) return;
+        panel.hidden = true;
+        panel.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('stf-detail-open');
+        setPostUrl('');
+    }
+
+    function handlePostDeepLink() {
+        var id = getPostQueryId();
+        if (id) openPostDetail(id, { skipHistory: true });
+        else closePostDetail();
     }
 
     /* ============ Submission Modal ============ */
@@ -1075,10 +1298,7 @@
                 var id = item.getAttribute('data-pin-id');
                 var card = document.querySelector('.stf-card[data-id="' + id + '"]');
                 if (card) {
-                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    card.classList.add('is-expanded');
-                    var expandBtn = card.querySelector('[data-action="expand"]');
-                    if (expandBtn) expandBtn.textContent = '收起';
+                    openPostDetail(id);
                 } else {
                     searchQuery = '';
                     var searchEl = document.getElementById('stf-search');
@@ -1093,10 +1313,7 @@
                         b.setAttribute('aria-selected', on ? 'true' : 'false');
                     });
                     renderCommunity();
-                    setTimeout(function () {
-                        var c = document.querySelector('.stf-card[data-id="' + id + '"]');
-                        if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 80);
+                    openPostDetail(id);
                 }
             });
         }
@@ -1127,6 +1344,8 @@
                 if (e.target.closest('[data-action="comment"]')) { toggleComments(id); return; }
                 if (e.target.closest('[data-action="bookmark"]')) { toggleBookmark(id); return; }
                 if (e.target.closest('[data-action="admin-hide"]')) { hideSubmission(id); return; }
+                if (e.target.closest('[data-action="admin-pin"]')) { togglePin(id); return; }
+                if (e.target.closest('[data-action="open-detail"]')) { openPostDetail(id); return; }
                 if (e.target.closest('[data-action="expand"]')) { toggleExpand(card); return; }
             });
 
@@ -1155,8 +1374,12 @@
                 }
                 form.dataset.stfBusy = '1';
                 try {
-                    addComment(targetId, name, text, { identityId: identityId });
+                    addComment(targetId, name, text, {
+                        identityId: identityId,
+                        parentId: form.dataset.replyParent || null
+                    });
                     if (textEl) textEl.value = '';
+                    setReplyTarget(form, null);
                 } finally {
                     form.dataset.stfBusy = '0';
                 }
@@ -1169,12 +1392,29 @@
                 syncCommentFormIdentity(form, sel.value);
             });
 
-            /* 管理员：隐藏评论 */
+            /* 管理员：隐藏评论；用户：一层回复 */
             grid.addEventListener('click', function (e) {
-                var btn = e.target.closest('[data-action="admin-hide-comment"]');
-                if (!btn) return;
-                e.stopPropagation();
-                hideComment(btn.getAttribute('data-hide-sub'), btn.getAttribute('data-hide-name'), btn.getAttribute('data-hide-text'));
+                var hideBtn = e.target.closest('[data-action="admin-hide-comment"]');
+                if (hideBtn) {
+                    e.stopPropagation();
+                    hideComment(hideBtn.getAttribute('data-hide-sub'), hideBtn.getAttribute('data-hide-name'), hideBtn.getAttribute('data-hide-text'));
+                    return;
+                }
+                var replyBtn = e.target.closest('[data-action="reply-comment"]');
+                if (replyBtn) {
+                    e.stopPropagation();
+                    var cardEl = replyBtn.closest('.stf-card');
+                    var formEl = cardEl ? cardEl.querySelector('.stf-comment-form') : null;
+                    var panel = replyBtn.closest('.stf-card-comments');
+                    if (panel && !panel.classList.contains('open')) toggleComments(cardEl.getAttribute('data-id'));
+                    setReplyTarget(formEl, replyBtn.getAttribute('data-parent-key'), replyBtn.getAttribute('data-reply-name'));
+                    return;
+                }
+                if (e.target.closest('[data-action="cancel-reply"]')) {
+                    e.stopPropagation();
+                    var f = e.target.closest('.stf-comment-form');
+                    setReplyTarget(f, null);
+                }
             });
         }
 
@@ -1294,6 +1534,72 @@
 
         /* 登录态变化 → 刷新两个表单的署名控件 */
         if (window.StarTorchAuth) window.StarTorchAuth.onChange(syncAuthUI);
+
+        /* 长文详情面板 */
+        var detailClose = document.getElementById('stf-post-detail-close');
+        var detailPanel = document.getElementById('stf-post-detail');
+        if (detailClose) detailClose.addEventListener('click', closePostDetail);
+        if (detailPanel) {
+            detailPanel.addEventListener('click', function (e) {
+                if (e.target === detailPanel || e.target.classList.contains('stf-post-detail-backdrop')) {
+                    closePostDetail();
+                }
+            });
+            detailPanel.addEventListener('submit', function (e) {
+                var form = e.target.closest('.stf-comment-form');
+                if (!form) return;
+                e.preventDefault();
+                if (form.dataset.stfBusy === '1') return;
+                var targetId = form.getAttribute('data-target');
+                var user = currentUser();
+                var textEl = form.querySelector('.stf-comment-input');
+                var text = textEl ? textEl.value.trim() : '';
+                var name = user ? user.name : '';
+                var identityId = '';
+                if (!user) {
+                    var identitySelect = form.querySelector('.stf-comment-identity');
+                    identityId = identitySelect ? identitySelect.value : '';
+                    var nameInput = form.querySelector('.stf-comment-name-input');
+                    name = nameInput ? nameInput.value.trim() : '';
+                }
+                if (!name || !text) {
+                    showToast(user ? '请填写评论' : '请填写署名和评论');
+                    return;
+                }
+                form.dataset.stfBusy = '1';
+                try {
+                    addComment(targetId, name, text, {
+                        identityId: identityId,
+                        parentId: form.dataset.replyParent || null
+                    });
+                    if (textEl) textEl.value = '';
+                    setReplyTarget(form, null);
+                } finally {
+                    form.dataset.stfBusy = '0';
+                }
+            });
+            detailPanel.addEventListener('click', function (e) {
+                var replyBtn = e.target.closest('[data-action="reply-comment"]');
+                if (replyBtn) {
+                    var formEl = detailPanel.querySelector('.stf-comment-form');
+                    setReplyTarget(formEl, replyBtn.getAttribute('data-parent-key'), replyBtn.getAttribute('data-reply-name'));
+                    return;
+                }
+                if (e.target.closest('[data-action="cancel-reply"]')) {
+                    setReplyTarget(detailPanel.querySelector('.stf-comment-form'), null);
+                    return;
+                }
+                var hideBtn = e.target.closest('[data-action="admin-hide-comment"]');
+                if (hideBtn) {
+                    hideComment(hideBtn.getAttribute('data-hide-sub'), hideBtn.getAttribute('data-hide-name'), hideBtn.getAttribute('data-hide-text'));
+                    renderDetailComments(hideBtn.getAttribute('data-hide-sub'));
+                }
+            });
+        }
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && detailPanel && !detailPanel.hidden) closePostDetail();
+        });
+        window.addEventListener('popstate', handlePostDeepLink);
 
         /* 调谐台彩蛋入口 + 左下角浮钮双态；各自隔离，避免一处抛错阻断角色环 */
         try { initTuner(); } catch (err) { console.error('[StarTorchForum] initTuner failed', err); }
@@ -1995,6 +2301,7 @@
         updateFilterUI();
         renderCommunity();
         initNavEnhancements();
+        handlePostDeepLink();
 
         /* 投稿附件上传（独立模块，不依赖飞行雪绒站 UploadManager） */
         if (window.StarTorchUpload) {

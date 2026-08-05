@@ -4,11 +4,11 @@
 --
 -- 背景：db/ 目录下曾同时存在两个 020 编号文件——
 --         migration-020-forum-tables.sql（论坛主表）
---         migration-020-forum-chat.sql  （聊天表）
+--         migration-020-forum-chat.sql  （聊天表，现已改名为 DEPRECATED-migration-020-forum-chat.sql）
 --       按 019→020→021→022 顺序执行时，020 只会被执行其中一份，
 --       导致 forum_chat 始终未创建，前端聊天降级为纯本地模式
 --       （REST 探针返回 PGRST205: Could not find the table 'public.forum_chat'）。
---       本文件重编号为 023，彻底消除编号撞车。
+--       本文件重编号为 023，彻底消除编号撞车。勿再执行 DEPRECATED-020-chat。
 --
 -- 修正：原 020-forum-chat 注释称「Realtime 已随 supabase_realtime publication
 --       发布所有表，无需额外配置」——这是错误的。migration-022 表明本项目采用

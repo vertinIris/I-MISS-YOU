@@ -11,8 +11,10 @@
 ## Migration 要点
 
 - `020`：仅 `migration-020-forum-tables.sql`（论坛帖/评）
-- 聊天：`migration-023-forum-chat.sql`（**禁止**再跑废弃的 `migration-020-forum-chat.sql`）
-- 本地脚本：`npm run db:migrate-020` / `db:migrate-023` 仅打印指引
+- 聊天：`migration-023-forum-chat.sql`（**禁止**再跑废弃的 `DEPRECATED-migration-020-forum-chat.sql`）
+- `028`：`migration-028-forum-pin-replies.sql` — `is_pinned` + `forum_comments.parent_id`（一层楼中楼）
+- 本地脚本：`npm run db:migrate-020` / `db:migrate-023` / `db:migrate-028` 仅打印指引
+- 内容管线：`docs/CONTENT-PIPELINE.md` · `npm run content:build`
 
 ## 双套 Auth（文档级约定）
 

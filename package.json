@@ -30,7 +30,7 @@
     "db:migrate-017": "echo 'Run db/migration-017-hard-delete-for-realtime.sql in Supabase SQL Editor'",
     "db:migrate-018": "echo 'Run db/migration-018-dedupe-comments.sql in Supabase SQL Editor'",
     "db:migrate-019": "echo 'Run db/migration-019-deaify-live-content.sql in Supabase SQL Editor'",
-    "db:migrate-020": "echo 'Run db/migration-020-forum-tables.sql in Supabase SQL Editor — forum tables only. Chat uses db/migration-023-forum-chat.sql (do NOT run deprecated migration-020-forum-chat.sql)'",
+    "db:migrate-020": "echo 'Run db/migration-020-forum-tables.sql in Supabase SQL Editor — forum tables only. Chat uses db/migration-023-forum-chat.sql (do NOT run DEPRECATED-migration-020-forum-chat.sql)'",
     "db:migrate-021": "echo 'Run db/migration-021-forum-rls.sql in Supabase SQL Editor'",
     "db:migrate-022": "echo 'Run db/migration-022-forum-realtime.sql in Supabase SQL Editor'",
     "db:migrate-023": "echo 'Run db/migration-023-forum-chat.sql in Supabase SQL Editor'",
@@ -38,6 +38,9 @@
     "db:migrate-025": "echo 'Run db/migration-025-cleanup-test-probe.sql in Supabase SQL Editor'",
     "db:migrate-026": "echo 'Run db/migration-026-forum-moderation-align.sql in Supabase SQL Editor'",
     "db:migrate-027": "echo 'Run db/migration-027-profiles-nickname-rls.sql — REQUIRED for forum nickname upsert'",
+    "db:migrate-028": "echo 'Run db/migration-028-forum-pin-replies.sql — is_pinned + forum_comments.parent_id (after 020-027)'",
+    "content:build": "node scripts/build-forum-import.cjs",
+    "content:pipeline": "node -e \"console.log('Source: 论坛内容/二创内容库 → npm run content:build → forum/js/forum-import-data.js → forum pull/seed → Supabase.\\nDocs: docs/CONTENT-PIPELINE.md')\"",
     "serve:win": "powershell -ExecutionPolicy Bypass -File ./run.ps1"
   },
   "keywords": [

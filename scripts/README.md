@@ -13,7 +13,8 @@
 ## 论坛内容（离线源稿）
 
 - 仓库根目录的 `论坛内容/` 是**离线源稿与资产库**：不部署到 GitHub Pages，且已写入 `.gitignore`（默认不入 git）。
-- 改二创种子后本地构建：`node scripts/build-forum-import.cjs`（输出到已跟踪的 `forum/js/forum-import-data.js`）。
+- 改二创种子后本地构建：`npm run content:build`（或 `node scripts/build-forum-import.cjs`），输出到已跟踪的 `forum/js/forum-import-data.js`。
+- 完整路径说明见 [`docs/CONTENT-PIPELINE.md`](../docs/CONTENT-PIPELINE.md)。
 - `论坛内容/技术参考/` 是旧导出快照，**仅对照阅读**；勿用其覆盖现网 `js/`、`forum/`、`index.html` 等，否则会回退 UI。
 
 ## 本地预览注意

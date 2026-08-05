@@ -249,11 +249,8 @@
             var angle = opts.angle !== undefined ? opts.angle : (Math.random() * 25 + 15);
             var duration = opts.duration !== undefined ? opts.duration : (Math.random() * 2 + 1.2);
 
-            /* Randomize trail length */
             var trailWidth = Math.random() * 60 + 50;
             var trailHeight = Math.random() * 1.5 + 1;
-
-            /* Randomize size and glow */
             var size = Math.random() * 2 + 2;
             var glowIntensity = Math.random() * 0.4 + 0.5;
 
@@ -266,55 +263,40 @@
             star.style.setProperty('--distance', distance + 'px');
             star.style.setProperty('--drop', drop + 'px');
             star.style.setProperty('--angle', angle + 'deg');
+            star.style.setProperty('--trail-w', trailWidth + 'px');
+            star.style.setProperty('--trail-h', trailHeight + 'px');
             star.style.animation = 'shootStar ' + duration + 's ease-out forwards';
 
-            /* Customize trail */
-            var trail = document.createElement('style');
-            var trailId = 'trail-' + Math.random().toString(36).substr(2, 9);
-            star.setAttribute('data-trail', trailId);
-            trail.textContent = '.shooting-star[data-trail="' + trailId + '"]::after{width:' + trailWidth + 'px;height:' + trailHeight + 'px;}';
-            document.head.appendChild(trail);
-
             container.appendChild(star);
-            setTimeout(function() {
-                star.remove();
-                trail.remove();
-            }, duration * 1000 + 100);
+            setTimeout(function() { star.remove(); }, duration * 1000 + 100);
         }
 
         function scheduleNext() {
             if (!isActive) return;
 
-            /* Random interval: sometimes fast burst, sometimes long pause */
             var interval;
             var roll = Math.random();
 
-            if (roll < 0.15) {
-                /* Burst mode: 2-4 stars in quick succession */
-                var burstCount = Math.floor(Math.random() * 3) + 2;
-                var burstGap = Math.random() * 400 + 200;
+            /* P0：降低流星频率与爆发密度，减少 DOM/style 抖动 */
+            if (roll < 0.12) {
+                var burstCount = Math.floor(Math.random() * 2) + 1;
+                var burstGap = Math.random() * 500 + 350;
                 for (var i = 0; i < burstCount; i++) {
                     (function(idx) {
                         setTimeout(function() {
-                            createStar({
-                                duration: Math.random() * 1.5 + 1,
-                                angle: Math.random() * 30 + 10
-                            });
+                            createStar({ duration: Math.random() * 1.5 + 1, angle: Math.random() * 30 + 10 });
                         }, idx * burstGap);
                     })(i);
                 }
-                interval = Math.random() * 3000 + 5000;
-            } else if (roll < 0.4) {
-                /* Quick single star */
+                interval = Math.random() * 5000 + 8000;
+            } else if (roll < 0.45) {
                 createStar({ duration: Math.random() * 1 + 0.8 });
-                interval = Math.random() * 2000 + 1500;
+                interval = Math.random() * 4000 + 4000;
             } else if (roll < 0.75) {
-                /* Normal star */
                 createStar();
-                interval = Math.random() * 4000 + 3000;
+                interval = Math.random() * 6000 + 5000;
             } else {
-                /* Long pause — a quiet moment in the sky */
-                interval = Math.random() * 5000 + 6000;
+                interval = Math.random() * 8000 + 9000;
             }
 
             timeoutId = setTimeout(scheduleNext, interval);
@@ -378,13 +360,15 @@
         var isReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (isReduced) return;
 
-        var sections = document.querySelectorAll('.section, .hero');
+        /* P0：仅首屏 hero 点缀，避免每个 section 都挂 8 个无限动画节点 */
+        var sections = document.querySelectorAll('.hero');
         for (var s = 0; s < sections.length; s++) {
+            if (sections[s].querySelector('.sparkle-particles')) continue;
             var container = document.createElement('div');
             container.className = 'sparkle-particles';
             sections[s].appendChild(container);
 
-            var count = 8;
+            var count = 5;
             for (var i = 0; i < count; i++) {
                 var sparkle = document.createElement('span');
                 sparkle.className = 'sparkle';
@@ -394,6 +378,20 @@
                 sparkle.style.width = sparkle.style.height = (Math.random() * 3 + 2) + 'px';
                 container.appendChild(sparkle);
             }
+        }
+    }
+
+    function scheduleIdleWork(fn, timeoutMs) {
+        if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(function() { fn(); }, { timeout: timeoutMs || 2000 });
+        } else {
+            setTimeout(fn, Math.min(timeoutMs || 2000, 400));
+        }
+    }
+
+    function syncAnimPauseClass() {
+        if (document.body) {
+            document.body.classList.toggle('fxre-anim-paused', !!document.hidden);
         }
     }
 
@@ -4486,9 +4484,7 @@
         initNavbarScroll();
         initSmoothScroll();
         initActiveNavLink();
-        initShootingStars();
         initLocationSelector();
-        initSparkles();
         initMusic();
         initResonanceButtons();
         initAvatarEasterEgg();
@@ -4506,6 +4502,15 @@
         initPublicCollectionPanel();
         if (typeof AdminPanel !== 'undefined') AdminPanel.init();
         initSyncStatus();
+
+        syncAnimPauseClass();
+        document.addEventListener('visibilitychange', syncAnimPauseClass);
+
+        /* P0：流星 / 星点延后到空闲，缩短首屏主线程占用 */
+        scheduleIdleWork(function() {
+            initShootingStars();
+            initSparkles();
+        }, 1600);
 
         /* v9.0: 初始化新模块 */
         if (typeof AuthManager !== 'undefined') AuthManager.init();

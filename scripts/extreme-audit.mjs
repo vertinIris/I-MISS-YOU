@@ -100,7 +100,7 @@ const forumCss = read('forum/forum.css');
 
 console.log('\n=== Migration 链 ===');
 const migFiles = existsSync(join(root, 'db')) ? readdirSync(join(root, 'db')) : [];
-for (let n = 1; n <= 27; n++) {
+for (let n = 1; n <= 28; n++) {
     const prefix = `migration-${String(n).padStart(3, '0')}`;
     if (migFiles.some(f => f.startsWith(prefix))) ok(prefix);
     else fail('缺 ' + prefix);
@@ -108,7 +108,10 @@ for (let n = 1; n <= 27; n++) {
 const m020 = migFiles.filter(f => f.startsWith('migration-020'));
 if (m020.length > 1) note('migration-020 多文件：仅 tables 有效；chat 已废弃，用 023 — ' + m020.join(', '));
 if (!migFiles.some(f => f.includes('027'))) note('027 nickname RLS 需在云端 SQL Editor 执行');
-
+if (!migFiles.some(f => f.includes('028'))) note('028 is_pinned + parent_id 需在云端 SQL Editor 执行');
+if (migFiles.some(f => f.includes('028') && read('db/' + migFiles.find(f => f.includes('028'))).includes('is_pinned'))) {
+    ok('028 含 is_pinned');
+}
 console.log('\n=== package.json 脚本与版本 ===');
 try {
     const pkg = JSON.parse(read('package.json'));
