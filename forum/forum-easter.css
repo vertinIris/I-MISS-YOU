@@ -4,6 +4,16 @@
    ============================================================ */
 
 /* 页脚隐藏触发器：一个极小的雪花，默认与页脚文字融为一体 */
+.stf-site-footer {
+    margin: 48px 0 24px;
+    text-align: center;
+}
+.stf-site-meta {
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: rgba(240, 244, 255, 0.42);
+}
 .stf-hidden-trigger {
     display: inline-flex;
     align-items: center;

@@ -4691,7 +4691,7 @@
         archive: ArchiveAPI,
         sync: SyncAPI,
         user: UserAPI,
-        version: 'v9.6'
+        version: 'v10.0'
     };
 })();
 

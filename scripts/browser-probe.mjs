@@ -45,6 +45,8 @@ async function probe(path) {
         return {
             js: S.isSafeUrl('javascript:alert(1)'),
             https: S.isSafeUrl('https://example.com/a.png'),
+            protoRel: S.isSafeUrl('//evil.example/x.png'),
+            svgData: S.isSafeUrl('data:image/svg+xml;base64,PHN2Zy'),
             color: S.sanitizeColor('red;background:url(x)', '#00f')
         };
     });
@@ -52,8 +54,44 @@ async function probe(path) {
         if (path.includes('forum')) fail(path + ' SecurityShield 未挂载');
         else ok(path + ' SecurityShield 延迟加载中可接受');
     } else {
-        if (shield.js === false && shield.https === true && shield.color === '#00f') ok(path + ' SecurityShield 契约');
-        else fail(path + ' SecurityShield 契约异常 ' + JSON.stringify(shield));
+        if (shield.js === false && shield.https === true && shield.protoRel === false && shield.svgData === false && shield.color === '#00f') {
+            ok(path + ' SecurityShield 契约');
+        } else {
+            fail(path + ' SecurityShield 契约异常 ' + JSON.stringify(shield));
+        }
+    }
+
+    /* Auth 关键路径：符号/钩子级（不连生产登录） */
+    const auth = await page.evaluate(() => {
+        const keys = [];
+        try {
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k && (/auth-token|supabase|fxre_auth|stf_session|stf_explicit/i.test(k))) keys.push(k);
+            }
+        } catch (e) { /* ignore */ }
+        return {
+            hasClient: !!(window.supabaseClient || (window.forumSupabase && window.forumSupabase.getClient && window.forumSupabase.getClient())),
+            hasAuthManager: typeof window.AuthManager !== 'undefined' || typeof AuthManager !== 'undefined',
+            hasStarTorch: !!(window.StarTorchAuth && typeof window.StarTorchAuth.getUser === 'function'),
+            hasOnAuth: !!(window.supabaseClient && window.supabaseClient.auth && typeof window.supabaseClient.auth.onAuthStateChange === 'function'),
+            version: window.__FXRE_API && window.__FXRE_API.version,
+            storageHints: keys.slice(0, 8)
+        };
+    });
+    if (path === '/' || path === '/index.html') {
+        if (auth.version === 'v10.0') ok('主站 __FXRE_API.version=v10.0');
+        else if (auth.version) fail('主站 version=' + auth.version);
+        else ok('主站 __FXRE_API 延迟加载可接受');
+        if (auth.hasAuthManager || auth.hasOnAuth || auth.hasClient) ok('主站 Auth 钩子可达');
+        else ok('主站 Auth 延迟加载（无确定性失败）');
+    }
+    if (path.includes('forum')) {
+        if (auth.hasStarTorch) ok('论坛 StarTorchAuth.getUser');
+        else fail('论坛缺 StarTorchAuth');
+        if (auth.hasOnAuth || auth.hasClient) ok('论坛 supabaseClient/auth 钩子');
+        else ok('论坛客户端延迟/离线可接受');
+        ok('Auth 存储提示 keys=' + (auth.storageHints.join(',') || '(empty-ok)'));
     }
 
     if (path.includes('forum')) {

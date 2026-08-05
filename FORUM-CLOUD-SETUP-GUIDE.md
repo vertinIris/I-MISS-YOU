@@ -1,5 +1,7 @@
 # 论坛上云操作手册（方案 2-B · 用户执行部分）
 
+> ⚠️ **过时提示（2026-08）**：本文为历史操作手册。以仓库内 **`db/migration-*.sql` + 当前前端代码** 为准；聊天请执行 `migration-023-forum-chat.sql`，勿再跑废弃的 `migration-020-forum-chat.sql`。现状摘要见 `docs/STATUS.md`。
+
 > 适用：你（站点 Owner）在 Supabase 后台与 GitHub Desktop 中手动完成的步骤。
 > 前端代码已由 AI 完成（`forum/` 子目录 + 3 个迁移 SQL），**沙箱无数据库写权、不代 push**。
 > 预计手动操作时间：15–25 分钟（含等 GitHub Pages 部署）。

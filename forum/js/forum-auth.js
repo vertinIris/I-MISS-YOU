@@ -28,6 +28,12 @@
  *
  * 降级：若 supabaseClient 未就绪（CDN 失败/离线），register/login 明确报错，
  *      但「匿名身份发帖」路径（forum.js 中 user 为 null 时）仍可用。
+ *
+ * 【双套 Auth 边界 · 勿大重构】
+ *   主站 AuthManager（js/auth-manager.js）与本模块分属两套 UI/镜像键；
+ *   权威会话是同项目 Supabase GoTrue（同域 persistSession 共享）。
+ *   主站镜像 `fxre_auth_session` ≠ 论坛镜像 `stf_session`；显式退出用
+ *   `stf_explicit_logout`。合并两套仅当产品要求统一 UI，现状以文档约定为准。
  */
 window.StarTorchAuth = (function () {
     'use strict';

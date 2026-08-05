@@ -1,12 +1,20 @@
 /**
  * AuthManager — 认证与权限管理模块
- * 飞行雪绒 v9.0
+ * 飞行雪绒 v10.0
  *
  * 职责:
  *   - 会话状态管理（匿名/注册/版主/管理员）
  *   - 删除令牌生成与校验
  *   - 匿名→注册平滑升级
  *   - 角色权限判定
+ *
+ * 【双套 Auth 边界 · 勿大重构】
+ *   - 本模块服务主站（index.html）：会话镜像键 `fxre_auth_session`，
+ *     权限模型含 moderator/admin（profiles.role）。
+ *   - 论坛用 `StarTorchAuth`（forum/js/forum-auth.js）：镜像键 `stf_session`，
+ *     另有昵称合成邮箱路径；管理员走 forum_admins / is_forum_admin()。
+ *   - 两站共用同一 Supabase 项目与默认 persistSession；同域下 GoTrue
+ *     localStorage 令牌自动互通，UI 镜像键彼此独立。详见 docs/STATUS.md。
  */
 
 var AuthManager = (function() {

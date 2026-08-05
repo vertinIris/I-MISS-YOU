@@ -34,6 +34,10 @@ const symbolChecks = [
     { file: 'js/main.js', includes: ['syncAllPostCommentCounts', 'applyRealtimeCommentEvent', 'sanitizeColor'] },
     { file: 'js/security-shield.js', includes: ['isSafeUrl', 'sanitizeColor', 'logViolation'] },
     { file: 'index.html', includes: ['admin-tab', 'collection-rename-btn', 'v10.0'] },
+    { file: 'forum/index.html', includes: ['v10.0', 'stf-hidden-trigger'] },
+    { file: 'js/main.js', includes: ["version: 'v10.0'"] },
+    { file: 'docs/STATUS.md', includes: ['v10.0', 'migration-023'] },
+    { file: '.github/workflows/static-checks.yml', includes: ['smoke-check', 'extreme-audit'] },
     { file: 'forum/js/forum.js', includes: ['safeMediaUrl', 'SecurityShield.init', 'submitBusy'] },
     { file: 'forum/js/forum-auth.js', includes: ['updateNickname', 'signOut', 'applyUser'] },
     { file: 'forum/js/forum-chat.js', includes: ['setChatExpanded', 'touchSelfPresence'] },
@@ -97,10 +101,10 @@ if (existsSync(migDir)) {
         console.log(has ? 'OK' : 'MISSING', `db/${prefix}*.sql`);
         if (!has) failed++;
     }
-    /* 020 双文件提示（不计入失败） */
+    /* 020 双文件提示（不计入失败）：chat 文件已废弃，聊天走 023 */
     const m020 = files.filter(f => f.startsWith('migration-020'));
     if (m020.length > 1) {
-        console.log('NOTE migration-020 存在多个文件:', m020.join(', '), '（部署时按内容顺序执行）');
+        console.log('NOTE migration-020 多文件：仅执行 migration-020-forum-tables.sql；聊天走 migration-023（勿跑废弃 forum-chat）');
     }
 } else {
     console.log('MISSING db/');

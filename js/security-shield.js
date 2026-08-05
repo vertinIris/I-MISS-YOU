@@ -1,5 +1,5 @@
 /**
- * SecurityShield — 前端安全防护网 v9.4
+ * SecurityShield — 前端安全防护网 v10.0
  *
  * 纵深防御层（配合 Supabase RLS + 服务端限流）：
  *   - XSS / 注入模式检测
@@ -102,12 +102,14 @@ var SecurityShield = (function() {
         if (!url || typeof url !== 'string') return false;
         url = url.trim();
         if (!url || DANGEROUS_URL.test(url)) return false;
-        /* 允许：绝对 http(s)、协议相对、同源相对路径、blob、图片 data URI */
-        if (url.indexOf('//') === 0) return true;
+        /* 拒绝协议相对 //…：无显式 scheme，易被页面上下文劫持 */
+        if (url.indexOf('//') === 0) return false;
+        /* 允许：绝对 http(s)、同源绝对/相对路径、blob、栅格图片 data URI（禁止 svg+xml XSS） */
         if (/^https?:\/\//i.test(url)) return true;
         if (url.indexOf('/') === 0) return true;
         if (/^blob:/i.test(url)) return true;
-        if (/^data:image\/(png|jpe?g|gif|webp|svg\+xml);/i.test(url)) return true;
+        if (/^data:image\/svg\+xml/i.test(url)) return false;
+        if (/^data:image\/(png|jpe?g|gif|webp);/i.test(url)) return true;
         /* 相对资源路径（禁止 .. 与控制字符） */
         if (/^[a-zA-Z0-9][\w./%-]*$/.test(url) && url.indexOf('..') === -1) return true;
         return false;

@@ -1,5 +1,7 @@
 # 飞行雪绒 / 星炬学院 · 执行规划 v8.0
 
+> ⚠️ **过时提示（2026-08）**：本规划含当时实测快照（如 `forum_chat` 404）。以 **`db/migration-*.sql` + 当前代码** 为准；后续迁移（023+）与修复以代码仓库为准。现状摘要见 `docs/STATUS.md`。
+
 > 编制日期：2026-08-04
 > 工作目录（唯一权威）：`C:/Users/lenovo/CURSOR/Snow/`
 > 仓库：`vertinIris/I-MISS-YOU` · 分支 `main` · 基线 HEAD `43279e3`

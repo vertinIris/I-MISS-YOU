@@ -1,0 +1,38 @@
+name: Static Checks
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  smoke-and-audit:
+    name: smoke-check + extreme-audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Smoke check
+        run: node scripts/smoke-check.mjs
+      - name: Extreme audit
+        run: node scripts/extreme-audit.mjs
+
+  # Optional: set repo Actions variable PLAYWRIGHT_PROBE=1 to enable
+  browser-probe:
+    name: browser-probe (optional)
+    runs-on: ubuntu-latest
+    if: ${{ vars.PLAYWRIGHT_PROBE == '1' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Playwright Chromium
+        run: npm i -D playwright && npx playwright install --with-deps chromium
+      - name: Start static server and probe
+        run: |
+          npx --yes serve -l 8848 . &
+          sleep 3
+          node scripts/browser-probe.mjs http://127.0.0.1:8848

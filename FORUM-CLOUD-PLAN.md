@@ -1,5 +1,7 @@
 # 论坛数据上云改造计划（方案 2-B · 详细执行方案）
 
+> ⚠️ **过时提示（2026-08）**：规划文档，可能与现状不一致。以 **`db/migration-*.sql` + 当前 `forum/` / `js/` 代码** 为准。现状摘要见 `docs/STATUS.md`。
+
 > 目标：将星炬学院主论坛（`forum/`）从「纯 localStorage 本地存储」升级为「Supabase 云端存储」，
 > 与主站（飞行雪绒）**共用同一 Supabase 项目**（`lmlyfyjffaaddysiliht`），实现：
 > 1. 账号统一 —— 任一站点注册/登录，两边自动互认（同一 Supabase 会话）。
