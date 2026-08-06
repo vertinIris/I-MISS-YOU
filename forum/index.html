@@ -6,6 +6,18 @@
     <title>星炬学院 · 公共研讨频段</title>
     <meta name="description" content="星炬学院主论坛 —— 鸣潮角色档案、世界观考据、同人创作与社区讨论的独立聚合站。">
     <meta name="theme-color" content="#0A101C">
+    <!-- 对齐主站 CSP；论坛 Supabase 容错需 unpkg.com -->
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self';
+                   script-src 'self' 'unsafe-inline' cdn.jsdelivr.net unpkg.com;
+                   style-src 'self' 'unsafe-inline' cdn.jsdelivr.net fonts.googleapis.com;
+                   img-src 'self' data: blob: https://*.supabase.co;
+                   connect-src 'self' https://*.supabase.co wss://*.supabase.co;
+                   font-src 'self' cdn.jsdelivr.net fonts.gstatic.com;
+                   base-uri 'self';
+                   form-action 'self';
+                   object-src 'none';
+                   upgrade-insecure-requests;">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="zh_CN">
     <meta property="og:site_name" content="星炬学院论坛">
@@ -1096,15 +1108,16 @@
         </div>
     </div>
 
-    <script src="js/forum-import-data.js"></script>
-    <script src="js/forum-data.js"></script>
-    <script src="../js/snow-realm.js"></script>
-    <script src="../js/security-shield.js"></script>
-    <script src="../js/rate-limiter-client.js"></script>
-    <script src="js/forum-auth.js"></script>
-    <script src="js/forum-upload.js"></script>
-    <script src="js/forum.js"></script>
-    <script src="js/forum-sync.js"></script>
+    <script defer src="js/forum-import-data.js"></script>
+    <script defer src="js/forum-data.js"></script>
+    <script defer src="../js/snow-realm.js"></script>
+    <script defer src="../js/security-shield.js"></script>
+    <script defer src="../js/rate-limiter-client.js"></script>
+    <script defer src="../js/modal-a11y.js"></script>
+    <script defer src="js/forum-auth.js"></script>
+    <script defer src="js/forum-upload.js"></script>
+    <script defer src="js/forum.js"></script>
+    <script defer src="js/forum-sync.js"></script>
     <!-- 论坛上云：Supabase 客户端 + 云端适配器（与主站共用同一项目，账号自动打通） -->
     <script>
         /* CDN 容错：主 CDN 失败则自动切换备用 CDN，再失败则回退本地模式 */
@@ -1119,10 +1132,10 @@
     </script>
     <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
             onerror="window.__loadSupabaseSDK('https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js', function(){ window.__loadSupabaseSDK('js/supabase.min.js', function(){ console.warn('[forum] Supabase SDK 所有来源均加载失败，回退纯本地模式'); }); });"></script>
-    <script src="js/forum-supabase.js"></script>
-    <script src="js/forum-cloud.js"></script>
-    <script src="js/forum-chat.js"></script>
-    <script src="js/forum-easter.js"></script>
-    <script src="../js/donation.js"></script>
+    <script defer src="js/forum-supabase.js"></script>
+    <script defer src="js/forum-cloud.js"></script>
+    <script defer src="js/forum-chat.js"></script>
+    <script defer src="js/forum-easter.js"></script>
+    <script defer src="../js/donation.js"></script>
 </body>
 </html>
