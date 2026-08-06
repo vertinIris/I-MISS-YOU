@@ -8,8 +8,8 @@
 | [CONTENT-PIPELINE.md](./CONTENT-PIPELINE.md) | 论坛内容源 → `content:build` → 导入 / 种子 |
 | [WORLDVIEW.md](./WORLDVIEW.md) | 世界观正文与考据约定 |
 | [WORLDVIEW-REVIEW.md](./WORLDVIEW-REVIEW.md) | 世界观评审记录 |
-| [CHARACTER-EXPAND-REVIEW.md](./CHARACTER-EXPAND-REVIEW.md) | 角色档案扩写评审 |
-| [CHARACTERS-EXPAND-REVIEW.md](./CHARACTERS-EXPAND-REVIEW.md) | 角色扩写汇总 |
+| [CHARACTERS-EXPAND-REVIEW.md](./CHARACTERS-EXPAND-REVIEW.md) | 角色档案扩写评审（权威） |
+| [CHARACTER-EXPAND-REVIEW.md](./CHARACTER-EXPAND-REVIEW.md) | 旧文件名 stub → 指向权威 |
 | [worldview-glossary.json](./worldview-glossary.json) | 术语表数据 |
 
 ## 常用命令

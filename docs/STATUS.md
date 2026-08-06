@@ -81,7 +81,11 @@ WHERE table_schema = 'public'
 | 权威会话 | 同项目 Supabase GoTrue（同域 `persistSession` 共享） | 同左 |
 | 管理员 | `profiles.role` | `forum_admins` / RLS `is_forum_admin()` |
 
-同域（如 GitHub Pages `/` 与 `/forum/`）下邮箱登录可互认；昵称合成邮箱路径仅论坛。合并两套 UI **非当前目标**。
+同域（如 GitHub Pages `/` 与 `/forum/`）下邮箱登录可互认；昵称合成邮箱路径仅论坛。合并两套 UI **非当前目标**（通行证 / 频道账号边界保留，不合并代码）。
+
+## 构建债（暂缓）
+
+静态站无打包管道；`js/main.js` 等以源文件 + `defer` 直出。**暂缓 terser / minify**，避免半吊子构建破坏全局与加载顺序；若日后加 `npm run minify`，须保 defer 与全局符号不变。
 
 ## 本地门禁与评审闭环
 

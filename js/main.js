@@ -2225,8 +2225,10 @@
      *        琳奈…）对她的记述统一迁往星炬学院主论坛（见 forum/js/forum-data.js）。
      *        访客投稿（id 前缀 sub_）不受此限制，仍正常展示。
      */
+    /* 社区种子署名：他角署名可保留作社区模拟；动态作者已统一「飞行雪绒」。
+       startorch realm 种子仅作世界观氛围，飞行雪绒站按 realm 过滤不渲染。 */
     var SEED_SUBMISSIONS = [
-        /* —— 飞行雪绒论坛（flying-edelweiss）：仅爱弥斯本人 —— */
+        /* —— 飞行雪绒相关（部分为社区拟声 / 他角视角种子）—— */
         {
             id: 'seed_3', name: '漂泊者', type: 'text', title: '来自黑海岸的信号',
             realm: 'startorch', tags: ['漂泊者', '爱弥斯', '飞行雪绒'],

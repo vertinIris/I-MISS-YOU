@@ -121,17 +121,18 @@
 }
 
 /* Light Theme - 爱弥斯温柔白 */
+/* P2：浅色主题去薰衣草紫底 → 雪绒纸白 / 暖金纸感 */
 [data-theme="light"] {
-    --bg-primary: #FAF5FF;
-    --bg-secondary: #F0F0FF;
-    --bg-tertiary: #E8E0F5;
+    --bg-primary: #FFFCF7;
+    --bg-secondary: #FFF8EF;
+    --bg-tertiary: #F5EDE0;
     --bg-gradient-1: #FFF5F8;
-    --bg-gradient-2: #F0F4FF;
-    --bg-gradient-3: #F5F0FF;
+    --bg-gradient-2: #FFF6E8;
+    --bg-gradient-3: #FFF9F0;
 
-    --text-primary: #1A1228;
-    --text-secondary: #4A4070;
-    --text-tertiary: #8A80A0;
+    --text-primary: #1C1610;
+    --text-secondary: #5A4A38;
+    --text-tertiary: #8A7A68;
 
     --glass-bg: rgba(255, 255, 255, 0.65);
     --glass-bg-hover: rgba(255, 255, 255, 0.85);
@@ -141,14 +142,14 @@
     --glass-blur: blur(20px) saturate(150%);
 
     --shadow-glow: 0 0 28px rgba(229, 132, 168, 0.10);
-    --shadow-card: 0 8px 32px rgba(45, 27, 78, 0.1);
-    --shadow-hover: 0 12px 40px rgba(45, 27, 78, 0.12);
+    --shadow-card: 0 8px 32px rgba(60, 40, 20, 0.08);
+    --shadow-hover: 0 12px 40px rgba(60, 40, 20, 0.10);
     --shadow-pink: none;
     --focus-ring: rgba(245, 181, 68, 0.50);
 
-    --nav-bg: rgba(250, 245, 255, 0.8);
-    --particle-color: 107, 138, 255;
-    --particle-alpha: 0.4;
+    --nav-bg: rgba(255, 252, 247, 0.85);
+    --particle-color: 245, 181, 68;
+    --particle-alpha: 0.35;
 }
 
 /* ============ Dynamic Gradient Animation ============ */
