@@ -30,7 +30,7 @@
 
     /* 未登录用户可选的匿名身份，贴合鸣潮「普通人」世界观 */
     var ANONYMOUS_IDENTITIES = {
-        student:  { name: '星炬学院学生', color: '#6B8AFF' },
+        student:  { name: '星炬学院学生', color: '#6d8fd6' },
         resident: { name: '拉海洛居民', color: '#A8D8FF' },
         observer: { name: '残星会观察员', color: '#B66BFF' },
         intern:   { name: '深空联合实习生', color: '#7FD99E' },
@@ -61,15 +61,15 @@
 
     function sanitizeColor(c) {
         if (typeof SecurityShield !== 'undefined' && SecurityShield.sanitizeColor) {
-            return SecurityShield.sanitizeColor(c, '#6B8AFF');
+            return SecurityShield.sanitizeColor(c, '#6d8fd6');
         }
-        if (!c) return '#6B8AFF';
+        if (!c) return '#6d8fd6';
         var s = String(c).trim();
         if (/^#[0-9A-Fa-f]{3,8}$/.test(s)) return s;
         if (/^var\(--[\w-]+\)$/.test(s)) return s;
         if (/^rgb(a?)\([\d\s,.%/]+\)$/.test(s)) return s;
         if (/^hsl(a?)\([\d\s,.%/]+\)$/.test(s)) return s;
-        return '#6B8AFF';
+        return '#6d8fd6';
     }
 
     /** 封面/附件 URL：仅允许安全 scheme，避免 javascript: 等经 src 执行 */
@@ -1008,7 +1008,7 @@
             likes: 0,
             liked: false,
             bookmarks: 0,
-            color: user ? sanitizeColor(user.color) : (identity ? identity.color : '#6B8AFF'),
+            color: user ? sanitizeColor(user.color) : (identity ? identity.color : '#6d8fd6'),
             identity: user ? null : (identityId || null),
             author: user ? user.key : null
         };

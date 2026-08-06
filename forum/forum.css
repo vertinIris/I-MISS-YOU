@@ -45,7 +45,7 @@
     font-weight: 900;
     line-height: 1.05;
     margin: 0 0 18px;
-    background: linear-gradient(100deg, #6B8AFF, #E8C56A, #A8D8FF, #6B8AFF);
+    background: linear-gradient(100deg, #6d8fd6, #E8C56A, #A8D8FF, #6d8fd6);
     background-size: 300% 100%;
     -webkit-background-clip: text;
     background-clip: text;
@@ -91,7 +91,7 @@
 
 /* ???????????????? */
 .forum-entry--primary {
-    border-top-color: var(--stf-brand, #6B8AFF);
+    border-top-color: var(--stf-brand, #6d8fd6);
     background: rgba(107, 138, 255, 0.06);
     box-shadow: 0 0 0 1px rgba(107, 138, 255, 0.12);
 }
@@ -331,7 +331,7 @@
     padding: 10px 22px;
     border-radius: var(--radius-full, 999px);
     border: none;
-    background: linear-gradient(135deg, var(--stf-brand, #6B8AFF), var(--stf-gold, #E8C56A));
+    background: linear-gradient(135deg, var(--stf-brand, #6d8fd6), var(--stf-gold, #E8C56A));
     color: #fff;
     font-weight: 600;
     font-size: 0.9rem;
@@ -391,7 +391,7 @@
     font-size: 28px;
     font-weight: 700;
     line-height: 1;
-    background: linear-gradient(100deg, #6B8AFF, #E8C56A);
+    background: linear-gradient(100deg, #6d8fd6, #E8C56A);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -720,7 +720,7 @@ html.archive-orbit-active .archive-album-shelf {
     border-radius: 22px;
     background: rgba(255,255,255,.05);
     border: 1px solid rgba(255,255,255,.10);
-    border-top: 3px solid var(--char, var(--stf-brand, #6B8AFF));
+    border-top: 3px solid var(--char, var(--stf-brand, #6d8fd6));
     text-decoration: none;
     color: inherit;
     overflow: hidden;
@@ -730,7 +730,7 @@ html.archive-orbit-active .archive-album-shelf {
     content: "";
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 80% 0%, color-mix(in srgb, var(--char, #6B8AFF) 22%, transparent), transparent 60%);
+    background: radial-gradient(circle at 80% 0%, color-mix(in srgb, var(--char, #6d8fd6) 22%, transparent), transparent 60%);
     opacity: 0;
     transition: opacity .4s;
     pointer-events: none;
@@ -738,15 +738,15 @@ html.archive-orbit-active .archive-album-shelf {
 .forum-entry:hover {
     transform: translateY(-8px);
     box-shadow: 0 22px 50px rgba(0,0,0,.4);
-    border-color: color-mix(in srgb, var(--char, #6B8AFF) 55%, transparent);
+    border-color: color-mix(in srgb, var(--char, #6d8fd6) 55%, transparent);
 }
 .forum-entry:hover::after { opacity: 1; }
 .forum-entry-icon {
     width: 52px; height: 52px;
     display: grid; place-items: center;
     border-radius: 14px;
-    background: color-mix(in srgb, var(--char, #6B8AFF) 18%, transparent);
-    color: var(--char, var(--stf-brand, #6B8AFF));
+    background: color-mix(in srgb, var(--char, #6d8fd6) 18%, transparent);
+    color: var(--char, var(--stf-brand, #6d8fd6));
 }
 .forum-entry-icon svg { width: 26px; height: 26px; }
 .forum-entry-title {
@@ -761,7 +761,7 @@ html.archive-orbit-active .archive-album-shelf {
 .forum-entry-desc { font-size: 14px; color: rgba(240,244,255,.7); line-height: 1.7; margin: 0; }
 .forum-entry-cta {
     margin-top: 6px; font-size: 13px; font-weight: 500;
-    color: var(--char, var(--stf-brand, #6B8AFF));
+    color: var(--char, var(--stf-brand, #6d8fd6));
     display: inline-flex; align-items: center; gap: 6px;
 }
 .forum-entry-cta svg { width: 16px; height: 16px; transition: transform .3s; }
@@ -984,7 +984,7 @@ html.archive-orbit-active .archive-album-shelf {
     appearance: none;
     background: none;
     border: none;
-    color: var(--stf-brand, #6B8AFF);
+    color: var(--stf-brand, #6d8fd6);
     font-size: 13px;
     cursor: pointer;
     padding: 0;
@@ -1121,7 +1121,7 @@ html.archive-orbit-active .archive-album-shelf {
 .stf-comment-submit {
     appearance: none;
     border: none;
-    background: linear-gradient(100deg, var(--stf-brand, #6B8AFF), var(--stf-gold, #E8C56A));
+    background: linear-gradient(100deg, var(--stf-brand, #6d8fd6), var(--stf-gold, #E8C56A));
     color: #fff;
     padding: 8px 16px;
     border-radius: 999px;
@@ -1391,7 +1391,7 @@ html.archive-orbit-active .archive-album-shelf {
 .stf-auth-module:hover .stf-auth-tab:not(.active) { color: rgba(255,255,255,.8); }
 .stf-auth-tab:hover { background: rgba(255,255,255,.04); }
 .stf-auth-tab:focus-visible {
-    outline: 2px solid var(--stf-brand, #6B8AFF);
+    outline: 2px solid var(--stf-brand, #6d8fd6);
     outline-offset: -2px;
 }
 /* ?? / ??????? */
@@ -1433,7 +1433,7 @@ html.archive-orbit-active .archive-album-shelf {
 }
 .stf-auth-mode-btn:hover { color: rgba(255,255,255,.85); background: rgba(255,255,255,.05); }
 .stf-auth-mode-btn:focus-visible {
-    outline: 2px solid var(--stf-brand, #6B8AFF);
+    outline: 2px solid var(--stf-brand, #6d8fd6);
     outline-offset: 2px;
 }
 .stf-auth-mode-btn.active { color: #fff; }
@@ -1469,7 +1469,7 @@ html.archive-orbit-active .archive-album-shelf {
     border-radius: 50%;
     display: grid; place-items: center;
     font-size: 22px; font-weight: 700; color: #fff;
-    background: linear-gradient(135deg, var(--stf-brand, #6B8AFF), var(--stf-gold, #E8C56A));
+    background: linear-gradient(135deg, var(--stf-brand, #6d8fd6), var(--stf-gold, #E8C56A));
     box-shadow: 0 0 18px rgba(107,138,255,.35);
     flex: none;
 }
@@ -1583,7 +1583,7 @@ html.archive-orbit-active .archive-album-shelf {
 }
 .stf-passport-cta.btn-primary,
 .stf-passport-panel .btn-primary {
-    background: linear-gradient(100deg, var(--stf-brand, #6B8AFF), var(--stf-gold, #E8C56A));
+    background: linear-gradient(100deg, var(--stf-brand, #6d8fd6), var(--stf-gold, #E8C56A));
     border: none;
     box-shadow: 0 10px 24px rgba(107, 138, 255, 0.28);
 }
@@ -1855,7 +1855,7 @@ html.archive-orbit-active .archive-album-shelf {
         radial-gradient(ellipse at 50% 0%, rgba(107,138,255,.12), transparent 55%),
         rgba(12, 14, 24, 0.72);
     border: 1px solid rgba(168,216,255,.14);
-    border-top: 2px solid var(--stf-brand, #6B8AFF);
+    border-top: 2px solid var(--stf-brand, #6d8fd6);
     box-shadow: 0 20px 48px rgba(0,0,0,.36), inset 0 0 40px rgba(107,138,255,.05);
     backdrop-filter: blur(8px);
 }
@@ -1992,7 +1992,7 @@ html.archive-orbit-active .archive-album-shelf {
 .stf-tuner-signal-bar i {
     display: block; height: 100%; width: 0%;
     border-radius: 999px;
-    background: linear-gradient(90deg, #6B8AFF, #A8D8FF, rgba(232,197,106,.85));
+    background: linear-gradient(90deg, #6d8fd6, #A8D8FF, rgba(232,197,106,.85));
     /* ??????JS ??????????????????? */
     transition: width .08s linear;
 }
@@ -2749,7 +2749,7 @@ body.stf-chat-expanded-open .stf-chat-card.is-chat-expanded .stf-chat-meta {
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.035);
     border: 1px solid rgba(255, 255, 255, 0.07);
-    border-left: 3px solid var(--char, var(--drifter-blue, #6B8AFF));
+    border-left: 3px solid var(--char, var(--drifter-blue, #6d8fd6));
     box-shadow: none;
     cursor: default;
     outline: none;

@@ -57,13 +57,13 @@
             .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
     function sanitizeColor(c) {
-        if (!c) return '#6B8AFF';
+        if (!c) return '#6d8fd6';
         var s = String(c).trim();
         if (/^#[0-9A-Fa-f]{3,8}$/.test(s)) return s;
         if (/^var\(--[\w-]+\)$/.test(s)) return s;
         if (/^rgb(a?)\([\d\s,.%/]+\)$/.test(s)) return s;
         if (/^hsl(a?)\([\d\s,.%/]+\)$/.test(s)) return s;
-        return '#6B8AFF';
+        return '#6d8fd6';
     }
     function fmtTime(ts) {
         var d = new Date(ts);
@@ -247,7 +247,7 @@
     function getSenderColor() {
         var user = currentUser();
         if (user && user.color) return sanitizeColor(user.color);
-        return '#6B8AFF';
+        return '#6d8fd6';
     }
 
     function scrollToBottom() {

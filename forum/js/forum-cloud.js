@@ -32,13 +32,13 @@
     /* ---------- 工具 ---------- */
     function pad(n) { return String(n).padStart(2, '0'); }
     function sanitizeColor(c) {
-        if (!c) return '#6B8AFF';
+        if (!c) return '#6d8fd6';
         var s = String(c).trim();
         if (/^#[0-9A-Fa-f]{3,8}$/.test(s)) return s;
         if (/^var\(--[\w-]+\)$/.test(s)) return s;
         if (/^rgb(a?)\([\d\s,.%/]+\)$/.test(s)) return s;
         if (/^hsl(a?)\([\d\s,.%/]+\)$/.test(s)) return s;
-        return '#6B8AFF';
+        return '#6d8fd6';
     }
 
     function fmtTimeStr(iso) {
@@ -138,7 +138,7 @@
                             await client.from('profiles').upsert({
                                 id: anon.data.user.id,
                                 nickname: '星炬学院访客',
-                                avatar_color: '#6B8AFF'
+                                avatar_color: '#6d8fd6'
                             });
                         }
                     } catch (e) { /* 忽略：profile 非发帖必需 */ }
@@ -185,7 +185,7 @@
             id: sub.id,
             author_id: sub.author || null,
             author_name: sub.name,
-            author_color: sub.color || '#6B8AFF',
+            author_color: sub.color || '#6d8fd6',
             type: sub.type,
             title: sub.title,
             content: sub.content,

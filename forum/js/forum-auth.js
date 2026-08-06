@@ -48,7 +48,7 @@ window.StarTorchAuth = (function () {
     // 真正权限由 Supabase RLS 的 is_forum_admin() 裁定）。增删管理员请改 SQL 表。
     var FORUM_ADMIN_EMAILS = ['2473609011@qq.com', '3604893605@qq.com'];
 
-    var AVATAR_COLORS = ['#FF6B9D', '#6B8AFF', '#B66BFF', '#7FD99E', '#E8C56A', '#A8D8FF', '#FF9E7A'];
+    var AVATAR_COLORS = ['#FF6B9D', '#6d8fd6', '#B66BFF', '#7FD99E', '#E8C56A', '#A8D8FF', '#FF9E7A'];
     var listeners = [];
     var current = null;
 
@@ -60,13 +60,13 @@ window.StarTorchAuth = (function () {
     function randomColor() { return AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)]; }
 
     function sanitizeColor(c) {
-        if (!c) return '#6B8AFF';
+        if (!c) return '#6d8fd6';
         var s = String(c).trim();
         if (/^#[0-9A-Fa-f]{3,8}$/.test(s)) return s;
         if (/^var\(--[\w-]+\)$/.test(s)) return s;
         if (/^rgb(a?)\([\d\s,.%/]+\)$/.test(s)) return s;
         if (/^hsl(a?)\([\d\s,.%/]+\)$/.test(s)) return s;
-        return '#6B8AFF';
+        return '#6d8fd6';
     }
 
     /* ==================================================================
@@ -468,7 +468,7 @@ window.StarTorchAuth = (function () {
             return Promise.reject(new Error('请先登录通行证'));
         }
         var client = window.supabaseClient;
-        var color = current.color || '#6B8AFF';
+        var color = current.color || '#6d8fd6';
 
         function applyLocal() {
             current.name = nick;
