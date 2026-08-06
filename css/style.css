@@ -6,35 +6,29 @@
    v6：鸣潮共振按钮系统 · 统一色彩动效 · 涟漪粒子特效
    ======================================== */
 
-/* ============ CSS Variables ============ */
+/* ============ CSS Variables ============
+   品牌色权威源：
+   - 主站（飞行雪绒）→ css/tokens-snow.css
+   - 论坛（星炬学院）→ css/tokens-stf.css
+   本文件 :root 不再覆写 --c-primary / --color-pink / --aimisi-pink / --bg-* /
+   --text-* / --glass-* / --surface-accent* / --focus-ring / --shadow-glow / --nav-bg
+   等场景品牌令牌，避免加载顺序把 tokens-* 冲掉。
+   ============================================================ */
 :root {
-    /* ============ v10 色彩角色系统 ============ */
-    /* 主色 Primary — 爱弥斯品牌身份：粉·白·浅蓝 为核心（粉色主导，白/浅蓝承托） */
-    --c-primary: #F4729B;
-    --c-primary-strong: #E84C7E;
-    --c-primary-soft: #FFB6D9;
-    --c-primary-dim: rgba(244, 114, 155, 0.14);
-    --c-core-white: #F0F4FF;
-    --c-core-blue: #6B8AFF;
-    --c-core-blue-light: #A8D8FF;
-    /* 辅助色 Secondary — 中性结构（锌灰，替代紫色调） */
+    /* 辅助色 Secondary — 中性结构（锌灰；非场景品牌） */
     --c-neutral-900: #0B0B14;
     --c-neutral-800: #14141F;
     --c-neutral-700: #1E1E2C;
     --c-neutral-600: #2A2A3A;
     --c-neutral-400: #6B6B82;
     --c-neutral-200: #C9C9DA;
-    /* 强调色 Accent — 橙金（辅助点缀，仅用于高亮/焦点，不作主色；金色不作为重点） */
+    /* 强调色 Accent — 橙金（辅助点缀，不作主品牌） */
     --c-accent: #E8A23D;
     --c-accent-strong: #D08A2C;
     --c-accent-soft: #F4C277;
     --c-accent-dim: rgba(232, 162, 61, 0.14);
 
-    /* Brand Colors - 粉蓝白为主，金色点缀 */
-    --color-pink: #F4729B;
-    --color-pink-light: #FFB6D9;
-    --color-pink-soft: #FF8FB0;
-    --color-pink-deep: #E84C7E;
+    /* 非品牌命名色（组件/角色次要用；主粉走 tokens） */
     --color-purple: #B66BFF;
     --color-purple-soft: #D4A5FF;
     --color-blue: #6B8AFF;
@@ -46,83 +40,45 @@
     --color-white: #FFFFFF;
     --color-snow: #F0F4FF;
     --color-black: #0A0A12;
+    --c-core-white: #F0F4FF;
+    --c-core-blue: #6B8AFF;
+    --c-core-blue-light: #A8D8FF;
 
-    /* v10 — 动态品牌光晕：粉 → 白 → 浅蓝（爱弥斯核心三色，去金/紫霓虹均质化） */
+    /* 渐变：引用场景 --c-primary*，主站玫夜 / 论坛蓝金自动跟随 tokens */
     --gradient-dynamic: linear-gradient(135deg,
-        #F4729B 0%,
-        #FFB6D9 18%,
-        #F0F4FF 40%,
-        #A8D8FF 62%,
-        #6B8AFF 82%,
-        #A8D8FF 100%
+        var(--c-primary, #e879a8) 0%,
+        var(--c-primary-soft, #f5c0d8) 18%,
+        var(--c-core-white, #F0F4FF) 40%,
+        var(--c-core-blue-light, #A8D8FF) 62%,
+        var(--c-core-blue, #6B8AFF) 82%,
+        var(--c-core-blue-light, #A8D8FF) 100%
     );
     --gradient-dynamic-soft: linear-gradient(135deg,
-        rgba(244, 114, 155, 0.16) 0%,
-        rgba(255, 182, 217, 0.12) 22%,
-        rgba(240, 244, 255, 0.14) 50%,
-        rgba(168, 216, 255, 0.16) 100%
+        color-mix(in srgb, var(--c-primary, #e879a8) 16%, transparent) 0%,
+        color-mix(in srgb, var(--c-primary-soft, #f5c0d8) 12%, transparent) 22%,
+        color-mix(in srgb, var(--c-core-white, #F0F4FF) 14%, transparent) 50%,
+        color-mix(in srgb, var(--c-core-blue-light, #A8D8FF) 16%, transparent) 100%
     );
-
-    /* v10 核心渐变 — 粉 → 浅蓝（爱弥斯主色），白承托；金不作为重点 */
-    --gradient-brand: linear-gradient(135deg, #F4729B 0%, #A8D8FF 100%);
-    --gradient-brand-soft: linear-gradient(135deg, rgba(244,114,155,0.16) 0%, rgba(168,216,255,0.12) 100%);
-    --gradient-pink-white: linear-gradient(135deg, #F4729B 0%, #FFF5F8 100%);
-    /* 角色专属着色(次要用)：漂泊者电蓝，不作为品牌主色 */
+    --gradient-brand: linear-gradient(135deg, var(--c-primary, #e879a8) 0%, var(--c-core-blue-light, #A8D8FF) 100%);
+    --gradient-brand-soft: linear-gradient(135deg, color-mix(in srgb, var(--c-primary, #e879a8) 16%, transparent) 0%, color-mix(in srgb, var(--c-core-blue-light, #A8D8FF) 12%, transparent) 100%);
+    --gradient-pink-white: linear-gradient(135deg, var(--c-primary, #e879a8) 0%, #FFF5F8 100%);
     --gradient-blue-white: linear-gradient(135deg, #5B8DEF 0%, #F0F4FF 100%);
 
-    /* Dark Theme (Default) - 漂泊者星空黑，夜间模式适度提亮文字与星光 */
-    --bg-primary: #07070E;
-    --bg-secondary: #0F0F18;
-    --bg-tertiary: #161625;
-    --bg-gradient-1: #07070E;
-    --bg-gradient-2: #120F1C;
-    --bg-gradient-3: #081022;
-
-    --text-primary: #FAF8FF;
-    --text-secondary: #D4CCE8;
-    /* R18: 次级文字提亮至 #9B95B8，暗色背景对比度≈4.9:1，达 WCAG AA */
-    --text-tertiary: #9B95B8;
-
-    /* R17 液态玻璃：1px 内折射边 + 内阴影，降饱和 */
-    --glass-bg: rgba(255, 255, 255, 0.04);
-    --glass-bg-hover: rgba(255, 255, 255, 0.07);
-    --glass-border: rgba(255, 255, 255, 0.10);
-    --glass-border-hover: rgba(245, 181, 68, 0.35);
-    --glass-blur: blur(24px) saturate(140%);
-
-    --shadow-glow: 0 0 26px rgba(229, 132, 168, 0.10);
+    /* 结构阴影（非品牌主色） */
     --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.45);
     --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.35);
     --shadow-pink: none;
-    /* R17 Accent 强调色用于焦点环 */
-    --focus-ring: rgba(245, 181, 68, 0.55);
-
-    /* R17 三级色彩角色 — 表面层级（去玻璃同质化） */
-    --surface-card: rgba(255, 255, 255, 0.05);          /* 内容卡：实色低透明底 */
-    --surface-card-border: rgba(255, 255, 255, 0.10);
-    --surface-inset: rgba(255, 255, 255, 0.03);         /* 嵌套项 / 评论 / 表单 */
     --surface-inset-border: rgba(255, 255, 255, 0.06);
-    --surface-accent: var(--c-primary-dim);             /* 交互/选中态：品牌粉低透明 */
-    --surface-accent-border: rgba(244, 114, 155, 0.35);
 
-    --nav-bg: rgba(7, 7, 14, 0.78);
     --particle-color: 255, 255, 255;
     --particle-alpha: 0.8;
 
     --transition-base: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     --transition-slow: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 
-    --radius-sm: 12px;
-    --radius-md: 20px;
-    --radius-lg: 28px;
     --radius-full: 9999px;
 
-    /* R18: 字体层级四级 Type Scale */
-    --font-sans: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
-    --font-serif: 'Noto Serif SC', 'Source Han Serif SC', 'SimSun', serif;
-
-    /* R18: 完整字阶（Hero / Display / Title / Subtitle / Body / Caption）+ 行高节奏
-       依据 REVIEW-v9.6 R18：建立四级以上 type scale，统一字重/字色/字距/行高节奏 */
+    /* R18: 完整字阶（Hero / Display / Title / Subtitle / Body / Caption）+ 行高节奏 */
     --fs-hero: clamp(2.8rem, 8vw, 5rem);
     --fw-hero: 900;
     --lh-hero: 1.05;
@@ -141,29 +97,14 @@
     --fs-caption: 0.8125rem;
     --fw-caption: 300;
     --lh-caption: 1.5;
-    /* R18 续(P0-1): 最小字号令牌，承载 legacy 0.75rem 的按钮/标签/小注，保持渲染尺寸不变 */
     --fs-micro: 0.75rem;
     --lh-micro: 1.4;
 
-    /* R18: 统一间距刻度 */
-    --space-1: 4px;
-    --space-2: 8px;
-    --space-3: 16px;
-    --space-4: 24px;
-    --space-5: 32px;
-    --space-6: 48px;
-
-    /* === 鸣潮共振按钮系统 Token === */
-    /* 爱弥斯色系 — 温暖粉白金 */
-    --aimisi-pink: #FF6B9D;
-    --aimisi-pink-light: #FFB6D9;
-    --aimisi-pink-soft: #FF8FB0;
-    --aimisi-pink-deep: #E84C7E;
-    --aimisi-white: #FFF5F8;
+    /* === 角色/频谱色（非站点品牌主色；粉主色由 tokens-* 提供） === */
     --aimisi-gold: #FFD700;
     --aimisi-gold-soft: #FFE066;
+    --aimisi-white: #FFF5F8;
 
-    /* 漂泊者色系 — 深邃星空蓝紫 */
     --drifter-blue: #6B8AFF;
     --drifter-blue-light: #A8D8FF;
     --drifter-blue-deep: #4A6AE0;
@@ -171,10 +112,8 @@
     --drifter-purple-deep: #9B6BFF;
     --drifter-starlight: #F0F4FF;
 
-    /* 共通频谱色 */
     --spectral-cyan: #00E5FF;
 
-    /* 按钮状态系统 */
     --btn-transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     --btn-transition-fast: 0.15s cubic-bezier(0.16, 1, 0.3, 1);
     --btn-scale-hover: 1.03;

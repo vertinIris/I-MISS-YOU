@@ -43,15 +43,15 @@
     --stf-z-easter: 1400;
 
     /* 论坛强制覆盖主站粉令牌（角色色 --char 仍可局部粉） */
-    --aimisi-pink: #6B8AFF;
+    --aimisi-pink: #6d8fd6;
     --aimisi-pink-light: #A8D8FF;
     --aimisi-pink-soft: #8AA4FF;
     --aimisi-pink-deep: #4A6AE0;
-    --color-pink: #6B8AFF;
+    --color-pink: #6d8fd6;
     --color-pink-light: #A8D8FF;
     --color-pink-soft: #8AA4FF;
     --color-pink-deep: #4A6AE0;
-    --c-primary: #6B8AFF;
+    --c-primary: #6d8fd6;
     --c-primary-strong: #4A6AE0;
     --c-primary-soft: #A8D8FF;
     --c-primary-dim: rgba(107, 138, 255, 0.14);
@@ -628,7 +628,7 @@ body .nav-logo span {
     box-shadow: 0 0 18px rgba(232, 197, 106, 0.22) inset, 0 0 16px rgba(232, 197, 106, 0.14);
 }
 .stf-tuner-signal-bar i {
-    background: linear-gradient(90deg, #6B8AFF, #A8D8FF, rgba(232, 197, 106, 0.85)) !important;
+    background: linear-gradient(90deg, #6d8fd6, #A8D8FF, rgba(232, 197, 106, 0.85)) !important;
 }
 
 /* FAB 层级：调频左下 < 捐赠 < 边缘同步 */
@@ -672,7 +672,7 @@ body.forum-page .donate-tab.is-active {
     color: var(--stf-brand-light, #A8D8FF);
 }
 body.forum-page .donate-btn-primary {
-    background: linear-gradient(100deg, var(--stf-brand, #6B8AFF), var(--stf-gold, #E8C56A));
+    background: linear-gradient(100deg, var(--stf-brand, #6d8fd6), var(--stf-gold, #E8C56A));
 }
 .stf-edge-indicator {
     z-index: var(--stf-z-edge) !important;

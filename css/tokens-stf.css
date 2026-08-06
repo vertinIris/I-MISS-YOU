@@ -14,6 +14,7 @@
   --stf-ink-2: oklch(78% 0.03 250);
   --stf-ink-3: oklch(62% 0.03 250);
 
+  /* 学院蓝权威值（统一旧硬编码 #6B8AFF / #6d8fd6 → 本令牌） */
   --stf-brand: #6d8fd6;
   --stf-brand-light: #a8c4f0;
   --stf-brand-deep: #3d5aa8;
