@@ -51,7 +51,7 @@ Supabase forum_* 表
 4. **云端 schema（按序）**  
    - 论坛基础：`020` 表 → `021` RLS → `022` Realtime → `023` 聊天  
    - 种子/清理：`024`…`026` 按需  
-   - **Production 已确认**：`027`（profiles nickname RLS）+ `028`（`is_pinned` + `parent_id` 置顶 / 一层楼中楼）。自查 SQL 见 `docs/STATUS.md`；**勿再写「待跑 028」、勿反复催重跑**。  
+   - **Production 已确认**：`017`（硬删 Realtime）+ `027`（profiles nickname RLS）+ `028`（`is_pinned` + `parent_id` 置顶 / 一层楼中楼）。自查 SQL 见 `docs/STATUS.md`；**勿再写「待跑」、勿反复催重跑**。  
    - **分区边界**：讨论区种子 / 云端帖 ≠ 世界观 lore 卡 ≠ 角色档案 HTML。扩展资料勿混入错误表。  
    - **禁止**再跑废弃的 `migration-020-forum-chat.sql`（已改名为 `DEPRECATED-migration-020-forum-chat.sql`）
 
