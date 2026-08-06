@@ -11,15 +11,25 @@
         │
         │  npm run content:build
         │  (= node scripts/build-forum-import.cjs)
+        │  分流：type:lore（档案/设定）→ 不写入讨论区种子
         ▼
-forum/js/forum-import-data.js   ← 仓库内种子（可 commit）
+forum/js/forum-import-data.js   ← 仓库内讨论区种子（可 commit）
         │
         │  论坛页加载：StarTorchData.ensureSeedData()
         │  云端 pull：StarTorchCloud.pull() 合并
-        │  可选：ensureCloudSeed 把缺失种子 upsert 上云
+        │  ensureCloudSeed：仅白名单类型（story/poem/art/text/video）upsert
+        │  type:lore 永不进入 forum_submissions
         ▼
 Supabase forum_* 表
 ```
+
+## 分区边界（硬约束）
+
+| 内容 | 去向 | 禁止 |
+|------|------|------|
+| 讨论区帖（story/poem/art/text/video…） | `forum_submissions` + 本地 `stf_submissions` | — |
+| 档案向 `type:lore` | 角色档案 HTML / 世界观卡；构建时从讨论区种子剔除 | **禁止** upsert 进 `forum_submissions` |
+| 角色扩写 | `characters/*/index.html` + `#characters-archive` | 勿拆进讨论区表 |
 
 ## 日常操作
 

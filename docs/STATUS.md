@@ -16,6 +16,39 @@
 - `028`：`migration-028-forum-pin-replies.sql` — `is_pinned` + `forum_comments.parent_id`（一层楼中楼）
 - 本地脚本：`npm run db:migrate-020` / `db:migrate-023` / `db:migrate-028` 仅打印指引
 - 内容管线：`docs/CONTENT-PIPELINE.md` · `npm run content:build`
+- **lore 护栏**：`type:lore` 档案向内容由构建分流 + `ensureCloudSeed` 白名单双拦，不进 `forum_submissions`
+
+### migration-017（硬删 / Realtime DELETE）— 需 Dashboard 自查（勿催立刻跑）
+
+含义：主站 `comments` / `submissions` 的 hide/自删从「`is_hidden` 软删」改为**物理 `DELETE`**，以便 Realtime 能投递 DELETE 事件；审计靠 `moderation_logs.content_snapshot`。  
+代码侧已按硬删路径标注（见 `js/supabase-adapter.js` deleteComment 注释）。**Agent 无法登录云端，以下 SQL 仅供日后 Dashboard 核验，不催用户立刻执行。**
+
+```sql
+-- 017 自查 A：函数体是否含物理 DELETE（期望 delete_comment_with_token / delete_submission_with_token 定义里出现 DELETE FROM）
+SELECT p.proname, pg_get_functiondef(p.oid) AS def
+FROM pg_proc p
+JOIN pg_namespace n ON n.oid = p.pronamespace
+WHERE n.nspname = 'public'
+  AND p.proname IN (
+    'delete_comment_with_token',
+    'delete_submission_with_token',
+    'moderate_comment',
+    'moderate_submission'
+  );
+
+-- 017 自查 B：moderation_logs 是否有 content_snapshot
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name = 'moderation_logs'
+  AND column_name = 'content_snapshot';
+
+-- 017 自查 C（抽测，可选）：对测试行执行作者删/版主 hide 后，行应不存在（物理删除），且不应仅剩 is_hidden=true
+-- SELECT id, is_hidden FROM public.comments WHERE id = <test_id>;  -- 期望 0 行
+-- SELECT id, is_hidden FROM public.submissions WHERE id = <test_id>;
+```
+
+**状态**：SQL 文件在仓（`db/migration-017-hard-delete-for-realtime.sql`）；**云端是否已应用 → 未由 Agent 核验**。
 
 ### Production 云端核验（收口）
 

@@ -5,7 +5,15 @@
 (function () {
     'use strict';
 
-    var SEED_VERSION = 'v1.2';
+    /* v1.3：档案向 type:lore 不再进入讨论区本地种子 / 云端 upsert */
+    var SEED_VERSION = 'v1.3';
+    var DISCUSSION_SEED_TYPES = {
+        story: 1, poem: 1, art: 1, text: 1, video: 1
+    };
+
+    function isDiscussionSeedType(type) {
+        return !!DISCUSSION_SEED_TYPES[String(type || '').toLowerCase()];
+    }
 
     var SEED_SUBMISSIONS = [
         {
@@ -110,7 +118,11 @@
     function getImportSeed() {
         try {
             var s = (typeof window !== 'undefined') && window.StarTorchImportSeed;
-            return (s && Array.isArray(s)) ? s : [];
+            if (!(s && Array.isArray(s))) return [];
+            /* 档案向 lore 不进讨论区种子（构建侧也会分流；此处双保险） */
+            return s.filter(function (item) {
+                return item && item.id && isDiscussionSeedType(item.type);
+            });
         } catch (e) { return []; }
     }
 
@@ -127,6 +139,15 @@
         var existing = readJSON('stf_submissions', []);
         if (!Array.isArray(existing)) existing = [];
 
+        /* 清掉历史误入讨论区的档案 lore（imp_* 或 type=lore） */
+        var beforePurge = existing.length;
+        existing = existing.filter(function (s) {
+            if (!s || !s.id) return false;
+            if (String(s.type || '').toLowerCase() === 'lore') return false;
+            return true;
+        });
+        var purged = beforePurge - existing.length;
+
         var known = {};
         existing.forEach(function (s) { if (s && s.id) known[s.id] = true; });
 
@@ -139,12 +160,13 @@
         var allSeeds = SEED_SUBMISSIONS.concat(getImportSeed());
         var added = 0;
         allSeeds.forEach(function (s) {
+            if (!s || !s.id || !isDiscussionSeedType(s.type)) return;
             if (known[s.id] || removed[s.id]) return;
             existing.push(s);
             added++;
         });
 
-        if (added > 0 || existing.length === 0) {
+        if (added > 0 || purged > 0 || existing.length === 0) {
             /* 按时间倒序，保证新并入的帖子落到正确位置 */
             existing.sort(function (a, b) {
                 return String((b && b.timeStr) || '').localeCompare(String((a && a.timeStr) || ''));

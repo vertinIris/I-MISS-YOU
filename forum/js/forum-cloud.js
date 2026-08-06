@@ -261,11 +261,23 @@
         }
     }
 
+    /* 讨论区上云白名单：档案向 type:lore 永不 upsert 进 forum_submissions */
+    var CLOUD_SEED_TYPE_ALLOW = {
+        story: 1, poem: 1, art: 1, text: 1, video: 1
+    };
+
+    function isCloudSeedAllowed(seed) {
+        if (!seed || !seed.id) return false;
+        var t = String(seed.type || '').toLowerCase();
+        if (t === 'lore') return false;
+        return !!CLOUD_SEED_TYPE_ALLOW[t];
+    }
+
     async function ensureCloudSeed(seeds, cloudIds) {
         if (!seeds || !seeds.length || !cloudIds) return;
         for (var i = 0; i < seeds.length; i++) {
             var s = seeds[i];
-            if (!s || !s.id) continue;
+            if (!isCloudSeedAllowed(s)) continue;
             if (cloudIds.indexOf(s.id) !== -1) continue;
             try {
                 await ensureSession();
@@ -371,6 +383,11 @@
     /* ---------- 推送（内部 attempt*: 尝试上云，返回布尔，不自动入队） ---------- */
     async function attemptSubmission(sub) {
         if (!client) return false;
+        /* 档案向 lore 禁止写入 forum_submissions（种子/误入双保险） */
+        if (sub && String(sub.type || '').toLowerCase() === 'lore') {
+            console.warn('[forum-cloud] 拒绝 upsert type:lore', sub && sub.id);
+            return true; /* 视为已处理，避免离线队列反复重试 */
+        }
         try {
             await ensureSession();
             var { error } = await client.from('forum_submissions').upsert(toCloudRow(sub));
