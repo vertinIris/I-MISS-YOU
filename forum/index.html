@@ -28,12 +28,14 @@
     <meta name="twitter:title" content="鸣潮同人论坛 · 星炬学院">
     <meta name="twitter:description" content="星炬学院主论坛：角色档案、世界观、同人创作与社区讨论。">
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <!-- Fonts：非阻塞（对齐角色页 media=print + onload）；CJK 由 Noto SC 提供，系统字体作回退 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap"></noscript>
     <link rel="stylesheet" href="../css/tokens-base.css">
-    <!-- style.css 仅提供共享组件；品牌色由 tokens-stf 在其后收口，避免粉令牌污染 -->
-    <link rel="stylesheet" href="../css/style.css">
+    <!-- forum-shared.css 共享子集（含 .reveal）；品牌色由 tokens-stf 在其后收口，避免粉令牌污染 -->
+    <link rel="stylesheet" href="../css/forum-shared.css">
     <link rel="stylesheet" href="../css/tokens-stf.css">
     <link rel="stylesheet" href="../css/donation.css">
     <link rel="stylesheet" href="forum.css">
