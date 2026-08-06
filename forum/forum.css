@@ -21,9 +21,9 @@
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(circle at 20% 20%, rgba(107,138,255,.16), transparent 45%),
+        radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent), transparent 45%),
         radial-gradient(circle at 80% 30%, rgba(232,197,106,.10), transparent 45%),
-        radial-gradient(circle at 50% 90%, rgba(107,138,255,.12), transparent 50%);
+        radial-gradient(circle at 50% 90%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 12%, transparent), transparent 50%);
     pointer-events: none;
 }
 .forum-hero-content { position: relative; z-index: 1; max-width: 760px; }
@@ -92,12 +92,12 @@
 /* ???????????????? */
 .forum-entry--primary {
     border-top-color: var(--stf-brand, #6d8fd6);
-    background: rgba(107, 138, 255, 0.06);
-    box-shadow: 0 0 0 1px rgba(107, 138, 255, 0.12);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 6%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--stf-brand, #6d8fd6) 12%, transparent);
 }
 .forum-entry--primary:hover {
-    border-color: rgba(107, 138, 255, 0.45);
-    box-shadow: 0 0 0 1px rgba(107, 138, 255, 0.22), 0 14px 36px rgba(0, 0, 0, 0.28);
+    border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 45%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--stf-brand, #6d8fd6) 22%, transparent), 0 14px 36px rgba(0, 0, 0, 0.28);
 }
 .forum-entry-ribbon {
     position: absolute;
@@ -119,14 +119,14 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 50% 0%, rgba(107, 138, 255, .08), transparent 55%);
+    background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 8%, transparent), transparent 55%);
     pointer-events: none;
 }
 .stf-chat-card {
     margin-top: 26px;
     border-radius: var(--radius-lg, 18px);
     background: rgba(12, 12, 22, 0.72);
-    border: 1px solid rgba(107, 138, 255, 0.22);
+    border: 1px solid color-mix(in srgb, var(--stf-brand, #6d8fd6) 22%, transparent);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
     overflow: hidden;
     display: flex;
@@ -140,8 +140,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 14px 18px;
-    border-bottom: 1px solid rgba(107, 138, 255, 0.15);
-    background: rgba(107, 138, 255, 0.06);
+    border-bottom: 1px solid color-mix(in srgb, var(--stf-brand, #6d8fd6) 15%, transparent);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 6%, transparent);
     font-size: 0.85rem;
     color: rgba(255, 255, 255, 0.7);
 }
@@ -288,8 +288,8 @@
     word-break: break-word;
 }
 .stf-chat-message.is-self .stf-chat-bubble {
-    background: linear-gradient(135deg, rgba(107, 138, 255, 0.26), rgba(168, 216, 255, 0.12));
-    border-color: rgba(107, 138, 255, 0.3);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 26%, transparent), rgba(168, 216, 255, 0.12));
+    border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 30%, transparent);
 }
 .stf-chat-meta {
     display: flex;
@@ -305,7 +305,7 @@
     display: flex;
     gap: 10px;
     padding: 14px 18px;
-    border-top: 1px solid rgba(107, 138, 255, 0.15);
+    border-top: 1px solid color-mix(in srgb, var(--stf-brand, #6d8fd6) 15%, transparent);
     background: rgba(0, 0, 0, 0.18);
 }
 .stf-chat-input {
@@ -313,7 +313,7 @@
     min-width: 0;
     padding: 11px 16px;
     border-radius: var(--radius-full, 999px);
-    border: 1px solid rgba(107, 138, 255, 0.25);
+    border: 1px solid color-mix(in srgb, var(--stf-brand, #6d8fd6) 25%, transparent);
     background: rgba(0, 0, 0, 0.25);
     color: #fff;
     font-family: inherit;
@@ -324,7 +324,7 @@
 .stf-chat-input::placeholder { color: rgba(255, 255, 255, 0.4); }
 .stf-chat-input:focus {
     border-color: rgba(168, 216, 255, 0.65);
-    box-shadow: 0 0 0 3px rgba(107, 138, 255, 0.15);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--stf-brand, #6d8fd6) 15%, transparent);
 }
 .stf-chat-send {
     flex: 0 0 auto;
@@ -340,7 +340,7 @@
 }
 .stf-chat-send:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(107, 138, 255, 0.35);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--stf-brand, #6d8fd6) 35%, transparent);
 }
 .stf-chat-send:active { transform: translateY(0) scale(0.97); }
 @keyframes chat-fade-in {
@@ -364,7 +364,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 50% 0%, rgba(107,138,255,.08), transparent 55%);
+    background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 8%, transparent), transparent 55%);
     pointer-events: none;
 }
 
@@ -412,7 +412,7 @@
     transition: all .25s;
 }
 .stf-sort-btn:hover { color: #fff; }
-.stf-sort-btn.active { background: linear-gradient(100deg, rgba(107,138,255,.35), rgba(232,197,106,.28)); color: #fff; }
+.stf-sort-btn.active { background: linear-gradient(100deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 35%, transparent), rgba(232,197,106,.28)); color: #fff; }
 
 /* ??? + ???? */
 .archive-float {
@@ -437,11 +437,11 @@
     border-radius: 22px;
     background:
         linear-gradient(165deg, rgba(18, 24, 44, 0.92), rgba(8, 10, 20, 0.96)),
-        radial-gradient(ellipse 70% 40% at 50% 100%, rgba(107, 138, 255, 0.12), transparent 70%);
+        radial-gradient(ellipse 70% 40% at 50% 100%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 12%, transparent), transparent 70%);
     border: 1px solid rgba(168, 216, 255, 0.18);
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        inset 0 -1px 0 rgba(107, 138, 255, 0.06),
+        inset 0 -1px 0 color-mix(in srgb, var(--stf-brand, #6d8fd6) 6%, transparent),
         0 0 0 1px rgba(10, 12, 22, 0.6),
         0 28px 64px rgba(0, 0, 0, 0.42);
 }
@@ -452,7 +452,7 @@
     bottom: 18px;
     height: 28px;
     border-radius: 50%;
-    background: radial-gradient(ellipse, rgba(107, 138, 255, 0.28), rgba(232, 197, 106, 0.06) 45%, transparent 72%);
+    background: radial-gradient(ellipse, color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent), rgba(232, 197, 106, 0.06) 45%, transparent 72%);
     filter: blur(8px);
     pointer-events: none;
 }
@@ -878,10 +878,10 @@ html.archive-orbit-active .archive-album-shelf {
 }
 .stf-filter-btn:hover { background: rgba(255,255,255,.1); }
 .stf-filter-btn.active {
-    background: linear-gradient(100deg, rgba(107,138,255,.35), rgba(182,107,255,.35));
+    background: linear-gradient(100deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 35%, transparent), rgba(182,107,255,.35));
     border-color: rgba(168,216,255,.35);
     color: #fff;
-    box-shadow: 0 6px 18px rgba(107,138,255,.22);
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--stf-brand, #6d8fd6) 22%, transparent);
 }
 
 .stf-tag-bar {
@@ -1079,12 +1079,12 @@ html.archive-orbit-active .archive-album-shelf {
 .stf-comment-form input::placeholder { color: rgba(240,244,255,.45); }
 .stf-comment-form .stf-comment-name-input { width: 110px; }
 .stf-comment-form .stf-comment-name-input.is-anonymous {
-    background: rgba(107,138,255,.06);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 6%, transparent);
     border-color: rgba(168,216,255,.25);
     color: rgba(240,244,255,.8);
 }
 .stf-comment-form .stf-comment-identity.is-anonymous {
-    background-color: rgba(107,138,255,.08);
+    background-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 8%, transparent);
     border-color: rgba(168,216,255,.35);
 }
 .stf-comment-form .stf-comment-input { flex: 1; min-width: 140px; }
@@ -1158,7 +1158,7 @@ html.archive-orbit-active .archive-album-shelf {
     transition: background .25s, border-color .25s, color .25s;
 }
 .stf-page-btn:hover:not(:disabled) { background: rgba(255,255,255,.1); }
-.stf-page-btn.active { background: rgba(107,138,255,.3); border-color: rgba(168,216,255,.35); color: #fff; }
+.stf-page-btn.active { background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 30%, transparent); border-color: rgba(168,216,255,.35); color: #fff; }
 .stf-page-btn:disabled {
     opacity: .35;
     cursor: not-allowed;
@@ -1269,11 +1269,11 @@ html.archive-orbit-active .archive-album-shelf {
 
 /* ????????? */
 .form-select.is-anonymous {
-    background: rgba(107,138,255,.08);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 8%, transparent);
     border-color: rgba(168,216,255,.35);
 }
 .form-input.is-anonymous {
-    background: rgba(107,138,255,.06);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 6%, transparent);
     border-color: rgba(168,216,255,.25);
     color: rgba(240,244,255,.8);
 }
@@ -1345,8 +1345,8 @@ html.archive-orbit-active .archive-album-shelf {
     flex: none;
 }
 .stf-account-avatar.is-signed {
-    box-shadow: 0 0 0 2px rgba(168, 216, 255, .28), 0 0 14px rgba(107, 138, 255, .35);
-    background: linear-gradient(135deg, rgba(107,138,255,.55), rgba(232,197,106,.4));
+    box-shadow: 0 0 0 2px rgba(168, 216, 255, .28), 0 0 14px color-mix(in srgb, var(--stf-brand, #6d8fd6) 35%, transparent);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 55%, transparent), rgba(232,197,106,.4));
 }
 
 /* ?????????? / ????????????? */
@@ -1369,8 +1369,8 @@ html.archive-orbit-active .archive-album-shelf {
     box-shadow: 0 6px 20px rgba(0,0,0,.16);
 }
 .stf-auth-module[data-auth-module="login"].is-active {
-    border-color: rgba(107,138,255,.32);
-    box-shadow: 0 6px 22px rgba(107,138,255,.1);
+    border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 32%, transparent);
+    box-shadow: 0 6px 22px color-mix(in srgb, var(--stf-brand, #6d8fd6) 10%, transparent);
 }
 .stf-auth-module[data-auth-module="register"].is-active {
     border-color: rgba(232,197,106,.28);
@@ -1396,10 +1396,10 @@ html.archive-orbit-active .archive-album-shelf {
 }
 /* ?? / ??????? */
 .stf-auth-module[data-auth-module="login"] .stf-auth-tab.active {
-    background: linear-gradient(135deg, rgba(107,138,255,.22), rgba(107,138,255,.08));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 22%, transparent), color-mix(in srgb, var(--stf-brand, #6d8fd6) 8%, transparent));
 }
 .stf-auth-module[data-auth-module="register"] .stf-auth-tab.active {
-    background: linear-gradient(135deg, rgba(107,138,255,.18), rgba(232,197,106,.14));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 18%, transparent), rgba(232,197,106,.14));
 }
 .stf-auth-form {
     display: flex;
@@ -1439,7 +1439,7 @@ html.archive-orbit-active .archive-album-shelf {
 .stf-auth-mode-btn.active { color: #fff; }
 [data-mode-scope="login"].stf-auth-mode-btn.active,
 [data-mode-scope="register"].stf-auth-mode-btn.active {
-    background: linear-gradient(135deg, rgba(107,138,255,.24), rgba(232,197,106,.12));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 24%, transparent), rgba(232,197,106,.12));
     box-shadow: inset 0 0 0 1px rgba(168,216,255,.28);
 }
 .stf-auth-mode-hint {
@@ -1459,7 +1459,7 @@ html.archive-orbit-active .archive-album-shelf {
     padding: 14px 16px;
     border-radius: 14px;
     background:
-        linear-gradient(135deg, rgba(107,138,255,.12), rgba(232,197,106,.06)),
+        linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 12%, transparent), rgba(232,197,106,.06)),
         rgba(255,255,255,.04);
     border: 1px solid rgba(168,216,255,.22);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
@@ -1470,7 +1470,7 @@ html.archive-orbit-active .archive-album-shelf {
     display: grid; place-items: center;
     font-size: 22px; font-weight: 700; color: #fff;
     background: linear-gradient(135deg, var(--stf-brand, #6d8fd6), var(--stf-gold, #E8C56A));
-    box-shadow: 0 0 18px rgba(107,138,255,.35);
+    box-shadow: 0 0 18px color-mix(in srgb, var(--stf-brand, #6d8fd6) 35%, transparent);
     flex: none;
 }
 .stf-account-card-text { display: flex; flex-direction: column; gap: 3px; }
@@ -1484,7 +1484,7 @@ html.archive-orbit-active .archive-album-shelf {
     overflow: hidden;
     border-radius: 18px;
     background:
-        radial-gradient(ellipse at 12% 0%, rgba(107,138,255,.18), transparent 42%),
+        radial-gradient(ellipse at 12% 0%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 18%, transparent), transparent 42%),
         radial-gradient(ellipse at 88% 8%, rgba(232,197,106,.12), transparent 36%),
         rgba(10, 12, 22, 0.96) !important;
     border: 1px solid rgba(168, 216, 255, 0.2) !important;
@@ -1504,7 +1504,7 @@ html.archive-orbit-active .archive-album-shelf {
     margin: 0;
     padding: 18px 20px 14px;
     border-bottom: 1px solid rgba(168, 216, 255, 0.12);
-    background: linear-gradient(180deg, rgba(107,138,255,.1), transparent);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 10%, transparent), transparent);
 }
 .stf-passport-brand {
     display: flex;
@@ -1520,8 +1520,8 @@ html.archive-orbit-active .archive-album-shelf {
     border: 1.5px solid rgba(232, 197, 106, 0.55);
     background:
         radial-gradient(circle at 40% 35%, rgba(255,255,255,.35), transparent 45%),
-        linear-gradient(145deg, rgba(107,138,255,.55), rgba(232,197,106,.35));
-    box-shadow: 0 0 0 3px rgba(107,138,255,.12), 0 0 18px rgba(107,138,255,.25);
+        linear-gradient(145deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 55%, transparent), rgba(232,197,106,.35));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--stf-brand, #6d8fd6) 12%, transparent), 0 0 18px color-mix(in srgb, var(--stf-brand, #6d8fd6) 25%, transparent);
 }
 .stf-passport-titles { min-width: 0; }
 .stf-passport-eyebrow {
@@ -1578,14 +1578,14 @@ html.archive-orbit-active .archive-album-shelf {
 }
 .stf-passport-panel .form-input:focus,
 .stf-passport-panel .form-select:focus {
-    border-color: rgba(107, 138, 255, 0.45);
-    box-shadow: 0 0 0 3px rgba(107, 138, 255, 0.12);
+    border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 45%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--stf-brand, #6d8fd6) 12%, transparent);
 }
 .stf-passport-cta.btn-primary,
 .stf-passport-panel .btn-primary {
     background: linear-gradient(100deg, var(--stf-brand, #6d8fd6), var(--stf-gold, #E8C56A));
     border: none;
-    box-shadow: 0 10px 24px rgba(107, 138, 255, 0.28);
+    box-shadow: 0 10px 24px color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent);
 }
 .stf-passport-panel .btn-ghost {
     opacity: 0.85;
@@ -1736,7 +1736,7 @@ html.archive-orbit-active .archive-album-shelf {
     border: 1px solid rgba(168, 216, 255, 0.32);
     background:
         linear-gradient(135deg, rgba(18, 22, 40, 0.92), rgba(11, 14, 26, 0.88)),
-        radial-gradient(circle at 18% 50%, rgba(107,138,255,.18), transparent 55%);
+        radial-gradient(circle at 18% 50%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 18%, transparent), transparent 55%);
     color: var(--stf-text, #F0F4FF);
     font: inherit; font-size: 14px;
     cursor: default;
@@ -1747,8 +1747,8 @@ html.archive-orbit-active .archive-album-shelf {
     transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
 .stf-tuner-compact:focus-within {
-    border-color: rgba(107, 138, 255, 0.55);
-    box-shadow: 0 14px 32px rgba(0,0,0,.45), 0 0 18px rgba(107,138,255,.2);
+    border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 55%, transparent);
+    box-shadow: 0 14px 32px rgba(0,0,0,.45), 0 0 18px color-mix(in srgb, var(--stf-brand, #6d8fd6) 20%, transparent);
 }
 .stf-tuner-compact-shell {
     display: inline-flex;
@@ -1758,7 +1758,7 @@ html.archive-orbit-active .archive-album-shelf {
     border-radius: 999px;
     background: rgba(0, 0, 0, 0.35);
     border: 1px solid rgba(168, 216, 255, 0.22);
-    box-shadow: inset 0 0 12px rgba(107, 138, 255, 0.12);
+    box-shadow: inset 0 0 12px color-mix(in srgb, var(--stf-brand, #6d8fd6) 12%, transparent);
 }
 .stf-tuner-compact-led {
     width: 9px; height: 9px; border-radius: 50%;
@@ -1852,11 +1852,11 @@ html.archive-orbit-active .archive-album-shelf {
     border-radius: 22px;
     text-align: center;
     background:
-        radial-gradient(ellipse at 50% 0%, rgba(107,138,255,.12), transparent 55%),
+        radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 12%, transparent), transparent 55%),
         rgba(12, 14, 24, 0.72);
     border: 1px solid rgba(168,216,255,.14);
     border-top: 2px solid var(--stf-brand, #6d8fd6);
-    box-shadow: 0 20px 48px rgba(0,0,0,.36), inset 0 0 40px rgba(107,138,255,.05);
+    box-shadow: 0 20px 48px rgba(0,0,0,.36), inset 0 0 40px color-mix(in srgb, var(--stf-brand, #6d8fd6) 5%, transparent);
     backdrop-filter: blur(8px);
 }
 .stf-tuner-head {
@@ -1874,8 +1874,8 @@ html.archive-orbit-active .archive-album-shelf {
     cursor: pointer;
 }
 .stf-tuner-minify:hover {
-    background: rgba(107,138,255,.18);
-    border-color: rgba(107,138,255,.4);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 18%, transparent);
+    border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 40%, transparent);
     color: #fff;
 }
 .stf-tuner-led {
@@ -1944,12 +1944,12 @@ html.archive-orbit-active .archive-album-shelf {
     border-radius: 12px;
     outline: none;
     transition: border-color .2s, box-shadow .2s, background .2s;
-    box-shadow: inset 0 0 18px rgba(107,138,255,.08);
+    box-shadow: inset 0 0 18px color-mix(in srgb, var(--stf-brand, #6d8fd6) 8%, transparent);
 }
 .stf-dial-input:focus {
     border-color: rgba(168,216,255,.55);
-    box-shadow: 0 0 0 3px rgba(107,138,255,.16), inset 0 0 18px rgba(107,138,255,.12);
-    background: rgba(107,138,255,.08);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent), inset 0 0 18px color-mix(in srgb, var(--stf-brand, #6d8fd6) 12%, transparent);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 8%, transparent);
 }
 /* ????????????? */
 .stf-dial-input.is-hit {
@@ -2087,7 +2087,7 @@ html.archive-orbit-active .archive-album-shelf {
     padding: 7px 14px;
     border-radius: 999px;
     border: 1px solid rgba(168, 216, 255, 0.22);
-    background: linear-gradient(135deg, rgba(107, 138, 255, 0.22), rgba(182, 107, 255, 0.22));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 22%, transparent), rgba(182, 107, 255, 0.22));
     color: #fff;
     font-size: 13px;
     cursor: pointer;
@@ -2096,8 +2096,8 @@ html.archive-orbit-active .archive-album-shelf {
 .stf-sync-btn svg { width: 15px; height: 15px; }
 .stf-sync-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(107, 138, 255, 0.28);
-    background: linear-gradient(135deg, rgba(107, 138, 255, 0.34), rgba(182, 107, 255, 0.34));
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 34%, transparent), rgba(182, 107, 255, 0.34));
 }
 .stf-sync-btn:focus-visible {
     outline: 2px solid #A8D8FF;
@@ -2117,7 +2117,7 @@ html.archive-orbit-active .archive-album-shelf {
     padding: 8px 10px 8px 14px;
     border-radius: 999px;
     background: rgba(11, 14, 26, 0.78);
-    border: 1px solid rgba(107, 138, 255, 0.35);
+    border: 1px solid color-mix(in srgb, var(--stf-brand, #6d8fd6) 35%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(232, 197, 106, 0.08);
@@ -2175,8 +2175,8 @@ html.archive-orbit-active .archive-album-shelf {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    border: 1px solid rgba(107, 138, 255, 0.45);
-    background: rgba(107, 138, 255, 0.18);
+    border: 1px solid color-mix(in srgb, var(--stf-brand, #6d8fd6) 45%, transparent);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 18%, transparent);
     color: var(--stf-text, #F0F4FF);
     font-size: 15px;
     line-height: 1;
@@ -2188,9 +2188,9 @@ html.archive-orbit-active .archive-album-shelf {
     transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 .stf-edge-btn:hover {
-    background: rgba(107, 138, 255, 0.34);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 34%, transparent);
     transform: scale(1.08);
-    box-shadow: 0 0 16px rgba(107, 138, 255, 0.4);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--stf-brand, #6d8fd6) 40%, transparent);
 }
 .stf-edge-btn:active { transform: scale(0.95); }
 .stf-edge-btn:focus-visible {
@@ -2224,7 +2224,7 @@ html.archive-orbit-active .archive-album-shelf {
     padding: 8px 14px 8px 10px;
     border-radius: 999px;
     background: rgba(11, 14, 26, 0.78);
-    border: 1px solid rgba(107, 138, 255, 0.35);
+    border: 1px solid color-mix(in srgb, var(--stf-brand, #6d8fd6) 35%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(232, 197, 106, 0.08);
@@ -2265,7 +2265,7 @@ html.archive-orbit-active .archive-album-shelf {
 .stf-back-home:hover {
     opacity: 1;
     transform: translateY(-2px);
-    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55), 0 0 18px rgba(107, 138, 255, 0.18);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55), 0 0 18px color-mix(in srgb, var(--stf-brand, #6d8fd6) 18%, transparent);
 }
 .stf-back-home:active { transform: translateY(0) scale(0.98); }
 .stf-back-home:focus-visible {
@@ -2277,8 +2277,8 @@ html.archive-orbit-active .archive-album-shelf {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    border: 1px solid rgba(107, 138, 255, 0.45);
-    background: rgba(107, 138, 255, 0.18);
+    border: 1px solid color-mix(in srgb, var(--stf-brand, #6d8fd6) 45%, transparent);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 18%, transparent);
     color: var(--stf-text, #F0F4FF);
     display: inline-flex;
     align-items: center;
@@ -2287,9 +2287,9 @@ html.archive-orbit-active .archive-album-shelf {
 }
 .stf-back-home-svg[hidden] { display: none !important; }
 .stf-back-home:hover .stf-back-home-icon {
-    background: rgba(107, 138, 255, 0.34);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 34%, transparent);
     transform: scale(1.08);
-    box-shadow: 0 0 16px rgba(107, 138, 255, 0.4);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--stf-brand, #6d8fd6) 40%, transparent);
 }
 .stf-back-home-text {
     overflow: hidden;
@@ -2398,14 +2398,14 @@ html.archive-orbit-active .archive-album-shelf {
 }
 .stf-feed-tab.active {
     color: #fff;
-    background: rgba(107, 138, 255, 0.22);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 22%, transparent);
     border-color: rgba(168, 216, 255, 0.28);
 }
 
 .stf-pinned {
     margin: 18px 0 6px;
     border-radius: 14px;
-    background: rgba(107, 138, 255, 0.06);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 6%, transparent);
     border: 1px solid rgba(168, 216, 255, 0.16);
     overflow: hidden;
 }
@@ -2539,7 +2539,7 @@ html.archive-orbit-active .archive-album-shelf {
     display: grid;
     place-items: center;
     flex: none;
-    background: rgba(107, 138, 255, 0.15);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 15%, transparent);
     color: var(--drifter-blue-light, #A8D8FF);
 }
 .stf-chat-entry-icon svg { width: 18px; height: 18px; }
@@ -2618,8 +2618,8 @@ html.archive-orbit-active .archive-album-shelf {
     transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 .stf-chat-expand:hover {
-    background: rgba(107, 138, 255, 0.18);
-    border-color: rgba(107, 138, 255, 0.4);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 18%, transparent);
+    border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 40%, transparent);
     color: #fff;
 }
 /* ?????? body?????? blur??? translateX ????????? */
@@ -2639,7 +2639,7 @@ html.archive-orbit-active .archive-album-shelf {
     margin-left: auto !important;
     margin-right: auto !important;
     border-radius: 20px;
-    border: 1px solid rgba(107, 138, 255, 0.35);
+    border: 1px solid color-mix(in srgb, var(--stf-brand, #6d8fd6) 35%, transparent);
     background: #0b1020 !important;
     box-shadow: 0 28px 80px rgba(0, 0, 0, 0.65);
     display: flex;
@@ -2707,14 +2707,14 @@ html.archive-orbit-active .archive-album-shelf {
     padding: 8px 12px;
     border-radius: 10px;
     border: 1px dashed rgba(168, 216, 255, 0.35);
-    background: rgba(107, 138, 255, 0.08);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 8%, transparent);
     color: rgba(240, 244, 255, 0.8);
     font: inherit;
     font-size: 12px;
     cursor: pointer;
 }
 .stf-chat-load-more:hover {
-    background: rgba(107, 138, 255, 0.16);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent);
     color: #fff;
 }
 .stf-chat-backdrop {
@@ -2936,7 +2936,7 @@ body.stf-chat-expanded-open .stf-chat-card.is-chat-expanded .stf-chat-meta {
 .stf-comment-replies {
     margin: 6px 0 0 18px;
     padding-left: 12px;
-    border-left: 2px solid rgba(107, 138, 255, 0.28);
+    border-left: 2px solid color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent);
 }
 .stf-comment.is-reply { opacity: 0.95; }
 .stf-comment-reply {
@@ -3001,7 +3001,7 @@ body.stf-chat-expanded-open .stf-chat-card.is-chat-expanded .stf-chat-meta {
 }
 .stf-post-detail-back {
     border: 1px solid rgba(168, 216, 255, 0.35);
-    background: rgba(107, 138, 255, 0.12);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 12%, transparent);
     color: #E8F0FF;
     border-radius: 999px;
     padding: 6px 12px;

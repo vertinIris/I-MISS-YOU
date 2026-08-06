@@ -180,7 +180,7 @@
     border-radius: 20px;
     background: rgba(255,255,255,.05);
     border: 1px solid rgba(168,216,255,.22);
-    box-shadow: 0 18px 48px rgba(0,0,0,.4), inset 0 0 30px rgba(107,138,255,.08);
+    box-shadow: 0 18px 48px rgba(0,0,0,.4), inset 0 0 30px color-mix(in srgb, var(--stf-brand, #6d8fd6) 8%, transparent);
     backdrop-filter: blur(8px);
     opacity: 0;
     transform: translateY(14px);
@@ -410,7 +410,7 @@
 .stf-corridor-mark:hover,
 .stf-corridor-mark:focus-visible {
     color: rgba(232, 197, 106, 0.85);
-    background: rgba(107, 138, 255, 0.08);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 8%, transparent);
     outline: none;
 }
 .stf-corridor-mark.is-found {

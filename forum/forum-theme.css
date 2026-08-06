@@ -54,10 +54,10 @@
     --c-primary: #6d8fd6;
     --c-primary-strong: #4A6AE0;
     --c-primary-soft: #A8D8FF;
-    --c-primary-dim: rgba(107, 138, 255, 0.14);
-    --surface-accent: rgba(107, 138, 255, 0.14);
-    --surface-accent-border: rgba(107, 138, 255, 0.35);
-    --shadow-glow: 0 0 22px rgba(107, 138, 255, 0.12);
+    --c-primary-dim: color-mix(in srgb, var(--stf-brand, #6d8fd6) 14%, transparent);
+    --surface-accent: color-mix(in srgb, var(--stf-brand, #6d8fd6) 14%, transparent);
+    --surface-accent-border: color-mix(in srgb, var(--stf-brand, #6d8fd6) 35%, transparent);
+    --shadow-glow: 0 0 22px color-mix(in srgb, var(--stf-brand, #6d8fd6) 12%, transparent);
     --focus-ring: rgba(168, 216, 255, 0.55);
 }
 
@@ -86,7 +86,7 @@ body {
         radial-gradient(1px 1px at 35% 88%, rgba(168, 216, 255, 0.22), transparent),
         radial-gradient(ellipse 120% 40% at 50% -8%, transparent 42%, rgba(232, 197, 106, 0.045) 48%, transparent 56%),
         radial-gradient(ellipse 90% 28% at 70% 8%, transparent 50%, rgba(232, 197, 106, 0.03) 56%, transparent 64%),
-        radial-gradient(1100px 560px at 50% -10%, rgba(107, 138, 255, 0.09), transparent 58%),
+        radial-gradient(1100px 560px at 50% -10%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 9%, transparent), transparent 58%),
         linear-gradient(180deg,
             var(--stf-bg-top) 0%,
             var(--stf-bg-mid) 42%,
@@ -128,9 +128,9 @@ body::after {
 }
 .forum-hero::before {
     background:
-        radial-gradient(circle at 22% 18%, rgba(107, 138, 255, 0.16), transparent 46%),
+        radial-gradient(circle at 22% 18%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent), transparent 46%),
         radial-gradient(circle at 78% 28%, rgba(232, 197, 106, 0.08), transparent 44%),
-        radial-gradient(circle at 50% 92%, rgba(107, 138, 255, 0.1), transparent 52%) !important;
+        radial-gradient(circle at 50% 92%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 10%, transparent), transparent 52%) !important;
     animation: none !important;
 }
 .forum-hero::after {
@@ -141,7 +141,7 @@ body::after {
     pointer-events: none;
     background: linear-gradient(to bottom,
         transparent 0%,
-        rgba(107, 138, 255, 0.04) 48%,
+        color-mix(in srgb, var(--stf-brand, #6d8fd6) 4%, transparent) 48%,
         rgba(8, 10, 18, 0.35) 100%);
     -webkit-mask-image: linear-gradient(to bottom, transparent, #000 55%);
     mask-image: linear-gradient(to bottom, transparent, #000 55%);
@@ -172,7 +172,7 @@ body::after {
 .hero-pill:hover {
     border-color: var(--stf-edge-strong);
     background: var(--stf-surface-2);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(107, 138, 255, 0.2);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28), 0 0 0 1px color-mix(in srgb, var(--stf-brand, #6d8fd6) 20%, transparent);
     transform: translateY(-2px);
 }
 
@@ -188,13 +188,13 @@ body .nav-logo span {
 }
 .stf-account-btn {
     border: 1px solid var(--stf-edge-strong);
-    background: rgba(107, 138, 255, 0.1);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 10%, transparent);
     box-shadow: var(--stf-inset);
     border-radius: 999px;
 }
 .stf-account-btn:hover {
     border-color: rgba(232, 197, 106, 0.4);
-    background: rgba(107, 138, 255, 0.16);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent);
 }
 .stf-account-btn:focus-visible {
     outline: none;
@@ -206,7 +206,7 @@ body .nav-logo span {
     background: linear-gradient(100deg, var(--stf-brand), color-mix(in srgb, var(--stf-brand) 70%, var(--stf-gold)), var(--stf-brand-light), var(--stf-brand));
     background-size: 280% 100%;
     color: #fff;
-    box-shadow: 0 10px 28px rgba(107, 138, 255, 0.28), var(--stf-inset);
+    box-shadow: 0 10px 28px color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent), var(--stf-inset);
 }
 .btn-primary::before {
     background: conic-gradient(from 0deg, transparent, rgba(168, 216, 255, 0.45), transparent 30%);
@@ -220,7 +220,7 @@ body .nav-logo span {
 }
 .stf-toolbar .btn-ghost:hover {
     border-color: rgba(168, 216, 255, 0.5);
-    background: rgba(107, 138, 255, 0.1);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 10%, transparent);
     color: #fff;
 }
 
@@ -246,12 +246,12 @@ body .nav-logo span {
 .forum-entry-cta { color: var(--char, var(--stf-brand)); }
 .forum-entry--primary {
     border-top-color: var(--stf-brand);
-    background: linear-gradient(180deg, rgba(107, 138, 255, 0.1), rgba(255, 255, 255, 0.035));
-    box-shadow: 0 0 0 1px rgba(107, 138, 255, 0.18), 0 16px 40px rgba(107, 138, 255, 0.08);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 10%, transparent), rgba(255, 255, 255, 0.035));
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--stf-brand, #6d8fd6) 18%, transparent), 0 16px 40px color-mix(in srgb, var(--stf-brand, #6d8fd6) 8%, transparent);
 }
 .forum-entry--primary:hover {
-    border-color: rgba(107, 138, 255, 0.55);
-    box-shadow: 0 0 0 1px rgba(107, 138, 255, 0.3), 0 22px 48px rgba(107, 138, 255, 0.16);
+    border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 55%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--stf-brand, #6d8fd6) 30%, transparent), 0 22px 48px color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent);
 }
 .forum-entry--primary .forum-entry-cta { color: var(--stf-brand); }
 .forum-entry--primary .forum-entry-icon {
@@ -260,7 +260,7 @@ body .nav-logo span {
 }
 .forum-entry-ribbon {
     background: linear-gradient(100deg, var(--stf-brand), var(--stf-gold));
-    box-shadow: 0 6px 16px rgba(107, 138, 255, 0.28);
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent);
     animation: none;
 }
 
@@ -271,7 +271,7 @@ body .nav-logo span {
     top: -64px; left: 0; right: 0;
     height: 100px;
     pointer-events: none;
-    background: radial-gradient(ellipse 50% 40% at 50% 0%, rgba(107, 138, 255, 0.06), transparent 72%);
+    background: radial-gradient(ellipse 50% 40% at 50% 0%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 6%, transparent), transparent 72%);
     opacity: 0.85;
 }
 .forum-section-inner::after {
@@ -288,7 +288,7 @@ body .nav-logo span {
     opacity: 0.7;
 }
 .forum-section--core::before {
-    background: radial-gradient(circle at 50% 0%, rgba(107, 138, 255, 0.09), transparent 55%);
+    background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 9%, transparent), transparent 55%);
 }
 
 .stf-stat b {
@@ -298,18 +298,18 @@ body .nav-logo span {
     color: transparent;
 }
 .stf-filter-btn.active {
-    background: rgba(107, 138, 255, 0.22);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 22%, transparent);
     border-color: rgba(168, 216, 255, 0.38);
     color: #fff;
     box-shadow: var(--stf-inset);
 }
 .stf-sort-btn.active {
-    background: rgba(107, 138, 255, 0.24);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 24%, transparent);
     color: #fff;
 }
 .stf-tag-chip.active {
-    background: rgba(107, 138, 255, 0.2);
-    border-color: rgba(107, 138, 255, 0.42);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 20%, transparent);
+    border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 42%, transparent);
     color: #fff;
 }
 .stf-card-expand { color: var(--stf-brand); }
@@ -323,9 +323,9 @@ body .nav-logo span {
 }
 .stf-fab {
     background: linear-gradient(100deg, var(--stf-brand), var(--stf-gold));
-    box-shadow: 0 12px 28px rgba(107, 138, 255, 0.32);
+    box-shadow: 0 12px 28px color-mix(in srgb, var(--stf-brand, #6d8fd6) 32%, transparent);
 }
-.stf-fab:hover { box-shadow: 0 16px 36px rgba(107, 138, 255, 0.4); }
+.stf-fab:hover { box-shadow: 0 16px 36px color-mix(in srgb, var(--stf-brand, #6d8fd6) 40%, transparent); }
 
 /* 帖流：材质边 + 内高光 + 12/10/8 节奏 */
 .stf-timeline,
@@ -500,7 +500,7 @@ body .nav-logo span {
 }
 .stf-pinned {
     border-radius: 12px;
-    background: rgba(107, 138, 255, 0.05);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 5%, transparent);
     border: 1px solid rgba(168, 216, 255, 0.16);
 }
 .stf-pinned-badge {
@@ -508,7 +508,7 @@ body .nav-logo span {
     color: var(--stf-gold);
 }
 .stf-feed-tab.active {
-    background: rgba(107, 138, 255, 0.2);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 20%, transparent);
     border-color: rgba(168, 216, 255, 0.28);
 }
 
@@ -516,7 +516,7 @@ body .nav-logo span {
 .stf-passport-panel {
     border-radius: 14px !important;
     background:
-        radial-gradient(ellipse at 12% 0%, rgba(107, 138, 255, 0.16), transparent 42%),
+        radial-gradient(ellipse at 12% 0%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent), transparent 42%),
         radial-gradient(ellipse at 88% 8%, rgba(232, 197, 106, 0.1), transparent 36%),
         var(--stf-surface-0) !important;
     border: 1px solid var(--stf-edge-strong) !important;
@@ -532,10 +532,10 @@ body .nav-logo span {
     border-color: rgba(232, 197, 106, 0.55);
 }
 .stf-sync-btn {
-    background: linear-gradient(135deg, rgba(107, 138, 255, 0.28), rgba(232, 197, 106, 0.14));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent), rgba(232, 197, 106, 0.14));
 }
 .stf-sync-btn:hover {
-    background: linear-gradient(135deg, rgba(107, 138, 255, 0.4), rgba(232, 197, 106, 0.2));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 40%, transparent), rgba(232, 197, 106, 0.2));
 }
 .stf-sync-dot.is-error { background: #FF8A8A; }
 
@@ -545,20 +545,20 @@ body .nav-logo span {
     border: 1px solid rgba(168, 216, 255, 0.34);
     background:
         linear-gradient(145deg, rgba(22, 28, 48, 0.95), rgba(10, 12, 22, 0.92)),
-        radial-gradient(circle at 16% 50%, rgba(107, 138, 255, 0.2), transparent 55%);
+        radial-gradient(circle at 16% 50%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 20%, transparent), transparent 55%);
     box-shadow:
         0 12px 28px rgba(0, 0, 0, 0.4),
         inset 0 1px 0 rgba(255, 255, 255, 0.1),
         inset 0 -1px 0 rgba(0, 0, 0, 0.35);
 }
 .stf-tuner-compact:focus-within {
-    border-color: rgba(107, 138, 255, 0.55);
-    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45), 0 0 14px rgba(107, 138, 255, 0.16);
+    border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 55%, transparent);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45), 0 0 14px color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent);
 }
 .stf-tuner-compact-shell {
     background: rgba(0, 0, 0, 0.42);
     border: 1px solid rgba(168, 216, 255, 0.24);
-    box-shadow: inset 0 0 14px rgba(107, 138, 255, 0.14);
+    box-shadow: inset 0 0 14px color-mix(in srgb, var(--stf-brand, #6d8fd6) 14%, transparent);
 }
 .stf-tuner-compact-led,
 .stf-tuner-led {
@@ -581,14 +581,14 @@ body .nav-logo span {
 .stf-tuner-frame {
     border-radius: 16px;
     background:
-        radial-gradient(ellipse at 50% 0%, rgba(107, 138, 255, 0.12), transparent 55%),
+        radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 12%, transparent), transparent 55%),
         linear-gradient(180deg, rgba(14, 18, 32, 0.94), rgba(8, 10, 18, 0.96));
     border: 1px solid rgba(168, 216, 255, 0.18);
     border-top: 2px solid var(--stf-brand);
     box-shadow:
         0 22px 48px rgba(0, 0, 0, 0.4),
         inset 0 1px 0 rgba(255, 255, 255, 0.06),
-        inset 0 0 40px rgba(107, 138, 255, 0.04);
+        inset 0 0 40px color-mix(in srgb, var(--stf-brand, #6d8fd6) 4%, transparent);
     position: relative;
     overflow: hidden;
 }
@@ -620,7 +620,7 @@ body .nav-logo span {
     border-radius: 10px;
     border: 1px solid rgba(168, 216, 255, 0.3);
     background: rgba(0, 0, 0, 0.35);
-    box-shadow: inset 0 0 18px rgba(107, 138, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 0 18px color-mix(in srgb, var(--stf-brand, #6d8fd6) 10%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 .stf-dial-input.is-locked {
     border-color: rgba(232, 197, 106, 0.8);
@@ -638,25 +638,25 @@ body .nav-logo span {
 body.forum-page .donate-fab {
     z-index: var(--stf-z-fab-donate) !important;
     opacity: 0.72;
-    border-color: rgba(107, 138, 255, 0.32) !important;
+    border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 32%, transparent) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.32), 0 0 0 1px rgba(232, 197, 106, 0.08) !important;
 }
 body.forum-page .donate-fab:hover {
     opacity: 0.95;
     border-color: rgba(232, 197, 106, 0.4) !important;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4), 0 0 14px rgba(107, 138, 255, 0.16) !important;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4), 0 0 14px color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent) !important;
 }
 body.forum-page .donate-fab:focus-visible {
     outline: none;
     box-shadow: var(--stf-focus) !important;
 }
 body.forum-page .donate-fab-icon {
-    border-color: rgba(107, 138, 255, 0.4) !important;
-    background: linear-gradient(135deg, rgba(107, 138, 255, 0.2), rgba(232, 197, 106, 0.14)) !important;
+    border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 40%, transparent) !important;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 20%, transparent), rgba(232, 197, 106, 0.14)) !important;
 }
 body.forum-page .donate-fab:hover .donate-fab-icon {
-    background: linear-gradient(135deg, rgba(107, 138, 255, 0.34), rgba(232, 197, 106, 0.22)) !important;
-    box-shadow: 0 0 14px rgba(107, 138, 255, 0.28);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 34%, transparent), rgba(232, 197, 106, 0.22)) !important;
+    box-shadow: 0 0 14px color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent);
     transform: scale(1.06) !important;
 }
 body.forum-page .donate-modal {
@@ -664,7 +664,7 @@ body.forum-page .donate-modal {
 }
 body.forum-page .donate-panel {
     border-color: rgba(168, 216, 255, 0.22);
-    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), 0 0 28px rgba(107, 138, 255, 0.1);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), 0 0 28px color-mix(in srgb, var(--stf-brand, #6d8fd6) 10%, transparent);
     background: rgba(10, 12, 22, 0.96);
 }
 body.forum-page .donate-tab.is-active {
@@ -692,7 +692,7 @@ body.forum-page .donate-btn-primary {
     width: min(640px, 88%);
     height: 72px;
     transform: translateX(-50%);
-    background: radial-gradient(ellipse, rgba(107, 138, 255, 0.32), rgba(232, 197, 106, 0.06) 42%, transparent 72%);
+    background: radial-gradient(ellipse, color-mix(in srgb, var(--stf-brand, #6d8fd6) 32%, transparent), rgba(232, 197, 106, 0.06) 42%, transparent 72%);
     filter: blur(12px);
     pointer-events: none;
     z-index: 0;
@@ -706,7 +706,7 @@ body.forum-page .donate-btn-primary {
     height: 2px;
     border-radius: 999px;
     background: linear-gradient(90deg, transparent, rgba(168, 216, 255, 0.35), rgba(232, 197, 106, 0.2), rgba(168, 216, 255, 0.35), transparent);
-    box-shadow: 0 0 18px rgba(107, 138, 255, 0.2);
+    box-shadow: 0 0 18px color-mix(in srgb, var(--stf-brand, #6d8fd6) 20%, transparent);
     pointer-events: none;
     z-index: 0;
 }
@@ -766,7 +766,7 @@ body.forum-page .donate-btn-primary {
 /* ---------- B6 · 聊天 / 焦点 / reduced-motion ---------- */
 .stf-chat-card {
     background: var(--stf-surface-0);
-    border: 1px solid rgba(107, 138, 255, 0.22);
+    border: 1px solid color-mix(in srgb, var(--stf-brand, #6d8fd6) 22%, transparent);
     border-radius: 14px;
     box-shadow: var(--stf-metal);
     filter: none;
@@ -774,8 +774,8 @@ body.forum-page .donate-btn-primary {
     -webkit-backdrop-filter: none;
 }
 .stf-chat-header {
-    background: rgba(107, 138, 255, 0.07);
-    border-bottom: 1px solid rgba(107, 138, 255, 0.14);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 7%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--stf-brand, #6d8fd6) 14%, transparent);
 }
 .stf-chat-bubble {
     background: rgba(255, 255, 255, 0.06);
@@ -784,8 +784,8 @@ body.forum-page .donate-btn-primary {
     border-radius: 12px;
 }
 .stf-chat-message.is-self .stf-chat-bubble {
-    background: linear-gradient(135deg, rgba(107, 138, 255, 0.28), rgba(168, 216, 255, 0.1));
-    border-color: rgba(107, 138, 255, 0.32);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent), rgba(168, 216, 255, 0.1));
+    border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 32%, transparent);
 }
 .stf-chat-empty {
     color: rgba(168, 216, 255, 0.55);
