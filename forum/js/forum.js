@@ -1786,6 +1786,34 @@
         });
     }
 
+    /* ============ Scroll reveal（论坛不加载 main.js，须本地补齐） ============ */
+    /* style.css 中 .reveal 默认 opacity:0；世界观区内容几乎全包在 .reveal 里，
+       若从不加 .visible，#worldview 会整区「全黑空白」——讨论区/角色卡因主体不在 reveal 内仍可见。 */
+    function initScrollReveal() {
+        var reveals = document.querySelectorAll('.reveal');
+        if (!reveals.length) return;
+        var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+        if (reduceMotion || !('IntersectionObserver' in window)) {
+            for (var i = 0; i < reveals.length; i++) reveals[i].classList.add('visible');
+            return;
+        }
+        var obs = new IntersectionObserver(function (entries) {
+            for (var j = 0; j < entries.length; j++) {
+                if (!entries[j].isIntersecting) continue;
+                var el = entries[j].target;
+                var parent = el.parentElement;
+                var siblings = parent
+                    ? Array.prototype.filter.call(parent.children, function (c) { return c.classList.contains('reveal'); })
+                    : [];
+                var idx = siblings.indexOf(el);
+                if (idx > 0) el.style.transitionDelay = (idx * 0.1) + 's';
+                el.classList.add('visible');
+                obs.unobserve(el);
+            }
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+        for (var k = 0; k < reveals.length; k++) obs.observe(reveals[k]);
+    }
+
     /* ============ Nav enhancements: mobile toggle + scrollspy ============ */
     function initNavEnhancements() {
         var toggle = document.getElementById('nav-toggle');
@@ -2450,6 +2478,10 @@
 
     /* ============ Init ============ */
     function init() {
+        /* 与数据层解耦：即便 StarTorchData 失败，世界观/分区标题也必须能从 opacity:0 解除 */
+        initScrollReveal();
+        initNavEnhancements();
+
         if (!window.StarTorchData) {
             console.warn('[StarTorchForum] Data layer not loaded');
             return;
@@ -2463,7 +2495,6 @@
         bindEvents();
         updateFilterUI();
         renderCommunity();
-        initNavEnhancements();
         handlePostDeepLink();
 
         /* 投稿附件上传（独立模块，不依赖飞行雪绒站 UploadManager） */

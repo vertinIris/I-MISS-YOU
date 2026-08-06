@@ -2017,6 +2017,20 @@ html.archive-orbit-active .archive-album-shelf {
     .forum-entry:hover, .lore-card:hover, .stf-card:hover,
     .hero-pill:hover, .archive-float:hover .character-archive-card,
     .stf-account-btn:hover, .stf-upload-zone:hover { transform: none !important; }
+    /* Forum does not load main.js: show .reveal immediately under reduced motion */
+    body.forum-page .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+}
+
+/* Hash deep-link safety: style.css .reveal defaults to opacity:0; forum.js adds IO */
+#worldview:target .reveal,
+#characters-archive:target .reveal,
+#stf-community:target .reveal {
+    opacity: 1;
+    transform: none;
 }
 
 /* ============ ?????????? / ???? / ????? ============ */

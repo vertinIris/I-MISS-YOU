@@ -38,14 +38,14 @@ const symbolChecks = [
     { file: 'js/main.js', includes: ["version: 'v10.0'"] },
     { file: 'docs/STATUS.md', includes: ['v10.0', 'migration-023'] },
     { file: '.github/workflows/static-checks.yml', includes: ['smoke-check', 'extreme-audit'] },
-    { file: 'forum/js/forum.js', includes: ['safeMediaUrl', 'SecurityShield.init', 'submitBusy', 'openPostDetail', 'is_pinned', 'initForumRealmSelector'] },
+    { file: 'forum/js/forum.js', includes: ['safeMediaUrl', 'SecurityShield.init', 'submitBusy', 'openPostDetail', 'is_pinned', 'initForumRealmSelector', 'initScrollReveal'] },
     { file: 'js/snow-realm.js', includes: ['snowfluff-realm-sync', 'FORUM_COPY', 'BroadcastChannel'] },
-    { file: 'forum/index.html', includes: ['stf-realm-dropdown', 'snow-realm.js'] },
+    { file: 'forum/index.html', includes: ['stf-realm-dropdown', 'snow-realm.js', 'id="worldview"', 'lore-card', '世界观考据'] },
     { file: 'forum/js/forum-cloud.js', includes: ['is_pinned', 'parent_id'] },
     { file: 'docs/CONTENT-PIPELINE.md', includes: ['content:build', '论坛内容'] },
     { file: 'forum/js/forum-auth.js', includes: ['updateNickname', 'signOut', 'applyUser'] },
     { file: 'forum/js/forum-chat.js', includes: ['setChatExpanded', 'touchSelfPresence'] },
-    { file: 'forum/forum.css', includes: ['transform: none !important', '--stf-z-chat-expand', 'stf-post-detail'] }
+    { file: 'forum/forum.css', includes: ['transform: none !important', '--stf-z-chat-expand', 'stf-post-detail', '#worldview:target .reveal'] }
 ];
 
 /** 期望存在的 migration 前缀（020 有 tables/chat 双文件属历史命名，均计入） */
