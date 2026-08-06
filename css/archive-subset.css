@@ -1,0 +1,908 @@
+/* AUTO-EXTRACTED subset from css/style.css — do not hand-edit large blocks;
+ * re-run: node scripts/extract-css-subsets.mjs
+ * .reveal must remain for initScrollReveal / worldview visibility.
+ */
+
+
+/* ---- reset ---- */
+
+*,
+*::before,
+*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body {
+  font-family: var(--font-sans, "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif);
+  color: var(--text-primary, #faf8ff);
+  background: var(--bg-primary, #0a0a12);
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button, input, textarea, select { font: inherit; color: inherit; }
+ul, ol { list-style: none; }
+.icon-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.icon { width: 1.1em; height: 1.1em; display: inline-block; vertical-align: -0.15em; flex-shrink: 0; }
+
+
+/* ---- reveal (KEEP for consistency) ---- */
+
+/* ============ Scroll Reveal ============ */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* ============ Reduced Motion ============ */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .css-snowflake,
+    .shooting-star {
+        animation: none !important;
+    }
+
+    .gradient-text,
+    .gradient-dynamic-bg,
+    .btn-primary,
+    .btn-music,
+    .egg-btn,
+    .diary-date,
+    .timeline-line,
+    .post-card::before,
+    .banner-gradient,
+    .ult-energy-core,
+    .hex-shield,
+    .data-rain,
+    .resonance-ripple,
+    .resonance-particle,
+    .comment-area {
+        animation: none !important;
+    }
+}
+
+
+/* ---- character archive + zone layout ---- */
+
+/* ============================================================
+ * Character Archive — 爱弥斯角色档案
+ * ============================================================ */
+.character-archive {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+.archive-intro {
+    padding: 32px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(255,107,157,0.08), rgba(107,138,255,0.08), rgba(182,107,255,0.06));
+    border: 1px solid rgba(255,107,157,0.15);
+}
+
+.archive-intro-text {
+    font-size: 0.95rem;
+    line-height: 1.9;
+    color: var(--text-secondary, #c8d0e0);
+}
+
+.archive-intro-text strong {
+    color: var(--text-primary, #e8ecf4);
+    font-weight: 600;
+}
+
+.archive-info-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.archive-info-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--text-secondary, #a8b0c0);
+}
+
+.archive-info-tag .tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.archive-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.archive-card {
+    padding: 28px;
+    border-radius: 16px;
+}
+
+.archive-card-full {
+    grid-column: 1 / -1;
+}
+
+.archive-card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary, #e8ecf4);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.archive-card-title .icon {
+    font-size: 1.1rem;
+}
+
+.archive-timeline {
+    position: relative;
+    padding-left: 24px;
+}
+
+.archive-timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    background: linear-gradient(180deg, rgba(255,107,157,0.4), rgba(107,138,255,0.4), rgba(182,107,255,0.2));
+    border-radius: 2px;
+}
+
+.archive-timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+    padding-left: 4px;
+}
+
+.archive-timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.archive-timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -22px;
+    top: 6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--text-primary, #e8ecf4);
+    border: 2px solid rgba(255,107,157,0.3);
+    box-shadow: 0 0 8px rgba(255,107,157,0.2);
+}
+
+.archive-timeline-era {
+    font-size: var(--fs-micro);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255,107,157,0.7);
+    margin-bottom: 4px;
+}
+
+.archive-timeline-text {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--text-secondary, #b8c0d0);
+}
+
+.archive-trait-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.archive-trait-item {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--text-secondary, #b8c0d0);
+}
+
+.archive-trait-item:last-child {
+    border-bottom: none;
+}
+
+.archive-trait-item strong {
+    color: var(--text-primary, #e8ecf4);
+    font-weight: 600;
+}
+
+.archive-ability {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.archive-ability-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.archive-ability-label {
+    flex-shrink: 0;
+    width: 72px;
+    font-size: var(--fs-micro);
+    font-weight: 600;
+    color: rgba(168,216,255,0.6);
+    padding-top: 2px;
+}
+
+.archive-ability-value {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--text-secondary, #b8c0d0);
+}
+
+.archive-ability-value strong {
+    color: var(--text-primary, #e8ecf4);
+}
+
+.archive-relation {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+}
+
+.archive-relation-name {
+    flex-shrink: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary, #e8ecf4);
+    min-width: 60px;
+}
+
+.archive-relation-desc {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--text-secondary, #a8b0c0);
+}
+
+.archive-music-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.archive-music-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.archive-music-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(255,107,157,0.15), rgba(107,138,255,0.15));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--fs-body);
+}
+
+.archive-music-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.archive-music-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary, #e8ecf4);
+}
+
+.archive-music-desc {
+    font-size: var(--fs-micro);
+    color: var(--text-secondary, #9098a8);
+    margin-top: 2px;
+}
+
+.archive-quote {
+    text-align: center;
+    padding: 36px 32px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(255,107,157,0.04), rgba(107,138,255,0.04));
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+.archive-quote-text {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    font-weight: 500;
+    color: var(--text-primary, #e8ecf4);
+    font-family: 'Noto Serif SC', serif;
+    margin-bottom: 12px;
+}
+
+.archive-quote-source {
+    font-size: 0.8rem;
+    color: var(--text-tertiary, #8088a0);
+}
+
+.archive-source-note {
+    font-size: var(--fs-micro);
+    color: var(--text-tertiary, #707890);
+    line-height: 1.6;
+    padding: 16px 20px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    grid-column: 1 / -1;
+}
+
+.archive-source-note a {
+    color: rgba(168,216,255,0.7);
+    text-decoration: none;
+}
+
+.archive-source-note a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 720px) {
+    .archive-grid {
+        grid-template-columns: 1fr;
+    }
+    .archive-intro {
+        padding: 20px;
+    }
+    .archive-card {
+        padding: 20px;
+    }
+}
+
+/* =========================================================
+   v10 · 角色入口卡 + 专区页样式
+   ========================================================= */
+
+/* 补充角色着色令牌（专区与入口卡共用） */
+:root {
+    --denia-lavender: #B89CD9;
+    --sigrica-green: #4EC89A;
+    --linne-purple: #B98CFF;
+    --mornye-red: #FF6B5B;
+    --lucilla-gold: #E8C56A;
+}
+
+/* ---- 首页角色入口卡 ---- */
+.character-entry {
+    --char: var(--c-primary, #F4729B);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.6rem 1.6rem 1.3rem;
+    text-decoration: none;
+    color: #fff;
+    border: 1px solid color-mix(in srgb, var(--char) 38%, transparent);
+    border-radius: 18px;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--char) 15%, var(--surface-card)) 0%, var(--surface-card) 72%);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    overflow: hidden;
+}
+.character-entry:hover {
+    transform: translateY(-4px);
+    border-color: var(--char);
+    box-shadow: 0 14px 32px -14px color-mix(in srgb, var(--char) 60%, transparent);
+}
+.character-entry-badge {
+    width: 56px;
+    height: 56px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--char);
+    color: #fff;
+    box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--char) 70%, transparent);
+    margin-bottom: 0.3rem;
+}
+.entry-badge-icon {
+    width: 30px;
+    height: 30px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.character-entry-name {
+    font-family: var(--font-serif, "Noto Serif SC");
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+.character-entry-alias {
+    font-size: 0.85rem;
+    color: color-mix(in srgb, var(--char) 78%, #fff);
+    font-weight: 500;
+}
+.character-entry-tagline {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.6;
+}
+.character-entry-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.3rem;
+}
+.char-tag {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--char) 16%, transparent);
+    color: color-mix(in srgb, var(--char) 72%, #fff);
+    border: 1px solid color-mix(in srgb, var(--char) 30%, transparent);
+}
+.character-entry-cta {
+    margin-top: 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--char);
+}
+.character-entry-cta .icon {
+    width: 1em;
+    height: 1em;
+    transition: transform 0.2s ease;
+}
+.character-entry:hover .character-entry-cta .icon {
+    transform: translateX(3px);
+}
+.character-entry--locked {
+    opacity: 0.55;
+    filter: grayscale(0.3);
+    cursor: not-allowed;
+    border-style: dashed;
+}
+.character-entry--locked .character-entry-cta {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ---- 替换 emoji 的内联 SVG 图标统一尺寸 ---- */
+.icon,
+.loc-icon,
+.nav-account-icon {
+    width: 1.15em;
+    height: 1.15em;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vertical-align: -0.18em;
+}
+.archive-card-title .icon {
+    margin-right: 0.45em;
+}
+.loc-icon {
+    width: 1.4rem;
+    height: 1.4rem;
+}
+
+/* ---- 专区页（characters/*.html） ---- */
+.zone-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 1.2rem;
+    background: rgba(10, 12, 24, 0.9);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.zone-topbar .zone-home {
+    font-family: var(--font-serif, "Noto Serif SC");
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex: none;
+}
+.zone-switch {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: min(70vw, 560px);
+    padding-bottom: 2px;
+    scrollbar-width: thin;
+}
+.zone-switch a,
+.zone-switch span {
+    font-size: 0.82rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    white-space: nowrap;
+    flex: none;
+}
+.zone-switch a:hover {
+    color: #fff;
+    border-color: var(--char, #F4729B);
+}
+.zone-switch .is-active {
+    color: #fff;
+    background: color-mix(in srgb, var(--char, #F4729B) 22%, transparent);
+    border-color: var(--char, #F4729B);
+}
+.zone-switch .is-locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.zone-hero {
+    --char: var(--c-primary, #F4729B);
+    text-align: center;
+    padding: 3.5rem 1.2rem 2.5rem;
+    background: radial-gradient(120% 100% at 50% 0%, color-mix(in srgb, var(--char) 22%, transparent), transparent 60%);
+}
+.zone-hero-badge {
+    width: 84px;
+    height: 84px;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--char);
+    color: #fff;
+    box-shadow: 0 10px 30px -10px color-mix(in srgb, var(--char) 70%, transparent);
+}
+.zone-hero-badge svg {
+    width: 44px;
+    height: 44px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.zone-hero-name {
+    font-family: var(--font-serif, "Noto Serif SC");
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900;
+    color: #fff;
+}
+.zone-hero-alias {
+    font-size: var(--fs-body);
+    color: color-mix(in srgb, var(--char) 75%, #fff);
+    margin-top: 0.3rem;
+}
+.zone-hero-tagline {
+    max-width: 640px;
+    margin: 0.8rem auto 0;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.7;
+}
+
+.zone-breadcrumb {
+    max-width: 880px;
+    margin: 1.5rem auto 0;
+    padding: 0 1.2rem;
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+.zone-breadcrumb a {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+}
+.zone-breadcrumb a:hover {
+    color: #fff;
+}
+.zone-breadcrumb .sep {
+    margin: 0 0.4rem;
+    opacity: 0.5;
+}
+
+.zone-stats {
+    max-width: 880px;
+    margin: 1.5rem auto;
+    padding: 0 1.2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.8rem;
+}
+.zone-stat {
+    background: var(--surface-card);
+    border: 1px solid var(--surface-card-border);
+    border-radius: 14px;
+    padding: 0.9rem 1rem;
+    min-width: 0;
+}
+.zone-stat-label {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.05em;
+}
+.zone-stat-value {
+    font-size: 0.92rem;
+    color: #fff;
+    margin-top: 0.3rem;
+    line-height: 1.5;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.zone-modules {
+    max-width: 880px;
+    margin: 2rem auto 4rem;
+    padding: 0 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 900px;
+}
+.module {
+    background: var(--surface-card);
+    border: 1px solid var(--surface-card-border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.25s ease;
+}
+.module[open] {
+    border-color: color-mix(in srgb, var(--char, #F4729B) 40%, rgba(255,255,255,0.12));
+}
+.module > summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 1.1rem 1.3rem;
+    font-family: var(--font-serif, "Noto Serif SC");
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+}
+.module > summary::-webkit-details-marker {
+    display: none;
+}
+.module > summary .module-icon {
+    width: 1.3rem;
+    height: 1.3rem;
+    fill: none;
+    stroke: var(--char, #F4729B);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex: none;
+}
+.module > summary .module-chevron {
+    margin-left: auto;
+    width: 1.2rem;
+    height: 1.2rem;
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.5);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.25s ease;
+}
+.module[open] > summary .module-chevron {
+    transform: rotate(90deg);
+}
+.module-body {
+    padding: 0 1.3rem 1.3rem;
+}
+.module-body .archive-timeline,
+.module-body .archive-trait-list,
+.module-body .archive-ability,
+.module-body .archive-relation,
+.module-body .archive-music-list,
+.module-body .archive-quote {
+    margin-top: 0;
+}
+
+.zone-source {
+    max-width: 880px;
+    margin: 0 auto 3rem;
+    padding: 1.2rem 1.2rem 0;
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.7;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-char="aimisi"]  { --char: var(--aimisi-pink); }
+[data-char="denia"]   { --char: var(--denia-lavender); }
+[data-char="sigrica"] { --char: var(--sigrica-green); }
+[data-char="drifter"] { --char: var(--drifter-blue); }
+[data-char="linne"]   { --char: var(--linne-purple); }
+[data-char="mornye"]  { --char: var(--mornye-red); }
+[data-char="lucilla"] { --char: var(--lucilla-gold); }
+
+/* ============ 角色档案：状态徽标与注记（达妮娅等） ============ */
+.archive-status-badge {
+    display: inline-block;
+    padding: 0.12em 0.7em;
+    border-radius: 999px;
+    font-size: 0.82em;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #E8ECFF;
+    background: linear-gradient(135deg, rgba(107,138,255,0.35), rgba(184,156,217,0.35));
+    border: 1px solid rgba(168,216,255,0.5);
+    box-shadow: 0 0 12px rgba(107,138,255,0.25);
+}
+.archive-note {
+    margin: 1.4rem 0 0;
+    padding: 0.9rem 1.1rem;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: rgba(232,236,255,0.78);
+    background: rgba(107,138,255,0.08);
+    border-left: 3px solid rgba(168,216,255,0.55);
+    border-radius: 0 10px 10px 0;
+}
+
+/* 来源层级徽标 · 信物 · 官方锚点（长文档案） */
+.source-tier {
+    display: inline-block;
+    margin-right: 0.35em;
+    padding: 0.08em 0.45em;
+    border-radius: 4px;
+    font-family: var(--font-mono, "IBM Plex Mono", "Cascadia Code", ui-monospace, monospace);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    vertical-align: 0.08em;
+    white-space: nowrap;
+}
+@media (max-width: 480px) {
+    .source-tier { white-space: normal; }
+}
+.source-tier--official {
+    color: oklch(88% 0.06 145);
+    background: oklch(45% 0.08 145 / 0.28);
+    border: 1px solid oklch(70% 0.1 145 / 0.35);
+}
+.source-tier--consensus {
+    color: oklch(88% 0.06 250);
+    background: oklch(45% 0.08 250 / 0.28);
+    border: 1px solid oklch(70% 0.1 250 / 0.35);
+}
+.source-tier--original {
+    color: oklch(88% 0.08 350);
+    background: oklch(45% 0.1 350 / 0.28);
+    border: 1px solid oklch(70% 0.12 350 / 0.35);
+}
+.archive-timeline-text .source-tier,
+.archive-trait-item .source-tier,
+.archive-ability-value .source-tier,
+.archive-relation-desc .source-tier {
+    margin-bottom: 0.15em;
+}
+.archive-relic-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+.archive-relic {
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    border: 1px solid oklch(96% 0.01 350 / 0.1);
+    background: oklch(96% 0.01 350 / 0.03);
+}
+.archive-relic-name {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+    color: var(--char, #e879a8);
+}
+.archive-relic-desc {
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.75;
+    color: oklch(88% 0.02 350 / 0.88);
+}
+.archive-anchor-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+.archive-anchor {
+    display: grid;
+    grid-template-columns: minmax(5.5rem, 7rem) 1fr;
+    gap: 0.5rem 0.85rem;
+    padding: 0.65rem 0;
+    border-bottom: 1px solid oklch(96% 0.01 350 / 0.08);
+    font-size: 0.9rem;
+    line-height: 1.65;
+}
+.archive-anchor:last-child { border-bottom: none; }
+.archive-anchor-key {
+    font-family: var(--font-mono, "IBM Plex Mono", ui-monospace, monospace);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: oklch(72% 0.06 350 / 0.75);
+}
+.archive-anchor-val { color: oklch(90% 0.02 350 / 0.9); }
+.archive-subdetails {
+    margin: 0.75rem 0 0;
+    border: 1px solid oklch(96% 0.01 350 / 0.08);
+    border-radius: 8px;
+    background: oklch(0% 0 0 / 0.15);
+}
+.archive-subdetails > summary {
+    cursor: pointer;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: oklch(85% 0.04 350);
+    list-style: none;
+}
+.archive-subdetails > summary::-webkit-details-marker { display: none; }
+.archive-subdetails[open] > summary {
+    border-bottom: 1px solid oklch(96% 0.01 350 / 0.08);
+}
+.archive-subdetails .archive-subbody {
+    padding: 0.85rem 0.9rem 1rem;
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: oklch(88% 0.02 350 / 0.88);
+}
+.archive-quote-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.archive-quote-item {
+    padding: 0.85rem 1rem;
+    border-left: 3px solid color-mix(in srgb, var(--char, #e879a8) 55%, transparent);
+    background: oklch(96% 0.01 350 / 0.03);
+    border-radius: 0 8px 8px 0;
+}
+
