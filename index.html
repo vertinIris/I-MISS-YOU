@@ -43,15 +43,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&family=ZCOOL+XiaoWei&display=swap" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&family=ZCOOL+XiaoWei&display=swap"></noscript>
 
-    <!-- Styles -->
-    <link rel="stylesheet" href="css/tokens-base.css">
-    <link rel="stylesheet" href="css/tokens-snow.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/secret-portal.css">
-    <link rel="stylesheet" href="css/community-polish.css">
-    <link rel="stylesheet" href="css/banding-fix.css">
-    <link rel="stylesheet" href="css/donation.css">
-    <link rel="stylesheet" href="css/snow-atmosphere.css">
+    <!-- Styles (Stage II: 8 个 CSS 合并压缩为 1 个 → dist/css/main.min.css，200KB→130KB) -->
+    <link rel="stylesheet" href="dist/css/main.min.css">
 </head>
 <body>
 
@@ -1751,24 +1744,11 @@
     <!-- Supabase SDK: async 加载，不阻塞页面渲染；弱网环境自动降级 -->
     <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
             onerror="console.warn('[Phase3] Supabase SDK CDN 加载失败，回退纯本地模式'); window.__supabaseLoadFailed=true;"></script>
-    <script defer src="dist/js/security-shield.js"></script>
-    <script defer src="dist/js/content-utils.js"></script>
-    <script defer src="dist/js/supabase-adapter.js"></script>
-    <script defer src="dist/js/repository.js"></script>
-    <script defer src="dist/js/admin-auth.js"></script>
-    <script defer src="dist/js/rate-limiter.js"></script>
-    <script defer src="dist/js/auth-manager.js"></script>
-    <script defer src="dist/js/sync-manager.js"></script>
-    <script defer src="dist/js/upload-manager.js"></script>
-    <script defer src="dist/js/rate-limiter-client.js"></script>
-    <script defer src="dist/js/admin-panel.js"></script>
-    <script defer src="dist/js/particles.js"></script>
     <div id="secret-portal-root"></div>
-    <script defer src="dist/js/secret-portal.js"></script>
-    <script defer src="dist/js/snow-easter.js"></script>
-    <script defer src="dist/js/snow-realm.js"></script>
-    <script defer src="dist/js/modal-a11y.js"></script>
-    <script defer src="dist/js/main.js"></script>
+    <!-- Stage II: 18 个本地 JS 合并为 1 个 bundle（477KB→222KB ↓53.4%）+ SRI 完整性校验 -->
+    <script defer src="dist/bundle-main.js"
+            integrity="sha384-OK0OpwzNgko0vHGh0YxO3/yDKKUlnKU3vug/llgU1RKwnS75QOs4znG7MdjeV1vS"
+            crossorigin="anonymous"></script>
     <!-- 管理员登录 Modal（替代原生 prompt，移动端友好） -->
     <div class="admin-modal-overlay" id="admin-login-modal" hidden>
         <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
@@ -1831,6 +1811,6 @@
         </div>
     </div>
 
-    <script defer src="dist/js/donation.js"></script>
+    <!-- donation.js 已合并入 bundle-main.js（Stage II） -->
 </body>
 </html>

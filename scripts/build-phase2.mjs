@@ -1,0 +1,248 @@
+/**
+ * 飞行雪绒 · Stage II 构建
+ * 1) JS 合并：主站 18 文件 → bundle-main.js；论坛 15 文件 → bundle-forum.js（按原顺序，整体 terser）
+ * 2) CSS 压缩：主站 8 个 + 论坛 8 个 → 合并压缩为内联用字符串 + 外链 .min.css
+ * 3) SRI：sha384 哈希
+ * 4) Source Map：bundle JS 生成 .map（不入仓库）
+ */
+import { minify } from 'terser';
+import { minify as cssMinify } from 'csso';
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(__dirname, '..');
+const DIST = path.join(ROOT, 'dist');
+
+// ============================================================
+// 1. 文件清单与顺序（严格按 index.html / forum/index.html 中 <script> 出现顺序）
+// ============================================================
+
+// 主站 18 个本地 JS（不含 CDN supabase.min.js）
+const MAIN_JS = [
+  'js/security-shield.js',
+  'js/content-utils.js',
+  'js/supabase-adapter.js',
+  'js/repository.js',
+  'js/admin-auth.js',
+  'js/rate-limiter.js',
+  'js/auth-manager.js',
+  'js/sync-manager.js',
+  'js/upload-manager.js',
+  'js/rate-limiter-client.js',
+  'js/admin-panel.js',
+  'js/particles.js',
+  'js/secret-portal.js',
+  'js/snow-easter.js',
+  'js/snow-realm.js',
+  'js/modal-a11y.js',
+  'js/main.js',
+  'js/donation.js',
+];
+
+// 论坛 15 个本地 JS（不含 CDN supabase.min.js；含跨目录引用的 ../js/*）
+const FORUM_JS = [
+  'forum/js/forum-import-data.js',
+  'forum/js/forum-data.js',
+  'js/snow-realm.js',            // ../js/snow-realm.js
+  'js/security-shield.js',       // ../js/security-shield.js
+  'js/rate-limiter-client.js',   // ../js/rate-limiter-client.js
+  'js/modal-a11y.js',            // ../js/modal-a11y.js
+  'forum/js/forum-auth.js',
+  'forum/js/forum-upload.js',
+  'forum/js/forum.js',
+  'forum/js/forum-sync.js',
+  'forum/js/forum-supabase.js',
+  'forum/js/forum-cloud.js',
+  'forum/js/forum-chat.js',
+  'forum/js/forum-easter.js',
+  'js/donation.js',              // ../js/donation.js
+];
+
+// 主站 CSS（index.html 中 <link> 顺序）
+const MAIN_CSS = [
+  'css/tokens-base.css',
+  'css/tokens-snow.css',
+  'css/style.css',
+  'css/secret-portal.css',
+  'css/community-polish.css',
+  'css/banding-fix.css',
+  'css/donation.css',
+  'css/snow-atmosphere.css',
+];
+
+// 论坛 CSS（forum/index.html 中 <link> 顺序）
+const FORUM_CSS = [
+  'css/tokens-base.css',
+  'css/forum-shared.css',
+  'css/tokens-stf.css',
+  'css/donation.css',
+  'forum/forum.css',
+  'forum/forum-easter.css',
+  'forum/forum-theme.css',
+  'forum/forum-visual.css',
+];
+
+// 角色页 CSS（7 个角色页共用，5 个文件）
+const ARCHIVE_CSS = [
+  'css/tokens-base.css',
+  'css/tokens-snow.css',
+  'css/archive-subset.css',
+  'css/snow-atmosphere.css',
+  'css/zone-atmosphere.css',
+];
+
+// 全局保留符号（与 Stage I 一致）
+const RESERVED_GLOBALS = [
+  'AdminAuth','AdminPanel','AuthManager','ClientRateLimiter','DataRepository',
+  'SecurityShield','SnowParticles','SupabaseAdapter','SyncManager','UploadManager',
+  'ContentUtils','SnowRealm','SnowEaster','SecretPortal','ModalA11y','__FXRE',
+  'escapeHtml','formatTime','showSubmitToast','openAdminLoginModal',
+  'StarTorchAuth','StarTorchChat','StarTorchCloud','StarTorchData','StarTorchEaster',
+  'StarTorchSync','StarTorchUpload','StarTorchSupabase','stfInitAll',
+  'renderComments','renderCommunity','handleCommentSubmit','handleDeleteComment',
+  'applyRealtimeCommentEvent','ensureProfileExists','reconcileCommentThread',
+  'reconcileCommunityGrid','syncAllPostCommentCounts','manualRefreshAll',
+  'toggleBookmark','openDonationModal','closeDonationModal','stripeCheckout',
+  'FlyingEdelweissDonate','forumSupabase','StarTorchForum',
+];
+
+const TERSER_OPTS = {
+  compress: { defaults: true, passes: 1, unsafe: false, unsafe_comps: false,
+              reduce_vars: true, hoist_funs: false, hoist_vars: false,
+              dead_code: true, drop_debugger: true, drop_console: false, keep_infinity: true },
+  mangle: { toplevel: false, eval: false, reserved: RESERVED_GLOBALS,
+            keep_fnames: true, keep_classnames: true },
+  format: { comments: false, preserve_annotations: false, semicolons: true, beautify: false },
+  sourceMap: { filename: null, url: null },  // 后面按需设置
+};
+
+// ============================================================
+// 2. 工具函数
+// ============================================================
+function fmt(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/1024/1024).toFixed(2) + ' MB';
+}
+
+function sriSha384(buf) {
+  const hash = crypto.createHash('sha384').update(buf).digest('base64');
+  return `sha384-${hash}`;
+}
+
+function readConcat(fileList) {
+  return fileList.map(rel => {
+    const fp = path.join(ROOT, rel);
+    if (!fs.existsSync(fp)) throw new Error(`源文件不存在: ${rel}`);
+    return fs.readFileSync(fp, 'utf8');
+  }).join('\n;\n');  // 分号分隔避免 IIFE 之间 ASI 问题
+}
+
+// ============================================================
+// 3. JS 合并 + 压缩
+// ============================================================
+async function buildBundle(fileList, outName) {
+  console.log(`\n[BUILD] ── 构建 ${outName} ──`);
+  const srcConcat = readConcat(fileList);
+  const srcSize = Buffer.byteLength(srcConcat, 'utf8');
+  console.log(`[BUILD]   合并源文件 ${fileList.length} 个，总体积 ${fmt(srcSize)}`);
+
+  const opts = JSON.parse(JSON.stringify(TERSER_OPTS));  // 深拷贝
+  opts.sourceMap = {
+    filename: outName,
+    url: outName + '.map',
+  };
+
+  const result = await minify(srcConcat, opts);
+  if (result.error) throw new Error(`Terser 压缩失败 ${outName}: ${result.error}`);
+  if (!result.code) throw new Error(`Terser 产物为空 ${outName}`);
+
+  const outPath = path.join(DIST, outName);
+  const mapPath = path.join(DIST, outName + '.map');
+
+  fs.writeFileSync(outPath, result.code, 'utf8');
+  if (result.map) {
+    // Terser 可能返回字符串或对象；统一为字符串写入
+    const mapStr = typeof result.map === 'string' ? result.map : JSON.stringify(result.map);
+    fs.writeFileSync(mapPath, mapStr, 'utf8');
+  }
+
+  const dstSize = Buffer.byteLength(result.code, 'utf8');
+  const ratio = (dstSize / srcSize * 100).toFixed(1);
+  const saved = ((1 - dstSize/srcSize) * 100).toFixed(1);
+  const sri = sriSha384(Buffer.from(result.code, 'utf8'));
+
+  console.log(`[BUILD]   ✅ ${outName}: ${fmt(srcSize)} → ${fmt(dstSize)} (${ratio}%, 节省 ${saved}%)`);
+  console.log(`[BUILD]   ✅ Source Map: ${outName}.map (${result.map ? fmt(Buffer.byteLength(JSON.stringify(result.map))) : 'N/A'})`);
+  console.log(`[BUILD]   ✅ SRI: ${sri.substring(0, 30)}...`);
+
+  return { name: outName, srcSize, dstSize, ratio, saved, sri, mapGenerated: !!result.map };
+}
+
+// ============================================================
+// 4. CSS 压缩
+// ============================================================
+function buildCss(fileList, outName) {
+  console.log(`\n[BUILD] ── 构建 ${outName} ──`);
+  const srcConcat = readConcat(fileList);
+  const srcSize = Buffer.byteLength(srcConcat, 'utf8');
+  console.log(`[BUILD]   合并源 CSS ${fileList.length} 个，总体积 ${fmt(srcSize)}`);
+
+  const result = cssMinify(srcConcat, { restructure: true, comments: false });
+  const minified = result.css;
+  const dstSize = Buffer.byteLength(minified, 'utf8');
+  const ratio = (dstSize / srcSize * 100).toFixed(1);
+  const saved = ((1 - dstSize/srcSize) * 100).toFixed(1);
+
+  // 写入 dist/css/ 供外链用（角色页等）
+  const outPath = path.join(DIST, 'css', outName);
+  fs.mkdirSync(path.dirname(outPath), { recursive: true });
+  fs.writeFileSync(outPath, minified, 'utf8');
+
+  console.log(`[BUILD]   ✅ ${outName}: ${fmt(srcSize)} → ${fmt(dstSize)} (${ratio}%, 节省 ${saved}%)`);
+
+  return { name: outName, srcSize, dstSize, ratio, saved, css: minified };
+}
+
+// ============================================================
+// 5. 执行
+// ============================================================
+(async () => {
+  fs.mkdirSync(path.join(DIST, 'css'), { recursive: true });
+
+  const report = {
+    generatedAt: new Date().toISOString(),
+    stage: 'phase-2',
+    bundles: {},
+    css: {},
+  };
+
+  // JS bundles
+  report.bundles.main = await buildBundle(MAIN_JS, 'bundle-main.js');
+  report.bundles.forum = await buildBundle(FORUM_JS, 'bundle-forum.js');
+
+  // CSS bundles
+  report.css.main = buildCss(MAIN_CSS, 'main.min.css');
+  report.css.forum = buildCss(FORUM_CSS, 'forum.min.css');
+  report.css.archive = buildCss(ARCHIVE_CSS, 'archive.min.css');
+
+  // 汇总
+  console.log('\n' + '='.repeat(72));
+  console.log('[BUILD] Stage II 汇总');
+  console.log('='.repeat(72));
+  console.log(`  bundle-main.js  : ${fmt(report.bundles.main.dstSize)}  (SRI: ${report.bundles.main.sri.substring(0,20)}...)`);
+  console.log(`  bundle-forum.js : ${fmt(report.bundles.forum.dstSize)}  (SRI: ${report.bundles.forum.sri.substring(0,20)}...)`);
+  console.log(`  main.min.css    : ${fmt(report.css.main.dstSize)}`);
+  console.log(`  forum.min.css   : ${fmt(report.css.forum.dstSize)}`);
+  console.log(`  archive.min.css : ${fmt(report.css.archive.dstSize)}`);
+  console.log('='.repeat(72));
+
+  fs.writeFileSync(
+    path.join(DIST, 'build-report-phase2.json'),
+    JSON.stringify(report, null, 2)
+  );
+  console.log('[BUILD] 报表写入 dist/build-report-phase2.json');
+})();

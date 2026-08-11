@@ -38,15 +38,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap"></noscript>
-    <link rel="stylesheet" href="../css/tokens-base.css">
-    <!-- forum-shared.css 共享子集（含 .reveal）；品牌色由 tokens-stf 在其后收口，避免粉令牌污染 -->
-    <link rel="stylesheet" href="../css/forum-shared.css">
-    <link rel="stylesheet" href="../css/tokens-stf.css">
-    <link rel="stylesheet" href="../css/donation.css">
-    <link rel="stylesheet" href="forum.css">
-    <link rel="stylesheet" href="forum-easter.css">
-    <link rel="stylesheet" href="forum-theme.css">
-    <link rel="stylesheet" href="forum-visual.css">
+    <!-- Styles (Stage II: 8 个 CSS 合并压缩为 1 个 → dist/css/forum.min.css，222KB→152KB) -->
+    <link rel="stylesheet" href="../dist/css/forum.min.css">
     <script>
         /* 沿用主站主题偏好 + 地址/realm；仅做视觉同步；不影响功能独立性 */
         (function () {
@@ -1115,16 +1108,11 @@
         </div>
     </div>
 
-    <script defer src="dist/forum/js/forum-import-data.js"></script>
-    <script defer src="dist/forum/js/forum-data.js"></script>
-    <script defer src="../dist/js/snow-realm.js"></script>
-    <script defer src="../dist/js/security-shield.js"></script>
-    <script defer src="../dist/js/rate-limiter-client.js"></script>
-    <script defer src="../dist/js/modal-a11y.js"></script>
-    <script defer src="dist/forum/js/forum-auth.js"></script>
-    <script defer src="dist/forum/js/forum-upload.js"></script>
-    <script defer src="dist/forum/js/forum.js"></script>
-    <script defer src="dist/forum/js/forum-sync.js"></script>
+    <!-- Stage II: 15 个本地 JS 合并为 1 个 bundle（696KB→534KB ↓23.3%）+ SRI 完整性校验 -->
+    <!-- forum-supabase.js 内含 waitForSDK 轮询，不依赖 CDN SDK 严格顺序；bundle 可安全先于 SDK 加载 -->
+    <script defer src="../dist/bundle-forum.js"
+            integrity="sha384-/0e/uyPD7XtCgzjeMIRkidPyRspi5/V6wspkw/zmctnSe2q8yc52S+Hl/XWVipHA"
+            crossorigin="anonymous"></script>
     <!-- 论坛上云：Supabase 客户端 + 云端适配器（与主站共用同一项目，账号自动打通） -->
     <script>
         /* CDN 容错：主 CDN 失败则自动切换备用 CDN，再失败则回退本地模式 */
@@ -1139,10 +1127,6 @@
     </script>
     <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
             onerror="window.__loadSupabaseSDK('https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js', function(){ window.__loadSupabaseSDK('js/supabase.min.js', function(){ console.warn('[forum] Supabase SDK 所有来源均加载失败，回退纯本地模式'); }); });"></script>
-    <script defer src="dist/forum/js/forum-supabase.js"></script>
-    <script defer src="dist/forum/js/forum-cloud.js"></script>
-    <script defer src="dist/forum/js/forum-chat.js"></script>
-    <script defer src="dist/forum/js/forum-easter.js"></script>
-    <script defer src="../dist/js/donation.js"></script>
+    <!-- donation.js 已合并入 bundle-forum.js（Stage II） -->
 </body>
 </html>
