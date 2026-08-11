@@ -56,6 +56,12 @@
             .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
+    /* T3: 防御性 DOMPurify 消毒（聊天消息 UGC innerHTML 渲染点二次防护） */
+    function safeHTML(html) {
+        if (typeof html !== 'string') return '';
+        if (typeof window.sanitizeHTML === 'function') return window.sanitizeHTML(html);
+        return html;
+    }
     function sanitizeColor(c) {
         if (!c) return '#6d8fd6';
         var s = String(c).trim();
@@ -320,7 +326,7 @@
                 + '<p>公共频段静默中。<br>发一句短讯，信号就会亮起来。</p>'
                 + '</div>';
         }
-        els.list.innerHTML = html;
+        els.list.innerHTML = safeHTML(html);
         var loadBtn = document.getElementById('stf-chat-load-more');
         if (loadBtn) {
             loadBtn.addEventListener('click', function () {

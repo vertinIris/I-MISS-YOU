@@ -67,12 +67,12 @@ window.StarTorchUpload = (function () {
             : '<span class="stf-upload-thumb stf-upload-thumb--icon" aria-hidden="true">' +
               (att.kind === 'audio' ? '♪' : '≡') + '</span>';
 
-        box.innerHTML = thumb +
+        box.innerHTML = safeHTML(thumb +
             '<span class="stf-upload-meta">' +
                 '<b>' + escapeHTML(att.name) + '</b>' +
                 '<span>' + escapeHTML(att.note) + '</span>' +
             '</span>' +
-            '<button type="button" class="stf-upload-remove" data-upload-remove aria-label="移除附件">×</button>';
+            '<button type="button" class="stf-upload-remove" data-upload-remove aria-label="移除附件">×</button>');
         box.hidden = false;
     }
 
@@ -80,6 +80,12 @@ window.StarTorchUpload = (function () {
         return String(str == null ? '' : str)
             .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    /* T3: 防御性 DOMPurify 消毒（附件预览 UGC innerHTML 渲染点二次防护） */
+    function safeHTML(html) {
+        if (typeof html !== 'string') return '';
+        if (typeof window.sanitizeHTML === 'function') return window.sanitizeHTML(html);
+        return html;
     }
 
     /* 图片压缩：长边收敛到 1280，输出 webp（不支持则 jpeg） */

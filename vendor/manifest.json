@@ -1,0 +1,102 @@
+{
+  "description": "飞行雪绒 vendor 清单 — 自托管第三方运行时库（无 CDN 依赖，规避 R-08 单点故障风险）",
+  "generated": "2026-08-11",
+  "policy": "所有库均从官方 GitHub 仓库或 npm registry 下载预编译版本，本地自托管。版本锁定，SRI 双保险。",
+  "libraries": {
+    "dompurify": {
+      "version": "3.2.7",
+      "source": "https://github.com/cure53/DOMPurify (main branch dist/)",
+      "license": "MPL-2.0 OR Apache-2.0",
+      "purpose": "XSS 防护 — 所有 UGC innerHTML 前消毒（P0 必装）",
+      "files": [
+        { "path": "dompurify/purify.min.js", "size": 29507, "sri": "sha384-2m6jHxAbjK2Ek09HQz6ZgdZJUHtgE5lCktvnidnOVD5ecaGIpi67pb29q2cv5IGG" },
+        { "path": "dompurify/purify.min.js.map", "size": 35840, "sri": "sha384-7xGLJDJq3O4ZV9pq1rd4McPNzF4L4bsqFPUzSLf8T0R3DFIZMkg8N16QZ4CpRlhb" }
+      ],
+      "integration": "<script src=\"vendor/dompurify/purify.min.js\" integrity=\"sha384-2m6jHxAbjK2Ek09HQz6ZgdZJUHtgE5lCktvnidnOVD5ecaGIpi67pb29q2cv5IGG\" crossorigin=\"anonymous\"></script>",
+      "usage": "const clean = DOMPurify.sanitize(dirtyHTML, { ALLOWED_TAGS: ['p','b','i','em','strong','a','code','pre','ul','ol','li','blockquote'], ALLOWED_ATTR: ['href','title','rel','target'] });"
+    },
+    "notyf": {
+      "version": "3.10.0",
+      "source": "npm pack notyf@3.10.0 (GitHub caroso1222/notyf)",
+      "license": "MIT",
+      "purpose": "Toast 通知 — 统一操作反馈（P0 必装）",
+      "files": [
+        { "path": "notyf/notyf.min.js", "size": 7646, "sri": "sha384-uuNfwJfjOG2ukYi4eAB11/t3lP4Zjf75a3UhgkLzEpiX8JpJfacpG7Ye+0tiVMxT" },
+        { "path": "notyf/notyf.min.css", "size": 5159, "sri": "sha384-snpJ3knpH6avB6cP1vPkNdmRzCYaCpom/3TNOyvo189BiogXYXQfXkyYpZ2/xADs" }
+      ],
+      "integration": "<link rel=\"stylesheet\" href=\"vendor/notyf/notyf.min.css\" integrity=\"sha384-snpJ3knpH6avB6cP1vPkNdmRzCYaCpom/3TNOyvo189BiogXYXQfXkyYpZ2/xADs\" crossorigin=\"anonymous\"><script src=\"vendor/notyf/notyf.min.js\" integrity=\"sha384-uuNfwJfjOG2ukYi4eAB11/t3lP4Zjf75a3UhgkLzEpiX8JpJfacpG7Ye+0tiVMxT\" crossorigin=\"anonymous\"></script>",
+      "usage": "const notyf = new Notyf({ duration: 3500, position: { x: 'right', y: 'top' } }); notyf.success('评论已发布'); notyf.error('登录失败');"
+    },
+    "lazysizes": {
+      "version": "5.3.2",
+      "source": "https://github.com/aFarkas/lazysizes (master)",
+      "license": "MIT",
+      "purpose": "图片懒加载 — 首屏 LCP/CLS 优化（P1 推荐）",
+      "files": [
+        { "path": "lazysizes/lazysizes.min.js", "size": 7889, "sri": "sha384-3gT/vsepWkfz/ff7PpWNUeMzeWoH3cDhm/A8jM7ouoAK0/fP/9bcHHR5kHq2nf+e" }
+      ],
+      "integration": "<script src=\"vendor/lazysizes/lazysizes.min.js\" integrity=\"sha384-3gT/vsepWkfz/ff7PpWNUeMzeWoH3cDhm/A8jM7ouoAK0/fP/9bcHHR5kHq2nf+e\" crossorigin=\"anonymous\" async></script>",
+      "usage": "<img class=\"lazyload\" data-src=\"image.jpg\" alt=\"...\">"
+    },
+    "marked": {
+      "version": "14.1.3",
+      "source": "npm pack marked@14.1.3 (GitHub markedjs/marked)",
+      "license": "MIT",
+      "purpose": "Markdown 渲染 — 评论区/帖子内容格式化（P1，需配合 DOMPurify）",
+      "files": [
+        { "path": "marked/marked.min.js", "size": 36521, "sri": "sha384-k8o8HikHweyzW55Wd3wl18ovJj6vHVYNQeQbeSM0fxx+0WiH4TcccOG9uz8Xd2JR" }
+      ],
+      "integration": "<script src=\"vendor/marked/marked.min.js\" integrity=\"sha384-k8o8HikHweyzW55Wd3wl18ovJj6vHVYNQeQbeSM0fxx+0WiH4TcccOG9uz8Xd2JR\" crossorigin=\"anonymous\"></script>",
+      "usage": "const html = DOMPurify.sanitize(marked.parse(userMarkdown));"
+    },
+    "highlight.js": {
+      "version": "11.11.2",
+      "source": "https://github.com/highlightjs/cdn-release (main build/)",
+      "license": "BSD-3-Clause",
+      "purpose": "代码语法高亮 — 论坛代码块着色（P1，配合 marked）",
+      "files": [
+        { "path": "highlight.js/highlight.min.js", "size": 108700, "sri": "sha384-pA3mpJvEhf/IyTTsw12TX+ddwHnNWAKnzCciMJXDDhSTuLoG2WOwZF90suJw6hk5" },
+        { "path": "highlight.js/github.min.css", "size": 1094, "sri": "sha384-eXhR3uCUc39mn7jqQ6P/DUclSePvUlwhHmYpNNWZIbcdBaj7ekw2VYxf3q89+sjr" }
+      ],
+      "integration": "<link rel=\"stylesheet\" href=\"vendor/highlight.js/github.min.css\" integrity=\"sha384-eXhR3uCUc39mn7jqQ6P/DUclSePvUlwhHmYpNNWZIbcdBaj7ekw2VYxf3q89+sjr\" crossorigin=\"anonymous\"><script src=\"vendor/highlight.js/highlight.min.js\" integrity=\"sha384-pA3mpJvEhf/IyTTsw12TX+ddwHnNWAKnzCciMJXDDhSTuLoG2WOwZF90suJw6hk5\" crossorigin=\"anonymous\"></script>",
+      "usage": "hljs.highlightAll(); // 或 marked 配合：marked.use({ renderer: { code: (code, lang) => hljs.highlight(code, {language: lang}).value } })"
+    },
+    "photoswipe": {
+      "version": "5.4.4",
+      "source": "npm pack photoswipe@5.4.4 (GitHub dimsemenov/PhotoSwipe)",
+      "license": "MIT",
+      "purpose": "图片灯箱画廊 — 角色立绘/场景图手势缩放浏览（P1 推荐）",
+      "files": [
+        { "path": "photoswipe/photoswipe-lightbox.esm.min.js", "size": 14338, "sri": "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/" },
+        { "path": "photoswipe/photoswipe.esm.min.js", "size": 54270, "sri": "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s" },
+        { "path": "photoswipe/photoswipe.min.css", "size": 7423, "sri": "sha384-IfxC36XL/toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx/1oA/0l8ysE", "note": "原包未提供 minified CSS，此为 photoswipe.css 重命名（内容未压缩但体积小 7.2KB）" }
+      ],
+      "integration": "<link rel=\"stylesheet\" href=\"vendor/photoswipe/photoswipe.min.css\"><script type=\"module\">import PhotoSwipeLightbox from './vendor/photoswipe/photoswipe-lightbox.esm.min.js'; const lightbox = new PhotoSwipeLightbox({ gallery: '#gallery', children: 'a', pswpModule: () => import('./vendor/photoswipe/photoswipe.esm.min.js') }); lightbox.init();</script>",
+      "usage": "ESM 动态 import，不需 SRI（浏览器原生 ESM 模块不支持 integrity 属性）"
+    },
+    "just-validate": {
+      "version": "4.3.0",
+      "source": "npm pack just-validate@4.3.0 (GitHub horprogs/Just-Validate)",
+      "license": "MIT",
+      "purpose": "表单验证 — 登录/注册/发帖/评论表单（P1 推荐）",
+      "files": [
+        { "path": "just-validate/just-validate.production.min.js", "size": 29796, "sri": "sha384-MTEqTcTyVLHVQNcumujWT8ThfE2tAm0jR8FP+YSLHn3KRydBdxTYaiK9USgsaU5e" }
+      ],
+      "integration": "<script src=\"vendor/just-validate/just-validate.production.min.js\" integrity=\"sha384-MTEqTcTyVLHVQNcumujWT8ThfE2tAm0jR8FP+YSLHn3KRydBdxTYaiK9USgsaU5e\" crossorigin=\"anonymous\"></script>",
+      "usage": "new JustValidate('#loginForm', { errorFieldCssClass: 'is-invalid' }).addField('#email', [{rule: 'required'}, {rule: 'email'}]).addField('#password', [{rule: 'required'}, {rule: 'minLength', value: 6}]);"
+    }
+  },
+  "devTools": {
+    "description": "开发工具（不进生产，已通过 npm install --save-dev 安装）",
+    "installed": {
+      "eslint": { "version": "^9.39.5", "purpose": "JS 静态分析" },
+      "prettier": { "version": "^3.9.6", "purpose": "代码格式化" },
+      "stylelint": { "version": "^16.26.1", "purpose": "CSS 检查" },
+      "stylelint-config-standard": { "version": "^36.0.1", "purpose": "stylelint 标准规则集" },
+      "axe-core": { "version": "^4.13.0", "purpose": "无障碍自动化测试引擎" }
+    },
+    "pendingInstall": {
+      "@lhci/cli": { "install": "npm install -g @lhci/cli", "purpose": "Lighthouse CI（建议全局安装）" }
+    }
+  }
+}

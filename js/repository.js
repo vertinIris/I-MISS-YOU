@@ -196,7 +196,7 @@
         var name = (c.name || '').trim();
         var text = (c.text || '')
             .replace(/\s+/g, '')
-            .replace(/[。.，,！!?？、~～\.]+$/g, '');
+            .replace(/[。.，,！!?？、~～.]+$/g, '');
         return name + '|' + text;
     }
 
@@ -667,7 +667,7 @@
         localSubs = Array.isArray(localSubs) ? localSubs : [];
         cloudSubs = Array.isArray(cloudSubs) ? cloudSubs : [];
         var byKey = {};
-        var merged = [];
+        var merged;
 
         function contentKey(s) {
             var t = s.time || 0;

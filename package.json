@@ -26,6 +26,11 @@
     "smoke-check": "node scripts/smoke-check.mjs",
     "extreme-audit": "node scripts/extreme-audit.mjs",
     "browser-probe": "node scripts/browser-probe.mjs",
+    "lint": "eslint js/ forum/js/ --config eslint.config.js",
+    "lint:fix": "eslint js/ forum/js/ --config eslint.config.js --fix",
+    "lint:css": "stylelint \"css/**/*.css\" \"forum/*.css\"",
+    "format": "prettier --write \"js/**/*.js\" \"forum/js/**/*.js\" \"css/**/*.css\" \"forum/*.css\"",
+    "format:check": "prettier --check \"js/**/*.js\" \"forum/js/**/*.js\" \"css/**/*.css\" \"forum/*.css\"",
     "db:migrate-016": "echo 'Run db/migration-016-replica-identity.sql in Supabase SQL Editor'",
     "db:migrate-017": "echo 'Run db/migration-017-hard-delete-for-realtime.sql in Supabase SQL Editor'",
     "db:migrate-018": "echo 'Run db/migration-018-dedupe-comments.sql in Supabase SQL Editor'",
@@ -73,6 +78,12 @@
     "terser": "^5.36.0"
   },
   "devDependencies": {
-    "csso": "^5.0.5"
+    "@eslint/js": "^10.0.1",
+    "axe-core": "^4.13.0",
+    "csso": "^5.0.5",
+    "eslint": "^9.39.5",
+    "prettier": "^3.9.6",
+    "stylelint": "^16.26.1",
+    "stylelint-config-standard": "^36.0.1"
   }
 }

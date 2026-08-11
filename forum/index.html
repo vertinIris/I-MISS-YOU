@@ -40,6 +40,10 @@
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap"></noscript>
     <!-- Styles (Stage II: 8 个 CSS 合并压缩为 1 个 → dist/css/forum.min.css，222KB→152KB) -->
     <link rel="stylesheet" href="../dist/css/forum.min.css">
+    <!-- P0 UX: Notyf Toast 通知样式（自托管 vendor，SRI 保护） -->
+    <link rel="stylesheet" href="../vendor/notyf/notyf.min.css"
+          integrity="sha384-snpJ3knpH6avB6cP1vPkNdmRzCYaCpom/3TNOyvo189BiogXYXQfXkyYpZ2/xADs"
+          crossorigin="anonymous">
     <script>
         /* 沿用主站主题偏好 + 地址/realm；仅做视觉同步；不影响功能独立性 */
         (function () {
@@ -1108,10 +1112,19 @@
         </div>
     </div>
 
+    <!-- Scripts -->
+    <!-- P0 Security: DOMPurify XSS 消毒（自托管 vendor，SRI 保护，defer 在 bundle 前执行） -->
+    <script defer src="../vendor/dompurify/purify.min.js"
+            integrity="sha384-2m6jHxAbjK2Ek09HQz6ZgdZJUHtgE5lCktvnidnOVD5ecaGIpi67pb29q2cv5IGG"
+            crossorigin="anonymous"></script>
+    <!-- P0 UX: Notyf Toast 通知（自托管 vendor，SRI 保护，defer 在 bundle 前执行） -->
+    <script defer src="../vendor/notyf/notyf.min.js"
+            integrity="sha384-uuNfwJfjOG2ukYi4eAB11/t3lP4Zjf75a3UhgkLzEpiX8JpJfacpG7Ye+0tiVMxT"
+            crossorigin="anonymous"></script>
     <!-- Stage II: 15 个本地 JS 合并为 1 个 bundle（696KB→534KB ↓23.3%）+ SRI 完整性校验 -->
     <!-- forum-supabase.js 内含 waitForSDK 轮询，不依赖 CDN SDK 严格顺序；bundle 可安全先于 SDK 加载 -->
     <script defer src="../dist/bundle-forum.js"
-            integrity="sha384-/0e/uyPD7XtCgzjeMIRkidPyRspi5/V6wspkw/zmctnSe2q8yc52S+Hl/XWVipHA"
+            integrity="sha384-7cb733hQmxW3ECSQR5c1N99UTMbl74iufCGpgrDJkHVVK0tooVRuVFEowrCGR+wv"
             crossorigin="anonymous"></script>
     <!-- 论坛上云：Supabase 客户端 + 云端适配器（与主站共用同一项目，账号自动打通） -->
     <script>

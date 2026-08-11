@@ -159,7 +159,7 @@ var UploadManager = (function() {
                 }
                 return true;
             };
-            var ok = true;
+            var ok;
             if (file.type === 'image/jpeg') {
                 ok = b.length > 2 && b[0] === 0xFF && b[1] === 0xD8 && b[2] === 0xFF;
             } else if (file.type === 'image/png') {

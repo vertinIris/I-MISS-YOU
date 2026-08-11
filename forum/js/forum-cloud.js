@@ -81,7 +81,7 @@
         var kept = [];
         for (var i = 0; i < q.length; i++) {
             var item = q[i];
-            var ok = false;
+            var ok;
             try {
                 if (item.op === 'submission') ok = await attemptSubmission(item.payload);
                 else if (item.op === 'update') ok = await attemptUpdate(item.payload);

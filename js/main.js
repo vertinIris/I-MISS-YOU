@@ -1530,7 +1530,7 @@
     function buildCommentNode(c, opts, isReply) {
         var html = buildCommentItemHtml(c, opts, isReply);
         var tmp = document.createElement('div');
-        tmp.innerHTML = html;
+        tmp.innerHTML = safeHTML(html);
         var el = tmp.firstElementChild;
         if (el) el.__cmtHtml = html;
         return el;
@@ -1761,7 +1761,7 @@
                     (col.is_public ? ' is-public' : '') +
                     '" data-collection-id="' + col.id + '">' + escapeHTML(col.name) + '</button>';
             });
-            collectionsListEl.innerHTML = html;
+            collectionsListEl.innerHTML = safeHTML(html);
             collectionsListEl.querySelectorAll('.bookmarks-col-chip').forEach(function(chip) {
                 chip.addEventListener('click', function() {
                     var raw = chip.getAttribute('data-collection-id');
@@ -1876,7 +1876,7 @@
             }
             if (emptyEl) emptyEl.hidden = true;
 
-            listEl.innerHTML = bookmarked.map(function(s) {
+            listEl.innerHTML = safeHTML(bookmarked.map(function(s) {
                 var meta = bookmarkMap[s.id] || {};
                 var colSelect = '';
                 if (isCloud && bookmarkRows) {
@@ -1888,7 +1888,7 @@
                     '<span class="bookmarks-item-title">' + escapeHTML(s.title) + '</span>' +
                     '<span class="bookmarks-item-meta">' + escapeHTML(s.name) + ' · ' + s.timeStr + '</span>' +
                     '</button>' + colSelect + '</li>';
-            }).join('');
+            }).join(''));
 
             if (isCloud && typeof SupabaseAdapter.getBookmarkCollections === 'function') {
                 SupabaseAdapter.getBookmarkCollections().then(function(collections) {
@@ -2768,6 +2768,15 @@
             .replace(/'/g, '&#039;');
     }
 
+    /* T3: 防御性 DOMPurify 消毒 — 在 escapeHTML 之上做二次防护，
+     * 捕获任何遗漏未转义的 UGC 字段（评论/投稿/收藏夹等 innerHTML 渲染点）。
+     * 守卫: typeof window.sanitizeHTML（app-toast.js 提供，DOMPurify 未加载时内部降级转义） */
+    function safeHTML(html) {
+        if (typeof html !== 'string') return '';
+        if (typeof window.sanitizeHTML === 'function') return window.sanitizeHTML(html);
+        return html;
+    }
+
     /* ===== Phase 3: Submission System ===== */
     function initSubmission() {
         var form = document.getElementById('submit-form');
@@ -3024,11 +3033,12 @@
         var excerpt = (typeof ContentUtils !== 'undefined')
             ? ContentUtils.previewText(pick.content, 160)
             : pick.content.substring(0, 160);
-        body.innerHTML =
+        body.innerHTML = safeHTML(
             '<h3 class="today-pick-title">' + escapeHTML(pick.title) + '</h3>' +
             '<div class="today-pick-meta">' + escapeHTML(pick.name) + ' · ' + pick.timeStr + '</div>' +
             '<p class="today-pick-excerpt">' + escapeHTML(excerpt) + '</p>' +
-            '<button type="button" class="today-pick-link" data-pick-id="' + pick.id + '">查看作品 →</button>';
+            '<button type="button" class="today-pick-link" data-pick-id="' + pick.id + '">查看作品 →</button>'
+        );
         el.hidden = false;
         var linkBtn = body.querySelector('.today-pick-link');
         if (linkBtn) {
@@ -3097,12 +3107,12 @@
             } else {
                 if (emptyEl) emptyEl.hidden = true;
                 if (listEl) {
-                    listEl.innerHTML = data.items.map(function(item) {
+                    listEl.innerHTML = safeHTML(data.items.map(function(item) {
                         return '<li><button type="button" data-submission-id="' + item.submissionId + '">' +
                             '<strong>' + escapeHTML(item.title) + '</strong><br>' +
                             '<span style="opacity:0.6;font-size:0.8rem">' + escapeHTML(item.name) + '</span>' +
                             '</button></li>';
-                    }).join('');
+                    }).join(''));
                     listEl.querySelectorAll('button[data-submission-id]').forEach(function(btn) {
                         btn.addEventListener('click', function() {
                             var sid = btn.getAttribute('data-submission-id');
@@ -3437,7 +3447,7 @@
     function buildSubmissionCardNode(s) {
         var html = buildSubmissionCardHTML(s);
         var tmp = document.createElement('div');
-        tmp.innerHTML = html;
+        tmp.innerHTML = safeHTML(html);
         var el = tmp.firstElementChild;
         if (el) el.__subHtml = html;
         return el;
@@ -3773,7 +3783,7 @@
         }
         var status = SupabaseAdapter.getStatus();
         var provider = (typeof DataRepository !== 'undefined') ? DataRepository.getProvider() : 'localStorage';
-        var html = '';
+        var html;
         var cls = 'footer-sync';
 
         if (!status.configValid) {
@@ -3861,7 +3871,8 @@
             e.preventDefault();
             e.stopPropagation();
             if (typeof AdminAuth === 'undefined') {
-                alert('管理员模块未加载');
+                if (typeof window.AppToast !== 'undefined') { window.AppToast.error('管理员模块未加载'); }
+                else { alert('管理员模块未加载'); }
                 return;
             }
             if (AdminAuth.isAdmin()) {
@@ -3897,7 +3908,11 @@
             if (__adminPressTimer) return;
             __adminPressTimer = setTimeout(function() {
                 __adminPressTimer = null;
-                if (typeof AdminAuth === 'undefined') { alert('管理员模块未加载'); return; }
+                if (typeof AdminAuth === 'undefined') {
+                    if (typeof window.AppToast !== 'undefined') { window.AppToast.error('管理员模块未加载'); }
+                    else { alert('管理员模块未加载'); }
+                    return;
+                }
                 AdminAuth.openLoginModal(function(success) {
                     if (success) {
                         updateSyncStatus();

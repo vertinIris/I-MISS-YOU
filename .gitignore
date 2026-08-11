@@ -17,3 +17,8 @@ _preview-*.png
 *_preview*.png
 # source map 不进仓库（Stage I 未生成；保留未来空间）
 dist/**/*.map
+vendor/**/*.map
+# vendor tarballs（下载中间产物，不入库；vendor/ 预编译文件本身入库）
+vendor/*.tgz
+# vendor npm pack 解包中间产物
+vendor/vendor/

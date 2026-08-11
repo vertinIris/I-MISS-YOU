@@ -30,6 +30,17 @@
     var COOLDOWN_MS = 30000;     /* 30 秒冷却 */
 
     /* ================================================================
+     * 统一通知 helper：优先 AppToast（Notyf），降级原生 alert
+     * 守卫: typeof window.AppToast !== 'undefined'（库未加载时不报错）
+     * ================================================================ */
+    function notify(level, msg) {
+        if (typeof window.AppToast !== 'undefined' && window.AppToast[level]) {
+            try { window.AppToast[level](msg); return; } catch (_) { /* 降级 */ }
+        }
+        try { alert(msg); } catch (_) { /* ignore */ }
+    }
+
+    /* ================================================================
      * 核心: SHA-256 哈希（纯 JS，零依赖）
      * ================================================================ */
     function sha256(message) {
@@ -223,7 +234,7 @@
         /* 冷却中不弹 */
         if (cooldownUntil > Date.now()) {
             var remaining = Math.ceil((cooldownUntil - Date.now()) / 1000);
-            alert('口令验证已锁定，请 ' + remaining + ' 秒后再试');
+            notify('error', '口令验证已锁定，请 ' + remaining + ' 秒后再试');
             if (callback) callback(false);
             return;
         }
@@ -236,10 +247,10 @@
         }
         var result = verify(pass);
         if (result.success) {
-            alert('管理员模式已开启\n\n• 可删除任意评论\n• 关闭浏览器后自动退出');
+            notify('success', '管理员模式已开启 · 可删除任意评论（关闭浏览器自动退出）');
             if (callback) callback(true);
         } else {
-            alert('验证失败：' + result.reason);
+            notify('error', '验证失败：' + result.reason);
             if (callback) callback(false);
         }
     }
@@ -262,7 +273,7 @@
     function openLoginModal(onSuccess) {
         if (cooldownUntil > Date.now()) {
             var remaining = Math.ceil((cooldownUntil - Date.now()) / 1000);
-            alert('口令验证已锁定，请 ' + remaining + ' 秒后再试');
+            notify('error', '口令验证已锁定，请 ' + remaining + ' 秒后再试');
             if (onSuccess) onSuccess(false);
             return;
         }

@@ -38,6 +38,7 @@ const MAIN_JS = [
   'js/snow-easter.js',
   'js/snow-realm.js',
   'js/modal-a11y.js',
+  'js/app-toast.js',
   'js/main.js',
   'js/donation.js',
 ];
@@ -50,6 +51,7 @@ const FORUM_JS = [
   'js/security-shield.js',       // ../js/security-shield.js
   'js/rate-limiter-client.js',   // ../js/rate-limiter-client.js
   'js/modal-a11y.js',            // ../js/modal-a11y.js
+  'js/app-toast.js',             // ../js/app-toast.js
   'forum/js/forum-auth.js',
   'forum/js/forum-upload.js',
   'forum/js/forum.js',

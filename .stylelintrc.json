@@ -1,0 +1,24 @@
+{
+  "extends": "stylelint-config-standard",
+  "ignoreFiles": [
+    "dist/**",
+    "node_modules/**",
+    "vendor/**",
+    "forum/js/supabase.min.js"
+  ],
+  "rules": {
+    "no-descending-specificity": null,
+    "selector-class-pattern": null,
+    "custom-property-pattern": null,
+    "keyframes-name-pattern": null,
+    "comment-empty-line-before": null,
+    "at-rule-no-unknown": null,
+    "import-notation": "string",
+    "color-function-notation": null,
+    "alpha-value-notation": null,
+    "shorthand-property-no-redundant-values": null,
+    "property-no-vendor-prefix": null,
+    "value-no-vendor-prefix": null,
+    "media-feature-range-notation": null
+  }
+}

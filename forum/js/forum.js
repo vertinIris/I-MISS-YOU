@@ -59,6 +59,14 @@
             .replace(/'/g, '&#39;');
     }
 
+    /* T3: 防御性 DOMPurify 消毒 — escapeHTML 之上的二次防护（评论/帖子详情等 UGC innerHTML 渲染点）。
+     * 守卫: typeof window.sanitizeHTML（app-toast.js 提供，未加载时内部降级转义） */
+    function safeHTML(html) {
+        if (typeof html !== 'string') return '';
+        if (typeof window.sanitizeHTML === 'function') return window.sanitizeHTML(html);
+        return html;
+    }
+
     function sanitizeColor(c) {
         if (typeof SecurityShield !== 'undefined' && SecurityShield.sanitizeColor) {
             return SecurityShield.sanitizeColor(c, '#6d8fd6');
@@ -524,7 +532,7 @@
             return;
         }
         wrap.hidden = false;
-        list.innerHTML = pins.map(function (s) {
+        list.innerHTML = safeHTML(pins.map(function (s) {
             var badge = s.is_pinned ? '置顶'
                 : (s.tags && s.tags.indexOf('公告') !== -1) ? '公告'
                 : (s.tags && s.tags.indexOf('置顶') !== -1) ? '置顶' : '精华';
@@ -533,7 +541,7 @@
                 '<span class="stf-pinned-title">' + escapeHTML(displayTitle(s)) + '</span>' +
                 '<span class="stf-pinned-meta">❤ ' + (s.likes || 0) + '</span>' +
             '</button></li>';
-        }).join('');
+        }).join(''));
     }
 
     function commentKey(c) {
@@ -569,7 +577,7 @@
                 roots.push(c);
             }
         });
-        list.innerHTML = roots.map(function (c) {
+        list.innerHTML = safeHTML(roots.map(function (c) {
             var key = commentKey(c);
             var replies = children[key] || children[c.id] || [];
             var nest = replies.map(function (r) { return buildCommentItemHTML(r, targetId, true); }).join('');
@@ -577,7 +585,7 @@
                 buildCommentItemHTML(c, targetId, false) +
                 (nest ? '<div class="stf-comment-replies">' + nest + '</div>' : '') +
             '</div>';
-        }).join('');
+        }).join(''));
     }
 
     /** 窗口分页：首尾 + 当前附近页码，中间用省略号，避免上百个圆点横排 */
@@ -889,7 +897,7 @@
             if (c.parent_id) (children[c.parent_id] = children[c.parent_id] || []).push(c);
             else roots.push(c);
         });
-        list.innerHTML = roots.map(function (c) {
+        list.innerHTML = safeHTML(roots.map(function (c) {
             var key = commentKey(c);
             var replies = children[key] || children[c.id] || [];
             var nest = replies.map(function (r) { return buildCommentItemHTML(r, targetId, true); }).join('');
@@ -897,7 +905,7 @@
                 buildCommentItemHTML(c, targetId, false) +
                 (nest ? '<div class="stf-comment-replies">' + nest + '</div>' : '') +
             '</div>';
-        }).join('');
+        }).join(''));
     }
 
     function openPostDetail(id, opts) {
@@ -913,7 +921,7 @@
         }
         var safeImg = safeMediaUrl(s.image);
         var commentForm = buildCommentFormHTML(s.id).replace('stf-comment-form', 'stf-comment-form stf-detail-comment-form');
-        body.innerHTML =
+        body.innerHTML = safeHTML(
             '<div class="stf-detail-meta">' +
                 '<span class="stf-detail-author" style="color:' + sanitizeColor(s.color) + '">' + escapeHTML(s.name) + '</span>' +
                 '<span class="stf-detail-time">' + escapeHTML(s.timeStr) + '</span>' +
@@ -927,7 +935,8 @@
                 '<h3 class="stf-detail-comments-title">评论</h3>' +
                 '<div class="stf-comment-list" id="stf-detail-comment-list" data-target="' + escapeHTML(s.id) + '"></div>' +
                 commentForm +
-            '</div>';
+            '</div>'
+        );
         panel.hidden = false;
         panel.setAttribute('aria-hidden', 'false');
         document.body.classList.add('stf-detail-open');
@@ -1358,7 +1367,7 @@
                 var user = currentUser();
                 var textEl = form.querySelector('.stf-comment-input');
                 var text = textEl ? textEl.value.trim() : '';
-                var name = '';
+                var name;
                 var identityId = '';
                 if (user) {
                     name = user.name;
