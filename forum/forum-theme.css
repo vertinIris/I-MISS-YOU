@@ -31,16 +31,17 @@
     --stf-focus: 0 0 0 2px rgba(10, 12, 22, 0.9), 0 0 0 4px rgba(168, 216, 255, 0.55);
 
     /* 浮层 z-index 表（B6）
-       遮罩必须低于放大聊天卡；勿再写死 10040 盖住 1100 导致整片发糊 */
+       遮罩必须低于放大聊天卡；modal / 发布表单必须高于聊天放大 */
     --stf-z-nav: 900;
     --stf-z-fab-tuner: 960;
     --stf-z-fab-donate: 970;
     --stf-z-edge: 980;
-    --stf-z-chat-backdrop: 1090;
+    --stf-z-chat-backdrop: 1080;
     --stf-z-chat-expand: 1100;
-    --stf-z-modal: 1200;
-    --stf-z-toast: 1300;
-    --stf-z-easter: 1400;
+    --stf-z-composer: 1400;
+    --stf-z-modal: 1500;
+    --stf-z-toast: 1600;
+    --stf-z-easter: 1700;
 
     /* 论坛强制覆盖主站粉令牌（角色色 --char 仍可局部粉） */
     --aimisi-pink: #6d8fd6;
@@ -176,9 +177,11 @@ body::after {
     transform: translateY(-2px);
 }
 
-/* 导航：学院深蓝底 + 冷金属顶边 */
+/* 导航：学院深蓝底 + 冷金属顶边 · 毛玻璃增强 70% 透明 */
 body .nav-glass {
-    background: rgba(8, 10, 18, 0.84) !important;
+    background: rgba(8, 10, 18, 0.68) !important;
+    backdrop-filter: blur(14px) saturate(1.1) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(1.1) !important;
     border-bottom: 1px solid var(--stf-edge);
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
     z-index: var(--stf-z-nav);
@@ -800,14 +803,14 @@ body.forum-page .donate-btn-primary {
 .stf-chat-send {
     background: linear-gradient(135deg, var(--stf-brand), color-mix(in srgb, var(--stf-brand) 65%, var(--stf-gold))) !important;
 }
-/* 放大态：实色底 + 禁止 blur/translate；z 高于遮罩、低于 modal */
+/* 放大态：半透明玻璃底 + 禁止 blur 糊住面板；z 低于 modal / 发布表单 */
 .stf-chat-card.is-chat-expanded {
-    z-index: var(--stf-z-chat-expand) !important;
-    background: #0b1020 !important;
+    z-index: var(--stf-z-chat-expand, 1100) !important;
+    background: rgba(10, 12, 22, 0.62) !important;
+    backdrop-filter: blur(14px) saturate(1.1) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(1.1) !important;
     transform: none !important;
     filter: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
     isolation: isolate;
     -webkit-font-smoothing: antialiased;
 }
@@ -823,20 +826,20 @@ body.forum-page .donate-btn-primary {
     -webkit-backdrop-filter: none !important;
 }
 .stf-chat-card.is-chat-expanded .stf-chat-messages {
-    background: #0b1020 !important;
+    background: rgba(10, 12, 22, 0.3) !important;
 }
 .stf-chat-backdrop {
-    z-index: var(--stf-z-chat-backdrop) !important;
-    /* 实色遮罩，禁止 backdrop blur 糊住面板 */
-    background: rgba(4, 8, 20, 0.88) !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
+    z-index: var(--stf-z-chat-backdrop, 1080) !important;
+    /* 半透明玻璃遮罩，保留背景景深可视 */
+    background: rgba(4, 8, 20, 0.52) !important;
+    backdrop-filter: blur(10px) saturate(1.05) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(1.05) !important;
     filter: none !important;
 }
-/* 放大时关掉 body 薄膜噪点，避免叠在浮层上发糊 */
+/* 放大时保留噪点薄膜半透明，仅轻微削弱避免发糊 */
 body.stf-chat-expanded-open::after {
-    opacity: 0 !important;
-    visibility: hidden !important;
+    opacity: 0.018 !important;
+    visibility: visible !important;
 }
 .stf-modal {
     z-index: var(--stf-z-modal);

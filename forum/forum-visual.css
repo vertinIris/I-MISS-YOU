@@ -4,6 +4,30 @@
    加载于 forum-theme.css 之后
    ============================================================ */
 
+/* 冗余兜底变量声明：即便上游 theme 的 :root 被压缩器合并丢值，此处仍能兜住 */
+:root {
+    /* 背景渐变 */
+    --stf-bg-top: #0A101C !important;
+    --stf-bg-mid: #0C1220 !important;
+    --stf-bg-bottom: #080E18 !important;
+    /* 令牌 */
+    --stf-brand: #6d8fd6 !important;
+    --stf-brand-light: #a8c4f0 !important;
+    --stf-gold: #E8C56A !important;
+    --stf-text: #EEF3FB !important;
+    /* z-index 层级系统（必须与 forum-theme.css 保持一致） */
+    --stf-z-nav: 900 !important;
+    --stf-z-fab-tuner: 960 !important;
+    --stf-z-fab-donate: 970 !important;
+    --stf-z-edge: 980 !important;
+    --stf-z-chat-backdrop: 1080 !important;
+    --stf-z-chat-expand: 1100 !important;
+    --stf-z-composer: 1400 !important;
+    --stf-z-modal: 1500 !important;
+    --stf-z-toast: 1600 !important;
+    --stf-z-easter: 1700 !important;
+}
+
 /* —— 学院深夜底：冷星点 + 金弧极淡 —— */
 body.forum-page {
   background:
@@ -15,10 +39,10 @@ body.forum-page {
     radial-gradient(1px 1px at 88% 58%, oklch(95% 0.01 250 / 0.25), transparent),
     radial-gradient(ellipse 100% 36% at 50% -6%, transparent 44%, oklch(78% 0.12 85 / 0.04) 50%, transparent 58%),
     radial-gradient(1000px 520px at 50% -8%, oklch(68% 0.12 255 / 0.1), transparent 60%),
-    linear-gradient(180deg, var(--stf-bg-top) 0%, var(--stf-bg-mid) 45%, var(--stf-bg-bottom) 100%) !important;
+    linear-gradient(180deg, var(--stf-bg-top, #0A101C) 0%, var(--stf-bg-mid, #0C1220) 45%, var(--stf-bg-bottom, #080E18) 100%) !important;
   background-attachment: fixed;
   font-family: var(--font-sans);
-  color: var(--stf-text);
+  color: var(--stf-text, #EEF3FB);
 }
 
 /* 薄膜噪点更克制 */
@@ -26,13 +50,13 @@ body.forum-page::after {
   opacity: 0.03;
 }
 
-/* —— N6 学院报头导航 —— */
+/* —— N6 学院报头导航 · 毛玻璃恢复 70% 透明度 —— */
 body.forum-page .nav-glass {
-  background: oklch(12% 0.03 250 / 0.9) !important;
+  background: oklch(12% 0.03 250 / 0.70) !important;
   border-bottom: 1px solid var(--stf-edge) !important;
   box-shadow: 0 1px 0 oklch(78% 0.12 85 / 0.08), 0 10px 28px oklch(0% 0 0 / 0.28) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  backdrop-filter: blur(16px) saturate(1.2) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.2) !important;
 }
 body.forum-page .nav-logo span {
   font-family: var(--font-display);

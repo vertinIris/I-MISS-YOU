@@ -1212,11 +1212,11 @@ html.archive-orbit-active .archive-album-shelf {
 .stf-community-empty.show { display: flex; }
 .stf-community-empty svg { width: 56px; height: 56px; opacity: .6; }
 
-/* ???? */
+/* 投稿模态 · z 走主题变量，避免被聊天放大浮层盖住 */
 .stf-modal {
     position: fixed;
     inset: 0;
-    z-index: 9999;
+    z-index: var(--stf-z-modal, 1500) !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1230,8 +1230,9 @@ html.archive-orbit-active .archive-album-shelf {
 .stf-modal-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(5,6,15,.72);
-    backdrop-filter: blur(10px);
+    background: rgba(5,6,15,.58);
+    backdrop-filter: blur(12px) saturate(1.05);
+    -webkit-backdrop-filter: blur(12px) saturate(1.05);
 }
 
 .stf-modal-panel {
@@ -2873,9 +2874,13 @@ body.stf-chat-expanded-open .stf-chat-card.is-chat-expanded .stf-chat-meta {
 .stf-composer {
     max-width: none;
     margin: 14px 0 0;
+    position: relative;
+    z-index: var(--stf-z-composer, 1400);
 }
 .stf-composer-form {
     margin-top: 10px;
+    position: relative;
+    z-index: var(--stf-z-composer, 1400);
 }
 
 @media (max-width: 980px) {
