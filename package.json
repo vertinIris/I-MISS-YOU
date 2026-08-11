@@ -68,6 +68,8 @@
     "Safari >= 14",
     "Edge >= 90"
   ],
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "ters": "^0.0.1-concept-pre-alpha.4",
+    "terser": "^5.36.0"
+  }
 }

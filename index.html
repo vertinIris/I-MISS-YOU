@@ -1751,24 +1751,24 @@
     <!-- Supabase SDK: async 加载，不阻塞页面渲染；弱网环境自动降级 -->
     <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
             onerror="console.warn('[Phase3] Supabase SDK CDN 加载失败，回退纯本地模式'); window.__supabaseLoadFailed=true;"></script>
-    <script defer src="js/security-shield.js"></script>
-    <script defer src="js/content-utils.js"></script>
-    <script defer src="js/supabase-adapter.js"></script>
-    <script defer src="js/repository.js"></script>
-    <script defer src="js/admin-auth.js"></script>
-    <script defer src="js/rate-limiter.js"></script>
-    <script defer src="js/auth-manager.js"></script>
-    <script defer src="js/sync-manager.js"></script>
-    <script defer src="js/upload-manager.js"></script>
-    <script defer src="js/rate-limiter-client.js"></script>
-    <script defer src="js/admin-panel.js"></script>
-    <script defer src="js/particles.js"></script>
+    <script defer src="dist/js/security-shield.js"></script>
+    <script defer src="dist/js/content-utils.js"></script>
+    <script defer src="dist/js/supabase-adapter.js"></script>
+    <script defer src="dist/js/repository.js"></script>
+    <script defer src="dist/js/admin-auth.js"></script>
+    <script defer src="dist/js/rate-limiter.js"></script>
+    <script defer src="dist/js/auth-manager.js"></script>
+    <script defer src="dist/js/sync-manager.js"></script>
+    <script defer src="dist/js/upload-manager.js"></script>
+    <script defer src="dist/js/rate-limiter-client.js"></script>
+    <script defer src="dist/js/admin-panel.js"></script>
+    <script defer src="dist/js/particles.js"></script>
     <div id="secret-portal-root"></div>
-    <script defer src="js/secret-portal.js"></script>
-    <script defer src="js/snow-easter.js"></script>
-    <script defer src="js/snow-realm.js"></script>
-    <script defer src="js/modal-a11y.js"></script>
-    <script defer src="js/main.js"></script>
+    <script defer src="dist/js/secret-portal.js"></script>
+    <script defer src="dist/js/snow-easter.js"></script>
+    <script defer src="dist/js/snow-realm.js"></script>
+    <script defer src="dist/js/modal-a11y.js"></script>
+    <script defer src="dist/js/main.js"></script>
     <!-- 管理员登录 Modal（替代原生 prompt，移动端友好） -->
     <div class="admin-modal-overlay" id="admin-login-modal" hidden>
         <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
@@ -1831,6 +1831,6 @@
         </div>
     </div>
 
-    <script defer src="js/donation.js"></script>
+    <script defer src="dist/js/donation.js"></script>
 </body>
 </html>

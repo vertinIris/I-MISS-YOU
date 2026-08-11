@@ -15,3 +15,5 @@ node_modules/
 # 本地大预览图
 _preview-*.png
 *_preview*.png
+# source map 不进仓库（Stage I 未生成；保留未来空间）
+dist/**/*.map
