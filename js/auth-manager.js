@@ -1,4 +1,4 @@
-/**
+﻿/**
  * AuthManager — 认证与权限管理模块
  * 飞行雪绒 v10.0
  *
@@ -39,7 +39,7 @@ var AuthManager = (function() {
             session.deleteTokens = JSON.parse(
                 localStorage.getItem('fxre_delete_tokens') || '{}'
             );
-        } catch(e) {
+        } catch(_) {
             session.deleteTokens = {};
         }
 
@@ -54,7 +54,7 @@ var AuthManager = (function() {
                 session.isAnonymous = cached.isAnonymous !== false;
                 session.email = cached.email || null;
             }
-        } catch(e) { /* ignore */ }
+        } catch(_) { /* ignore */ }
     }
 
     // ---- 删除令牌管理 ----
@@ -77,7 +77,7 @@ var AuthManager = (function() {
         try {
             localStorage.setItem('fxre_delete_tokens',
                 JSON.stringify(session.deleteTokens));
-        } catch(e) { /* quota exceeded */ }
+        } catch(_) { /* quota exceeded */ }
     }
 
     function getDeleteToken(targetId) {
@@ -89,7 +89,7 @@ var AuthManager = (function() {
         try {
             localStorage.setItem('fxre_delete_tokens',
                 JSON.stringify(session.deleteTokens));
-        } catch(e) { /* ignore */ }
+        } catch(_) { /* ignore */ }
     }
 
     // ---- 权限判定 ----
@@ -181,7 +181,7 @@ var AuthManager = (function() {
                 isAnonymous: session.isAnonymous,
                 email: session.email
             }));
-        } catch(e) { /* ignore */ }
+        } catch(_) { /* ignore */ }
     }
 
     function mapAuthError(err) {
@@ -373,7 +373,7 @@ var AuthManager = (function() {
         try {
             var cached = JSON.parse(localStorage.getItem(PROFILE_CACHE_KEY) || '{}');
             if (cached.nickname) return cached;
-        } catch (e) { /* ignore */ }
+        } catch(_) { /* ignore */ }
         return { nickname: null, avatar_color: null };
     }
 
@@ -385,7 +385,7 @@ var AuthManager = (function() {
                 avatar_color: profile.avatar_color || profile.avatarColor || null,
                 updated_at: Date.now()
             }));
-        } catch (e) { /* ignore */ }
+        } catch(_) { /* ignore */ }
     }
 
     function fetchProfile() {
@@ -538,7 +538,7 @@ var AuthManager = (function() {
                         isAnonymous: session.isAnonymous,
                         email: session.email
                     }));
-                } catch(e) { /* ignore */ }
+                } catch(_) { /* ignore */ }
 
                 return session.role;
             });

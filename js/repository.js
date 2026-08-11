@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 飞行雪绒 — DataRepository 抽象层
  * Phase 3: 统一数据访问接口，支持 localStorage / Supabase 双后端切换
  *
@@ -23,11 +23,11 @@
      * 安全的 localStorage 封装
      * ================================================================ */
     function safeGetItem(key) {
-        try { return localStorage.getItem(key); } catch(e) { return null; }
+        try { return localStorage.getItem(key); } catch(_) { return null; }
     }
 
     function safeSetItem(key, value) {
-        try { localStorage.setItem(key, value); return true; } catch(e) { return false; }
+        try { localStorage.setItem(key, value); return true; } catch(_) { return false; }
     }
 
     /* ================================================================
@@ -123,7 +123,7 @@
     function emit(event, data) {
         if (!listeners[event]) return;
         listeners[event].forEach(function(fn) {
-            try { fn(data); } catch(e) {}
+            try { fn(data); } catch(_) {}
         });
     }
 
@@ -335,7 +335,7 @@
                 if (!key || key.indexOf('fxre_comments_') !== 0) continue;
                 if (key === 'fxre_comments_seed_version') continue;
                 var list;
-                try { list = JSON.parse(safeGetItem(key) || '[]'); } catch(e) { continue; }
+                try { list = JSON.parse(safeGetItem(key) || '[]'); } catch(_) { continue; }
                 if (!Array.isArray(list)) continue;
                 var deduped = dedupeCommentList(list);
                 if (deduped.length !== list.length) {
@@ -343,7 +343,7 @@
                     safeSetItem(key, JSON.stringify(deduped));
                 }
             }
-        } catch(e) {}
+        } catch(_) {}
         if (removed > 0) console.log('[Repository] 已清理本地重复评论 ' + removed + ' 条');
         return removed;
     }
@@ -406,7 +406,7 @@
                 if (targetId === 'seed_version') continue;
 
                 var list;
-                try { list = JSON.parse(safeGetItem(key) || '[]'); } catch(e) { continue; }
+                try { list = JSON.parse(safeGetItem(key) || '[]'); } catch(_) { continue; }
                 if (!Array.isArray(list)) continue;
 
                 var uploadTasks = [];
@@ -434,7 +434,7 @@
                     );
                 }
             }
-        } catch(e) {}
+        } catch(_) {}
 
         return Promise.all(keyTasks).then(function() {
             if (keyTasks.length) console.log('[Repository] 本地未同步评论补传完成');
@@ -476,7 +476,7 @@
                     targetIds.push(targetId);
                     tasks.push(pullCommentsAndPersist(targetId));
                 }
-            } catch(e) {}
+            } catch(_) {}
 
             /* 也拉取页面上可见但 localStorage 可能尚未有的 target */
             if (typeof document !== 'undefined') {
@@ -499,7 +499,7 @@
         try {
             var data = safeGetItem('fxre_comments_' + targetId);
             return data ? JSON.parse(data) : [];
-        } catch(e) { return []; }
+        } catch(_) { return []; }
     }
 
     /**
@@ -585,7 +585,7 @@
             if (list.length < before) {
                 safeSetItem(key, JSON.stringify(list));
             }
-        } catch(e) {}
+        } catch(_) {}
     }
     function getAllComments() {
         if (isCloudReady()) {
@@ -609,7 +609,7 @@
                     result[targetId] = JSON.parse(safeGetItem(key));
                 }
             }
-        } catch(e) {}
+        } catch(_) {}
         return result;
     }
 
@@ -737,7 +737,7 @@
             var all = data ? JSON.parse(data) : [];
             if (!typeFilter || typeFilter === '全部') return all;
             return all.filter(function(s) { return s.type === typeFilter; });
-        } catch(e) { return []; }
+        } catch(_) { return []; }
     }
 
     /**
@@ -828,13 +828,13 @@
             var removedAny = false;
             for (var i = 0; i < localStorage.length; i++) {
                 var key;
-                try { key = localStorage.key(i); } catch(e) { continue; }
+                try { key = localStorage.key(i); } catch(_) { continue; }
                 if (!key) continue;
 
                 if (key.indexOf('fxre_comments_') === 0) {
                     if (key === 'fxre_comments_seed_version') continue;
                     var clist;
-                    try { clist = JSON.parse(safeGetItem(key) || '[]'); } catch(e) { continue; }
+                    try { clist = JSON.parse(safeGetItem(key) || '[]'); } catch(_) { continue; }
                     if (!Array.isArray(clist)) continue;
                     var ckept = clist.filter(function(c) { return !(c && c.id != null); });
                     if (ckept.length !== clist.length) {
@@ -844,7 +844,7 @@
 
                 } else if (key === 'fxre_submissions') {
                     var slist;
-                    try { slist = JSON.parse(safeGetItem(key) || '[]'); } catch(e) { continue; }
+                    try { slist = JSON.parse(safeGetItem(key) || '[]'); } catch(_) { continue; }
                     if (!Array.isArray(slist)) continue;
                     var skept = slist.filter(function(s) {
                         /* 仅剔除带数字 id 的云端投稿副本，保留种子(seed_)/本地(sub_) */

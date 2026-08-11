@@ -7,12 +7,12 @@
  */
 
 :root {
-  --stf-paper: oklch(14% 0.03 250);
-  --stf-paper-2: oklch(18% 0.035 250);
-  --stf-paper-3: oklch(22% 0.04 252);
-  --stf-ink: oklch(95% 0.015 250);
-  --stf-ink-2: oklch(78% 0.03 250);
-  --stf-ink-3: oklch(62% 0.03 250);
+  --stf-paper: oklch(14% 0.03 250deg);
+  --stf-paper-2: oklch(18% 0.035 250deg);
+  --stf-paper-3: oklch(22% 0.04 252deg);
+  --stf-ink: oklch(95% 0.015 250deg);
+  --stf-ink-2: oklch(78% 0.03 250deg);
+  --stf-ink-3: oklch(62% 0.03 250deg);
 
   /* 学院蓝权威值（统一旧硬编码 #6B8AFF / #6d8fd6 → 本令牌） */
   --stf-brand: #6d8fd6;
@@ -24,22 +24,20 @@
   --stf-bg-mid: #0c1220;
   --stf-bg-bottom: #080e18;
   --stf-text: #eef3fb;
-  --stf-text-muted: oklch(78% 0.03 250 / 0.68);
-
-  --stf-surface-0: oklch(14% 0.03 250 / 0.96);
-  --stf-surface-1: oklch(96% 0.01 250 / 0.04);
-  --stf-surface-2: oklch(96% 0.01 250 / 0.08);
-  --stf-edge: oklch(78% 0.06 250 / 0.16);
-  --stf-edge-strong: oklch(78% 0.06 250 / 0.3);
-  --stf-inset: inset 0 1px 0 oklch(96% 0.01 250 / 0.08);
-  --stf-metal: 0 0 0 1px oklch(78% 0.06 250 / 0.14), var(--stf-inset);
-  --stf-focus: 0 0 0 2px oklch(14% 0.03 250 / 0.95), 0 0 0 4px oklch(78% 0.06 250 / 0.55);
+  --stf-text-muted: oklch(78% 0.03 250deg / 0.68);
+  --stf-surface-0: oklch(14% 0.03 250deg / 0.96);
+  --stf-surface-1: oklch(96% 0.01 250deg / 0.04);
+  --stf-surface-2: oklch(96% 0.01 250deg / 0.08);
+  --stf-edge: oklch(78% 0.06 250deg / 0.16);
+  --stf-edge-strong: oklch(78% 0.06 250deg / 0.3);
+  --stf-inset: inset 0 1px 0 oklch(96% 0.01 250deg / 0.08);
+  --stf-metal: 0 0 0 1px oklch(78% 0.06 250deg / 0.14), var(--stf-inset);
+  --stf-focus: 0 0 0 2px oklch(14% 0.03 250deg / 0.95), 0 0 0 4px oklch(78% 0.06 250deg / 0.55);
 
   /* Scene → signature */
   --sig-accent: var(--stf-brand-light);
   --sig-accent-strong: var(--stf-gold);
   --sig-ink: var(--stf-ink);
-
   --stf-z-nav: var(--z-nav, 900);
   --stf-z-fab-tuner: var(--z-fab-tuner, 960);
   --stf-z-fab-donate: var(--z-fab-donate, 970);
@@ -62,22 +60,20 @@
   --c-primary: #6d8fd6;
   --c-primary-strong: #3d5aa8;
   --c-primary-soft: #a8c4f0;
-  --c-primary-dim: oklch(68% 0.12 255 / 0.14);
-  --surface-accent: oklch(68% 0.12 255 / 0.14);
-  --surface-accent-border: oklch(68% 0.12 255 / 0.35);
-  --shadow-glow: 0 0 22px oklch(68% 0.12 255 / 0.12);
-  --focus-ring: oklch(78% 0.06 250 / 0.55);
+  --c-primary-dim: oklch(68% 0.12 255deg / 0.14);
+  --surface-accent: oklch(68% 0.12 255deg / 0.14);
+  --surface-accent-border: oklch(68% 0.12 255deg / 0.35);
+  --shadow-glow: 0 0 22px oklch(68% 0.12 255deg / 0.12);
+  --focus-ring: oklch(78% 0.06 250deg / 0.55);
 
   /* Google Fonts 可选；断网/屏蔽时走系统 CJK 栈 */
   --font-display: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
   --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
   --font-sans: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "Cascadia Code", ui-monospace, "Consolas", monospace;
-
   --stf-radius-sm: 6px;
   --stf-radius-md: 10px;
   --stf-radius-lg: 14px;
-
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --dur-fast: 140ms;
   --dur-base: 240ms;

@@ -1,4 +1,4 @@
-/* ========================================
+﻿/* ========================================
    飞行雪绒 — Main Interaction System
    Theme Toggle · Scroll Reveal · Like · Easter Egg · Magnetic
    增强浏览器兼容性：Edge · 夸克 · Safari · 旧版浏览器
@@ -8,11 +8,11 @@
     'use strict';
 
     function safeSetItem(key, value) {
-        try { window.localStorage.setItem(key, value); return true; } catch (e) { return false; }
+        try { window.localStorage.setItem(key, value); return true; } catch(_) { return false; }
     }
 
     function safeGetItem(key) {
-        try { return window.localStorage.getItem(key); } catch (e) { return null; }
+        try { return window.localStorage.getItem(key); } catch(_) { return null; }
     }
 
     function addMediaListener(query, callback) {
@@ -81,7 +81,7 @@
     /* ===== 博文点赞状态持久化（G-09 修复）===== */
     var POST_LIKES_KEY = 'fxre_post_likes';
     function getPostLikedStates() {
-        try { return JSON.parse(safeGetItem(POST_LIKES_KEY) || '{}'); } catch(e) { return {}; }
+        try { return JSON.parse(safeGetItem(POST_LIKES_KEY) || '{}'); } catch(_) { return {}; }
     }
     function savePostLikedStates(states) {
         safeSetItem(POST_LIKES_KEY, JSON.stringify(states));
@@ -326,7 +326,7 @@
         try {
             document.documentElement.setAttribute('data-realm', slug);
             if (document.body) document.body.setAttribute('data-realm', slug);
-        } catch (e) { /* ignore */ }
+        } catch(_) { /* ignore */ }
         safeSetItem('snowfluff-location', loc || '星炬学院');
         safeSetItem('snowfluff-realm', slug);
         return slug;
@@ -517,7 +517,7 @@
                     musicPlayer.analyser.fftSize = 128;
                     musicPlayer.masterGain.connect(musicPlayer.analyser);
                     musicPlayer.analyser.connect(musicPlayer.audioCtx.destination);
-                } catch (e) {
+                } catch(e) {
                     console.warn('Web Audio API not available:', e);
                     return;
                 }
@@ -543,7 +543,7 @@
                 try {
                     if (musicPlayer.activeNodes[i].stop) musicPlayer.activeNodes[i].stop();
                     if (musicPlayer.activeNodes[i].disconnect) musicPlayer.activeNodes[i].disconnect();
-                } catch (e) {}
+                } catch(_) {}
             }
             musicPlayer.activeNodes = [];
             musicPlayer.isPlaying = false;
@@ -1078,7 +1078,7 @@
             document.execCommand('copy');
             document.body.removeChild(ta);
             showSubmitToast('链接已复制 ✓', 2500);
-        } catch (e) {
+        } catch(_) {
             showSubmitToast('请手动复制：' + url, 4000);
         }
         return Promise.resolve();
@@ -1263,7 +1263,7 @@
     function reconcileCommentsBulk(targetId, cloudComments) {
         cloudComments = Array.isArray(cloudComments) ? cloudComments : [];
         var local = [];
-        try { local = JSON.parse(safeGetItem('fxre_comments_' + targetId) || '[]'); } catch (e) {}
+        try { local = JSON.parse(safeGetItem('fxre_comments_' + targetId) || '[]'); } catch(_) {}
         var cloudIds = {};
         cloudComments.forEach(function(cc) { if (cc && cc.id != null) cloudIds[String(cc.id)] = 1; });
         var kept = local.filter(function(c) { return !c.id || cloudIds[String(c.id)]; });
@@ -1628,7 +1628,7 @@
                 moreBtn.addEventListener('click', function() {
                     commentDisplayLimits[targetId] = (commentDisplayLimits[targetId] || COMMENT_PAGE_SIZE) + COMMENT_PAGE_SIZE;
                     var cur = [];
-                    try { cur = JSON.parse(safeGetItem('fxre_comments_' + targetId) || '[]'); } catch (e) {}
+                    try { cur = JSON.parse(safeGetItem('fxre_comments_' + targetId) || '[]'); } catch(_) {}
                     reconcileCommentThread(list, cur, opts);
                 });
                 list.appendChild(moreBtn);
@@ -1701,7 +1701,7 @@
                 }
             });
             localStorage.setItem('fxre_bookmarks', JSON.stringify(bookmarks));
-        } catch (e) { /* ignore */ }
+        } catch(_) { /* ignore */ }
     }
 
     function syncCloudBookmarks() {
@@ -1717,7 +1717,7 @@
 
     function applyBookmarkFlags(submissions) {
         var localBookmarks = {};
-        try { localBookmarks = JSON.parse(localStorage.getItem('fxre_bookmarks') || '{}'); } catch (e) {}
+        try { localBookmarks = JSON.parse(localStorage.getItem('fxre_bookmarks') || '{}'); } catch(_) {}
         submissions.forEach(function(s) {
             s.bookmarked = !!localBookmarks[s.id];
         });
@@ -1860,7 +1860,7 @@
         function paint(submissions, bookmarkRows) {
             submissions = applyBookmarkFlags(submissions || []);
             var bookmarkMap = {};
-            try { bookmarkMap = JSON.parse(localStorage.getItem('fxre_bookmarks') || '{}'); } catch (e) {}
+            try { bookmarkMap = JSON.parse(localStorage.getItem('fxre_bookmarks') || '{}'); } catch(_) {}
 
             var bookmarked = submissions.filter(function(s) {
                 if (!s.bookmarked) return false;
@@ -2307,7 +2307,7 @@
     function getComments(targetId) {
         if (typeof DataRepository !== 'undefined') return DataRepository.getComments(targetId);
         var data = safeGetItem('fxre_comments_' + targetId);
-        if (data) { try { return JSON.parse(data); } catch(e) { return []; } }
+        if (data) { try { return JSON.parse(data); } catch(_) { return []; } }
         return [];
     }
 
@@ -2423,7 +2423,7 @@
             var removeId = payload.old ? payload.old.id : (payload.new ? payload.new.id : null);
             if (removeId) {
                 var local = [];
-                try { local = JSON.parse(safeGetItem('fxre_comments_' + targetId) || '[]'); } catch (e) {}
+                try { local = JSON.parse(safeGetItem('fxre_comments_' + targetId) || '[]'); } catch(_) {}
                 local = local.filter(function(c) { return String(c.id) !== String(removeId); });
                 saveComments(targetId, local);
                 refreshCommentListUI(targetId, local);
@@ -2437,7 +2437,7 @@
             var c = mapRealtimeCommentRow(row);
             if (!c) { refreshCommentListUI(targetId); return; }
             var comments = [];
-            try { comments = JSON.parse(safeGetItem('fxre_comments_' + targetId) || '[]'); } catch (e) {}
+            try { comments = JSON.parse(safeGetItem('fxre_comments_' + targetId) || '[]'); } catch(_) {}
             var found = false;
             for (var i = 0; i < comments.length; i++) {
                 if (c.id && String(comments[i].id) === String(c.id)) {
@@ -2753,7 +2753,7 @@
                     });
                     localStorage.setItem(key, JSON.stringify(list));
                 }
-            } catch(e) {}
+            } catch(_) {}
             renderComments(targetId);
         }
     }
@@ -2975,7 +2975,7 @@
     function getSubmissions() {
         if (typeof DataRepository !== 'undefined') return DataRepository.getSubmissions();
         var data = safeGetItem('fxre_submissions');
-        if (data) { try { return JSON.parse(data); } catch(e) { return []; } }
+        if (data) { try { return JSON.parse(data); } catch(_) { return []; } }
         return [];
     }
 
@@ -2986,7 +2986,7 @@
     /** 同步读取 localStorage 中的投稿（不调云端，用于乐观更新后修正） */
     function getSubmissionsSync() {
         var data = safeGetItem('fxre_submissions');
-        if (data) { try { return JSON.parse(data); } catch(e) { return []; } }
+        if (data) { try { return JSON.parse(data); } catch(_) { return []; } }
         return [];
     }
 
@@ -3605,7 +3605,7 @@
                                     if (result.action === 'removed') delete bookmarks[id];
                                     else bookmarks[id] = { time: Date.now(), cloud: true };
                                     localStorage.setItem('fxre_bookmarks', JSON.stringify(bookmarks));
-                                } catch (e) {}
+                                } catch(_) {}
                                 showSubmitToast(!isBookmarked ? '已收藏' : '已取消收藏', 1500);
                             } else if (result && result.reason) {
                                 showSubmitToast(result.reason, 3000);
@@ -3630,7 +3630,7 @@
                             }
                             localStorage.setItem(bookmarkKey, JSON.stringify(bookmarks));
                             showSubmitToast(!isBookmarked ? '已收藏（本地）' : '已取消收藏', 1500);
-                        } catch(e) {}
+                        } catch(_) {}
                     }
                 });
             }
@@ -3863,7 +3863,7 @@
                     document.body.removeChild(ta);
                     showSubmitToast('\u8bca\u65ad\u4fe1\u606f\u5df2\u590d\u5236 \u2713');
                 }
-            } catch(e) {}
+            } catch(_) {}
         });
 
         /* 双击页脚 → 管理员登录 */
@@ -4720,7 +4720,7 @@
                 });
                 if (typeof syncAllPostCommentCounts === 'function') syncAllPostCommentCounts();
                 return true;
-            } catch (e) {
+            } catch(_) {
                 return false;
             }
         }

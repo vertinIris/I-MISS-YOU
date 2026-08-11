@@ -8,12 +8,14 @@
     margin: 48px 0 24px;
     text-align: center;
 }
+
 .stf-site-meta {
     margin: 0;
     font-size: 12px;
     letter-spacing: 0.04em;
     color: rgba(240, 244, 255, 0.42);
 }
+
 .stf-hidden-trigger {
     display: inline-flex;
     align-items: center;
@@ -26,10 +28,12 @@
     vertical-align: middle;
     transition: color .25s, transform .25s;
 }
+
 .stf-hidden-trigger:hover {
     color: var(--aimisi-pink, #FF6B9D);
     transform: rotate(15deg) scale(1.15);
 }
+
 .stf-hidden-snowflake {
     width: 14px;
     height: 14px;
@@ -51,6 +55,7 @@
     pointer-events: none;
     transition: opacity .35s ease, visibility .35s;
 }
+
 .stf-easter-overlay.is-active {
     opacity: 1;
     visibility: visible;
@@ -67,9 +72,11 @@
     filter: blur(6px);
     transform: scale(.2);
 }
+
 .stf-easter-overlay.is-active .stf-easter-ring {
     animation: stf-easter-ring-burst 1.1s cubic-bezier(.16,1,.3,1) forwards;
 }
+
 @keyframes stf-easter-ring-burst {
     0%   { opacity: 0; transform: scale(.2) rotate(0deg); }
     20%  { opacity: .9; transform: scale(.6) rotate(45deg); }
@@ -84,6 +91,7 @@
     overflow: hidden;
     pointer-events: none;
 }
+
 .stf-easter-particle {
     position: absolute;
     width: 6px;
@@ -93,9 +101,11 @@
     box-shadow: 0 0 10px 2px var(--aimisi-pink, #FF6B9D);
     opacity: 0;
 }
+
 .stf-easter-overlay.is-active .stf-easter-particle {
     animation: stf-easter-particle-fly .9s cubic-bezier(.16,1,.3,1) forwards;
 }
+
 @keyframes stf-easter-particle-fly {
     0%   { opacity: 1; transform: translate(0,0) scale(1); }
     100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(.2); }
@@ -112,15 +122,18 @@
     opacity: 0;
     transform: scale(.6);
 }
+
 .stf-easter-overlay.is-active .stf-resonance {
     animation: stf-resonance-in 1.4s cubic-bezier(.16,1,.3,1) forwards;
 }
+
 @keyframes stf-resonance-in {
     0%   { opacity: 0; transform: scale(.55) rotate(-12deg); }
     45%  { opacity: 1; transform: scale(1.06) rotate(4deg); }
     70%  { transform: scale(.98) rotate(-2deg); }
     100% { opacity: 1; transform: scale(1) rotate(0deg); }
 }
+
 .stf-resonance-wave {
     position: absolute;
     inset: 18%;
@@ -128,22 +141,27 @@
     border: 2px solid rgba(168,216,255,.5);
     opacity: 0;
 }
+
 .stf-easter-overlay.is-active .stf-resonance-wave {
     animation: stf-resonance-ring 2.6s ease-out infinite;
 }
+
 .stf-easter-overlay.is-active .stf-resonance-wave--2 {
     border-color: rgba(182,107,255,.5);
     animation-delay: .5s;
 }
+
 .stf-easter-overlay.is-active .stf-resonance-wave--3 {
     border-color: rgba(255,107,157,.55);
     animation-delay: 1s;
 }
+
 @keyframes stf-resonance-ring {
     0%   { opacity: 0; transform: scale(.4); }
     25%  { opacity: .9; }
     100% { opacity: 0; transform: scale(1.7); }
 }
+
 .stf-resonance-halo {
     position: absolute;
     inset: 24%;
@@ -152,13 +170,16 @@
     filter: blur(8px);
     opacity: 0;
 }
+
 .stf-easter-overlay.is-active .stf-resonance-halo {
     animation: stf-halo-breathe 3s ease-in-out infinite;
 }
+
 @keyframes stf-halo-breathe {
     0%, 100% { opacity: .5; transform: scale(.95); }
     50%      { opacity: .9; transform: scale(1.08); }
 }
+
 .stf-resonance-flake {
     position: relative;
     width: 62%;
@@ -166,6 +187,7 @@
     filter: drop-shadow(0 0 18px rgba(255,107,157,.6));
     animation: stf-flake-spin 14s linear infinite;
 }
+
 @keyframes stf-flake-spin { to { transform: rotate(360deg); } }
 
 /* 精致频率牌 */
@@ -185,30 +207,37 @@
     opacity: 0;
     transform: translateY(14px);
 }
+
 .stf-easter-overlay.is-active .stf-freq-display {
     animation: stf-freq-in .7s ease .5s forwards;
 }
+
 @keyframes stf-freq-in { to { opacity: 1; transform: translateY(0); } }
+
 .stf-freq-label {
     font-size: 11px; letter-spacing: .34em;
     color: rgba(168,216,255,.8); text-transform: uppercase;
 }
+
 .stf-freq-digits {
     display: flex; gap: 10px;
     font-family: "Noto Serif SC", serif;
     font-size: clamp(38px, 9vw, 60px);
     font-weight: 800; line-height: 1;
 }
+
 .stf-freq-digit {
-    background: linear-gradient(180deg, #FFFFFF, #FFB6D9 60%, #FF6B9D);
+    background: linear-gradient(180deg, #FFF, #FFB6D9 60%, #FF6B9D);
     -webkit-background-clip: text; background-clip: text; color: transparent;
     text-shadow: 0 0 26px rgba(255,107,157,.35);
 }
+
 .stf-freq-line {
     width: 70%; height: 1px;
     background: linear-gradient(90deg, transparent, rgba(168,216,255,.7), transparent);
 }
 .stf-freq-line i { display: block; }
+
 .stf-freq-sub {
     font-size: 13px; letter-spacing: .12em;
     color: rgba(240,244,255,.72);
@@ -216,6 +245,7 @@
 
 /* 屏幕轻微粉闪（进入另一世界） */
 .stf-easter-overlay.is-active { animation: stf-screen-flash 2s ease forwards; }
+
 @keyframes stf-screen-flash {
     0%   { box-shadow: inset 0 0 0 0 rgba(255,107,157,0); }
     40%  { box-shadow: inset 0 0 160px 40px rgba(255,107,157,.18); }
@@ -232,9 +262,11 @@
     opacity: 0;
     pointer-events: none;
 }
+
 .stf-easter-overlay.is-active .stf-easter-note {
     animation: stf-note-float 1.6s ease-out forwards;
 }
+
 @keyframes stf-note-float {
     0%   { opacity: 0; transform: translate(0, 0) scale(.6) rotate(0deg); }
     20%  { opacity: 1; }
@@ -255,12 +287,14 @@
     transition: opacity .45s ease, visibility .45s;
 }
 .stf-welcome.is-open { opacity: 1; visibility: visible; }
+
 .stf-welcome-backdrop {
     position: absolute;
     inset: 0;
     background: radial-gradient(circle at 50% 50%, rgba(10,10,18,.88), rgba(5,5,12,.96));
     backdrop-filter: blur(8px);
 }
+
 .stf-welcome-panel {
     position: relative;
     width: min(480px, 100%);
@@ -272,6 +306,7 @@
     border-top: 2px solid var(--stf-brand, #6d8fd6);
 }
 .stf-welcome.is-open .stf-welcome-panel { transform: none; }
+
 .stf-welcome-signal {
     display: inline-flex;
     align-items: center;
@@ -281,6 +316,7 @@
     color: var(--stf-brand-light, #A8D8FF);
     margin-bottom: 18px;
 }
+
 .stf-welcome-dot {
     width: 8px; height: 8px;
     border-radius: 50%;
@@ -288,10 +324,12 @@
     box-shadow: 0 0 10px var(--stf-brand, #6d8fd6);
     animation: stf-welcome-pulse 2s ease-in-out infinite;
 }
+
 @keyframes stf-welcome-pulse {
     0%, 100% { opacity: .6; transform: scale(1); }
     50%      { opacity: 1; transform: scale(1.35); }
 }
+
 .stf-welcome h2 {
     font-family: "Noto Serif SC", serif;
     font-size: 26px;
@@ -317,9 +355,11 @@
     opacity: 0;
     transform: translateY(10px);
 }
+
 .stf-easter-overlay.is-active .stf-easter-hint {
     animation: stf-easter-hint-in .6s ease .45s forwards;
 }
+
 @keyframes stf-easter-hint-in {
     to { opacity: 1; transform: translateY(0); }
 }
@@ -331,6 +371,7 @@
     gap: 22px;
     margin-top: 36px;
 }
+
 .character-archive-card {
     position: relative;
     display: flex;
@@ -346,6 +387,7 @@
     overflow: hidden;
     transition: transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s, border-color .4s;
 }
+
 .character-archive-card::after {
     content: "";
     position: absolute;
@@ -355,12 +397,14 @@
     transition: opacity .4s;
     pointer-events: none;
 }
+
 .character-archive-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 22px 50px rgba(0,0,0,.4);
     border-color: color-mix(in srgb, var(--char, #FF6B9D) 55%, transparent);
 }
 .character-archive-card:hover::after { opacity: 1; }
+
 .character-archive-icon {
     width: 50px; height: 50px;
     display: grid; place-items: center;
@@ -369,21 +413,25 @@
     color: var(--char, var(--aimisi-pink));
 }
 .character-archive-icon svg { width: 24px; height: 24px; }
+
 .character-archive-name {
     font-family: "Noto Serif SC", serif;
     font-size: 21px; font-weight: 700; margin: 4px 0 0;
 }
+
 .character-archive-alias {
     font-size: 13px;
     color: var(--char, var(--aimisi-pink));
     opacity: .9;
 }
+
 .character-archive-line {
     font-size: 14px;
     color: rgba(240,244,255,.7);
     line-height: 1.7;
     margin: 0;
 }
+
 .character-archive-cta {
     margin-top: 6px;
     font-size: 13px; font-weight: 500;
@@ -407,15 +455,18 @@
     border-radius: 999px;
     transition: color 0.25s, background 0.25s;
 }
+
 .stf-corridor-mark:hover,
 .stf-corridor-mark:focus-visible {
     color: rgba(232, 197, 106, 0.85);
     background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 8%, transparent);
     outline: none;
 }
+
 .stf-corridor-mark.is-found {
     color: rgba(255, 107, 157, 0.75);
 }
+
 .stf-easter-toast {
     position: fixed;
     left: 50%;
@@ -436,6 +487,7 @@
     transition: opacity 0.4s ease, transform 0.4s ease;
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
 }
+
 .stf-easter-toast.is-visible {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
@@ -445,12 +497,15 @@
 .stf-tuner-frame.is-close .stf-tuner-wave {
     box-shadow: 0 0 24px rgba(232, 197, 106, 0.18);
 }
+
 .stf-tuner-frame.is-close .stf-tuner-led {
     box-shadow: 0 0 12px rgba(232, 197, 106, 0.55);
 }
+
 .stf-dial-input.is-hit {
     animation: stf-dial-hit 0.35s ease;
 }
+
 @keyframes stf-dial-hit {
     0% { transform: scale(1); }
     40% { transform: scale(1.06); }

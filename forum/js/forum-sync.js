@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 星炬学院主论坛 · 同步监测 / 主动同步 / 自动同步
  * ----------------------------------------------------
  * 设计说明：
@@ -67,7 +67,7 @@
                 }
                 if (hit) bag[k] = localStorage.getItem(k);
             }
-        } catch (e) { /* ignore */ }
+        } catch(_) { /* ignore */ }
         return bag;
     }
 
@@ -79,7 +79,7 @@
 
     function getPending() {
         if (state.adapter && typeof state.adapter.getPending === 'function') {
-            try { return state.adapter.getPending() || 0; } catch (e) { return 0; }
+            try { return state.adapter.getPending() || 0; } catch(_) { return 0; }
         }
         return 0;
     }
@@ -109,7 +109,7 @@
         }
         if (txt) txt.textContent = statusText();
         for (var i = 0; i < listeners.length; i++) {
-            try { listeners[i](getStatus()); } catch (e) { /* ignore */ }
+            try { listeners[i](getStatus()); } catch(_) { /* ignore */ }
         }
     }
 
@@ -145,7 +145,7 @@
                         handleCloudFailure();
                     }
                 });
-            } catch (e) {
+            } catch(_) {
                 state.syncing = false;
                 handleCloudFailure();
             }
@@ -155,7 +155,7 @@
         /* 本地模式：重新跑种子合并 + 重渲染 */
         try {
             if (window.StarTorchData) window.StarTorchData.ensureSeedData();
-        } catch (e) { /* ignore */ }
+        } catch(_) { /* ignore */ }
         if (window.StarTorchForum && window.StarTorchForum.refreshCommunity) {
             window.StarTorchForum.refreshCommunity();
         }
@@ -225,7 +225,7 @@
     /* ---------- 公开 API ---------- */
     function getCloudLastError() {
         if (state.adapter && typeof state.adapter.getLastError === 'function') {
-            try { return state.adapter.getLastError(); } catch (e) { return null; }
+            try { return state.adapter.getLastError(); } catch(_) { return null; }
         }
         return null;
     }

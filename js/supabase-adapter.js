@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 飞行雪绒 — Supabase 适配器模块
  * Phase 3: 封装 Supabase 客户端，提供云端数据访问
  *
@@ -37,7 +37,7 @@
         try {
             localStorage.setItem(PENDING_KEY, JSON.stringify(pendingSync));
             return true;
-        } catch (e) {
+        } catch(e) {
             console.warn('[SupabaseAdapter] pending 队列持久化失败:', e.message || e);
             return false;
         }
@@ -73,13 +73,13 @@
         try {
             var raw = localStorage.getItem(PENDING_KEY);
             if (raw) return JSON.parse(raw);
-        } catch(e){}
+        } catch(_){}
         return [];
     }
 
     function clearPendingQueue() {
         pendingSync = [];
-        try { localStorage.removeItem(PENDING_KEY); } catch(e){}
+        try { localStorage.removeItem(PENDING_KEY); } catch(_){}
     }
 
     function dropQuotaBlockedFromQueue() {

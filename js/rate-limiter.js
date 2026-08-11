@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 飞行雪绒 — 客户端速率限制器
  * Phase 3: 防止恶意刷屏，辅助 RLS 服务端限制
  *
@@ -16,11 +16,11 @@
      * localStorage 安全封装
      * ================================================================ */
     function safeGetItem(key) {
-        try { return localStorage.getItem(key); } catch(e) { return null; }
+        try { return localStorage.getItem(key); } catch(_) { return null; }
     }
 
     function safeSetItem(key, value) {
-        try { localStorage.setItem(key, value); return true; } catch(e) { return false; }
+        try { localStorage.setItem(key, value); return true; } catch(_) { return false; }
     }
 
     /* ================================================================
@@ -168,14 +168,14 @@
         try {
             var raw = getStore(key);
             if (raw) { return JSON.parse(raw); }
-        } catch(e) {}
+        } catch(_) {}
         return { timestamps: [], blockUntil: 0 };
     }
 
     function saveState(key, data) {
         try {
             setStore(key, JSON.stringify(data));
-        } catch(e) {}
+        } catch(_) {}
     }
 
     /* ================================================================

@@ -14,6 +14,9 @@
 | highlight.js | 11.11.2 | 代码语法高亮 — 论坛代码块 | P1 推荐 |
 | PhotoSwipe | 5.4.4 | 图片灯箱画廊 — 手势缩放浏览 | P1 推荐 |
 | Just-Validate | 4.3.0 | 表单验证 — 登录/注册/发帖 | P1 推荐 |
+| Font-Awesome | 7.3.1 | 图标库 — 通用 UI 图标（Solid/Regular/Brands 三样式 + fa-spin 动画） | P1 推荐 |
+| anime.js | 4.5.0 | JS 动画引擎 — 高级视觉特效（磁性按钮/曲线轮播/hero 入场/滚动触发） | P1 推荐 |
+| Material Design Icons | 7.4.47 | 图标库 — 学院蓝金论坛"权威感"图标，可变字体支持 | P1 推荐 |
 
 完整元数据（含 SRI 哈希、集成代码片段、使用示例）见 `manifest.json`。
 
@@ -72,6 +75,37 @@
   lightbox.init();
 </script>
 ```
+
+### 3. P1 推荐 — 图标库与动画引擎（2026-08-11 新增，参考 GitHub TOP 10 调研）
+
+```html
+<!-- Font-Awesome 7.3.1（通用 UI 图标，按需接入页面） -->
+<link rel="stylesheet" href="vendor/fontawesome/css/all.min.css"
+      integrity="sha384-qrALq7+6jBOZIQsNnT6xGkMDru64qD6uTlDra39xrt2SoXl4pO3FX6Roz/RpR/BS"
+      crossorigin="anonymous">
+<!-- 用法：<i class="fas fa-heart"></i>（Solid）/ <i class="far fa-star"></i>（Regular）/ <i class="fab fa-github"></i>（Brands）/ <i class="fas fa-spinner fa-spin"></i>（动画） -->
+
+<!-- Material Design Icons 7.4.47（学院蓝金论坛"权威感"图标，与 FA 风格区分） -->
+<link rel="stylesheet" href="vendor/mdi/css/materialdesignicons.min.css"
+      integrity="sha384-HphS8cQyN+eYiJ5PMbzShG6qZdRtvHPVLPkYb8JwMkmNgaIxrFVDhQe3jIbq3EZ2"
+      crossorigin="anonymous">
+<!-- 用法：<span class="mdi mdi-home"></span> / <span class="mdi mdi-forum"></span> / <span class="mdi mdi-account"></span> -->
+
+<!-- anime.js 4.5.0 — UMD 全局（用于 <script src> 场景） -->
+<script src="vendor/animejs/anime.umd.min.js"
+        integrity="sha384-InMmvD3VoYcY7hGjSC80aLb2bNNE4CzpX+Eq6FVDlmB0IKgDvmfPw4UY8L/M++iG"
+        crossorigin="anonymous"></script>
+<!-- 用法：anime.animate('.target', { translateX: 250, duration: 800, easing: 'easeOutQuad' }); -->
+
+<!-- 或 anime.js ESM 模块（推荐用于 <script type="module"> 场景，tree-shakeable） -->
+<script type="module">
+  import { animate, stagger, createTimeline } from './vendor/animejs/anime.esm.min.js';
+  // 磁性按钮示例（参考 ITomPoland/ui-components）
+  animate('.magnetic-btn', { scale: [1, 1.06], duration: 280, easing: 'easeOutQuad' });
+</script>
+```
+
+**字体子集化建议**：Font-Awesome（3 个 woff2 共 ~254KB）与 MDI（woff2 ~394KB）目前为全集。若 Lighthouse 显示字体阻塞 LCP，可使用 `fonttools`/`subfont` 按页面实际使用的图标名做子集，预计可降至 30–50KB/库。当前 browserslist（Chrome ≥90 / FF ≥88 / Safari ≥14 / Edge ≥90）原生支持 woff2，已剔除 woff/ttf/svg 等旧格式。
 
 ## CSP 适配
 

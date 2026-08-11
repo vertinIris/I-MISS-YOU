@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 飞行雪绒 — 管理员口令认证模块
  * v7.6: 轻量管理员系统，基于口令哈希 + sessionStorage
  *
@@ -35,9 +35,9 @@
      * ================================================================ */
     function notify(level, msg) {
         if (typeof window.AppToast !== 'undefined' && window.AppToast[level]) {
-            try { window.AppToast[level](msg); return; } catch (_) { /* 降级 */ }
+            try { window.AppToast[level](msg); return; } catch(_) { /* 降级 */ }
         }
-        try { alert(msg); } catch (_) { /* ignore */ }
+        try { alert(msg); } catch(_) { /* ignore */ }
     }
 
     /* ================================================================
@@ -163,7 +163,7 @@
             failCount = 0;
             cooldownUntil = 0;
             var token = 'fxre_admin_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
-            try { sessionStorage.setItem('fxre_admin_token', token); } catch(e) {}
+            try { sessionStorage.setItem('fxre_admin_token', token); } catch(_) {}
             adminToken = token;
             console.log('[AdminAuth] 管理员登录成功');
             return { success: true, reason: '' };
@@ -190,7 +190,7 @@
         try {
             var stored = sessionStorage.getItem('fxre_admin_token');
             if (stored) { adminToken = stored; return true; }
-        } catch(e) {}
+        } catch(_) {}
         return false;
     }
 
@@ -199,7 +199,7 @@
      */
     function logout() {
         adminToken = null;
-        try { sessionStorage.removeItem('fxre_admin_token'); } catch(e) {}
+        try { sessionStorage.removeItem('fxre_admin_token'); } catch(_) {}
         console.log('[AdminAuth] 已退出管理员模式');
     }
 
@@ -307,7 +307,7 @@
         overlay.hidden = false;
         if (errEl) errEl.hidden = true;
         input.value = '';
-        setTimeout(function() { try { input.focus(); } catch(e) {} }, 50);
+        setTimeout(function() { try { input.focus(); } catch(_) {} }, 50);
         submitBtn.onclick = submit;
         cancelBtn.onclick = close;
         overlay.onclick = function(e) { if (e.target === overlay) close(); };

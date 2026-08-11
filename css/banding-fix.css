@@ -25,6 +25,7 @@ body::before {
 
 /* 各 .section 顶部/底部微光，柔化相邻板块的接缝 */
 .section { position: relative; }
+
 .section::before {
     content: "";
     position: absolute;
@@ -34,6 +35,7 @@ body::before {
     pointer-events: none;
     background: linear-gradient(to bottom, rgba(255,107,157,.06), transparent);
 }
+
 .section::after {
     content: "";
     position: absolute;

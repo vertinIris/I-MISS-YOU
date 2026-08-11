@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    星炬学院论坛 · 飞行雪绒隐藏入口
    完全独立实现：不依赖飞行雪绒站 secret-portal.js
    触发方式：页脚雪花 4 秒内连击 5 次 / 键盘输入 9072
@@ -94,7 +94,7 @@
                 osc.start();
                 osc.stop(ctx.currentTime + 1);
             }
-        } catch (e) { /* ignore */ }
+        } catch(_) { /* ignore */ }
 
         // 与像素飞出动画（2s）对齐后跳转
         setTimeout(function () {
@@ -143,7 +143,7 @@
     function initWelcome() {
         try {
             if (localStorage.getItem('stf_welcome_seen') === '1') return;
-        } catch (e) { return; }
+        } catch(_) { return; }
 
         var welcome = document.getElementById('stf-welcome');
         if (!welcome) return;
@@ -155,7 +155,7 @@
         function closeWelcome() {
             welcome.classList.remove('is-open');
             setTimeout(function () { welcome.hidden = true; }, 450);
-            try { localStorage.setItem('stf_welcome_seen', '1'); } catch (e) {}
+            try { localStorage.setItem('stf_welcome_seen', '1'); } catch(_) {}
         }
 
         var timer = setTimeout(openWelcome, 1200);

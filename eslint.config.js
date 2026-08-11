@@ -91,7 +91,8 @@ export default [
     },
     rules: {
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      /* no-console 仅禁用 dir/trace/group（调试残留），log/warn/error 为项目运行时状态输出，有意保留 */
+      'no-console': ['warn', { allow: ['log', 'warn', 'error', 'info'] }],
       'no-undef': 'error',
       /* no-redeclare 关闭：项目采用 var X = (function(){...})() + window.X 导出模式，
          定义文件内 var 与 config globals 会触发误报；跨文件引用靠全局作用域 */

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 星炬学院主论坛 · 通行证系统（双轨身份版）
  * ----------------------------------------------------
  * 复用飞行雪绒主站同一 Supabase 项目（lmlyfyjffaaddysiliht）。
@@ -53,9 +53,9 @@ window.StarTorchAuth = (function () {
     var current = null;
 
     /* ---------- storage（本地映射 / 镜像，非口令） ---------- */
-    function safeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
-    function safeSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
-    function safeRemove(k) { try { localStorage.removeItem(k); } catch (e) { /* ignore */ } }
+    function safeGet(k) { try { return localStorage.getItem(k); } catch(_) { return null; } }
+    function safeSet(k, v) { try { localStorage.setItem(k, v); return true; } catch(_) { return false; } }
+    function safeRemove(k) { try { localStorage.removeItem(k); } catch(_) { /* ignore */ } }
 
     function randomColor() { return AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)]; }
 
@@ -110,7 +110,7 @@ window.StarTorchAuth = (function () {
     /* 昵称归一化：去首尾空格 + 折叠内部连续空白 + 小写 + Unicode 规范化 */
     function normalizeNick(name) {
         var n = String(name || '').trim().replace(/\s+/g, ' ');
-        if (n.normalize) { try { n = n.normalize('NFKC'); } catch (e) { /* ignore */ } }
+        if (n.normalize) { try { n = n.normalize('NFKC'); } catch(_) { /* ignore */ } }
         return n.toLowerCase();
     }
 
@@ -192,7 +192,7 @@ window.StarTorchAuth = (function () {
     /* ---------- 当前用户视图 ---------- */
     function emit() {
         listeners.forEach(function (fn) {
-            try { fn(current); } catch (e) { /* ignore */ }
+            try { fn(current); } catch(_) { /* ignore */ }
         });
     }
 
@@ -214,7 +214,7 @@ window.StarTorchAuth = (function () {
     }
 
     function saveMirror(v) { safeSet(SESSION_MIRROR_KEY, JSON.stringify(v)); }
-    function loadMirror() { try { return JSON.parse(safeGet(SESSION_MIRROR_KEY)); } catch (e) { return null; } }
+    function loadMirror() { try { return JSON.parse(safeGet(SESSION_MIRROR_KEY)); } catch(_) { return null; } }
     function clearMirror() { safeRemove(SESSION_MIRROR_KEY); }
 
     /* 主站注册未采集昵称时，profiles.nickname 默认为「匿名信号源」——不得当作真实展示名 */
@@ -274,7 +274,7 @@ window.StarTorchAuth = (function () {
             : (user && user.created_at) ? Date.parse(user.created_at)
             : (current ? current.joined : Date.now());
 
-        try { localStorage.removeItem('stf_explicit_logout'); } catch (e) { /* ignore */ }
+        try { localStorage.removeItem('stf_explicit_logout'); } catch(_) { /* ignore */ }
 
         var v = publicView(user.id, name, color, joined,
             current ? current.posts : 0, email, authMode, role);
@@ -377,7 +377,7 @@ window.StarTorchAuth = (function () {
         var opts = normalizePayload(arguments, 'register');
         var id;
         try { id = resolveIdentity(opts, true); }
-        catch (e) { return Promise.reject(e); }
+        catch(e) { return Promise.reject(e); }
 
         var pwd = String(opts.password || '');
         if (pwd.length < 6) return Promise.reject(new Error('口令至少 6 位'));
@@ -422,7 +422,7 @@ window.StarTorchAuth = (function () {
         var opts = normalizePayload(arguments, 'login');
         var id;
         try { id = resolveIdentity(opts, false); }
-        catch (e) { return Promise.reject(e); }
+        catch(e) { return Promise.reject(e); }
 
         var client = window.supabaseClient;
         if (!client) return Promise.reject(new Error('云端未连接，无法登录'));
@@ -436,7 +436,7 @@ window.StarTorchAuth = (function () {
     }
 
     function logout() {
-        try { localStorage.setItem('stf_explicit_logout', '1'); } catch (e) { /* ignore */ }
+        try { localStorage.setItem('stf_explicit_logout', '1'); } catch(_) { /* ignore */ }
         clearMirror();
         current = null;
         emit();

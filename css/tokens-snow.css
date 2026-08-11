@@ -8,20 +8,20 @@
 
 :root {
   /* Paper / ink */
-  --sn-paper: oklch(12% 0.02 350);
-  --sn-paper-2: oklch(16% 0.025 350);
-  --sn-paper-3: oklch(20% 0.03 348);
-  --sn-ink: oklch(96% 0.01 350);
-  --sn-ink-2: oklch(82% 0.02 350);
-  --sn-ink-3: oklch(68% 0.025 350);
-  --sn-rule: oklch(40% 0.04 350 / 0.35);
+  --sn-paper: oklch(12% 0.02 350deg);
+  --sn-paper-2: oklch(16% 0.025 350deg);
+  --sn-paper-3: oklch(20% 0.03 348deg);
+  --sn-ink: oklch(96% 0.01 350deg);
+  --sn-ink-2: oklch(82% 0.02 350deg);
+  --sn-ink-3: oklch(68% 0.025 350deg);
+  --sn-rule: oklch(40% 0.04 350deg / 0.35);
 
   /* Accent — 雪绒粉（非紫辉光） */
-  --sn-accent: oklch(72% 0.14 350);
-  --sn-accent-strong: oklch(64% 0.16 348);
-  --sn-accent-soft: oklch(84% 0.08 350);
-  --sn-mist: oklch(92% 0.03 350);
-  --sn-ice: oklch(78% 0.06 230);
+  --sn-accent: oklch(72% 0.14 350deg);
+  --sn-accent-strong: oklch(64% 0.16 348deg);
+  --sn-accent-soft: oklch(84% 0.08 350deg);
+  --sn-mist: oklch(92% 0.03 350deg);
+  --sn-ice: oklch(78% 0.06 230deg);
 
   /* Scene → signature */
   --sig-accent: var(--hue-rose, #e879a8);
@@ -32,11 +32,10 @@
   --c-primary: #e879a8;
   --c-primary-strong: #d4548c;
   --c-primary-soft: #f5c0d8;
-  --c-primary-dim: oklch(72% 0.14 350 / 0.14);
+  --c-primary-dim: oklch(72% 0.14 350deg / 0.14);
   --c-core-white: #f7f0f4;
   --c-core-blue: #8eb4e8;
   --c-core-blue-light: #c5dff8;
-
   --color-pink: #e879a8;
   --color-pink-light: #f5c0d8;
   --color-pink-soft: #efa0c0;
@@ -46,51 +45,43 @@
   --aimisi-pink-soft: #efa0c0;
   --aimisi-pink-deep: #d4548c;
   --aimisi-white: #faf4f7;
-
   --bg-primary: #100810;
   --bg-secondary: #161018;
   --bg-tertiary: #1c141c;
   --bg-gradient-1: #100810;
   --bg-gradient-2: #180e16;
   --bg-gradient-3: #0e0a12;
-
   --text-primary: #faf4f7;
   --text-secondary: #dcc8d4;
   --text-tertiary: #a8909e;
-
-  --glass-bg: oklch(96% 0.01 350 / 0.04);
-  --glass-bg-hover: oklch(96% 0.01 350 / 0.07);
-  --glass-border: oklch(96% 0.01 350 / 0.1);
-  --glass-border-hover: oklch(72% 0.14 350 / 0.4);
+  --glass-bg: oklch(96% 0.01 350deg / 0.04);
+  --glass-bg-hover: oklch(96% 0.01 350deg / 0.07);
+  --glass-border: oklch(96% 0.01 350deg / 0.1);
+  --glass-border-hover: oklch(72% 0.14 350deg / 0.4);
   --glass-blur: blur(12px) saturate(120%);
-
-  --surface-card: oklch(96% 0.01 350 / 0.045);
-  --surface-card-border: oklch(96% 0.01 350 / 0.1);
-  --surface-inset: oklch(96% 0.01 350 / 0.03);
+  --surface-card: oklch(96% 0.01 350deg / 0.045);
+  --surface-card-border: oklch(96% 0.01 350deg / 0.1);
+  --surface-inset: oklch(96% 0.01 350deg / 0.03);
   --surface-accent: var(--c-primary-dim);
-  --surface-accent-border: oklch(72% 0.14 350 / 0.35);
-
-  --shadow-glow: 0 0 28px oklch(72% 0.14 350 / 0.12);
-  --focus-ring: oklch(72% 0.14 350 / 0.55);
-  --nav-bg: oklch(12% 0.02 350 / 0.82);
+  --surface-accent-border: oklch(72% 0.14 350deg / 0.35);
+  --shadow-glow: 0 0 28px oklch(72% 0.14 350deg / 0.12);
+  --focus-ring: oklch(72% 0.14 350deg / 0.55);
+  --nav-bg: oklch(12% 0.02 350deg / 0.82);
 
   /* Google Fonts 可选；断网/屏蔽时走系统 CJK 栈，角色页与主站一致 */
   --font-display: "ZCOOL XiaoWei", "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
   --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
   --font-sans: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", "Cascadia Code", ui-monospace, "Consolas", monospace;
-
   --radius-sm: 10px;
   --radius-md: 18px;
   --radius-lg: 24px;
-
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
   --dur-fast: 160ms;
   --dur-base: 280ms;
   --dur-slow: 520ms;
-
-  --sn-focus: 0 0 0 2px oklch(12% 0.02 350 / 0.95), 0 0 0 4px oklch(72% 0.14 350 / 0.55);
+  --sn-focus: 0 0 0 2px oklch(12% 0.02 350deg / 0.95), 0 0 0 4px oklch(72% 0.14 350deg / 0.55);
 }
 
 html, body {

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 星炬学院主论坛 · 独立数据层
  * 与飞行雪绒站（fxre_*）完全隔离，键前缀 stf_*
  */
@@ -92,11 +92,11 @@
     };
 
     function safeGet(key) {
-        try { return localStorage.getItem(key); } catch (e) { return null; }
+        try { return localStorage.getItem(key); } catch(_) { return null; }
     }
 
     function safeSet(key, value) {
-        try { localStorage.setItem(key, value); return true; } catch (e) { return false; }
+        try { localStorage.setItem(key, value); return true; } catch(_) { return false; }
     }
 
     /**
@@ -112,7 +112,7 @@
             if (!raw) return fallback;
             var parsed = JSON.parse(raw);
             return parsed == null ? fallback : parsed;
-        } catch (e) { return fallback; }
+        } catch(_) { return fallback; }
     }
 
     function getImportSeed() {
@@ -123,7 +123,7 @@
             return s.filter(function (item) {
                 return item && item.id && isDiscussionSeedType(item.type);
             });
-        } catch (e) { return []; }
+        } catch(_) { return []; }
     }
 
     function ensureSeedData() {
@@ -193,7 +193,7 @@
             var data = safeGet('stf_submissions');
             var all = data ? JSON.parse(data) : [];
             return all.filter(function (s) { return s.realm === 'startorch'; });
-        } catch (e) { return []; }
+        } catch(_) { return []; }
     }
 
     function saveSubmissions(list) {
@@ -204,7 +204,7 @@
         try {
             var data = safeGet('stf_comments_' + targetId);
             return data ? JSON.parse(data) : [];
-        } catch (e) { return []; }
+        } catch(_) { return []; }
     }
 
     function saveComments(targetId, list) {

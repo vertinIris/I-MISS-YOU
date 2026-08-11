@@ -1,4 +1,4 @@
-/* ========================================
+﻿/* ========================================
    飞行雪绒 — Snowflake Particle System
    Three.js增强版 + 纯CSS降级方案
    兼容：Edge · 夸克 · Safari · 低性能设备
@@ -13,7 +13,7 @@
             var canvas = document.createElement('canvas');
             return !!(window.WebGLRenderingContext &&
                 (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
-        } catch (e) {
+        } catch(_) {
             return false;
         }
     }
@@ -31,11 +31,11 @@
     }
 
     function safeSetStorage(key, value) {
-        try { window.localStorage.setItem(key, value); } catch (e) {}
+        try { window.localStorage.setItem(key, value); } catch(_) {}
     }
 
     function safeGetStorage(key) {
-        try { return window.localStorage.getItem(key); } catch (e) { return null; }
+        try { return window.localStorage.getItem(key); } catch(_) { return null; }
     }
 
     function scheduleIdle(fn, timeoutMs) {
@@ -169,7 +169,7 @@
             }
 
             return true;
-        } catch (e) {
+        } catch(e) {
             console.warn('Three.js particle init failed:', e);
             hasWebGLFailed = true;
             destroyThree();
@@ -313,7 +313,7 @@
             animationId = null;
         }
         if (renderer) {
-            try { renderer.dispose(); } catch (e) {}
+            try { renderer.dispose(); } catch(_) {}
             renderer = null;
         }
         scene = null;

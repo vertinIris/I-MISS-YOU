@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 飞行雪绒 · AppToast + sanitizeHTML 共享工具层
  *
  * 职责:
@@ -28,7 +28,7 @@
                 dismissible: true,
                 ripple: true
             });
-        } catch (e) {
+        } catch(e) {
             console.warn('[AppToast] Notyf 初始化失败:', e.message || e);
             return null;
         }
@@ -59,7 +59,7 @@
                     dismissible: cfg.dismissible !== false
                 });
             }
-        } catch (e) {
+        } catch(_) {
             fallbackLog(type, message);
         }
     }
@@ -103,7 +103,7 @@
         }
         try {
             return DOMPurify.sanitize(dirty, PURIFY_CONFIG);
-        } catch (e) {
+        } catch(e) {
             console.warn('[sanitizeHTML] DOMPurify 消毒失败，降级纯文本:', e.message || e);
             return dirty.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }

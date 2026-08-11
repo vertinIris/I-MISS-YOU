@@ -1,4 +1,4 @@
-/**
+﻿/**
  * forum-chat.js — 星炬学院实时公共聊天室（v2 · 真实感增强）
  *
  * 实时来源（按优先级合并）：
@@ -106,7 +106,7 @@
                 tabId = 't_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
                 sessionStorage.setItem('stf_chat_tab', tabId);
             }
-        } catch (e) {
+        } catch(_) {
             tabId = 't_' + Date.now().toString(36);
         }
         return tabId;
@@ -121,7 +121,7 @@
                 guestPresenceId = 'g_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
                 localStorage.setItem('stf_chat_guest_presence', guestPresenceId);
             }
-        } catch (e) {
+        } catch(_) {
             guestPresenceId = getTabId();
         }
         return guestPresenceId;
@@ -165,7 +165,7 @@
                 key: toKey,
                 name: getSenderName()
             });
-        } catch (e) {}
+        } catch(_) {}
     }
 
     function touchSelfPresence(nameHint) {
@@ -195,7 +195,7 @@
                 pendingReplaceFrom = null;
             }
             bc.postMessage(payload);
-        } catch (e) {}
+        } catch(_) {}
     }
 
     function pruneParticipants(now) {
@@ -237,7 +237,7 @@
             }
         }
         var saved = '';
-        try { saved = localStorage.getItem('stf_chat_nick') || ''; } catch (e) {}
+        try { saved = localStorage.getItem('stf_chat_nick') || ''; } catch(_) {}
         return saved || '匿名信号源';
     }
     function currentUserKey() {
@@ -357,7 +357,7 @@
                 });
                 return;
             }
-        } catch (e) { /* fallback */ }
+        } catch(_) { /* fallback */ }
         fallbackCopyText(text, ok, fail);
     }
 
@@ -372,7 +372,7 @@
         try {
             var done = document.execCommand('copy');
             if (done) ok(); else fail();
-        } catch (e) { fail(); }
+        } catch(_) { fail(); }
         document.body.removeChild(ta);
     }
 
@@ -562,7 +562,7 @@
                         time: now, user_id: userKey, isSelf: false
                     }
                 });
-            } catch (e) {}
+            } catch(_) {}
         }
 
         // 上云
@@ -596,7 +596,7 @@
 
         if (els.input) els.input.value = '';
         if (els.counter) els.counter.textContent = '0/' + MAX_LEN;
-        if (!user) { try { localStorage.setItem('stf_chat_nick', name); } catch (e) {} }
+        if (!user) { try { localStorage.setItem('stf_chat_nick', name); } catch(_) {} }
         if (typeof ClientRateLimiter !== 'undefined' && ClientRateLimiter.recordCommentSent) {
             ClientRateLimiter.recordCommentSent(text);
         }
@@ -675,7 +675,7 @@
     }
 
     function broadcastTyping() {
-        if (bc) { try { bc.postMessage({ t: 'typing', name: getSenderName() }); } catch (e) {} }
+        if (bc) { try { bc.postMessage({ t: 'typing', name: getSenderName() }); } catch(_) {} }
     }
 
     function bindEvents() {
@@ -782,7 +782,7 @@
             bc = new BroadcastChannel('stf-chat-room');
             bc.onmessage = onBroadcastMessage;
             broadcastHello(true);
-        } catch (e) { bc = null; }
+        } catch(_) { bc = null; }
     }
 
     function startPresenceHeartbeat() {
@@ -827,9 +827,9 @@
                 if (!bc || !lastSelfPresenceKey) return;
                 try {
                     bc.postMessage({ t: 'presence', op: 'leave', key: lastSelfPresenceKey });
-                } catch (e) {}
+                } catch(_) {}
             });
-        } catch (e) {}
+        } catch(_) {}
 
         var c = cloud();
         if (c && c.onChatRealtime) {

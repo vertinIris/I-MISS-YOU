@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 星炬学院主论坛 · 独立前端逻辑
  * 不依赖飞行雪绒站 js/main.js 或 js/repository.js
  */
@@ -222,7 +222,7 @@
         }
         updateStaffBar();
         /* 登录后补上隐藏按钮；登出后移除 */
-        try { renderCommunity(); } catch (e) { /* 尚未初始化时忽略 */ }
+        try { renderCommunity(); } catch(_) { /* 尚未初始化时忽略 */ }
     }
 
     function isStaff() {
@@ -679,7 +679,7 @@
         try {
             var data = localStorage.getItem('stf_submissions');
             return data ? JSON.parse(data) : [];
-        } catch (e) { return []; }
+        } catch(_) { return []; }
     }
 
     function findSubmission(id) {
@@ -857,7 +857,7 @@
             var q = new URLSearchParams(window.location.search || '');
             var fromQ = q.get('post');
             if (fromQ) return fromQ;
-        } catch (e) {}
+        } catch(_) {}
         var hash = (window.location.hash || '').replace(/^#/, '');
         if (hash.indexOf('post=') === 0) return decodeURIComponent(hash.slice(5));
         if (hash.indexOf('post/') === 0) return decodeURIComponent(hash.slice(5));
@@ -874,7 +874,7 @@
                 url.searchParams.delete('post');
             }
             history.replaceState(null, '', url.pathname + url.search + url.hash);
-        } catch (e) {
+        } catch(_) {
             try {
                 if (id) window.location.hash = 'post=' + encodeURIComponent(id);
                 else if ((window.location.hash || '').indexOf('post') !== -1) window.location.hash = '';
@@ -945,7 +945,7 @@
         if (!opts.skipHistory) setPostUrl(s.id);
         var closeBtn = document.getElementById('stf-post-detail-close');
         if (closeBtn) {
-            try { closeBtn.focus({ preventScroll: true }); } catch (e) { closeBtn.focus(); }
+            try { closeBtn.focus({ preventScroll: true }); } catch(_) { closeBtn.focus(); }
         }
     }
 
@@ -1029,7 +1029,7 @@
         list.unshift(newSub);
         try {
             StarTorchData.saveSubmissions(list);
-        } catch (e) {
+        } catch(_) {
             showToast('本地存储空间不足，请移除附件后重试');
             return false;
         }
@@ -1175,7 +1175,7 @@
             localStorage.setItem(DRAFT_KEY, JSON.stringify({
                 title: title.value, content: content.value, at: Date.now()
             }));
-        } catch (e) { /* 配额不足时静默 */ }
+        } catch(_) { /* 配额不足时静默 */ }
         var hint = document.getElementById(prefix + '-draft');
         if (hint) {
             hint.textContent = '草稿已保存';
@@ -1185,15 +1185,15 @@
     }
 
     function clearDraft() {
-        try { localStorage.removeItem(DRAFT_KEY); } catch (e) { /* ignore */ }
+        try { localStorage.removeItem(DRAFT_KEY); } catch(_) { /* ignore */ }
     }
 
     function loadDraft(prefix) {
         var raw;
-        try { raw = localStorage.getItem(DRAFT_KEY); } catch (e) { return; }
+        try { raw = localStorage.getItem(DRAFT_KEY); } catch(_) { return; }
         if (!raw) return;
         var draft;
-        try { draft = JSON.parse(raw); } catch (e) { return; }
+        try { draft = JSON.parse(raw); } catch(_) { return; }
         if (!draft) return;
         var title = document.getElementById(prefix + '-title');
         var content = document.getElementById(prefix + '-content');
@@ -1633,12 +1633,12 @@
     var FAB_ARIA_CHANNEL = '打开飞行雪绒频道页';
 
     function hasEnteredTuner() {
-        try { return localStorage.getItem(TUNER_ENTERED_KEY) === '1'; } catch (e) { return false; }
+        try { return localStorage.getItem(TUNER_ENTERED_KEY) === '1'; } catch(_) { return false; }
     }
 
     function markTunerEntered() {
         if (hasEnteredTuner()) return;
-        try { localStorage.setItem(TUNER_ENTERED_KEY, '1'); } catch (e) { /* private mode */ }
+        try { localStorage.setItem(TUNER_ENTERED_KEY, '1'); } catch(_) { /* private mode */ }
     }
 
     function applyTunerFabMode() {
@@ -1706,7 +1706,7 @@
 
             noiseSrc.connect(filter);
             filter.connect(master);
-            try { noiseSrc.start(); } catch (e) { /* already started */ }
+            try { noiseSrc.start(); } catch(_) { /* already started */ }
             return ctx;
         }
 
@@ -1755,7 +1755,7 @@
         try {
             if (history.replaceState) history.replaceState(null, '', '#stf-tuner');
             else window.location.hash = 'stf-tuner';
-        } catch (e) { /* ignore */ }
+        } catch(_) { /* ignore */ }
         var dial0 = document.getElementById('stf-dial-0');
         if (dial0) {
             setTimeout(function () {
@@ -2148,7 +2148,7 @@
                 syncingCompact = true;
                 compactInput.value = readCode();
                 syncingCompact = false;
-                try { compactInput.select(); } catch (e) { /* ignore */ }
+                try { compactInput.select(); } catch(_) { /* ignore */ }
             });
 
             compactInput.addEventListener('input', commitCompactInput);
@@ -2353,7 +2353,7 @@
                     document.body.setAttribute('data-realm', slug);
                     document.body.setAttribute('data-location', locationName);
                 }
-            } catch (e) { /* ignore */ }
+            } catch(_) { /* ignore */ }
         }
 
         var chip = document.getElementById('stf-realm-label');
@@ -2497,7 +2497,7 @@
         }
         /* 与主站一致：启用 DOM/表单/存储纵深防护（此前论坛只加载了脚本未 init） */
         if (typeof SecurityShield !== 'undefined' && SecurityShield.init) {
-            try { SecurityShield.init(); } catch (e) { console.warn('[StarTorchForum] SecurityShield.init failed', e); }
+            try { SecurityShield.init(); } catch(e) { console.warn('[StarTorchForum] SecurityShield.init failed', e); }
         }
         initRealmFromMainSite();
         StarTorchData.ensureSeedData();

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 飞行雪绒 ↔ 星炬学院 · 地址 / realm 共享配置与跨页同步
  * storage: snowfluff-location + snowfluff-realm
  * 通道: BroadcastChannel('snowfluff-realm-sync') + window storage 事件
@@ -75,11 +75,11 @@
     };
 
     function safeGet(key) {
-        try { return localStorage.getItem(key); } catch (e) { return null; }
+        try { return localStorage.getItem(key); } catch(_) { return null; }
     }
 
     function safeSet(key, value) {
-        try { localStorage.setItem(key, value); return true; } catch (e) { return false; }
+        try { localStorage.setItem(key, value); return true; } catch(_) { return false; }
     }
 
     function resolve(loc, realm) {
@@ -109,7 +109,7 @@
                 document.body.setAttribute('data-realm', state.realm);
                 document.body.setAttribute('data-location', state.location);
             }
-        } catch (e) { /* ignore */ }
+        } catch(_) { /* ignore */ }
         return state;
     }
 
@@ -124,7 +124,7 @@
             source: source || 'local'
         };
         for (var i = 0; i < listeners.length; i++) {
-            try { listeners[i](payload); } catch (e) { /* ignore */ }
+            try { listeners[i](payload); } catch(_) { /* ignore */ }
         }
     }
 
@@ -148,7 +148,7 @@
                     bc = new BroadcastChannel(CHANNEL);
                 }
                 if (bc) bc.postMessage({ location: state.location, realm: state.realm });
-            } catch (e) { /* ignore */ }
+            } catch(_) { /* ignore */ }
         }
 
         if (!opts.silent) notify(state, opts.fromRemote ? (opts.source || 'remote') : 'local');
@@ -189,7 +189,7 @@
                     if (!data.location && !data.realm) return;
                     onRemoteState(data.location, data.realm, 'broadcast');
                 };
-            } catch (e) { bc = null; }
+            } catch(_) { bc = null; }
         }
 
         global.addEventListener('storage', function (ev) {

@@ -81,6 +81,7 @@
 /* Signature: 频率刻度条 — 短横 + 刻度，刻意不做椭圆/圆环 */
 .sig-freqbar {
   --sig-w: min(13rem, 68vw);
+
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -91,19 +92,22 @@
   pointer-events: none;
   color: var(--sig-accent);
 }
+
 .sig-freqbar-tick {
   display: block;
   width: 1px;
   height: 0.45rem;
-  background: currentColor;
+  background: currentcolor;
   opacity: 0.42;
 }
+
 .sig-freqbar-tick--major {
   height: 0.72rem;
   opacity: 0.88;
   background: var(--sig-accent-strong);
   width: 1.5px;
 }
+
 .sig-freqbar-rule {
   flex: 1 1 auto;
   align-self: center;

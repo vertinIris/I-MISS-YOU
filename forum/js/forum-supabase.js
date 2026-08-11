@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 星炬学院主论坛 · Supabase 客户端初始化
  * ----------------------------------------------------
  * 复用飞行雪绒主站同一 Supabase 项目（lmlyfyjffaaddysiliht），
@@ -55,7 +55,7 @@
                 window.supabaseClient = client; /* 与主站同名，便于跨页共享会话 */
                 console.log('[forum-supabase] 客户端初始化成功');
                 return client;
-            } catch (e) {
+            } catch(e) {
                 console.warn('[forum-supabase] 初始化失败', e);
                 return null;
             }

@@ -12,6 +12,7 @@
                 box-shadow .38s ease,
                 background .38s ease;
 }
+
 .community-card:hover {
     transform: translateY(-6px);
     box-shadow: 0 20px 46px rgba(0,0,0,.38),
@@ -24,6 +25,7 @@
     transition: background .3s ease, color .3s ease,
                 transform .25s cubic-bezier(.16,1,.3,1), box-shadow .3s ease;
 }
+
 .community-filter-btn.active,
 .tag-chip.active {
     transform: translateY(-1px);
@@ -34,6 +36,7 @@
 .community-empty.show {
     animation: ce-pop .42s cubic-bezier(.16,1,.3,1);
 }
+
 @keyframes ce-pop {
     from { opacity: 0; transform: translateY(12px) scale(.98); }
     to   { opacity: 1; transform: none; }
@@ -41,6 +44,7 @@
 
 /* 分页：圆角 + 悬浮浮起 */
 .community-pagination { gap: 8px; margin-top: 28px; }
+
 .community-pagination button {
     border-radius: 10px;
     transition: transform .2s ease, background .2s ease, color .2s ease;
@@ -61,11 +65,13 @@
     transition: border-color .25s ease, background .25s ease, color .25s ease, transform .25s ease;
 }
 .nav-link-forum::after { display: none !important; }
+
 .nav-link-forum-icon {
     width: 15px;
     height: 15px;
     flex: 0 0 auto;
 }
+
 .nav-link-forum:hover,
 .nav-link-forum:focus-visible {
     color: #fff !important;

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 星炬学院主论坛 · 投稿附件上传
  * 独立实现，不依赖飞行雪绒站 UploadManager
  *
@@ -114,7 +114,7 @@ window.StarTorchUpload = (function () {
                     var out = canvas.toDataURL('image/webp', 0.82);
                     if (out.indexOf('data:image/webp') !== 0) out = canvas.toDataURL('image/jpeg', 0.82);
                     done(out);
-                } catch (e) { done(reader.result); }
+                } catch(_) { done(reader.result); }
             };
             img.onerror = function () { done(null); };
             img.src = reader.result;
@@ -132,7 +132,7 @@ window.StarTorchUpload = (function () {
             audio.addEventListener('error', function () { finish(0); });
             audio.src = url;
             setTimeout(function () { if (audio.readyState === 0) finish(0); }, 3000);
-        } catch (e) { done(0); }
+        } catch(_) { done(0); }
     }
 
     function processFile(prefix, file) {

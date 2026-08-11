@@ -1,4 +1,4 @@
-/**
+﻿/**
  * SyncManager — Realtime 实时同步 + 轮询降级
  * 飞行雪绒 v9.5
  *
@@ -160,7 +160,7 @@ var SyncManager = (function() {
                （重复调用会抛 "tried to subscribe multiple times"），
                重连必须移除旧实例并重建 channel，而不是对旧实例二次 subscribe */
             if (subscriptions[targetId]) {
-                try { supabaseClient.removeChannel(subscriptions[targetId]); } catch (e) {}
+                try { supabaseClient.removeChannel(subscriptions[targetId]); } catch(_) {}
                 delete subscriptions[targetId];
             }
             if (targetId === 'submissions') {

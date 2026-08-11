@@ -31,14 +31,14 @@
 /* —— 学院深夜底：冷星点 + 金弧极淡 —— */
 body.forum-page {
   background:
-    radial-gradient(ellipse 80% 60% at 50% 40%, transparent 40%, oklch(10% 0.03 250 / 0.55) 100%),
-    radial-gradient(1.1px 1.1px at 14% 16%, oklch(95% 0.01 250 / 0.5), transparent),
-    radial-gradient(1px 1px at 32% 44%, oklch(78% 0.06 250 / 0.38), transparent),
-    radial-gradient(1.3px 1.3px at 58% 10%, oklch(95% 0.01 250 / 0.32), transparent),
-    radial-gradient(1px 1px at 76% 26%, oklch(78% 0.06 250 / 0.4), transparent),
-    radial-gradient(1px 1px at 88% 58%, oklch(95% 0.01 250 / 0.25), transparent),
-    radial-gradient(ellipse 100% 36% at 50% -6%, transparent 44%, oklch(78% 0.12 85 / 0.04) 50%, transparent 58%),
-    radial-gradient(1000px 520px at 50% -8%, oklch(68% 0.12 255 / 0.1), transparent 60%),
+    radial-gradient(ellipse 80% 60% at 50% 40%, transparent 40%, oklch(10% 0.03 250deg / 0.55) 100%),
+    radial-gradient(1.1px 1.1px at 14% 16%, oklch(95% 0.01 250deg / 0.5), transparent),
+    radial-gradient(1px 1px at 32% 44%, oklch(78% 0.06 250deg / 0.38), transparent),
+    radial-gradient(1.3px 1.3px at 58% 10%, oklch(95% 0.01 250deg / 0.32), transparent),
+    radial-gradient(1px 1px at 76% 26%, oklch(78% 0.06 250deg / 0.4), transparent),
+    radial-gradient(1px 1px at 88% 58%, oklch(95% 0.01 250deg / 0.25), transparent),
+    radial-gradient(ellipse 100% 36% at 50% -6%, transparent 44%, oklch(78% 0.12 85deg / 0.04) 50%, transparent 58%),
+    radial-gradient(1000px 520px at 50% -8%, oklch(68% 0.12 255deg / 0.1), transparent 60%),
     linear-gradient(180deg, var(--stf-bg-top, #0A101C) 0%, var(--stf-bg-mid, #0C1220) 45%, var(--stf-bg-bottom, #080E18) 100%) !important;
   background-attachment: fixed;
   font-family: var(--font-sans);
@@ -52,12 +52,13 @@ body.forum-page::after {
 
 /* —— N6 学院报头导航 · 毛玻璃恢复 70% 透明度 —— */
 body.forum-page .nav-glass {
-  background: oklch(12% 0.03 250 / 0.70) !important;
+  background: oklch(12% 0.03 250deg / 0.70) !important;
   border-bottom: 1px solid var(--stf-edge) !important;
-  box-shadow: 0 1px 0 oklch(78% 0.12 85 / 0.08), 0 10px 28px oklch(0% 0 0 / 0.28) !important;
+  box-shadow: 0 1px 0 oklch(78% 0.12 85deg / 0.08), 0 10px 28px oklch(0% 0 0deg / 0.28) !important;
   backdrop-filter: blur(16px) saturate(1.2) !important;
   -webkit-backdrop-filter: blur(16px) saturate(1.2) !important;
 }
+
 body.forum-page .nav-logo span {
   font-family: var(--font-display);
   font-style: normal;
@@ -66,6 +67,7 @@ body.forum-page .nav-logo span {
   font-size: 1.05rem;
   color: var(--stf-ink, #eef3fb);
 }
+
 body.forum-page .nav-link {
   font-size: 0.82rem;
   letter-spacing: 0.1em;
@@ -73,22 +75,25 @@ body.forum-page .nav-link {
   color: var(--stf-text-muted);
   border-radius: var(--stf-radius-sm);
 }
+
 body.forum-page .nav-link:hover,
 body.forum-page .nav-link:focus-visible {
   color: var(--stf-brand-light);
 }
+
 .stf-account-btn {
   border-radius: var(--stf-radius-sm) !important;
   border: 1px solid var(--stf-edge-strong) !important;
-  background: oklch(68% 0.12 255 / 0.1) !important;
+  background: oklch(68% 0.12 255deg / 0.1) !important;
   font-family: var(--font-mono);
   font-size: 0.78rem;
   letter-spacing: 0.08em;
   box-shadow: var(--stf-inset) !important;
 }
+
 .stf-account-btn:hover {
-  border-color: oklch(78% 0.12 85 / 0.45) !important;
-  background: oklch(68% 0.12 255 / 0.16) !important;
+  border-color: oklch(78% 0.12 85deg / 0.45) !important;
+  background: oklch(68% 0.12 255deg / 0.16) !important;
 }
 
 /* —— Hero：品牌「星炬学院」优先 · 居中稳住视觉重心 · 预算克制 —— */
@@ -99,20 +104,23 @@ body.forum-page .nav-link:focus-visible {
   align-items: center !important;
   justify-content: center !important;
 }
+
 .forum-hero::before {
   background:
-    radial-gradient(circle at 50% 28%, oklch(68% 0.12 255 / 0.18), transparent 52%),
-    radial-gradient(circle at 78% 18%, oklch(78% 0.12 85 / 0.07), transparent 42%),
-    linear-gradient(180deg, oklch(14% 0.03 250 / 0.12) 0%, transparent 55%),
-    radial-gradient(circle at 50% 100%, oklch(68% 0.12 255 / 0.1), transparent 55%) !important;
+    radial-gradient(circle at 50% 28%, oklch(68% 0.12 255deg / 0.18), transparent 52%),
+    radial-gradient(circle at 78% 18%, oklch(78% 0.12 85deg / 0.07), transparent 42%),
+    linear-gradient(180deg, oklch(14% 0.03 250deg / 0.12) 0%, transparent 55%),
+    radial-gradient(circle at 50% 100%, oklch(68% 0.12 255deg / 0.1), transparent 55%) !important;
   animation: none !important;
 }
+
 .forum-hero-content {
   max-width: 720px !important;
   margin: 0 auto !important;
   text-align: center !important;
   width: 100%;
 }
+
 .forum-hero-brand {
   font-family: var(--font-display);
   font-style: normal;
@@ -134,9 +142,11 @@ body.forum-page .nav-link:focus-visible {
   display: none !important;
   animation: none !important;
 }
+
 .forum-hero .sig-freqbar {
   margin: 0.35rem auto 0.9rem;
 }
+
 .forum-hero-title {
   /* 副标题角色：不再用渐变字 */
   font-family: var(--font-sans) !important;
@@ -150,6 +160,7 @@ body.forum-page .nav-link:focus-visible {
   animation: none !important;
   margin: 0 0 1rem !important;
 }
+
 .forum-hero-sub {
   color: var(--stf-text-muted) !important;
   max-width: 34em;
@@ -159,17 +170,20 @@ body.forum-page .nav-link:focus-visible {
   line-height: 1.75 !important;
   letter-spacing: 0.02em;
 }
+
 .forum-hero-actions {
   justify-content: center !important;
   margin-top: 1.5rem;
 }
+
 .forum-hero-actions .btn-primary {
   border-radius: var(--stf-radius-md) !important;
   background: var(--stf-brand-deep) !important;
   background-size: 100% 100% !important;
-  box-shadow: 0 6px 18px oklch(68% 0.12 255 / 0.18), var(--stf-inset) !important;
+  box-shadow: 0 6px 18px oklch(68% 0.12 255deg / 0.18), var(--stf-inset) !important;
   letter-spacing: 0.08em;
 }
+
 .forum-hero-actions .btn-ghost {
   border-radius: var(--stf-radius-md) !important;
   border-color: var(--stf-edge-strong) !important;
@@ -186,8 +200,9 @@ body.forum-page .nav-link:focus-visible {
   margin: 0.35rem auto 2rem;
   max-width: 44rem;
   padding: 0.25rem 0 0.15rem;
-  border-bottom: 1px solid oklch(68% 0.08 255 / 0.14);
+  border-bottom: 1px solid oklch(68% 0.08 255deg / 0.14);
 }
+
 .forum-quicknav-row .hero-pill {
   border-radius: 0 !important;
   border: none !important;
@@ -201,13 +216,15 @@ body.forum-page .nav-link:focus-visible {
   color: inherit;
   transition: border-color 0.2s var(--ease-out), background 0.2s var(--ease-out);
 }
+
 .forum-quicknav-row .hero-pill:hover,
 .forum-quicknav-row .hero-pill:focus-visible {
   border-color: var(--stf-gold) !important;
-  background: oklch(68% 0.12 255 / 0.05) !important;
+  background: oklch(68% 0.12 255deg / 0.05) !important;
   outline: none;
   transform: none !important;
 }
+
 .forum-quicknav-row .hero-pill b {
   display: block;
   font-family: var(--font-display);
@@ -219,6 +236,7 @@ body.forum-page .nav-link:focus-visible {
   color: var(--stf-ink);
   margin-bottom: 0.28rem;
 }
+
 .forum-quicknav-row .hero-pill span {
   font-size: 0.78rem;
   letter-spacing: 0.06em;
@@ -231,6 +249,7 @@ body.forum-page .nav-link:focus-visible {
   border-left-color: var(--stf-gold) !important;
   padding-right: 1.35rem !important;
 }
+
 .forum-quicknav-row .hero-pill--lead b {
   font-size: clamp(1.65rem, 3.2vw, 2.25rem);
   letter-spacing: 0.14em;
@@ -241,10 +260,12 @@ body.forum-page .nav-link:focus-visible {
 body.forum-page .nav-container {
   justify-content: flex-start;
 }
+
 body.forum-page .nav-links {
   margin-left: 20px;
   margin-right: auto;
 }
+
 .stf-realm-chip {
   position: relative;
   display: inline-flex;
@@ -254,6 +275,7 @@ body.forum-page .nav-links {
   max-width: min(280px, 36vw);
   z-index: 220;
 }
+
 .stf-realm-trigger {
   display: inline-flex;
   align-items: center;
@@ -261,26 +283,28 @@ body.forum-page .nav-links {
   margin: 0;
   padding: 4px 12px;
   border-radius: var(--stf-radius-sm, 6px);
-  border: 1px solid oklch(78% 0.12 85 / 0.32);
-  background: oklch(14% 0.03 250 / 0.94);
-  color: oklch(94% 0.01 250 / 0.96);
+  border: 1px solid oklch(78% 0.12 85deg / 0.32);
+  background: oklch(14% 0.03 250deg / 0.94);
+  color: oklch(94% 0.01 250deg / 0.96);
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.1em;
   white-space: nowrap;
-  box-shadow: 0 4px 14px oklch(0% 0 0 / 0.28);
+  box-shadow: 0 4px 14px oklch(0% 0 0deg / 0.28);
   max-width: 100%;
   cursor: pointer;
   user-select: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+
 .stf-realm-trigger:hover,
 .stf-realm-trigger:focus-visible,
 .stf-realm-chip.open .stf-realm-trigger {
-  border-color: oklch(78% 0.12 85 / 0.55);
-  box-shadow: 0 6px 18px oklch(0% 0 0 / 0.36);
+  border-color: oklch(78% 0.12 85deg / 0.55);
+  box-shadow: 0 6px 18px oklch(0% 0 0deg / 0.36);
   outline: none;
 }
+
 .stf-realm-text {
   display: flex;
   flex-direction: column;
@@ -288,13 +312,15 @@ body.forum-page .nav-links {
   min-width: 0;
   line-height: 1.25;
 }
+
 .stf-realm-label {
   font-size: 0.68rem;
   letter-spacing: 0.08em;
-  color: oklch(94% 0.01 250 / 0.88);
+  color: oklch(94% 0.01 250deg / 0.88);
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .stf-realm-code {
   font-size: 0.58rem;
   letter-spacing: 0.14em;
@@ -303,22 +329,26 @@ body.forum-page .nav-links {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .stf-realm-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
   background: var(--stf-brand-light, #8eb6ff);
-  box-shadow: 0 0 0 0 oklch(68% 0.12 255 / 0.4);
+  box-shadow: 0 0 0 0 oklch(68% 0.12 255deg / 0.4);
   flex-shrink: 0;
 }
+
 .stf-realm-arrow {
   flex-shrink: 0;
   opacity: 0.65;
   transition: transform 0.2s ease;
 }
+
 .stf-realm-chip.open .stf-realm-arrow {
   transform: rotate(180deg);
 }
+
 .stf-realm-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -328,9 +358,9 @@ body.forum-page .nav-links {
   max-width: min(320px, calc(100vw - 24px));
   padding: 8px;
   border-radius: 12px;
-  border: 1px solid oklch(78% 0.12 85 / 0.35);
-  background: oklch(12% 0.03 250 / 0.98);
-  box-shadow: 0 16px 40px oklch(0% 0 0 / 0.45);
+  border: 1px solid oklch(78% 0.12 85deg / 0.35);
+  background: oklch(12% 0.03 250deg / 0.98);
+  box-shadow: 0 16px 40px oklch(0% 0 0deg / 0.45);
   opacity: 0;
   visibility: hidden;
   transform: translateY(-6px) scale(0.97);
@@ -338,11 +368,13 @@ body.forum-page .nav-links {
   z-index: 230;
   white-space: normal;
 }
+
 .stf-realm-chip.open .stf-realm-dropdown {
   opacity: 1;
   visibility: visible;
   transform: translateY(0) scale(1);
 }
+
 .stf-realm-option {
   display: flex;
   flex-direction: column;
@@ -360,23 +392,27 @@ body.forum-page .nav-links {
   cursor: pointer;
   letter-spacing: 0.04em;
 }
+
 .stf-realm-option:hover,
 .stf-realm-option:focus-visible {
-  background: oklch(28% 0.04 250 / 0.55);
+  background: oklch(28% 0.04 250deg / 0.55);
   outline: none;
 }
+
 .stf-realm-option.active {
-  background: oklch(32% 0.06 250 / 0.55);
-  box-shadow: inset 0 0 0 1px oklch(78% 0.12 85 / 0.35);
+  background: oklch(32% 0.06 250deg / 0.55);
+  box-shadow: inset 0 0 0 1px oklch(78% 0.12 85deg / 0.35);
 }
+
 .stf-realm-opt-name {
   font-size: 0.78rem;
-  color: oklch(96% 0.01 250 / 0.95);
+  color: oklch(96% 0.01 250deg / 0.95);
 }
+
 .stf-realm-opt-desc {
   font-size: 0.62rem;
   letter-spacing: 0.06em;
-  color: oklch(78% 0.03 250 / 0.72);
+  color: oklch(78% 0.03 250deg / 0.72);
   line-height: 1.35;
 }
 
@@ -387,18 +423,21 @@ body.forum-page[data-realm="labelle"] {
   --stf-brand-light: #b7cfff;
   --stf-gold: #d4b45a;
 }
+
 html[data-realm="lahairo"] body.forum-page,
 body.forum-page[data-realm="lahairo"] {
   --stf-brand: #7ec8e8;
   --stf-brand-light: #c7e9f7;
   --stf-gold: #e8f0ff;
 }
+
 html[data-realm="snow-cabin"] body.forum-page,
 body.forum-page[data-realm="snow-cabin"] {
   --stf-brand: #e8a0b8;
   --stf-brand-light: #f5c9d8;
   --stf-gold: #f0d7a0;
 }
+
 html[data-realm="digital-sea"] body.forum-page,
 body.forum-page[data-realm="digital-sea"] {
   --stf-brand: #6ad0d8;
@@ -410,9 +449,10 @@ body.forum-page[data-realm="digital-sea"] {
 .forum-page .section-label {
   font-family: var(--font-mono);
   letter-spacing: 0.28em;
-  color: oklch(78% 0.06 250 / 0.7);
+  color: oklch(78% 0.06 250deg / 0.7);
   font-size: 0.7rem;
 }
+
 .forum-page .section-title {
   font-family: var(--font-display);
   font-style: normal;
@@ -420,6 +460,7 @@ body.forum-page[data-realm="digital-sea"] {
   letter-spacing: 0.06em;
   color: var(--stf-text);
 }
+
 .forum-entry {
   border-radius: var(--stf-radius-lg) !important;
   background: var(--stf-surface-1) !important;
@@ -427,16 +468,19 @@ body.forum-page[data-realm="digital-sea"] {
   border-top: 2px solid var(--char, var(--stf-brand)) !important;
   box-shadow: var(--stf-metal) !important;
 }
+
 .forum-entry--primary {
-  background: oklch(68% 0.12 255 / 0.06) !important;
+  background: oklch(68% 0.12 255deg / 0.06) !important;
 }
+
 .forum-entry-ribbon {
   border-radius: var(--stf-radius-sm) !important;
   background: var(--stf-gold) !important;
-  color: oklch(14% 0.03 250) !important;
+  color: oklch(14% 0.03 250deg) !important;
   box-shadow: none !important;
   animation: none !important;
 }
+
 .forum-entry-title {
   font-family: var(--font-display) !important;
   font-size: clamp(1.55rem, 2.4vw, 1.9rem) !important;
@@ -446,6 +490,7 @@ body.forum-page[data-realm="digital-sea"] {
   color: var(--stf-ink) !important;
   margin: 0.35rem 0 0 !important;
 }
+
 .forum-entry--primary .forum-entry-title {
   font-size: clamp(1.7rem, 2.8vw, 2.1rem) !important;
   letter-spacing: 0.12em !important;
@@ -462,31 +507,36 @@ body.forum-page[data-realm="digital-sea"] {
   transition: border-color var(--dur-base, 240ms) var(--ease-out, ease),
     background var(--dur-base, 240ms) var(--ease-out, ease) !important;
 }
+
 .stf-feed .stf-card:hover,
 .stf-timeline .stf-card:hover {
   background: var(--stf-surface-2) !important;
   border-color: var(--stf-edge-strong) !important;
   transform: none !important;
 }
+
 .stf-feed-tab {
   border-radius: var(--stf-radius-sm) !important;
   font-family: var(--font-mono);
   font-size: 0.75rem;
   letter-spacing: 0.06em;
 }
+
 .stf-feed-tab.active {
-  background: oklch(68% 0.12 255 / 0.22) !important;
+  background: oklch(68% 0.12 255deg / 0.22) !important;
   border-color: var(--stf-edge-strong) !important;
   color: #fff !important;
 }
+
 .stf-composer-trigger,
 .stf-composer-form,
 .stf-aside-card {
   border-radius: var(--stf-radius-md) !important;
 }
+
 .stf-pinned-badge {
   border-radius: var(--stf-radius-sm) !important;
-  background: oklch(78% 0.12 85 / 0.16) !important;
+  background: oklch(78% 0.12 85deg / 0.16) !important;
   color: var(--stf-gold) !important;
   font-family: var(--font-mono);
   font-size: 0.68rem;
@@ -497,15 +547,16 @@ body.forum-page[data-realm="digital-sea"] {
 .stf-passport-panel {
   border-radius: var(--stf-radius-lg) !important;
   background:
-    radial-gradient(ellipse at 10% 0%, oklch(68% 0.12 255 / 0.16), transparent 42%),
-    radial-gradient(ellipse at 90% 6%, oklch(78% 0.12 85 / 0.1), transparent 36%),
+    radial-gradient(ellipse at 10% 0%, oklch(68% 0.12 255deg / 0.16), transparent 42%),
+    radial-gradient(ellipse at 90% 6%, oklch(78% 0.12 85deg / 0.1), transparent 36%),
     var(--stf-surface-0) !important;
   border: 1px solid var(--stf-edge-strong) !important;
 }
+
 .stf-passport-eyebrow {
   font-family: var(--font-mono);
   letter-spacing: 0.22em !important;
-  color: oklch(78% 0.12 85 / 0.9) !important;
+  color: oklch(78% 0.12 85deg / 0.9) !important;
 }
 
 /* —— 按钮：蓝为主，金为辅 —— */
@@ -515,16 +566,19 @@ body.forum-page .btn-primary {
   background-size: 100% 100% !important;
   animation: none !important;
 }
+
 body.forum-page .btn-primary::before,
 body.forum-page .btn-primary::after {
   opacity: 0.35;
 }
+
 .stf-comment-submit,
 .stf-fab,
 .stf-chat-send {
   border-radius: var(--stf-radius-md) !important;
   background: linear-gradient(135deg, var(--stf-brand), color-mix(in srgb, var(--stf-brand) 70%, var(--stf-gold))) !important;
 }
+
 .stf-stat b {
   background: none !important;
   -webkit-background-clip: unset !important;
@@ -546,17 +600,21 @@ body.forum-page .btn-primary::after {
     padding: 100px 18px 56px !important;
     min-height: min(78vh, 680px) !important;
   }
+
   .forum-hero-brand {
     font-size: clamp(2.2rem, 12vw, 3rem);
     letter-spacing: 0.06em;
   }
+
   .forum-hero-title {
     letter-spacing: 0.1em !important;
   }
+
   .forum-quicknav-row {
     gap: 8px !important;
     justify-content: center !important;
   }
+
   .forum-quicknav-row .hero-pill {
     min-width: calc(50% - 8px);
   }
@@ -566,17 +624,21 @@ body.forum-page .btn-primary::after {
     margin-right: 6px;
     max-width: min(168px, 48vw);
   }
+
   .stf-realm-trigger {
     padding: 3px 8px;
     gap: 6px;
   }
+
   .stf-realm-label {
     display: none;
   }
+
   .stf-realm-code {
     font-size: 0.55rem;
     letter-spacing: 0.1em;
   }
+
   .stf-realm-dropdown {
     right: 0;
     left: auto;
@@ -596,27 +658,32 @@ html.archive-orbit-active .archive-orbit-stage {
   perspective: 1100px;
   perspective-origin: 50% 42%;
 }
+
 html.archive-orbit-active .archive-orbit-ring {
   transform-style: preserve-3d;
   transform: rotateX(-8deg);
 }
+
 html.archive-orbit-active .archive-orbit-ring.is-paused {
   /* pause-on-hover：JS 停转；深度 transform 由 paint() 保留 */
   filter: none;
 }
+
 html.archive-orbit-active .archive-float.is-orbit-item .character-archive-card {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  background: oklch(14% 0.03 250 / 0.92);
-  border: 1px solid var(--stf-edge, oklch(78% 0.06 250 / 0.2));
-  box-shadow: var(--stf-metal, 0 0 0 1px oklch(78% 0.06 250 / 0.14));
+  background: oklch(14% 0.03 250deg / 0.92);
+  border: 1px solid var(--stf-edge, oklch(78% 0.06 250deg / 0.2));
+  box-shadow: var(--stf-metal, 0 0 0 1px oklch(78% 0.06 250deg / 0.14));
 }
+
 html.archive-orbit-active .archive-float.is-orbit-item .character-archive-name {
   font-family: var(--font-display);
   letter-spacing: 0.06em;
   color: var(--stf-ink, #eef3fb);
 }
+
 html.archive-orbit-active .archive-album-shelf {
   opacity: 0.35;
-  background: radial-gradient(ellipse 60% 40% at 50% 100%, oklch(78% 0.12 85 / 0.12), transparent 70%);
+  background: radial-gradient(ellipse 60% 40% at 50% 100%, oklch(78% 0.12 85deg / 0.12), transparent 70%);
 }

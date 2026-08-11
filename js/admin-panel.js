@@ -1,4 +1,4 @@
-/**
+﻿/**
  * AdminPanel — 版主/管理员后台 v9.6
  * 举报队列 · 评论审核（含批量）· 操作日志
  */
@@ -276,7 +276,7 @@ var AdminPanel = (function() {
             var d = new Date(iso);
             return (d.getMonth() + 1) + '/' + d.getDate() + ' ' +
                 String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
-        } catch (e) {
+        } catch(_) {
             return '';
         }
     }

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 星炬学院主论坛 · 云端适配器（window.StarTorchCloud）
  * ----------------------------------------------------
  * 实现 forum-sync.js 约定的云端接缝接口：
@@ -48,15 +48,15 @@
         return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
             ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
     }
-    function safeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
-    function safeSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+    function safeGet(k) { try { return localStorage.getItem(k); } catch(_) { return null; } }
+    function safeSet(k, v) { try { localStorage.setItem(k, v); return true; } catch(_) { return false; } }
 
     function readLocalSubmissions() {
         try {
             var raw = safeGet('stf_submissions');
             var arr = raw ? JSON.parse(raw) : [];
             return Array.isArray(arr) ? arr : [];
-        } catch (e) { return []; }
+        } catch(_) { return []; }
     }
     function writeLocalSubmissions(list) { safeSet('stf_submissions', JSON.stringify(list)); }
 
@@ -66,17 +66,17 @@
             if (!Array.isArray(q)) q = [];
             q.push({ op: op, payload: payload, at: Date.now() });
             safeSet(QUEUE_KEY, JSON.stringify(q));
-        } catch (e) { /* 配额不足则丢弃，下次联网重试由云端为准 */ }
+        } catch(_) { /* 配额不足则丢弃，下次联网重试由云端为准 */ }
     }
     function getPending() {
         try {
             var q = JSON.parse(safeGet(QUEUE_KEY) || '[]');
             return Array.isArray(q) ? q.length : 0;
-        } catch (e) { return 0; }
+        } catch(_) { return 0; }
     }
     async function drainQueue() {
         var q;
-        try { q = JSON.parse(safeGet(QUEUE_KEY) || '[]'); } catch (e) { q = []; }
+        try { q = JSON.parse(safeGet(QUEUE_KEY) || '[]'); } catch(_) { q = []; }
         if (!Array.isArray(q) || !q.length) return;
         var kept = [];
         for (var i = 0; i < q.length; i++) {
@@ -88,7 +88,7 @@
                 else if (item.op === 'comment') ok = await attemptComment(item.payload.subId, item.payload.comment);
                 else if (item.op === 'hideComment') ok = await attemptHideComment(item.payload.subId, item.payload.name, item.payload.text);
                 else ok = true; /* 未知类型直接丢弃，避免死循环 */
-            } catch (e) { ok = false; }
+            } catch(_) { ok = false; }
             if (!ok) kept.push(item);
         }
         safeSet(QUEUE_KEY, JSON.stringify(kept));
@@ -141,11 +141,11 @@
                                 avatar_color: '#6d8fd6'
                             });
                         }
-                    } catch (e) { /* 忽略：profile 非发帖必需 */ }
+                    } catch(_) { /* 忽略：profile 非发帖必需 */ }
                     return anon.data.session;
                 }
                 return null;
-            } catch (e) {
+            } catch(e) {
                 console.warn('[forum-cloud] ensureSession 失败', e);
                 return null;
             } finally {
@@ -256,7 +256,7 @@
                 });
                 if (window.StarTorchData && StarTorchData.saveComments) StarTorchData.saveComments(sid, combined);
             });
-        } catch (e) {
+        } catch(e) {
             console.warn('[forum-cloud] 评论拉取失败（保留本地）', e);
         }
     }
@@ -282,7 +282,7 @@
             try {
                 await ensureSession();
                 await client.from('forum_submissions').upsert(toCloudRow(s));
-            } catch (e) {
+            } catch(e) {
                 console.warn('[forum-cloud] 官方种子上云失败', s.id, e);
             }
         }
@@ -311,11 +311,11 @@
     async function clearStaleSession() {
         try {
             await client.auth.signOut({ scope: 'local' });
-        } catch (e) { /* ignore */ }
+        } catch(_) { /* ignore */ }
         /* 同时清理旧版 localStorage key */
         try {
             localStorage.removeItem('sb-' + 'lmlyfyjffaaddysiliht' + '-auth-token');
-        } catch (e) { /* ignore */ }
+        } catch(_) { /* ignore */ }
     }
 
     async function pullSubmissionsOnce() {
@@ -329,7 +329,7 @@
         if (!client) {
             /* 离线：本地兜底，标记未连接 */
             setPullError({ message: 'Supabase 客户端未初始化（SDK 可能加载失败）' }, 'init');
-            try { if (window.StarTorchData) StarTorchData.ensureSeedData(); } catch (e) { /* ignore */ }
+            try { if (window.StarTorchData) StarTorchData.ensureSeedData(); } catch(_) { /* ignore */ }
             if (window.StarTorchForum && window.StarTorchForum.refreshCommunity) window.StarTorchForum.refreshCommunity();
             return cb && cb(false);
         }
@@ -343,19 +343,19 @@
             clearPullError();
 
             /* 2. 评论与种子上云属于「增强同步」，失败不应导致整体降级 */
-            try { await pullComments(cloudIds); } catch (e) { setPullError(e, 'comments'); }
+            try { await pullComments(cloudIds); } catch(e) { setPullError(e, 'comments'); }
 
             try {
                 var seeds = (window.StarTorchData && StarTorchData.getSeedSubmissions) ? StarTorchData.getSeedSubmissions() : [];
                 await ensureCloudSeed(seeds, cloudIds);
-            } catch (e) { setPullError(e, 'seed'); }
+            } catch(e) { setPullError(e, 'seed'); }
 
             /* 3. 离线队列同样不应阻塞主流程 */
             drainQueue().catch(function (e) { setPullError(e, 'queue'); });
 
             if (window.StarTorchForum && window.StarTorchForum.refreshCommunity) window.StarTorchForum.refreshCommunity();
             return cb && cb(true);
-        } catch (e) {
+        } catch(e) {
             /* 主站过期/无效 session 会导致 401；清掉本地 session 用 anon key 重试一次 */
             if (isAuthError(e)) {
                 try {
@@ -393,7 +393,7 @@
             var { error } = await client.from('forum_submissions').upsert(toCloudRow(sub));
             if (error) throw error;
             return true;
-        } catch (e) { console.warn('[forum-cloud] 发帖上云失败', e); return false; }
+        } catch(e) { console.warn('[forum-cloud] 发帖上云失败', e); return false; }
     }
     async function attemptUpdate(sub) {
         if (!client) return false;
@@ -408,7 +408,7 @@
                 .eq('id', sub.id);
             if (error) throw error;
             return true;
-        } catch (e) { console.warn('[forum-cloud] 点赞/收藏上云失败', e); return false; }
+        } catch(e) { console.warn('[forum-cloud] 点赞/收藏上云失败', e); return false; }
     }
     async function attemptComment(subId, comment) {
         if (!client) return false;
@@ -427,7 +427,7 @@
             var { error } = await client.from('forum_comments').insert(row);
             if (error) throw error;
             return true;
-        } catch (e) { console.warn('[forum-cloud] 评论上云失败', e); return false; }
+        } catch(e) { console.warn('[forum-cloud] 评论上云失败', e); return false; }
     }
 
     async function attemptHideComment(subId, name, text) {
@@ -441,7 +441,7 @@
                 .eq('content', text);
             if (error) throw error;
             return true;
-        } catch (e) { console.warn('[forum-cloud] 评论隐藏失败', e); return false; }
+        } catch(e) { console.warn('[forum-cloud] 评论隐藏失败', e); return false; }
     }
     async function hideComment(subId, name, text, cb) {
         var ok = await attemptHideComment(subId, name, text);
@@ -479,7 +479,7 @@
         };
     }
     function notifyChatListeners(payload) {
-        chatListeners.forEach(function (cb) { try { cb(payload); } catch (e) {} });
+        chatListeners.forEach(function (cb) { try { cb(payload); } catch(_) {} });
     }
     async function pullChat(limit, cb) {
         if (!client) return cb && cb([], { code: 'NO_CLIENT' });
@@ -495,7 +495,7 @@
             chatTableMissing = false;
             var rows = (res.data || []).map(chatRowToLocal).reverse();
             return cb && cb(rows, null);
-        } catch (e) {
+        } catch(e) {
             console.warn('[forum-cloud] 拉取聊天失败', e);
             if (e && (e.code === 'PGRST205' || (e.message && /could not find the table/i.test(e.message)))) {
                 chatTableMissing = true;
@@ -521,7 +521,7 @@
             chatTableMissing = false;
             var inserted = (res.data && res.data[0]) ? chatRowToLocal(res.data[0]) : null;
             return cb && cb(true, null, inserted);
-        } catch (e) {
+        } catch(e) {
             console.warn('[forum-cloud] 发送聊天失败', e);
             if (e && (e.code === 'PGRST205' || (e.message && /could not find the table/i.test(e.message)))) {
                 chatTableMissing = true;
@@ -562,7 +562,7 @@
                     if (payload.new && payload.new.is_hidden) scheduleRefresh();
                 })
                 .subscribe();
-        } catch (e) {
+        } catch(e) {
             console.warn('[forum-cloud] Realtime 订阅失败（不影响轮询兜底）', e);
         }
     }

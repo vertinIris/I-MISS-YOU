@@ -10,6 +10,7 @@
 *::before,
 *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
 body {
   font-family: var(--font-sans, "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif);
   color: var(--text-primary, #faf8ff);
@@ -845,7 +846,7 @@ ul, ol { list-style: none; }
     background:
         repeating-radial-gradient(
             circle at center,
-            transparent 0px, transparent 2px,
+            transparent 0, transparent 2px,
             rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.04) 4px
         );
     opacity: 0.6;
@@ -1784,9 +1785,11 @@ ul, ol { list-style: none; }
     .archive-grid {
         grid-template-columns: 1fr;
     }
+
     .archive-intro {
         padding: 20px;
     }
+
     .archive-card {
         padding: 20px;
     }
@@ -1808,6 +1811,7 @@ ul, ol { list-style: none; }
 /* ---- 首页角色入口卡 ---- */
 .character-entry {
     --char: var(--c-primary, #F4729B);
+
     position: relative;
     display: flex;
     flex-direction: column;
@@ -1821,11 +1825,13 @@ ul, ol { list-style: none; }
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     overflow: hidden;
 }
+
 .character-entry:hover {
     transform: translateY(-4px);
     border-color: var(--char);
     box-shadow: 0 14px 32px -14px color-mix(in srgb, var(--char) 60%, transparent);
 }
+
 .character-entry-badge {
     width: 56px;
     height: 56px;
@@ -1837,6 +1843,7 @@ ul, ol { list-style: none; }
     box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--char) 70%, transparent);
     margin-bottom: 0.3rem;
 }
+
 .entry-badge-icon {
     width: 30px;
     height: 30px;
@@ -1846,27 +1853,32 @@ ul, ol { list-style: none; }
     stroke-linecap: round;
     stroke-linejoin: round;
 }
+
 .character-entry-name {
     font-family: var(--font-serif, "Noto Serif SC");
     font-size: 1.4rem;
     font-weight: 700;
 }
+
 .character-entry-alias {
     font-size: 0.85rem;
     color: color-mix(in srgb, var(--char) 78%, #fff);
     font-weight: 500;
 }
+
 .character-entry-tagline {
     font-size: 0.9rem;
     color: rgba(255, 255, 255, 0.7);
     line-height: 1.6;
 }
+
 .character-entry-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
     margin-top: 0.3rem;
 }
+
 .char-tag {
     font-size: 0.72rem;
     padding: 0.2rem 0.6rem;
@@ -1875,6 +1887,7 @@ ul, ol { list-style: none; }
     color: color-mix(in srgb, var(--char) 72%, #fff);
     border: 1px solid color-mix(in srgb, var(--char) 30%, transparent);
 }
+
 .character-entry-cta {
     margin-top: 0.6rem;
     display: inline-flex;
@@ -1884,20 +1897,24 @@ ul, ol { list-style: none; }
     font-weight: 600;
     color: var(--char);
 }
+
 .character-entry-cta .icon {
     width: 1em;
     height: 1em;
     transition: transform 0.2s ease;
 }
+
 .character-entry:hover .character-entry-cta .icon {
     transform: translateX(3px);
 }
+
 .character-entry--locked {
     opacity: 0.55;
     filter: grayscale(0.3);
     cursor: not-allowed;
     border-style: dashed;
 }
+
 .character-entry--locked .character-entry-cta {
     color: rgba(255, 255, 255, 0.7);
 }
@@ -1910,15 +1927,17 @@ ul, ol { list-style: none; }
     height: 1.15em;
     flex: none;
     fill: none;
-    stroke: currentColor;
+    stroke: currentcolor;
     stroke-width: 1.8;
     stroke-linecap: round;
     stroke-linejoin: round;
     vertical-align: -0.18em;
 }
+
 .archive-card-title .icon {
     margin-right: 0.45em;
 }
+
 .loc-icon {
     width: 1.4rem;
     height: 1.4rem;
@@ -1930,6 +1949,7 @@ ul, ol { list-style: none; }
 /* ---- 首页角色入口卡 ---- */
 .character-entry {
     --char: var(--c-primary, #F4729B);
+
     position: relative;
     display: flex;
     flex-direction: column;
@@ -1943,11 +1963,13 @@ ul, ol { list-style: none; }
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     overflow: hidden;
 }
+
 .character-entry:hover {
     transform: translateY(-4px);
     border-color: var(--char);
     box-shadow: 0 14px 32px -14px color-mix(in srgb, var(--char) 60%, transparent);
 }
+
 .character-entry-badge {
     width: 56px;
     height: 56px;
@@ -1959,6 +1981,7 @@ ul, ol { list-style: none; }
     box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--char) 70%, transparent);
     margin-bottom: 0.3rem;
 }
+
 .entry-badge-icon {
     width: 30px;
     height: 30px;
@@ -1968,27 +1991,32 @@ ul, ol { list-style: none; }
     stroke-linecap: round;
     stroke-linejoin: round;
 }
+
 .character-entry-name {
     font-family: var(--font-serif, "Noto Serif SC");
     font-size: 1.4rem;
     font-weight: 700;
 }
+
 .character-entry-alias {
     font-size: 0.85rem;
     color: color-mix(in srgb, var(--char) 78%, #fff);
     font-weight: 500;
 }
+
 .character-entry-tagline {
     font-size: 0.9rem;
     color: rgba(255, 255, 255, 0.7);
     line-height: 1.6;
 }
+
 .character-entry-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
     margin-top: 0.3rem;
 }
+
 .char-tag {
     font-size: 0.72rem;
     padding: 0.2rem 0.6rem;
@@ -1997,6 +2025,7 @@ ul, ol { list-style: none; }
     color: color-mix(in srgb, var(--char) 72%, #fff);
     border: 1px solid color-mix(in srgb, var(--char) 30%, transparent);
 }
+
 .character-entry-cta {
     margin-top: 0.6rem;
     display: inline-flex;
@@ -2006,20 +2035,24 @@ ul, ol { list-style: none; }
     font-weight: 600;
     color: var(--char);
 }
+
 .character-entry-cta .icon {
     width: 1em;
     height: 1em;
     transition: transform 0.2s ease;
 }
+
 .character-entry:hover .character-entry-cta .icon {
     transform: translateX(3px);
 }
+
 .character-entry--locked {
     opacity: 0.55;
     filter: grayscale(0.3);
     cursor: not-allowed;
     border-style: dashed;
 }
+
 .character-entry--locked .character-entry-cta {
     color: rgba(255, 255, 255, 0.7);
 }
@@ -2032,15 +2065,17 @@ ul, ol { list-style: none; }
     height: 1.15em;
     flex: none;
     fill: none;
-    stroke: currentColor;
+    stroke: currentcolor;
     stroke-width: 1.8;
     stroke-linecap: round;
     stroke-linejoin: round;
     vertical-align: -0.18em;
 }
+
 .archive-card-title .icon {
     margin-right: 0.45em;
 }
+
 .loc-icon {
     width: 1.4rem;
     height: 1.4rem;

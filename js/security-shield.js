@@ -1,4 +1,4 @@
-/**
+﻿/**
  * SecurityShield — 前端安全防护网 v10.0
  *
  * 纵深防御层（配合 Supabase RLS + 服务端限流）：
@@ -140,7 +140,7 @@ var SecurityShield = (function() {
                 }
             }
             return parsed;
-        } catch (e) {
+        } catch(_) {
             return fallback;
         }
     }

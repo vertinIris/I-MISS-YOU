@@ -116,6 +116,7 @@ body::after {
 .sparkle-particles {
     animation: none !important;
 }
+
 .galaxy-river,
 .pink-galaxy {
     opacity: 0 !important;
@@ -127,6 +128,7 @@ body::after {
     min-height: 72vh;
     padding: 112px 24px 64px;
 }
+
 .forum-hero::before {
     background:
         radial-gradient(circle at 22% 18%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent), transparent 46%),
@@ -134,6 +136,7 @@ body::after {
         radial-gradient(circle at 50% 92%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 10%, transparent), transparent 52%) !important;
     animation: none !important;
 }
+
 .forum-hero::after {
     content: "";
     position: absolute;
@@ -147,6 +150,7 @@ body::after {
     -webkit-mask-image: linear-gradient(to bottom, transparent, #000 55%);
     mask-image: linear-gradient(to bottom, transparent, #000 55%);
 }
+
 .forum-hero-title {
     background: linear-gradient(105deg, var(--stf-brand-light) 0%, var(--stf-brand) 42%, var(--stf-gold) 78%, var(--stf-brand-light) 100%);
     background-size: 220% 100%;
@@ -156,20 +160,24 @@ body::after {
     animation: stf-title-drift 16s ease-in-out infinite;
     letter-spacing: 0.02em;
 }
+
 @keyframes stf-title-drift {
     0%, 100% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
 }
+
 .forum-hero-sub {
     color: rgba(240, 244, 255, 0.72);
     letter-spacing: 0.01em;
 }
+
 .hero-pill {
     border-radius: 12px;
     border: 1px solid var(--stf-edge);
     background: var(--stf-surface-1);
     box-shadow: var(--stf-metal);
 }
+
 .hero-pill:hover {
     border-color: var(--stf-edge-strong);
     background: var(--stf-surface-2);
@@ -186,19 +194,23 @@ body .nav-glass {
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
     z-index: var(--stf-z-nav);
 }
+
 body .nav-logo span {
     letter-spacing: 0.04em;
 }
+
 .stf-account-btn {
     border: 1px solid var(--stf-edge-strong);
     background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 10%, transparent);
     box-shadow: var(--stf-inset);
     border-radius: 999px;
 }
+
 .stf-account-btn:hover {
     border-color: rgba(232, 197, 106, 0.4);
     background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent);
 }
+
 .stf-account-btn:focus-visible {
     outline: none;
     box-shadow: var(--stf-focus);
@@ -211,16 +223,20 @@ body .nav-logo span {
     color: #fff;
     box-shadow: 0 10px 28px color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent), var(--stf-inset);
 }
+
 .btn-primary::before {
     background: conic-gradient(from 0deg, transparent, rgba(168, 216, 255, 0.45), transparent 30%);
 }
+
 .btn-primary::after {
     background: linear-gradient(110deg, transparent 30%, rgba(243, 224, 163, 0.45), transparent 70%);
 }
+
 .stf-toolbar .btn-ghost {
     border-color: rgba(168, 216, 255, 0.25);
     color: var(--stf-brand-light);
 }
+
 .stf-toolbar .btn-ghost:hover {
     border-color: rgba(168, 216, 255, 0.5);
     background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 10%, transparent);
@@ -235,32 +251,39 @@ body .nav-logo span {
     border-top: 3px solid var(--char, var(--stf-brand));
     box-shadow: var(--stf-metal);
 }
+
 .forum-entry::after {
     background: radial-gradient(circle at 80% 0%, color-mix(in srgb, var(--char, var(--stf-brand)) 18%, transparent), transparent 60%);
 }
+
 .forum-entry:hover {
     border-color: color-mix(in srgb, var(--char, var(--stf-brand)) 45%, transparent);
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35), var(--stf-inset);
 }
+
 .forum-entry-icon {
     background: color-mix(in srgb, var(--char, var(--stf-brand)) 16%, transparent);
     color: var(--char, var(--stf-brand));
 }
 .forum-entry-cta { color: var(--char, var(--stf-brand)); }
+
 .forum-entry--primary {
     border-top-color: var(--stf-brand);
     background: linear-gradient(180deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 10%, transparent), rgba(255, 255, 255, 0.035));
     box-shadow: 0 0 0 1px color-mix(in srgb, var(--stf-brand, #6d8fd6) 18%, transparent), 0 16px 40px color-mix(in srgb, var(--stf-brand, #6d8fd6) 8%, transparent);
 }
+
 .forum-entry--primary:hover {
     border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 55%, transparent);
     box-shadow: 0 0 0 1px color-mix(in srgb, var(--stf-brand, #6d8fd6) 30%, transparent), 0 22px 48px color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent);
 }
 .forum-entry--primary .forum-entry-cta { color: var(--stf-brand); }
+
 .forum-entry--primary .forum-entry-icon {
     background: color-mix(in srgb, var(--stf-brand) 18%, transparent);
     color: var(--stf-brand);
 }
+
 .forum-entry-ribbon {
     background: linear-gradient(100deg, var(--stf-brand), var(--stf-gold));
     box-shadow: 0 6px 16px color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent);
@@ -268,6 +291,7 @@ body .nav-logo span {
 }
 
 .forum-section-inner { position: relative; }
+
 .forum-section-inner::before {
     content: "";
     position: absolute;
@@ -277,6 +301,7 @@ body .nav-logo span {
     background: radial-gradient(ellipse 50% 40% at 50% 0%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 6%, transparent), transparent 72%);
     opacity: 0.85;
 }
+
 .forum-section-inner::after {
     content: "";
     position: absolute;
@@ -290,6 +315,7 @@ body .nav-logo span {
         transparent 100%);
     opacity: 0.7;
 }
+
 .forum-section--core::before {
     background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 9%, transparent), transparent 55%);
 }
@@ -300,30 +326,36 @@ body .nav-logo span {
     background-clip: text;
     color: transparent;
 }
+
 .stf-filter-btn.active {
     background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 22%, transparent);
     border-color: rgba(168, 216, 255, 0.38);
     color: #fff;
     box-shadow: var(--stf-inset);
 }
+
 .stf-sort-btn.active {
     background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 24%, transparent);
     color: #fff;
 }
+
 .stf-tag-chip.active {
     background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 20%, transparent);
     border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 42%, transparent);
     color: #fff;
 }
 .stf-card-expand { color: var(--stf-brand); }
+
 .stf-card-action.liked {
     color: var(--stf-gold);
     border-color: rgba(232, 197, 106, 0.35);
     background: rgba(232, 197, 106, 0.1);
 }
+
 .stf-comment-submit {
     background: linear-gradient(100deg, var(--stf-brand), var(--stf-gold));
 }
+
 .stf-fab {
     background: linear-gradient(100deg, var(--stf-brand), var(--stf-gold));
     box-shadow: 0 12px 28px color-mix(in srgb, var(--stf-brand, #6d8fd6) 32%, transparent);
@@ -358,6 +390,7 @@ body .nav-logo span {
     cursor: default;
     outline: none;
 }
+
 .stf-feed .stf-card:hover,
 .stf-timeline .stf-card:hover {
     transform: none;
@@ -365,10 +398,12 @@ body .nav-logo span {
     border-color: rgba(168, 216, 255, 0.22);
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18), var(--stf-inset);
 }
+
 .stf-feed .stf-card:focus-visible,
 .stf-timeline .stf-card:focus-visible {
     box-shadow: var(--stf-focus);
 }
+
 .stf-card.is-expanded .stf-card-back,
 .stf-card.is-flipped .stf-card-back {
     background: var(--stf-surface-0);
@@ -377,6 +412,7 @@ body .nav-logo span {
     padding: 12px 12px 4px;
     border: 1px solid rgba(168, 216, 255, 0.1);
 }
+
 .stf-card-inner {
     position: static;
     width: 100%;
@@ -385,6 +421,7 @@ body .nav-logo span {
     transform-style: flat;
     transition: none;
 }
+
 .stf-card-front,
 .stf-card-back {
     position: static;
@@ -399,8 +436,10 @@ body .nav-logo span {
     overflow: visible;
 }
 .stf-card-back { display: none; }
+
 .stf-card.is-flipped .stf-card-back,
 .stf-card.is-expanded .stf-card-back { display: block; }
+
 .stf-card-preview {
     font-size: 13px;
     line-height: 1.55;
@@ -408,6 +447,7 @@ body .nav-logo span {
     margin-bottom: 6px;
 }
 .stf-card-tags--preview { margin-bottom: 8px; }
+
 .stf-card-front-actions {
     display: flex;
     align-items: center;
@@ -419,8 +459,10 @@ body .nav-logo span {
     color: var(--stf-text-muted);
 }
 .stf-front-stat { display: inline-flex; align-items: center; gap: 4px; }
+
 .stf-card-flip-hint,
 .stf-card-flip-back { display: none; }
+
 .stf-card-back .stf-card-content {
     font-size: 14px;
     line-height: 1.8;
@@ -429,6 +471,7 @@ body .nav-logo span {
     margin-bottom: 12px;
 }
 .stf-card-back .stf-card-tags { margin-bottom: 12px; }
+
 .stf-card-back .stf-card-actions {
     display: flex;
     gap: 8px;
@@ -443,6 +486,7 @@ body .nav-logo span {
     position: relative;
     z-index: 2;
 }
+
 .stf-composer-trigger {
     display: flex;
     align-items: center;
@@ -459,10 +503,12 @@ body .nav-logo span {
     box-shadow: var(--stf-metal);
     transition: border-color 0.25s, background 0.25s;
 }
+
 .stf-composer-trigger:hover {
     border-color: var(--stf-edge-strong);
     background: var(--stf-surface-2);
 }
+
 .stf-composer-avatar {
     width: 36px; height: 36px;
     border-radius: 50%;
@@ -471,6 +517,7 @@ body .nav-logo span {
     color: #fff; font-size: 16px;
     flex: none;
 }
+
 .stf-composer-hint {
     font-size: 12px;
     padding: 4px 12px;
@@ -478,6 +525,7 @@ body .nav-logo span {
     background: linear-gradient(100deg, var(--stf-brand), var(--stf-gold));
     color: #fff;
 }
+
 .stf-composer-form {
     margin-top: 12px;
     padding: 18px;
@@ -495,21 +543,25 @@ body .nav-logo span {
     position: sticky;
     top: 88px;
 }
+
 .stf-aside-card {
     border-radius: 12px;
     background: var(--stf-surface-1);
     border: 1px solid var(--stf-edge);
     box-shadow: var(--stf-metal);
 }
+
 .stf-pinned {
     border-radius: 12px;
     background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 5%, transparent);
     border: 1px solid rgba(168, 216, 255, 0.16);
 }
+
 .stf-pinned-badge {
     background: rgba(232, 197, 106, 0.16);
     color: var(--stf-gold);
 }
+
 .stf-feed-tab.active {
     background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 20%, transparent);
     border-color: rgba(168, 216, 255, 0.28);
@@ -527,16 +579,20 @@ body .nav-logo span {
         0 28px 70px rgba(0, 0, 0, 0.55),
         var(--stf-inset) !important;
 }
+
 .stf-passport-eyebrow {
     letter-spacing: 0.2em;
     color: rgba(232, 197, 106, 0.88);
 }
+
 .stf-passport-seal {
     border-color: rgba(232, 197, 106, 0.55);
 }
+
 .stf-sync-btn {
     background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent), rgba(232, 197, 106, 0.14));
 }
+
 .stf-sync-btn:hover {
     background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 40%, transparent), rgba(232, 197, 106, 0.2));
 }
@@ -554,33 +610,40 @@ body .nav-logo span {
         inset 0 1px 0 rgba(255, 255, 255, 0.1),
         inset 0 -1px 0 rgba(0, 0, 0, 0.35);
 }
+
 .stf-tuner-compact:focus-within {
     border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 55%, transparent);
     box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45), 0 0 14px color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent);
 }
+
 .stf-tuner-compact-shell {
     background: rgba(0, 0, 0, 0.42);
     border: 1px solid rgba(168, 216, 255, 0.24);
     box-shadow: inset 0 0 14px color-mix(in srgb, var(--stf-brand, #6d8fd6) 14%, transparent);
 }
+
 .stf-tuner-compact-led,
 .stf-tuner-led {
     animation: stf-tuner-breathe 3.6s ease-in-out infinite;
 }
+
 .stf-tuner-compact-led.is-locked,
 .stf-tuner-led.is-locked {
     background: var(--stf-gold) !important;
     box-shadow: 0 0 14px 3px rgba(232, 197, 106, 0.75) !important;
     animation: stf-led-gold 1.2s ease-in-out infinite !important;
 }
+
 @keyframes stf-led-gold {
     0%, 100% { box-shadow: 0 0 10px 2px rgba(232, 197, 106, 0.55); }
     50% { box-shadow: 0 0 18px 4px rgba(232, 197, 106, 0.9); }
 }
+
 @keyframes stf-tuner-breathe {
     0%, 100% { opacity: 0.72; filter: brightness(0.95); }
     50% { opacity: 1; filter: brightness(1.12); }
 }
+
 .stf-tuner-frame {
     border-radius: 16px;
     background:
@@ -595,6 +658,7 @@ body .nav-logo span {
     position: relative;
     overflow: hidden;
 }
+
 .stf-tuner-frame::before {
     content: "";
     position: absolute;
@@ -607,6 +671,7 @@ body .nav-logo span {
         rgba(168, 216, 255, 0.35) 3px 4px
     );
 }
+
 .stf-tuner.is-expanded .stf-dial {
     animation: stf-dial-enter 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -614,22 +679,26 @@ body .nav-logo span {
 .stf-tuner.is-expanded .stf-dial:nth-child(2) { animation-delay: 0.1s; }
 .stf-tuner.is-expanded .stf-dial:nth-child(3) { animation-delay: 0.16s; }
 .stf-tuner.is-expanded .stf-dial:nth-child(4) { animation-delay: 0.22s; }
+
 @keyframes stf-dial-enter {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
 }
 .stf-dial-step:active { transform: scale(0.98); }
+
 .stf-dial-input {
     border-radius: 10px;
     border: 1px solid rgba(168, 216, 255, 0.3);
     background: rgba(0, 0, 0, 0.35);
     box-shadow: inset 0 0 18px color-mix(in srgb, var(--stf-brand, #6d8fd6) 10%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
+
 .stf-dial-input.is-locked {
     border-color: rgba(232, 197, 106, 0.8);
     background: rgba(232, 197, 106, 0.1);
     box-shadow: 0 0 18px rgba(232, 197, 106, 0.22) inset, 0 0 16px rgba(232, 197, 106, 0.14);
 }
+
 .stf-tuner-signal-bar i {
     background: linear-gradient(90deg, #6d8fd6, #A8D8FF, rgba(232, 197, 106, 0.85)) !important;
 }
@@ -638,45 +707,55 @@ body .nav-logo span {
 .stf-back-home {
     z-index: var(--stf-z-fab-tuner) !important;
 }
+
 body.forum-page .donate-fab {
     z-index: var(--stf-z-fab-donate) !important;
     opacity: 0.72;
     border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 32%, transparent) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.32), 0 0 0 1px rgba(232, 197, 106, 0.08) !important;
 }
+
 body.forum-page .donate-fab:hover {
     opacity: 0.95;
     border-color: rgba(232, 197, 106, 0.4) !important;
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4), 0 0 14px color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent) !important;
 }
+
 body.forum-page .donate-fab:focus-visible {
     outline: none;
     box-shadow: var(--stf-focus) !important;
 }
+
 body.forum-page .donate-fab-icon {
     border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 40%, transparent) !important;
     background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 20%, transparent), rgba(232, 197, 106, 0.14)) !important;
 }
+
 body.forum-page .donate-fab:hover .donate-fab-icon {
     background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 34%, transparent), rgba(232, 197, 106, 0.22)) !important;
     box-shadow: 0 0 14px color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent);
     transform: scale(1.06) !important;
 }
+
 body.forum-page .donate-modal {
     z-index: var(--stf-z-modal);
 }
+
 body.forum-page .donate-panel {
     border-color: rgba(168, 216, 255, 0.22);
     box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), 0 0 28px color-mix(in srgb, var(--stf-brand, #6d8fd6) 10%, transparent);
     background: rgba(10, 12, 22, 0.96);
 }
+
 body.forum-page .donate-tab.is-active {
     border-color: rgba(168, 216, 255, 0.35);
     color: var(--stf-brand-light, #A8D8FF);
 }
+
 body.forum-page .donate-btn-primary {
     background: linear-gradient(100deg, var(--stf-brand, #6d8fd6), var(--stf-gold, #E8C56A));
 }
+
 .stf-edge-indicator {
     z-index: var(--stf-z-edge) !important;
 }
@@ -687,6 +766,7 @@ body.forum-page .donate-btn-primary {
     width: min(980px, 100%);
     height: 560px;
 }
+
 .archive-orbit-stage::before {
     content: "";
     position: absolute;
@@ -700,6 +780,7 @@ body.forum-page .donate-btn-primary {
     pointer-events: none;
     z-index: 0;
 }
+
 .archive-orbit-stage::after {
     content: "";
     position: absolute;
@@ -713,30 +794,37 @@ body.forum-page .donate-btn-primary {
     pointer-events: none;
     z-index: 0;
 }
+
 .archive-orbit-ring {
     transform: rotateX(-16deg);
     transform-origin: 50% 52%;
     transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
+
 .archive-orbit-ring.is-paused {
     transform: rotateX(-7deg);
 }
+
 .archive-orbit-ring .archive-float.is-orbit-item {
     transition: filter 0.35s ease, opacity 0.35s ease;
 }
+
 .archive-orbit-ring .archive-float.is-orbit-item .character-archive-card {
     border-radius: 12px;
     box-shadow:
         0 14px 32px rgba(0, 0, 0, 0.42),
         inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
+
 .archive-orbit-ring.is-paused .archive-float.is-orbit-item {
     filter: brightness(0.96);
 }
+
 .character-archive-card.is-featured {
     background: linear-gradient(180deg, rgba(255, 107, 157, 0.1), rgba(255, 255, 255, 0.035));
     box-shadow: 0 0 0 1px rgba(255, 107, 157, 0.14), 0 16px 40px rgba(255, 107, 157, 0.08);
 }
+
 .character-archive-card.is-featured::before {
     content: "";
     position: absolute;
@@ -749,14 +837,17 @@ body.forum-page .donate-btn-primary {
     animation: stf-breathe 5s ease-in-out infinite;
     pointer-events: none;
 }
+
 @keyframes stf-breathe {
     0%, 100% { opacity: 0.28; transform: scale(0.97); }
     50% { opacity: 0.55; transform: scale(1.03); }
 }
+
 .card-featured-ribbon {
     background: linear-gradient(100deg, #FF6B9D, #E8C56A);
     box-shadow: 0 6px 14px rgba(255, 107, 157, 0.22);
 }
+
 .archive-orbit-ring .archive-float--featured .character-archive-card.is-featured::before {
     inset: -18px;
     opacity: 0.35;
@@ -776,30 +867,36 @@ body.forum-page .donate-btn-primary {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
 }
+
 .stf-chat-header {
     background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 7%, transparent);
     border-bottom: 1px solid color-mix(in srgb, var(--stf-brand, #6d8fd6) 14%, transparent);
 }
+
 .stf-chat-bubble {
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(168, 216, 255, 0.1);
     color: rgba(240, 244, 255, 0.92);
     border-radius: 12px;
 }
+
 .stf-chat-message.is-self .stf-chat-bubble {
     background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent), rgba(168, 216, 255, 0.1));
     border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 32%, transparent);
 }
+
 .stf-chat-empty {
     color: rgba(168, 216, 255, 0.55);
     line-height: 1.7;
     padding: 24px 12px;
 }
+
 .stf-chat-empty span {
     font-size: 1.35rem;
     margin-bottom: 10px;
     opacity: 0.85;
 }
+
 .stf-chat-send {
     background: linear-gradient(135deg, var(--stf-brand), color-mix(in srgb, var(--stf-brand) 65%, var(--stf-gold))) !important;
 }
@@ -814,6 +911,7 @@ body.forum-page .donate-btn-primary {
     isolation: isolate;
     -webkit-font-smoothing: antialiased;
 }
+
 .stf-chat-card.is-chat-expanded .stf-chat-messages,
 .stf-chat-card.is-chat-expanded .stf-chat-header,
 .stf-chat-card.is-chat-expanded .stf-chat-form,
@@ -825,9 +923,11 @@ body.forum-page .donate-btn-primary {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
 }
+
 .stf-chat-card.is-chat-expanded .stf-chat-messages {
     background: rgba(10, 12, 22, 0.3) !important;
 }
+
 .stf-chat-backdrop {
     z-index: var(--stf-z-chat-backdrop, 1080) !important;
     /* 半透明玻璃遮罩，保留背景景深可视 */
@@ -841,9 +941,11 @@ body.stf-chat-expanded-open::after {
     opacity: 0.018 !important;
     visibility: visible !important;
 }
+
 .stf-modal {
     z-index: var(--stf-z-modal);
 }
+
 .stf-toast {
     z-index: var(--stf-z-toast);
 }
@@ -886,11 +988,13 @@ body.stf-chat-expanded-open::after {
     .stf-tuner.is-expanded .stf-dial {
         animation: none !important;
     }
+
     .archive-orbit-ring,
     .archive-orbit-ring.is-paused {
         transform: none !important;
         transition: none !important;
     }
+
     .stf-card,
     .stf-card-inner,
     .hero-pill,
@@ -899,6 +1003,7 @@ body.stf-chat-expanded-open::after {
     .donate-fab {
         transition: opacity 0.15s ease, border-color 0.15s ease, background 0.15s ease !important;
     }
+
     .hero-pill:hover,
     .forum-entry:hover,
     .archive-float:hover .character-archive-card {

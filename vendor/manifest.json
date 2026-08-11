@@ -84,6 +84,44 @@
       ],
       "integration": "<script src=\"vendor/just-validate/just-validate.production.min.js\" integrity=\"sha384-MTEqTcTyVLHVQNcumujWT8ThfE2tAm0jR8FP+YSLHn3KRydBdxTYaiK9USgsaU5e\" crossorigin=\"anonymous\"></script>",
       "usage": "new JustValidate('#loginForm', { errorFieldCssClass: 'is-invalid' }).addField('#email', [{rule: 'required'}, {rule: 'email'}]).addField('#password', [{rule: 'required'}, {rule: 'minLength', value: 6}]);"
+    },
+    "fontawesome": {
+      "version": "7.3.1",
+      "source": "npm pack @fortawesome/fontawesome-free@7.3.1 (GitHub FortAwesome/Font-Awesome)",
+      "license": "icons: CC-BY-4.0 + OFL-1.1; code: MIT",
+      "purpose": "图标库 — 通用 UI 图标（论坛分类徽章/按钮/导航/状态指示），Solid/Regular/Brands 三样式 + fa-spin/fa-bounce 动画类（P1 推荐）",
+      "files": [
+        { "path": "fontawesome/css/all.min.css", "size": 90336, "sri": "sha384-qrALq7+6jBOZIQsNnT6xGkMDru64qD6uTlDra39xrt2SoXl4pO3FX6Roz/RpR/BS" },
+        { "path": "fontawesome/webfonts/fa-solid-900.woff2", "size": 119488, "sri": "sha384-TeBDWCQ2a4tojAZRcJzXsEgFI2EzW27W0GYt9HIpqXdUiPIauuYxz9RpAgJM1x9+" },
+        { "path": "fontawesome/webfonts/fa-regular-400.woff2", "size": 19512, "sri": "sha384-78Wu/Ea/cmf/TbrN4bDVNmemhBWOSesv4mzA40dUVsj9Hb5E2CTaukY/7qGGVmBg" },
+        { "path": "fontawesome/webfonts/fa-brands-400.woff2", "size": 115420, "sri": "sha384-QSzlW1NKpLQ4F3Vyt5v6/78tJC+q3tbKZBx6mmL4357XJJMQwKo3s0VxJ0Fp8l78" }
+      ],
+      "integration": "<link rel=\"stylesheet\" href=\"vendor/fontawesome/css/all.min.css\" integrity=\"sha384-qrALq7+6jBOZIQsNnT6xGkMDru64qD6uTlDra39xrt2SoXl4pO3FX6Roz/RpR/BS\" crossorigin=\"anonymous\">",
+      "usage": "<i class=\"fas fa-heart\"></i> <!-- Solid -->\n<i class=\"far fa-star\"></i> <!-- Regular -->\n<i class=\"fab fa-github\"></i> <!-- Brands -->\n<i class=\"fas fa-spinner fa-spin\"></i> <!-- Animated -->"
+    },
+    "animejs": {
+      "version": "4.5.0",
+      "source": "npm pack animejs@4.5.0 (GitHub juliangarnier/anime)",
+      "license": "MIT",
+      "purpose": "JS 动画引擎 — 高级视觉特效（磁性按钮、曲线弧形轮播、角色立绘 hero 入场动画、scroll-triggered 动效，参考 ITomPoland/ui-components）（P1 推荐）",
+      "files": [
+        { "path": "animejs/anime.umd.min.js", "size": 118043, "sri": "sha384-InMmvD3VoYcY7hGjSC80aLb2bNNE4CzpX+Eq6FVDlmB0IKgDvmfPw4UY8L/M++iG" },
+        { "path": "animejs/anime.esm.min.js", "size": 118678, "sri": "sha384-dUvtnao0svvqLmC/RmuxxBIMGuLoVY2joH2Rd3wq74ZaJkK0zpPvJvtK4daGSDNf" }
+      ],
+      "integration": "<script src=\"vendor/animejs/anime.umd.min.js\" integrity=\"sha384-InMmvD3VoYcY7hGjSC80aLb2bNNE4CzpX+Eq6FVDlmB0IKgDvmfPw4UY8L/M++iG\" crossorigin=\"anonymous\"></script>",
+      "usage": "// UMD 全局 anime 对象（用于 <script src> 场景）:\nanime.animate('.target', { translateX: 250, duration: 800, easing: 'easeOutQuad' });\nanime.stagger(100); // 交错动画\n// ESM（用于 <script type=\"module\"> 场景）:\nimport { animate, stagger, createTimeline } from './vendor/animejs/anime.esm.min.js';"
+    },
+    "mdi": {
+      "version": "7.4.47",
+      "source": "npm pack @mdi/font@7.4.47 (GitHub Templarian/MaterialDesign)",
+      "license": "icons: OFL-1.1; code: MIT",
+      "purpose": "Material Design 图标库 — 学院蓝金论坛'权威感'图标（分类徽章/操作按钮/状态指示），与 Font-Awesome 风格区分（P1 推荐）",
+      "files": [
+        { "path": "mdi/css/materialdesignicons.min.css", "size": 346626, "sri": "sha384-HphS8cQyN+eYiJ5PMbzShG6qZdRtvHPVLPkYb8JwMkmNgaIxrFVDhQe3jIbq3EZ2" },
+        { "path": "mdi/fonts/materialdesignicons-webfont.woff2", "size": 403216, "sri": "sha384-te6z6DUYMHA8itp+eMFcT94kFbOhZcEyF2ZtDUpF01/xi0QfbBO1MiBsKN/AO6jt" }
+      ],
+      "integration": "<link rel=\"stylesheet\" href=\"vendor/mdi/css/materialdesignicons.min.css\" integrity=\"sha384-HphS8cQyN+eYiJ5PMbzShG6qZdRtvHPVLPkYb8JwMkmNgaIxrFVDhQe3jIbq3EZ2\" crossorigin=\"anonymous\">",
+      "usage": "<span class=\"mdi mdi-home\"></span>\n<span class=\"mdi mdi-account\"></span>\n<span class=\"mdi mdi-forum\"></span>"
     }
   },
   "devTools": {

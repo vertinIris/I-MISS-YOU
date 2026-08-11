@@ -26,16 +26,16 @@
                 var el = m.target;
                 if (el.hidden) {
                     if (lastFocused && document.contains(lastFocused)) {
-                        try { lastFocused.focus(); } catch (_) { /* ignore */ }
+                        try { lastFocused.focus(); } catch(_) { /* ignore */ }
                     }
                     lastFocused = null;
                 } else {
                     lastFocused = document.activeElement;
                     var f = getFocusable(el);
                     if (f.length) {
-                        try { f[0].focus(); } catch (_) { /* ignore */ }
+                        try { f[0].focus(); } catch(_) { /* ignore */ }
                     } else {
-                        try { el.focus(); } catch (_) { /* ignore */ }
+                        try { el.focus(); } catch(_) { /* ignore */ }
                     }
                 }
             });
