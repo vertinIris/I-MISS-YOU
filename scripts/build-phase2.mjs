@@ -208,7 +208,37 @@ function buildCss(fileList, outName) {
 }
 
 // ============================================================
-// 5. 执行
+// 5. SRI 自动更新：构建后更新 HTML 中的 integrity 属性
+// ============================================================
+function updateSriInHtml(htmlPath, bundleName, sri) {
+  console.log(`\n[BUILD]   → 更新 ${path.basename(htmlPath)} 中的 ${bundleName} SRI...`);
+  let html = fs.readFileSync(htmlPath, 'utf8');
+
+  // 匹配 <script src=".../bundleName" integrity="old-sri" 的模式
+  // 支持 index.html (src="dist/bundle-*.js") 和 forum/index.html (src="../dist/bundle-*.js")
+  const escapedName = bundleName.replace(/\./g, '\\.');
+  const scriptRegex = new RegExp(
+    `<script[^>]*src="([^"]*)${escapedName}"[^>]*integrity="[^"]*"[^>]*crossorigin="anonymous"[^>]*>`,
+    'g'
+  );
+
+  const matches = html.match(scriptRegex);
+  if (!matches) {
+    console.warn(`[BUILD]   ⚠️ 未在 ${path.basename(htmlPath)} 中找到 ${bundleName} 的 script 标签`);
+    return false;
+  }
+
+  html = html.replace(scriptRegex, (match) => {
+    return match.replace(/integrity="[^"]*"/, `integrity="${sri}"`);
+  });
+
+  fs.writeFileSync(htmlPath, html, 'utf8');
+  console.log(`[BUILD]   ✅ ${path.basename(htmlPath)} 的 ${bundleName} SRI 已更新 → ${sri.substring(0, 25)}...`);
+  return true;
+}
+
+// ============================================================
+// 6. 执行
 // ============================================================
 (async () => {
   fs.mkdirSync(path.join(DIST, 'css'), { recursive: true });
@@ -245,4 +275,38 @@ function buildCss(fileList, outName) {
     JSON.stringify(report, null, 2)
   );
   console.log('[BUILD] 报表写入 dist/build-report-phase2.json');
+
+  // 自动更新 HTML 中的 SRI integrity 属性（防止未来重建后白屏）
+  console.log('\n' + '='.repeat(72));
+  console.log('[BUILD] SRI 自动更新 → HTML');
+  console.log('='.repeat(72));
+
+  const indexHtml = path.join(ROOT, 'index.html');
+  const forumHtml = path.join(ROOT, 'forum', 'index.html');
+
+  const mainUpdated = updateSriInHtml(indexHtml, 'bundle-main.js', report.bundles.main.sri);
+  const forumUpdated = updateSriInHtml(forumHtml, 'bundle-forum.js', report.bundles.forum.sri);
+
+  // 自检：确认 HTML 中的 SRI 与构建产物一致
+  console.log('\n[BUILD] 验证 HTML SRI 与构建产物一致性...');
+  const verifyHtml = (htmlPath, bundleName, expectedSri) => {
+    const html = fs.readFileSync(htmlPath, 'utf8');
+    const esc = bundleName.replace(/\./g, '\\.');
+    // HTML 中属性顺序：src="bundleName" 在前，integrity="..." 在后
+    const regex = new RegExp(`src="[^"]*${esc}"[^>]*integrity="([^"]*)"`);
+    const match = html.match(regex);
+    if (match && match[1] === expectedSri) {
+      console.log(`[BUILD]   ✅ ${path.basename(htmlPath)}: ${bundleName} SRI 一致`);
+    } else {
+      console.error(`[BUILD]   ❌ ${path.basename(htmlPath)}: ${bundleName} SRI 不匹配！`);
+      console.error(`       期望: ${expectedSri}`);
+      console.error(`       实际: ${match ? match[1] : '未找到'}`);
+      process.exit(1);
+    }
+  };
+
+  if (mainUpdated) verifyHtml(indexHtml, 'bundle-main.js', report.bundles.main.sri);
+  if (forumUpdated) verifyHtml(forumHtml, 'bundle-forum.js', report.bundles.forum.sri);
+
+  console.log('\n[BUILD] ✅ Stage II 构建完成，HTML SRI 已同步。');
 })();
