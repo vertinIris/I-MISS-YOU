@@ -1,0 +1,197 @@
+/* =========================================================
+   STF · Anti-AI-Generated Signature Weapons (T1-T12)
+   星炬学院专属 12 招 · Academic-Archive 档案馆 × 研讨通行证
+   ========================================================= */
+
+/* ---------- T1: 装订孔（卡片左侧 2-3 孔 · 纸张打孔） ---------- */
+.sig-binding {
+    position: absolute;
+    top: 0;
+    left: 10px;
+    width: 14px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 18% 0;
+    pointer-events: none;
+}
+.sig-binding__hole {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--neutral-900);
+    box-shadow: inset 0 1px 2px color-mix(in srgb, var(--color-white) 15%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-gold-warm) 35%, transparent);
+}
+.sig-binding--2 .sig-binding__hole:nth-child(n+3) { display: none; }
+
+/* ---------- T2: 档案堆叠偏移（多卡片层叠 3px × 3° 递增） ---------- */
+.sig-stack {
+    position: relative;
+}
+.sig-stack__layer {
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    border-radius: inherit;
+    border: inherit;
+    opacity: 0.6;
+}
+.sig-stack__layer:nth-child(2) { transform: translate(3px, 2px) rotate(0.6deg); opacity: 0.45; z-index: -1; }
+.sig-stack__layer:nth-child(3) { transform: translate(6px, 4px) rotate(1.2deg); opacity: 0.3; z-index: -2; }
+
+/* ---------- T3: 八角印章（旋转 ±6° + 粗细不匀边框） ---------- */
+.sig-seal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    color: var(--color-gold-warm);
+    transform: rotate(-6deg);
+}
+.sig-seal svg polygon {
+    stroke-width: 1.4;
+}
+/* 印章轻微随机旋转（页面加载时 JS 再 ±1° 扰动） */
+.sig-seal--var { transform: rotate(7deg); }
+
+/* ---------- T4: 金属磨损边框（1px 边框故意不闭合 + 缺口） ---------- */
+.sig-metal-edge {
+    position: relative;
+    border: 1px solid color-mix(in srgb, var(--color-gold-warm) 55%, transparent);
+}
+.sig-metal-edge::before,
+.sig-metal-edge::after {
+    content: "";
+    position: absolute;
+    background: var(--stf-surface-1, var(--neutral-900));
+}
+/* 左上角 3px 缺口 */
+.sig-metal-edge::before {
+    top: -1px; left: 12%;
+    width: 5px; height: 2px;
+}
+/* 右下角 2px 缺口 */
+.sig-metal-edge::after {
+    bottom: -1px; right: 8%;
+    width: 3px; height: 2px;
+}
+
+/* ---------- T5: 杜威十进制编号（Footer/卡片的分类编号） ---------- */
+.sig-dewey {
+    font-family: JetBrains Mono, IBM Plex Mono, monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--neutral-400);
+    padding: 2px 8px;
+    border-left: 2px solid var(--color-gold-warm);
+}
+
+/* ---------- T6: 抽屉造型面板（Quick Composer 顶边把手） ---------- */
+.sig-drawer {
+    position: relative;
+    border-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.sig-drawer__handle {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 6px;
+    border-radius: 3px 3px 0 0;
+    background: var(--neutral-600);
+    box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--color-white) 8%, transparent);
+}
+
+/* ---------- T7: 门牌编号（黑底金字 1px 边框错位） ---------- */
+.sig-doorplate {
+    display: inline-block;
+    background: var(--neutral-900);
+    color: var(--color-gold-soft);
+    font-family: JetBrains Mono, monospace;
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    padding: 3px 9px 3px 10px;
+    border: 1.5px solid var(--color-gold-warm);
+    border-right-width: 2.5px;  /* 故意不匀称 */
+    border-bottom-width: 2px;
+    border-radius: 2px;
+    box-shadow: 1px 1px 0 color-mix(in srgb, var(--color-gold) 20%, transparent);
+}
+
+/* ---------- T8: 星图网格误差（背景网格线 → 每 20% 轻微加粗错位） ---------- */
+.sig-grid-starmap {
+    background-image:
+        linear-gradient(to right, color-mix(in srgb, var(--color-blue) 10%, transparent) 1px, transparent 1px),
+        linear-gradient(to bottom, color-mix(in srgb, var(--color-blue) 10%, transparent) 1px, transparent 1px);
+    background-size: 32px 32px;
+    position: relative;
+}
+.sig-grid-starmap::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+        repeating-linear-gradient(to right, transparent 0 calc(32px*5 - 1px), color-mix(in srgb, var(--color-blue) 18%, transparent) calc(32px*5 - 1px) calc(32px*5));
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* ---------- T9: 时间线节点偏移（星轨时间线圆点 ±2px 随机偏移） ---------- */
+.sig-timeline-node {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-blue);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-blue) 25%, transparent);
+}
+.sig-timeline-node--off-1 { transform: translate(2px, 0); }
+.sig-timeline-node--off-2 { transform: translate(-2px, 1px); }
+.sig-timeline-node--fresh {
+    animation: stf-pulse-node 2s ease-in-out infinite;
+}
+@keyframes stf-pulse-node {
+    0%, 100% { box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-blue) 25%, transparent); }
+    50%      { box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-blue) 12%, transparent); }
+}
+
+/* ---------- T10: 旧内容横向扫描线退出（Realm/频段切换） ---------- */
+@keyframes stf-scan-out {
+    0%   { clip-path: inset(0 0 0 0);    opacity: 1; transform: translateY(0); }
+    60%  { clip-path: inset(0 0 0 100%); opacity: 0.5; }
+    100% { clip-path: inset(0 0 0 100%); opacity: 0; transform: translateY(-4px); }
+}
+@keyframes stf-fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.sig-scan-leave { animation: stf-scan-out 120ms steps(3) forwards; }
+.sig-scan-enter { animation: stf-fade-in 200ms ease-out 120ms both; }
+
+/* ---------- T11: 筛选徽章切角反转（选中/未选中切角方向相反） ---------- */
+.sig-chip {
+    position: relative;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%);
+    padding: 4px 10px 4px 8px;
+}
+.sig-chip--active {
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
+}
+
+/* ---------- T12: 签名 SVG 轻微抖动（Footer 档案管理员签名） ---------- */
+@keyframes stf-sig-wobble {
+    0%, 100% { transform: translate(0, 0); }
+    25%      { transform: translate(0.4px, -0.3px); }
+    50%      { transform: translate(-0.3px, 0.4px); }
+    75%      { transform: translate(0.3px, 0.5px); }
+}
+.sig-sign-wobble {
+    animation: stf-sig-wobble 6s ease-in-out infinite;
+}

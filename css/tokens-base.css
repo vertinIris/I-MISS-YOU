@@ -13,6 +13,21 @@
    Anti-slop: 非奶油衬线陶土 / 非酸绿朱红近黑 / 非报纸细线零圆角
    ============================================================ */
 
+/* ============================================================
+   Breakpoint Contract（断点契约）
+   8 断点 · 所有 @media 必须使用以下值之一，由 scripts/lint-breakpoints.mjs 校验
+     --bp-4xs: 320px   极小手机（iPhone SE 1st）
+     --bp-3xs: 360px   小手机（Android 主流）
+     --bp-2xs: 480px   大手机 / 小平板竖
+     --bp-xs:  768px   平板竖（iPad）
+     --bp-sm:  1024px  平板横 / 小笔记本
+     --bp-md:  1280px  桌面标准
+     --bp-lg:  1440px  桌面大屏
+     --bp-xl:  1920px  全高清+
+   策略：保持现有 max-width 反向断点；新写 @media 优先 min-width（mobile-first）
+   注意：CSS @media 不支持 var()，--bp-* token 仅供 JS 读取与文档化
+   ============================================================ */
+
 :root {
   /* —— Shared named hues (scene layers remint accents) —— */
   --hue-midnight: #0a0e18;
@@ -23,6 +38,63 @@
   --hue-rose-soft: #f5c0d8;
   --hue-ice: #8eb4e8;
   --hue-ice-soft: #c5dff8;
+
+  /* —— Neutral scale (shared by both brands) —— */
+  --neutral-900: #0B0B14;
+  --neutral-800: #14141F;
+  --neutral-700: #1E1E2C;
+  --neutral-600: #2A2A3A;
+  --neutral-500: #3F3F52;
+  --neutral-400: #6B6B82;
+  --neutral-300: #9098a8;
+  --neutral-200: #C9C9DA;
+  --neutral-100: #E0E0ED;
+
+  /* —— Full-spectrum named colors (shared palette, brand-agnostic) —— */
+  --color-white: #ffffff;
+  --color-snow: #F0F4FF;
+  --color-mist: #eef3fb;
+  --color-black: #0A0A12;
+
+  --color-pink: #e879a8;
+  --color-pink-soft: #f5c0d8;
+  --color-pink-deep: #d4548c;
+  --color-pink-warm: #FFB6D9;
+  --color-pink-pale: #FFF5F8;
+
+  --color-rose: #FF6B9D;
+  --color-rose-soft: #FFD9A8;
+
+  --color-blue: #6B8AFF;
+  --color-blue-light: #A8D8FF;
+  --color-blue-soft: #9AB3FF;
+  --color-blue-deep: #4A6AE0;
+  --color-blue-pale: #F0F4FF;
+  --color-blue-warm: #5B8DEF;
+
+  --color-gold: #FFD700;
+  --color-gold-soft: #FFE066;
+  --color-gold-warm: #E8C56A;
+  --color-gold-pale: #FFF2CC;
+  --color-gold-deep: #D4AF37;
+
+  --color-purple: #B66BFF;
+  --color-purple-soft: #D4A5FF;
+  --color-purple-deep: #9B6BFF;
+
+  --color-mint: #4EC89A;
+  --color-lavender: #B89CD9;
+  --color-violet: #B98CFF;
+  --color-coral: #FF6B5B;
+
+  --color-cyan: #00E5FF;
+
+  /* —— Character identity colors (used across both sites) —— */
+  --char-denia: #B89CD9;
+  --char-sigrica: #4EC89A;
+  --char-linne: #B98CFF;
+  --char-mornye: #FF6B5B;
+  --char-lucilla: #E8C56A;
 
   /* —— Motion (site-wide) —— */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -43,6 +115,17 @@
   --content-max: 72rem;
   --hero-max: 42rem;
 
+  /* —— Breakpoint tokens（documentation + JS-readable；@media 不支持 var()）—— */
+  --bp-4xs: 320px;
+  --bp-3xs: 360px;
+  --bp-2xs: 480px;
+  --bp-xs:  768px;
+  --bp-sm:  1024px;
+  --bp-md:  1280px;
+  --bp-lg:  1440px;
+  --bp-xl:  1920px;
+  --hover-enabled: 1; /* 在 (hover:none) and (pointer:coarse) 下置 0，供 JS 检测 */
+
   /* —— Radius (restrained; no capsule clusters) —— */
   --radius-xs: 4px;
   --radius-sm: 8px;
@@ -52,6 +135,44 @@
   /* —— Focus —— */
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
+
+  /* —— Shadow tokens (shared) —— */
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.35);
+  --shadow-inset-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  --shadow-inset-shadow: inset 0 0 24px rgba(0, 0, 0, 0.22);
+
+  /* —— Surface tokens (base, overridden per brand) —— */
+  --surface-inset-border: rgba(255, 255, 255, 0.06);
+  --transition-base: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  --radius-full: 9999px;
+
+  /* —— Particle system shared —— */
+  --particle-color: 255, 255, 255;
+  --particle-alpha: 0.8;
+
+  /* —— Typography scale (shared) —— */
+  --fs-hero: clamp(2.8rem, 8vw, 5rem);
+  --fw-hero: 900;
+  --lh-hero: 1.05;
+  --fs-display: clamp(2.2rem, 5vw, 3.2rem);
+  --fw-display: 900;
+  --lh-display: 1.12;
+  --fs-title: clamp(1.4rem, 3vw, 1.9rem);
+  --fw-title: 700;
+  --lh-title: 1.25;
+  --fs-subtitle: clamp(1.1rem, 2vw, 1.35rem);
+  --fw-subtitle: 600;
+  --lh-subtitle: 1.35;
+  --fs-body: 1rem;
+  --fw-body: 400;
+  --lh-body: 1.7;
+  --fs-caption: 0.8125rem;
+  --fw-caption: 300;
+  --lh-caption: 1.5;
+  --fs-micro: 0.75rem;
+  --lh-micro: 1.4;
 
   /* —— Signature tint (overridden per scene) —— */
   --sig-accent: var(--hue-ice);
@@ -115,4 +236,47 @@
   max-width: 2.75rem;
   background: color-mix(in srgb, var(--sig-accent-strong) 55%, transparent);
   opacity: 0.7;
+}
+
+/* ============================================================
+   Pointer / Hover Adaptation（移动端触屏全局降级）
+   WCAG 2.5.5 · tap-target ≥ 44×44px；纯装饰 hover 动效在触屏下禁用
+   桌面触摸屏笔记本通常 hover:hover 仍为 true，不会误入此块
+   逃生口：元素加 data-keep-size 可豁免 tap-target 强制
+   ============================================================ */
+@media (hover: none) and (pointer: coarse) {
+  :root {
+    --hover-enabled: 0;
+  }
+
+  /* 强制可点击元素满足 44×44px tap-target（WCAG 2.5.5） */
+  button:not([data-keep-size]),
+  a:not([data-keep-size]):not(.nav-skip-link),
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="submit"],
+  input[type="button"],
+  select,
+  textarea,
+  [role="button"]:not([data-keep-size]),
+  [role="tab"]:not([data-keep-size]) {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* 禁用纯 hover 装饰动效（保留功能态） */
+  .hover-only-fx,
+  [data-hover-fx="decorative"] {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  /* 移除移动端 tap 高亮灰块 */
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@media (hover: hover) {
+  /* hover 容器：未来 hover-only 效果在此白名单内激活 */
 }

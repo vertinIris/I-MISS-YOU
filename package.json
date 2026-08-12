@@ -29,6 +29,7 @@
     "lint": "eslint js/ forum/js/ --config eslint.config.js",
     "lint:fix": "eslint js/ forum/js/ --config eslint.config.js --fix",
     "lint:css": "stylelint \"css/**/*.css\" \"forum/*.css\"",
+    "lint:bp": "node scripts/lint-breakpoints.mjs",
     "format": "prettier --write \"js/**/*.js\" \"forum/js/**/*.js\" \"css/**/*.css\" \"forum/*.css\"",
     "format:check": "prettier --check \"js/**/*.js\" \"forum/js/**/*.js\" \"css/**/*.css\" \"forum/*.css\"",
     "db:migrate-016": "echo 'Run db/migration-016-replica-identity.sql in Supabase SQL Editor'",

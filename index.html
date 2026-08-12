@@ -53,7 +53,7 @@
 <body>
 
     <!-- SVG Icon Sprite (inline linear icons, currentColor) -->
-    <svg class="icon-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <svg class="icon-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <defs>
             <symbol id="ic-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
             <symbol id="ic-sparkles" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8z"/></symbol>
@@ -88,6 +88,13 @@
 
     <!-- ============ Navigation ============ -->
     <nav class="nav-glass" id="navbar">
+        <!-- N9 Side-Chip: 滚动进度指示（仅 ≥1024px 显示） -->
+        <div class="nav-sidechip" aria-hidden="true">
+            <div class="nav-sidechip-track">
+                <div class="nav-sidechip-fill" id="sn-scroll-fill"></div>
+            </div>
+            <span class="nav-sidechip-label" id="sn-scroll-label">§ 00 · HERO</span>
+        </div>
         <div class="nav-container">
             <a href="#hero" class="nav-logo">
                 <svg class="nav-logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -143,7 +150,7 @@
                 <a href="#timeline" class="nav-link">动态</a>
                 <a href="#diary" class="nav-link">日志</a>
                 <a href="#submit" class="nav-link">投稿</a>
-                <a href="#community" class="nav-link">社区</a>
+                <a href="#community" class="nav-link">听众来信</a>
                 <button type="button" class="nav-link nav-link-admin" id="admin-panel-open-btn" hidden title="版主/管理后台">
                     <svg class="nav-link-admin-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z"/>
@@ -286,7 +293,15 @@
                 </div>
             </div>
             <h1 class="hero-title">
-                <span class="hero-title-mark">飞行雪绒</span>
+                <span class="hero-title-track" aria-hidden="true">飞行雪绒</span>
+                <span class="hero-title-mark sn-title-breath">
+                    <span class="sn-title-ch sn-title-ch--1" style="letter-spacing:0.02em">飞</span><span class="sn-title-ch sn-title-ch--2" style="letter-spacing:-0.04em">行</span><span class="sn-title-ch sn-title-ch--3" style="letter-spacing:0.08em">雪</span><span class="sn-title-ch sn-title-ch--4" style="letter-spacing:0em">绒</span>
+                </span>
+                <!-- S3 笔迹不规则下划线：2-3 条叠加 SVG path 模拟手写马克笔 -->
+                <svg class="sn-title-scribble" viewBox="0 0 280 12" preserveAspectRatio="none" aria-hidden="true">
+                    <path d="M4 6 Q 50 2, 110 7 T 220 5 T 276 8" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.85"/>
+                    <path d="M8 9 Q 60 5, 130 8 T 240 6 T 272 9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.45"/>
+                </svg>
             </h1>
             <div class="sig-freqbar" aria-hidden="true">
                 <span class="sig-freqbar-tick sig-freqbar-tick--major"></span>
@@ -299,6 +314,27 @@
                 <span class="sig-freqbar-tick"></span>
                 <span class="sig-freqbar-tick sig-freqbar-tick--major"></span>
             </div>
+            <!-- S1 雪花六出签名：6 分支 2 处故意残缺 -->
+            <svg class="sn-hero-snowflake" viewBox="0 0 80 80" aria-hidden="true">
+                <g stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.55">
+                    <!-- 主分支 -->
+                    <line x1="40" y1="8"  x2="40" y2="72"/>
+                    <line x1="12" y1="24" x2="68" y2="56"/>
+                    <line x1="12" y1="56" x2="68" y2="24"/>
+                    <!-- 子分支（左分支故意缺一条 → S1 残缺） -->
+                    <line x1="40" y1="18" x2="34" y2="14"/>
+                    <line x1="40" y1="18" x2="46" y2="14"/>
+                    <!-- 下方子分支正常 -->
+                    <line x1="40" y1="62" x2="34" y2="66"/>
+                    <line x1="40" y1="62" x2="46" y2="66"/>
+                    <!-- 斜1子分支完整 -->
+                    <line x1="22" y1="32" x2="18" y2="28"/>
+                    <line x1="22" y1="32" x2="20" y2="38"/>
+                    <!-- 斜2子分支：缺第二条末端（故意不完美对称） -->
+                    <line x1="58" y1="48" x2="62" y2="52"/>
+                </g>
+                <circle cx="40" cy="40" r="3" fill="currentColor" opacity="0.7"/>
+            </svg>
             <p class="hero-tagline">星炬学院的日常</p>
             <p class="hero-freq" aria-hidden="true">
                 <span class="sn-freq-pulse"></span>
@@ -322,11 +358,15 @@
                 </a>
             </div>
         </div>
-        <div class="scroll-indicator">
-            <div class="scroll-mouse">
-                <div class="scroll-wheel"></div>
+        <div class="scroll-indicator sn-scroll-dial" aria-hidden="true">
+            <div class="sn-dial-tape">
+                <div class="sn-dial-reel sn-dial-reel--l"></div>
+                <div class="sn-dial-reel sn-dial-reel--r"></div>
+                <div class="sn-dial-ribbon">
+                    <span>SCROLL</span><span>·</span><span>TURN</span><span>·</span><span>LISTEN</span>
+                </div>
             </div>
-            <span class="scroll-text">向下滚动</span>
+            <span class="sn-dial-hint">调频旋钮 · 向下旋动</span>
         </div>
     </section>
 
@@ -1485,7 +1525,7 @@
                         <div class="upload-hint">拖拽文件到此处，或点击选择文件</div>
                         <div class="upload-formats">支持: .txt .md .json .csv · .jpg .png .gif .webp .avif .bmp .svg | 限制: 文本 30MB / 图片 15MB</div>
                     </div>
-                    <input type="file" id="upload-file-input" style="display:none;" accept=".txt,.md,.json,.csv,.jpg,.jpeg,.png,.gif,.webp,.avif,.bmp,.svg">
+                    <input type="file" id="upload-file-input" class="u-hidden" accept=".txt,.md,.json,.csv,.jpg,.jpeg,.png,.gif,.webp,.avif,.bmp,.svg">
                     <div class="upload-progress" id="upload-progress" style="display:none;">
                         <div class="progress-fill" id="upload-progress-fill"></div>
                         <span class="progress-text" id="upload-progress-text">0%</span>
@@ -1514,8 +1554,11 @@
     <!-- ============ Community Section (Phase 3) ============ -->
     <section class="section" id="community">
         <div class="container">
-            <h2 class="section-title">飞行雪绒社区</h2>
-            <p class="section-subtitle">与爱弥斯 / 飞行雪绒相关的创作与评价 · 共 <span id="community-count">0</span> 份作品</p>
+            <div class="section-header reveal">
+                <span class="section-label">INBOX · ON AIR</span>
+                <h2 class="section-title">听众来信</h2>
+                <p class="section-desc">写给飞行雪绒的明信片与同好投稿。夜读时间会一封封拆开。</p>
+            </div>
 
             <div class="community-toolbar">
                 <button type="button" class="btn-ghost community-guidelines-btn" id="guidelines-open-btn">社区规范</button>
@@ -1550,8 +1593,17 @@
                 <div class="today-pick-body" id="today-pick-body"></div>
             </div>
 
-            <div class="community-grid" id="community-grid">
-                <!-- Submissions rendered by JS -->
+            <div class="sn-envelope sig-envelope-top sig-snow-noise reveal">
+                <div class="sig-postmark sn-envelope__stamp">
+                    <span>FM · 9072</span>
+                </div>
+                <div class="sn-envelope__flap" aria-hidden="true"></div>
+                <div class="sn-envelope__body">
+                    <div class="community-grid" id="community-grid">
+                        <!-- Submissions rendered by JS -->
+                    </div>
+                </div>
+                <div class="sig-tape sig-tape--bl" style="position:static;display:block;margin:16px auto 0;width:110px;"></div>
             </div>
 
             <nav class="community-pagination" id="community-pagination" hidden aria-label="社区分页"></nav>
@@ -1667,65 +1719,70 @@
         </div>
     </div>
 
-    <!-- ============ Footer ============ -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-logo">
-                <svg class="footer-logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="footerSnowflakeGrad" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stop-color="#A8D8FF"/>
-                            <stop offset="50%" stop-color="#6B8AFF"/>
-                            <stop offset="100%" stop-color="#FFFFFF"/>
-                        </linearGradient>
-                        <linearGradient id="footerSnowflakeGrad2" x1="0" y1="1" x2="1" y2="0">
-                            <stop offset="0%" stop-color="#FFFFFF"/>
-                            <stop offset="100%" stop-color="#A8D8FF"/>
-                        </linearGradient>
-                    </defs>
-                    <g stroke="url(#footerSnowflakeGrad)" stroke-width="2" stroke-linecap="round" opacity="0.9">
-                        <line x1="20" y1="4" x2="20" y2="36"/>
-                        <line x1="4" y1="12" x2="36" y2="28"/>
-                        <line x1="4" y1="28" x2="36" y2="12"/>
-                    </g>
-                    <g stroke="url(#footerSnowflakeGrad2)" stroke-width="1.2" stroke-linecap="round" opacity="0.7">
-                        <line x1="20" y1="10" x2="14" y2="6"/>
-                        <line x1="20" y1="10" x2="26" y2="6"/>
-                        <line x1="20" y1="30" x2="14" y2="34"/>
-                        <line x1="20" y1="30" x2="26" y2="34"/>
-                        <line x1="10" y1="16" x2="6" y2="14"/>
-                        <line x1="10" y1="16" x2="8" y2="22"/>
-                        <line x1="30" y1="24" x2="34" y2="26"/>
-                        <line x1="30" y1="24" x2="32" y2="18"/>
-                        <line x1="10" y1="24" x2="6" y2="26"/>
-                        <line x1="10" y1="24" x2="8" y2="18"/>
-                        <line x1="30" y1="16" x2="34" y2="14"/>
-                        <line x1="30" y1="16" x2="32" y2="22"/>
-                    </g>
-                    <circle cx="20" cy="20" r="4" fill="url(#footerSnowflakeGrad2)" opacity="0.85"/>
-                    <circle cx="20" cy="20" r="2" fill="#FFFFFF" opacity="0.9"/>
-                    <circle cx="20" cy="4" r="1.5" fill="#FFFFFF" opacity="0.8"/>
-                    <circle cx="20" cy="36" r="1.5" fill="#FFFFFF" opacity="0.8"/>
-                    <circle cx="4" cy="12" r="1.2" fill="#A8D8FF" opacity="0.8"/>
-                    <circle cx="36" cy="28" r="1.2" fill="#A8D8FF" opacity="0.8"/>
-                    <circle cx="4" cy="28" r="1.2" fill="#A8D8FF" opacity="0.8"/>
-                    <circle cx="36" cy="12" r="1.2" fill="#A8D8FF" opacity="0.8"/>
-                </svg>
-                <span>飞行雪绒</span>
+    <!-- ============ Footer: Ft5 Frequency-Spectrum + Credits ============ -->
+    <footer class="sn-footer">
+        <div class="sn-footer__spectrum" aria-hidden="true">
+            <div class="sn-footer__eq">
+                <!-- 31 根 EQ 柱（模拟频谱条），高度由 CSS 随机决定 -->
+                <span style="--eqh:30%"></span><span style="--eqh:55%"></span><span style="--eqh:42%"></span>
+                <span style="--eqh:70%"></span><span style="--eqh:48%"></span><span style="--eqh:28%"></span>
+                <span style="--eqh:82%"></span><span style="--eqh:36%"></span><span style="--eqh:58%"></span>
+                <span style="--eqh:44%"></span><span style="--eqh:66%"></span><span style="--eqh:32%"></span>
+                <span style="--eqh:74%"></span><span style="--eqh:52%"></span><span style="--eqh:40%"></span>
+                <span style="--eqh:88%"></span><span style="--eqh:38%"></span><span style="--eqh:60%"></span>
+                <span style="--eqh:46%"></span><span style="--eqh:78%"></span><span style="--eqh:34%"></span>
+                <span style="--eqh:68%"></span><span style="--eqh:50%"></span><span style="--eqh:26%"></span>
+                <span style="--eqh:72%"></span><span style="--eqh:44%"></span><span style="--eqh:56%"></span>
+                <span style="--eqh:80%"></span><span style="--eqh:36%"></span><span style="--eqh:62%"></span>
+                <span style="--eqh:48%"></span>
             </div>
-            <p class="footer-desc">打破第四面墙的沉浸式同人创作项目</p>
-
-            <div class="footer-disclaimer">
-                <p>本网站为《鸣潮》游戏的非商业同人作品，所有原创内容版权归作者所有。</p>
-                <p>《鸣潮》游戏及其相关角色、世界观、音乐等知识产权属于库洛游戏（Kuro Games）。</p>
-                <p>本网站仅用于展示同人创作，不用于商业目的，不侵犯任何版权方权益。</p>
-                <p>本网站模拟的"飞行雪绒"社交账号为同人创作，与官方账号无关。</p>
+            <div class="sn-footer__freq-row">
+                <span class="sn-footer__freq-label">FREQ · 90.72 MHz</span>
+                <span class="sn-footer__onair">
+                    <span class="sn-footer__dot"></span>
+                    ON AIR · 飞行雪绒夜电台
+                </span>
+                <span class="sn-footer__time" id="sn-footer-time">--:--</span>
             </div>
-
-            <div class="footer-bottom">
-                <p>© 2026 飞行雪绒 · 同人创作 · 非商业用途</p>
-                <p class="footer-meta">v10.0 · R18 字阶系统 · R20 Realtime 硬删 · 版主批量审核 · profiles · Made with 星辉与微光</p>
-                <p class="footer-sync" id="sync-status" title="点击复制诊断信息 · 同步请用右下角 🔄 按钮">☁ 本地模式</p>
+        </div>
+        <div class="sn-footer__credits">
+            <div class="sn-footer__col">
+                <div class="sn-footer__brand">
+                    <svg class="nav-logo-icon" viewBox="0 0 40 40" aria-hidden="true">
+                        <g stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.9">
+                            <line x1="20" y1="4" x2="20" y2="36"/>
+                            <line x1="4" y1="12" x2="36" y2="28"/>
+                            <line x1="4" y1="28" x2="36" y2="12"/>
+                        </g>
+                        <circle cx="20" cy="20" r="3" fill="currentColor" opacity="0.85"/>
+                    </svg>
+                    <span>飞行雪绒</span>
+                </div>
+                <p class="sn-footer__tag">爱弥斯的夜电台。星炬学院的日常日志与听众来信。</p>
+            </div>
+            <div class="sn-footer__col sn-footer__col--links">
+                <h4>直达频段</h4>
+                <ul>
+                    <li><a href="#profile">电台档案</a></li>
+                    <li><a href="#music">夜播歌单</a></li>
+                    <li><a href="#diary">雪绒日志</a></li>
+                    <li><a href="#timeline">动态收听</a></li>
+                </ul>
+            </div>
+            <div class="sn-footer__col sn-footer__col--links">
+                <h4>跨站入口</h4>
+                <ul>
+                    <li><a href="forum/index.html">进入星炬学院 →</a></li>
+                    <li><a href="characters/aimisi/index.html">角色档案 · 爱弥斯</a></li>
+                </ul>
+            </div>
+            <div class="sn-footer__col sn-footer__col--meta">
+                <!-- S9 邮戳偏移装饰 -->
+                <div class="sig-postmark" style="position:static;margin-bottom:12px;display:inline-flex;align-items:center;justify-content:center;">
+                    <span>SENT · 9072</span>
+                </div>
+                <p>鸣潮同人创作项目 · 非官方非商业</p>
+                <p class="sn-footer__copy">© 飞行雪绒 · <span id="sn-footer-year">2026</span> · 以思念调频</p>
             </div>
         </div>
     </footer>
@@ -1759,7 +1816,7 @@
     <div id="secret-portal-root"></div>
     <!-- Stage II: 18 个本地 JS 合并为 1 个 bundle（477KB→222KB ↓53.4%）+ SRI 完整性校验 -->
     <script defer src="dist/bundle-main.js"
-            integrity="sha384-Ql+fIeShR+6q6bddFsTtQzLBfHd8Zc8ec4Z9KVUsceQLEKIZm8BZCn5gb1+U9AXo"
+            integrity="sha384-N76AMxbONQXxBmAtRLU+mx9NOWxRaosvtXVULFRsSV4vqECp3TGwOOJlEcHCpuEp"
             crossorigin="anonymous"></script>
     <!-- 管理员登录 Modal（替代原生 prompt，移动端友好） -->
     <div class="admin-modal-overlay" id="admin-login-modal" hidden>

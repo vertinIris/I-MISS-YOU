@@ -1,0 +1,18 @@
+name = "i-miss-you"
+compatibility_date = "2026-08-11"
+pages_build_output_dir = "."
+
+# Cloudflare Pages 部署配置
+# 
+# 重要：wrangler.toml 仅用于 Wrangler CLI 部署
+# 实际部署推荐通过 Cloudflare Dashboard（连接 GitHub 仓库自动部署）
+# 
+# 两种部署方式：
+# 1. Dashboard 方式（推荐）：Cloudflare Dashboard → Pages → Create → Connect to Git
+#    - 自动部署，无需 Wrangler
+#    - 支持预览部署（每个 PR 一个 URL）
+#    - 配置 CNAME 优选IP 更直观
+# 
+# 2. Wrangler CLI 方式：wrangler pages deploy . --project-name=i-miss-you
+#    - 适合 CI/CD 集成
+#    - 需要先在 Dashboard 创建项目

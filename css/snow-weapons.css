@@ -1,0 +1,280 @@
+/* =========================================================
+   Snow · Component-specific Weapons Styles
+   绑定 P0-2/P0-5/P0-6 新 DOM 结构的配套样式
+   ========================================================= */
+
+/* ---------- B6/N9: 顶栏 Side-Chip 滚动进度条 ---------- */
+.nav-glass { position: relative; }
+.nav-sidechip {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 0;
+    pointer-events: none;
+    z-index: 5;
+}
+.nav-sidechip-track {
+    width: 2px;
+    flex: 1;
+    background: color-mix(in srgb, var(--color-white) 8%, transparent);
+    border-radius: 1px;
+    position: relative;
+    overflow: hidden;
+    margin: 6px 0;
+}
+.nav-sidechip-fill {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 0%;
+    background: linear-gradient(180deg, var(--color-rose), var(--color-blue-light));
+    border-radius: 1px;
+    transition: height 120ms linear;
+}
+.nav-sidechip-label {
+    font-family: IBM Plex Mono, monospace;
+    font-size: 9px;
+    color: var(--neutral-400);
+    letter-spacing: 0.1em;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    margin-top: 4px;
+    white-space: nowrap;
+}
+@media (max-width: 1023px) { .nav-sidechip { display: none; } }
+
+/* ---------- B6: Night-Radio 调频旋钮滚动指示 ---------- */
+.sn-scroll-dial {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px !important;
+    background: none !important;
+}
+.sn-dial-tape {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.sn-dial-reel {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid color-mix(in srgb, var(--color-white) 22%, transparent);
+    position: relative;
+    background:
+        radial-gradient(circle at 50% 50%, transparent 5.5px, color-mix(in srgb, var(--color-white) 10%, transparent) 6px);
+}
+.sn-dial-reel::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1.5px dashed color-mix(in srgb, var(--color-rose) 45%, transparent);
+    border-radius: 50%;
+    animation: sn-tape-spin 6s linear infinite;
+}
+.sn-dial-reel--r::before { animation-direction: reverse; }
+@keyframes sn-tape-spin { to { transform: rotate(360deg); } }
+.sn-dial-ribbon {
+    font-family: IBM Plex Mono, monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--color-blue-light);
+    padding: 2px 8px;
+    border-top: 1px solid color-mix(in srgb, var(--color-rose) 35%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-rose) 35%, transparent);
+    opacity: 0.75;
+    display: flex;
+    gap: 8px;
+}
+.sn-dial-ribbon span:nth-child(2) { color: var(--color-rose-soft); }
+.sn-dial-hint {
+    font-family: Noto Sans SC, sans-serif;
+    font-size: 11px;
+    color: var(--neutral-400);
+    letter-spacing: 0.06em;
+}
+
+/* ---------- Hero: 字距呼吸 + 雪花签名 ---------- */
+.sn-title-breath {
+    position: relative;
+    display: inline-block;
+}
+.sn-hero-snowflake {
+    width: 52px;
+    height: 52px;
+    color: var(--color-blue-light);
+    margin: 4px 0;
+    animation: sn-float 5s ease-in-out infinite;
+}
+@keyframes sn-float {
+    0%,100% { transform: translateY(0) rotate(0); }
+    50%     { transform: translateY(-6px) rotate(8deg); }
+}
+.sn-title-scribble {
+    display: block;
+    width: 100%;
+    height: 12px;
+    margin-top: 2px;
+    color: var(--color-rose);
+}
+.hero-title-track {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0);
+    white-space: nowrap; border: 0;
+}
+
+/* ---------- P0-6: 信封造型 听众来信 ---------- */
+.sn-envelope {
+    position: relative;
+    background: linear-gradient(180deg,
+        color-mix(in srgb, var(--color-pink-warm) 12%, transparent),
+        color-mix(in srgb, var(--color-snow) 6%, transparent)
+    );
+    border: 1px solid color-mix(in srgb, var(--color-rose) 22%, transparent);
+    border-radius: 4px;
+    padding: 28px 24px 22px;
+    margin-top: 16px;
+}
+.sn-envelope__flap {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 22px;
+    background: linear-gradient(180deg,
+        color-mix(in srgb, var(--color-pink-warm) 35%, transparent),
+        transparent
+    );
+    clip-path: polygon(0 0, 100% 0, 88% 100%, 50% 55%, 12% 100%);
+}
+.sn-envelope__stamp {
+    position: absolute;
+    top: 26px; right: 20px;
+    width: 68px; height: 68px;
+}
+.sn-envelope__body {
+    position: relative;
+    z-index: 1;
+}
+.sn-letter-card .sig-tape-corner { width: 20px; height: 20px; }
+
+/* ---------- Ft5: 雪绒频谱签名 Footer ---------- */
+.sn-footer {
+    border-top: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
+    background:
+        radial-gradient(120% 60% at 50% 0%, color-mix(in srgb, var(--color-rose) 10%, transparent), transparent 60%),
+        var(--neutral-900);
+    padding: 0 0 28px;
+    margin-top: 64px;
+}
+.sn-footer__spectrum {
+    padding: 28px 32px 12px;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-white) 5%, transparent);
+}
+.sn-footer__eq {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2px;
+    height: 56px;
+    padding: 0 8px 12px;
+}
+.sn-footer__eq > span {
+    flex: 1 1 auto;
+    min-width: 2px;
+    background: linear-gradient(180deg, var(--color-rose), var(--color-blue-light));
+    border-radius: 1px 1px 0 0;
+    height: var(--eqh, 40%);
+    animation: sn-eq-wave 2.4s ease-in-out infinite;
+}
+.sn-footer__eq > span:nth-child(3n)   { animation-delay: -0.4s; }
+.sn-footer__eq > span:nth-child(7n)   { animation-delay: -1.2s; }
+.sn-footer__eq > span:nth-child(11n)  { animation-delay: -0.8s; }
+.sn-footer__eq > span:nth-child(5n+3) { animation-delay: -1.6s; }
+@keyframes sn-eq-wave {
+    0%,100% { transform: scaleY(1); }
+    50%     { transform: scaleY(0.68); }
+}
+.sn-footer__freq-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    font-family: IBM Plex Mono, monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--neutral-300);
+}
+.sn-footer__freq-label { color: var(--color-blue-light); font-weight: 500; }
+.sn-footer__onair {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-rose-soft);
+}
+.sn-footer__dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--color-rose);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-rose) 20%, transparent);
+    animation: sn-blink 1.4s ease-in-out infinite;
+}
+@keyframes sn-blink { 50% { opacity: 0.35; } }
+.sn-footer__time { color: var(--color-gold-soft); }
+.sn-footer__credits {
+    max-width: var(--site-max, 1200px);
+    margin: 0 auto;
+    padding: 32px 32px 0;
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
+    gap: 28px;
+}
+.sn-footer__brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: Noto Serif SC, serif;
+    font-size: 20px; font-weight: 700;
+    color: var(--color-white);
+    margin-bottom: 12px;
+}
+.sn-footer__brand svg { width: 28px; height: 28px; color: var(--color-blue-light); }
+.sn-footer__tag {
+    color: var(--neutral-300);
+    font-size: 13px;
+    line-height: 1.7;
+    margin: 0;
+}
+.sn-footer__col h4 {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--color-blue-light);
+    text-transform: uppercase;
+    margin: 0 0 12px;
+}
+.sn-footer__col ul { list-style: none; padding: 0; margin: 0; }
+.sn-footer__col li { margin: 6px 0; }
+.sn-footer__col a {
+    color: var(--neutral-300);
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 160ms ease;
+}
+.sn-footer__col a:hover { color: var(--color-rose); }
+.sn-footer__copy {
+    margin-top: 10px;
+    color: var(--neutral-400);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+}
+.sn-footer__col--meta { color: var(--neutral-300); font-size: 13px; line-height: 1.8; }
+@media (max-width: 900px) {
+    .sn-footer__credits { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 540px) {
+    .sn-footer__credits { grid-template-columns: 1fr; padding: 24px 20px 0; }
+    .sn-footer__spectrum { padding: 20px 16px 8px; }
+}

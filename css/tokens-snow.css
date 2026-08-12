@@ -4,10 +4,13 @@
  * axes: dark / soft-serif-cjk / warm-rose · nav: N9 · footer: Ft5
  * signature: 频率刻度条 .sig-freqbar (--sig-*) · shared base: tokens-base.css
  * pre-emit critique: P5 H5 E4 S5 R4 V5
+ *
+ * All color values reference tokens-base.css shared tokens where possible.
+ * Brand-specific overrides use OKLCH for perceptual uniformity.
  */
 
 :root {
-  /* Paper / ink */
+  /* Paper / ink — brand-specific perceptual space */
   --sn-paper: oklch(12% 0.02 350deg);
   --sn-paper-2: oklch(16% 0.025 350deg);
   --sn-paper-3: oklch(20% 0.03 348deg);
@@ -16,7 +19,7 @@
   --sn-ink-3: oklch(68% 0.025 350deg);
   --sn-rule: oklch(40% 0.04 350deg / 0.35);
 
-  /* Accent — 雪绒粉（非紫辉光） */
+  /* Accent — 雪绒粉 */
   --sn-accent: oklch(72% 0.14 350deg);
   --sn-accent-strong: oklch(64% 0.16 348deg);
   --sn-accent-soft: oklch(84% 0.08 350deg);
@@ -24,55 +27,74 @@
   --sn-ice: oklch(78% 0.06 230deg);
 
   /* Scene → signature */
-  --sig-accent: var(--hue-rose, #e879a8);
-  --sig-accent-strong: var(--hue-ice, #8eb4e8);
+  --sig-accent: var(--color-pink);
+  --sig-accent-strong: var(--color-blue-light);
   --sig-ink: var(--sn-ink);
 
-  /* Map into legacy tokens used across style.css */
-  --c-primary: #e879a8;
-  --c-primary-strong: #d4548c;
-  --c-primary-soft: #f5c0d8;
+  /* Legacy token mapping → shared base tokens + brand overrides */
+  --c-primary: var(--color-pink);
+  --c-primary-strong: var(--color-pink-deep);
+  --c-primary-soft: var(--color-pink-soft);
   --c-primary-dim: oklch(72% 0.14 350deg / 0.14);
-  --c-core-white: #f7f0f4;
-  --c-core-blue: #8eb4e8;
-  --c-core-blue-light: #c5dff8;
-  --color-pink: #e879a8;
-  --color-pink-light: #f5c0d8;
-  --color-pink-soft: #efa0c0;
-  --color-pink-deep: #d4548c;
-  --aimisi-pink: #e879a8;
-  --aimisi-pink-light: #f5c0d8;
-  --aimisi-pink-soft: #efa0c0;
-  --aimisi-pink-deep: #d4548c;
-  --aimisi-white: #faf4f7;
-  --bg-primary: #100810;
-  --bg-secondary: #161018;
-  --bg-tertiary: #1c141c;
-  --bg-gradient-1: #100810;
+  --c-core-white: var(--color-snow);
+  --c-core-blue: var(--color-blue);
+  --c-core-blue-light: var(--color-blue-light);
+
+  /* Legacy color aliases → shared tokens */
+  --color-pink: var(--color-pink);
+  --color-pink-light: var(--color-pink-soft);
+  --color-pink-soft: var(--color-pink-warm);
+  --color-pink-deep: var(--color-pink-deep);
+  --aimisi-pink: var(--color-pink);
+  --aimisi-pink-light: var(--color-pink-soft);
+  --aimisi-pink-soft: var(--color-pink-warm);
+  --aimisi-pink-deep: var(--color-pink-deep);
+  --aimisi-white: var(--color-pink-pale);
+
+  /* Legacy bg aliases */
+  --bg-primary: var(--sn-paper);
+  --bg-secondary: var(--sn-paper-2);
+  --bg-tertiary: var(--sn-paper-3);
+  --bg-gradient-1: var(--sn-paper);
   --bg-gradient-2: #180e16;
   --bg-gradient-3: #0e0a12;
-  --text-primary: #faf4f7;
-  --text-secondary: #dcc8d4;
-  --text-tertiary: #a8909e;
+
+  /* Legacy text aliases */
+  --text-primary: var(--sn-ink);
+  --text-secondary: var(--sn-ink-2);
+  --text-tertiary: var(--sn-ink-3);
+
+  /* Glass system — brand-specific */
   --glass-bg: oklch(96% 0.01 350deg / 0.04);
   --glass-bg-hover: oklch(96% 0.01 350deg / 0.07);
   --glass-border: oklch(96% 0.01 350deg / 0.1);
   --glass-border-hover: oklch(72% 0.14 350deg / 0.4);
   --glass-blur: blur(12px) saturate(120%);
+
+  /* Surface system */
   --surface-card: oklch(96% 0.01 350deg / 0.045);
   --surface-card-border: oklch(96% 0.01 350deg / 0.1);
   --surface-inset: oklch(96% 0.01 350deg / 0.03);
   --surface-accent: var(--c-primary-dim);
   --surface-accent-border: oklch(72% 0.14 350deg / 0.35);
+
+  /* Shadow & focus */
   --shadow-glow: 0 0 28px oklch(72% 0.14 350deg / 0.12);
   --focus-ring: oklch(72% 0.14 350deg / 0.55);
   --nav-bg: oklch(12% 0.02 350deg / 0.82);
 
-  /* Google Fonts 可选；断网/屏蔽时走系统 CJK 栈，角色页与主站一致 */
-  --font-display: "ZCOOL XiaoWei", "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
-  --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
-  --font-sans: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", "Cascadia Code", ui-monospace, "Consolas", monospace;
+  /* Character identity aliases → shared tokens */
+  --aimisi-gold: var(--color-gold);
+  --aimisi-gold-soft: var(--color-gold-soft);
+  --drifter-blue: var(--color-blue);
+  --drifter-blue-light: var(--color-blue-light);
+  --drifter-blue-deep: var(--color-blue-deep);
+  --drifter-purple: var(--color-purple);
+  --drifter-purple-deep: var(--color-purple-deep);
+  --drifter-starlight: var(--color-blue-pale);
+  --spectral-cyan: var(--color-cyan);
+
+  /* Brand-specific radius & motion (overrides shared) */
   --radius-sm: 10px;
   --radius-md: 18px;
   --radius-lg: 24px;
@@ -82,6 +104,12 @@
   --dur-base: 280ms;
   --dur-slow: 520ms;
   --sn-focus: 0 0 0 2px oklch(12% 0.02 350deg / 0.95), 0 0 0 4px oklch(72% 0.14 350deg / 0.55);
+
+  /* Font stacks */
+  --font-display: "ZCOOL XiaoWei", "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
+  --font-sans: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "Cascadia Code", ui-monospace, "Consolas", monospace;
 }
 
 html, body {

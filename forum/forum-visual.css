@@ -525,7 +525,7 @@ body.forum-page[data-realm="digital-sea"] {
 .stf-feed-tab.active {
   background: oklch(68% 0.12 255deg / 0.22) !important;
   border-color: var(--stf-edge-strong) !important;
-  color: #fff !important;
+  color: var(--color-white) !important;
 }
 
 .stf-composer-trigger,

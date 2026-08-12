@@ -145,6 +145,24 @@
 
     <header class="forum-hero">
         <div class="forum-hero-content">
+            <!-- 火炬 SVG 金色呼吸光晕（C1 学院大厅 Hero） -->
+            <div class="stf-hero-torch" aria-hidden="true">
+                <svg viewBox="0 0 120 140" fill="none">
+                    <defs>
+                        <radialGradient id="stf-torch-glow" cx="50%" cy="35%" r="60%">
+                            <stop offset="0%" stop-color="var(--color-gold)" stop-opacity="0.7"/>
+                            <stop offset="50%" stop-color="var(--color-gold-warm)" stop-opacity="0.2"/>
+                            <stop offset="100%" stop-color="var(--color-gold)" stop-opacity="0"/>
+                        </radialGradient>
+                    </defs>
+                    <circle cx="60" cy="40" r="56" fill="url(#stf-torch-glow)" class="stf-torch-aura"/>
+                    <!-- 火炬主体 -->
+                    <path d="M50 70 L50 115 Q50 125 60 125 Q70 125 70 115 L70 70 Z" fill="var(--color-gold-warm)" opacity="0.85"/>
+                    <!-- 火焰 -->
+                    <path d="M60 20 Q46 44 52 58 Q48 66 60 68 Q72 66 68 58 Q74 44 60 20 Z" fill="var(--color-gold)" class="stf-torch-flame"/>
+                    <path d="M60 34 Q54 46 57 56 Q60 58 63 56 Q66 46 60 34 Z" fill="var(--color-gold-soft)" opacity="0.9"/>
+                </svg>
+            </div>
             <h1 class="forum-hero-brand">星炬学院</h1>
             <div class="sig-freqbar" aria-hidden="true">
                 <span class="sig-freqbar-tick sig-freqbar-tick--major"></span>
@@ -176,45 +194,65 @@
                 <h2 class="section-title">功能区导览</h2>
                 <p class="section-desc">从一个入口，走到鸣潮的每一个角落</p>
             </div>
-            <div class="forum-quicknav-row" role="navigation" aria-label="核心入口">
-                <a class="hero-pill hero-pill--lead" href="#stf-community">
-                    <b>讨论区</b><span>帖子 · 话题 · 互动</span>
-                </a>
-                <a class="hero-pill" href="#characters-archive">
-                    <b>角色档案</b><span>官方角色考据</span>
-                </a>
-                <a class="hero-pill" href="#worldview">
-                    <b>世界观</b><span>索拉里斯考据卡</span>
-                </a>
-            </div>
-            <div class="forum-grid">
+            <!-- 档案馆索引墙：2-1-1 非对称 → 替代 AI 标配 3 列 feature grid（C4 立即废除） -->
+            <div class="stf-indexwall" role="navigation" aria-label="核心入口">
 
-                <a class="forum-entry forum-entry--primary" href="#stf-community" style="--char: var(--stf-brand, #6d8fd6);">
-                    <span class="forum-entry-ribbon">核心</span>
-                    <span class="forum-entry-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <!-- SECTION-01 主索引卡（讨论区）· 2×1 大卡片 -->
+                <a class="stf-indexcard stf-indexcard--2x1" href="#stf-community">
+                    <!-- T2 装订孔：左侧 3 孔 -->
+                    <span class="stf-binding-holes" aria-hidden="true">
+                        <span></span><span></span><span></span>
                     </span>
-                    <span class="forum-entry-title">讨论区</span>
-                    <span class="forum-entry-desc">星炬学院的核心互动区 —— 发帖、话题筛选、点赞评论收藏，异步沉淀，与同好相遇。</span>
-                    <span class="forum-entry-cta">进入讨论区 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
-                </a>
-
-                <a class="forum-entry" href="#characters-archive" style="--char: var(--drifter-blue);">
-                    <span class="forum-entry-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    <!-- T7 门牌编号 -->
+                    <span class="stf-doorplate">SECTION · 01</span>
+                    <!-- T3 八角印章（旋转 -6°）替代 ribbon -->
+                    <span class="stf-badge-seal" aria-hidden="true">
+                        <svg viewBox="0 0 80 80">
+                            <polygon points="40,4 68,16 76,40 68,64 40,76 12,64 4,40 12,16" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                            <text x="40" y="38" text-anchor="middle" font-family="Noto Serif SC" font-size="11" font-weight="700" fill="currentColor">核心</text>
+                            <text x="40" y="52" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="currentColor" opacity="0.7">CORE</text>
+                        </svg>
                     </span>
-                    <span class="forum-entry-title">角色档案</span>
-                    <span class="forum-entry-desc">星炬学院的他们：爱弥斯、达妮娅、西格莉卡、琳奈、莫宁、洛瑟菈 —— 官方设定考据。</span>
-                    <span class="forum-entry-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                    <span class="stf-indexcard-title">讨论区</span>
+                    <span class="stf-indexcard-sub">帖子 · 话题 · 互动</span>
+                    <span class="stf-indexcard-desc">星炬学院的核心互动区 —— 发帖、话题筛选、点赞评论收藏，异步沉淀，与同好相遇。</span>
+                    <span class="stf-indexcard-cta">
+                        进入讨论区
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+                    </span>
                 </a>
 
-                <a class="forum-entry" href="#worldview" style="--char: var(--sigrica-green);">
-                    <span class="forum-entry-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                <!-- SECTION-02 角色档案 · 1×1 -->
+                <a class="stf-indexcard" href="#characters-archive">
+                    <span class="stf-doorplate stf-doorplate--sm">SECTION · 02</span>
+                    <span class="stf-indexcard-tab" aria-hidden="true">角色</span>
+                    <span class="stf-indexcard-title">角色档案</span>
+                    <span class="stf-indexcard-sub">官方角色考据</span>
+                    <span class="stf-indexcard-cta">
+                        查阅档案
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
                     </span>
-                    <span class="forum-entry-title">世界观</span>
-                    <span class="forum-entry-desc">索拉里斯规则与地理势力考据卡 —— 角色履历请走「角色档案」，同人长帖请走「讨论区」。</span>
-                    <span class="forum-entry-cta">考据世界 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                </a>
+
+                <!-- SECTION-03 世界观 · 1×1 -->
+                <a class="stf-indexcard" href="#worldview">
+                    <span class="stf-doorplate stf-doorplate--sm">SECTION · 03</span>
+                    <!-- 星图纹理背景（SVG 微图案） -->
+                    <svg class="stf-starmap-bg" viewBox="0 0 100 60" aria-hidden="true" preserveAspectRatio="none">
+                        <g fill="currentColor" opacity="0.18">
+                            <circle cx="20" cy="15" r="1.2"/><circle cx="45" cy="30" r="0.8"/>
+                            <circle cx="72" cy="12" r="1"/><circle cx="85" cy="42" r="0.7"/>
+                            <circle cx="30" cy="45" r="0.9"/><circle cx="60" cy="50" r="1.1"/>
+                            <line x1="20" y1="15" x2="45" y2="30" stroke="currentColor" stroke-width="0.4" opacity="0.2"/>
+                            <line x1="45" y1="30" x2="72" y2="12" stroke="currentColor" stroke-width="0.4" opacity="0.2"/>
+                        </g>
+                    </svg>
+                    <span class="stf-indexcard-title">世界观</span>
+                    <span class="stf-indexcard-sub">索拉里斯考据卡</span>
+                    <span class="stf-indexcard-cta">
+                        考据世界
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+                    </span>
                 </a>
 
             </div>
@@ -276,6 +314,58 @@
                         <span class="stf-staff-hint">帖子/评论右下角可「隐藏」；写操作由云端 RLS 校验。</span>
                     </div>
 
+                    <!-- 常驻 Quick Composer：抽屉造型（T6 把手）· 默认收起仅显示一行输入 -->
+                    <div class="stf-composer sig-drawer" id="stf-quick-composer">
+                        <span class="sig-drawer__handle" aria-hidden="true"></span>
+                        <div class="stf-composer__input-row">
+                            <input type="text" class="stf-composer__input" id="stf-qc-title"
+                                   placeholder="分享你的鸣潮同人思考、作品或话题…"
+                                   aria-label="新帖标题，点击展开完整编辑器">
+                            <button type="button" class="btn-primary stf-composer__expand" id="stf-qc-expand"
+                                    aria-expanded="false" aria-controls="stf-qc-fields" title="展开完整编辑器">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            </button>
+                        </div>
+                        <!-- 展开字段（默认隐藏） -->
+                        <div class="stf-composer__fields" id="stf-qc-fields" hidden>
+                            <label class="stf-composer__field">
+                                <span>内容类型</span>
+                                <div class="stf-composer__types">
+                                    <button type="button" class="sig-chip stf-chip-type--active" data-type="text">文字</button>
+                                    <button type="button" class="sig-chip" data-type="story">故事</button>
+                                    <button type="button" class="sig-chip" data-type="poem">诗歌</button>
+                                    <button type="button" class="sig-chip" data-type="art">插画</button>
+                                    <button type="button" class="sig-chip" data-type="music">音乐</button>
+                                </div>
+                            </label>
+                            <label class="stf-composer__field">
+                                <span>角色标签（可多选）</span>
+                                <div class="stf-composer__tags sig-tag-cloud">
+                                    <button type="button" class="stf-tag-chip sig-tag-chip">爱弥斯</button>
+                                    <button type="button" class="stf-tag-chip sig-tag-chip">达妮娅</button>
+                                    <button type="button" class="stf-tag-chip sig-tag-chip">西格莉卡</button>
+                                    <button type="button" class="stf-tag-chip sig-tag-chip">琳奈</button>
+                                    <button type="button" class="stf-tag-chip sig-tag-chip">莫宁</button>
+                                    <button type="button" class="stf-tag-chip sig-tag-chip">洛瑟菈</button>
+                                    <button type="button" class="stf-tag-chip sig-tag-chip">漂泊者</button>
+                                </div>
+                            </label>
+                            <label class="stf-composer__field">
+                                <span>正文</span>
+                                <textarea class="stf-composer__textarea" id="stf-qc-content" rows="5"
+                                          placeholder="写下你的故事、考据、分析或同人创作…支持 Markdown 粗体/斜体/链接。"
+                                          maxlength="4000"></textarea>
+                            </label>
+                            <div class="stf-composer__actions">
+                                <span class="stf-composer__counter"><span id="stf-qc-count">0</span> / 4000</span>
+                                <div class="stf-composer__btns">
+                                    <button type="button" class="btn-ghost" id="stf-qc-cancel">收起</button>
+                                    <button type="button" class="btn-primary" id="stf-qc-submit">发布新帖</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="stf-tag-bar" aria-label="角色标签筛选">
                         <span class="tag-category-label">角色</span>
                         <button type="button" class="stf-tag-chip" data-tag="爱弥斯">爱弥斯</button>
@@ -290,15 +380,27 @@
                         <button type="button" class="stf-tag-chip" data-tag="考据">考据</button>
                         <button type="button" class="stf-tag-chip" data-tag="情感">情感</button>
                         <button type="button" class="stf-tag-chip" data-tag="冒险">冒险</button>
-                    </div>
+                    </div><!-- /stf-tag-bar -->
 
-                    <div class="stf-pinned" id="stf-pinned" hidden aria-label="置顶与精华">
-                        <div class="stf-pinned-head">
-                            <span class="stf-pinned-label">置顶</span>
-                            <button type="button" class="stf-pinned-toggle" id="stf-pinned-toggle" aria-expanded="true">收起</button>
+                    <!-- 星轨时间线容器（T8 星图网格 + T9 节点偏移） -->
+                    <div class="stf-timeline sig-grid-starmap">
+                        <div class="stf-timeline__rail" aria-hidden="true"></div>
+
+                        <div class="stf-pinned" id="stf-pinned" hidden aria-label="置顶与精华">
+                            <div class="stf-pinned-head">
+                                <span class="stf-pinned-label">置顶</span>
+                                <button type="button" class="stf-pinned-toggle" id="stf-pinned-toggle" aria-expanded="true">收起</button>
+                            </div>
+                            <!-- 置顶首卡星轨节点示范：forum.js 渲染每条 li 时，需在 .stf-card 前插入对应节点 -->
+                            <ul class="stf-pinned-list" id="stf-pinned-list">
+                                <!-- forum.js 渲染模板参考：
+                                <li>
+                                    <span class="sig-timeline-node sig-timeline-node--fresh sig-timeline-node--off-2"></span>
+                                    <article class="stf-card stf-card--stack stf-timeline__item">…</article>
+                                </li>
+                                -->
+                            </ul>
                         </div>
-                        <ul class="stf-pinned-list" id="stf-pinned-list"></ul>
-                    </div>
 
                     <div class="stf-composer" id="stf-composer">
                         <button type="button" class="stf-composer-trigger" id="stf-composer-trigger" aria-expanded="false" aria-controls="stf-composer-form">
@@ -384,6 +486,13 @@
                         </form>
                     </div>
 
+                    <!-- 信息流 stf-feed：每条 .stf-card 由 forum.js 动态渲染。
+                         forum.js 适配要求：
+                         1. 每条卡片外层添加 class stf-timeline__item
+                         2. 每张 .stf-card 前插入星轨节点圆点：
+                            <span class="sig-timeline-node sig-timeline-node--off-1"></span>
+                         3. .stf-card 同时添加 class stf-card--stack（预览内容 mask 渐隐，折叠高度由 CSS 控制）
+                    -->
                     <div class="stf-feed" id="stf-community-grid" aria-label="讨论帖列表">
                         <!-- JS 渲染 -->
                     </div>
@@ -397,6 +506,7 @@
                         <p>讨论区还安静着。点右上角发帖，留下第一条讨论。</p>
                         <button type="button" class="btn-ghost magnetic" data-action="open-submit"><span>去发帖</span></button>
                     </div>
+                    </div><!-- /stf-timeline -->
                 </div>
 
                 <!-- 长文详情深度面板：?post=id 或 #post=id -->
@@ -669,7 +779,7 @@
             <div class="lore-group reveal" aria-labelledby="lore-group-bridge">
                 <h3 class="lore-group-title" id="lore-group-bridge">双站桥接 · 总典卷六（非角色档案）</h3>
                 <div class="lore-grid">
-                    <article class="lore-card" style="--char: var(--aimisi-pink, #FF6B9D);">
+                    <article class="lore-card" style="--char: var(--aimisi-pink, var(--color-rose));">
                         <span class="lore-tier lore-tier-orig">项目原创</span>
                         <h3>飞行雪绒 · 调频 9072</h3>
                         <p>官方确认爱弥斯的歌手化名「飞行雪绒」。频道页与深夜频率 9072 为同人演绎（左下角浮钮可打开频道）—— 用官方「频率」语言叙事，不改写索拉里斯物理法则；角色履历仍归「角色档案」。</p>
@@ -907,16 +1017,68 @@
         </div>
     </div>
 
-    <footer class="stf-site-footer">
-        <p class="stf-site-meta">
-            星炬学院 · v10.0
-            <button type="button" class="stf-hidden-trigger" id="stf-hidden-trigger" aria-label="隐藏信号">
-                <svg class="stf-hidden-snowflake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                    <path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/>
-                </svg>
-            </button>
-            · 与飞行雪绒同域会话
-        </p>
+    <!-- ============ Footer: Ft1 Archive-Card + Dewey-Decimal-Code ============ -->
+    <footer class="stf-footer">
+        <div class="stf-footer__card sig-metal-edge">
+            <!-- T1 装订孔（左侧 3 孔） -->
+            <div class="sig-binding sig-binding--3">
+                <span class="sig-binding__hole"></span>
+                <span class="sig-binding__hole"></span>
+                <span class="sig-binding__hole"></span>
+            </div>
+            <!-- T5 杜威十进制编号 -->
+            <div class="stf-footer__dewey">
+                <span class="sig-dewey">STF · 000.001</span>
+            </div>
+            <div class="stf-footer__body">
+                <h4 class="stf-footer__title">星炬学院 · 鸣潮同人档案馆</h4>
+                <div class="stf-footer__version">v11.0 · M4 Frontend Refactor</div>
+                <div class="stf-footer__classify">
+                    <span class="stf-footer__tag">分类 · 共鸣者研究</span>
+                    <span class="stf-footer__tag">索拉里斯地理</span>
+                    <span class="stf-footer__tag">隧者适格 / 档案管理</span>
+                </div>
+                <!-- 管理员签名 SVG + T12 轻微抖动 -->
+                <div class="stf-footer__signature sig-sign-wobble" aria-hidden="true">
+                    <svg viewBox="0 0 160 28" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 22 Q 10 8 18 16 T 32 18 Q 38 8 46 16 L 54 22"/>
+                        <path d="M62 24 L 68 10 Q 72 6 76 12 L 82 22 Q 86 14 92 20 L 98 8"/>
+                        <path d="M108 20 Q 116 6 124 14 T 140 16 L 152 22"/>
+                    </svg>
+                    <span class="stf-footer__signer">—— 星炬学院档案馆 · 管理员手签</span>
+                </div>
+            </div>
+        </div>
+        <div class="stf-footer__links">
+            <div class="stf-footer__link-group">
+                <h5>档案索引</h5>
+                <a href="#stf-community">讨论区</a>
+                <a href="#characters-archive">角色档案</a>
+                <a href="#worldview">世界观考据</a>
+            </div>
+            <div class="stf-footer__link-group">
+                <h5>行政</h5>
+                <a href="#top">返回大厅 ↑</a>
+                <a href="../index.html">返回飞行雪绒</a>
+            </div>
+            <div class="stf-footer__legal">
+                <span class="stf-footer__seal sig-seal sig-seal--var" aria-hidden="true">
+                    <svg viewBox="0 0 80 80">
+                        <polygon points="40,4 68,16 76,40 68,64 40,76 12,64 4,40 12,16"
+                                 fill="none" stroke="currentColor" stroke-width="1.3"/>
+                        <text x="40" y="36" text-anchor="middle" font-family="Noto Serif SC" font-size="10" font-weight="700" fill="currentColor">星炬</text>
+                        <text x="40" y="50" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="currentColor" opacity="0.7">ARCHIVE</text>
+                    </svg>
+                </span>
+                <button type="button" class="stf-hidden-trigger" id="stf-hidden-trigger" aria-label="隐藏信号" style="background:none;border:none;padding:0;cursor:pointer;opacity:0.55;">
+                    <svg class="stf-hidden-snowflake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" style="width:22px;height:22px;">
+                        <path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/>
+                    </svg>
+                </button>
+                <p>© 星炬学院 · 鸣潮同人档案馆 · <span id="stf-footer-year">2026</span></p>
+                <p class="stf-footer__hint">鸣潮 © 库洛游戏。本项目为非官方非商业同人创作站点。</p>
+            </div>
+        </div>
     </footer>
 
     <!-- 开场沉浸提示：仅首次访问延迟出现 -->
@@ -1040,7 +1202,7 @@
                 <form class="stf-nick-form" id="stf-nick-form">
                     <div class="form-group">
                         <label class="form-label" for="stf-nick-input">显示名</label>
-                        <p class="form-hint" style="margin:0 0 8px;">出现在顶栏、发帖与聊天里的署名（支持中文）。</p>
+                        <p class="form-hint form-hint-compact">出现在顶栏、发帖与聊天里的署名（支持中文）。</p>
                         <input type="text" class="form-input" id="stf-nick-input" maxlength="20" autocomplete="nickname" placeholder="2–20 字，例如：澈秋" required>
                     </div>
                     <p class="stf-auth-error" id="stf-nick-error" role="alert" hidden></p>
@@ -1124,7 +1286,7 @@
     <!-- Stage II: 15 个本地 JS 合并为 1 个 bundle（696KB→534KB ↓23.3%）+ SRI 完整性校验 -->
     <!-- forum-supabase.js 内含 waitForSDK 轮询，不依赖 CDN SDK 严格顺序；bundle 可安全先于 SDK 加载 -->
     <script defer src="../dist/bundle-forum.js"
-            integrity="sha384-7cb733hQmxW3ECSQR5c1N99UTMbl74iufCGpgrDJkHVVK0tooVRuVFEowrCGR+wv"
+            integrity="sha384-LgteZEmI5urraArncZwNs6rBDONIa1RBqbikB/42WnJT6BDG8TV8zco9Yow6vD7Q"
             crossorigin="anonymous"></script>
     <!-- 论坛上云：Supabase 客户端 + 云端适配器（与主站共用同一项目，账号自动打通） -->
     <script>

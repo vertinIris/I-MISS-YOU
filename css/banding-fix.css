@@ -7,8 +7,8 @@
 /* 连续深空底色：自上而下微调，避免板块间出现硬色块边界 */
 body {
     background:
-        radial-gradient(1200px 700px at 50% -10%, rgba(255,107,157,.10), transparent 60%),
-        radial-gradient(900px 600px at 80% 22%, rgba(107,138,255,.07), transparent 55%),
+        radial-gradient(1200px 700px at 50% -10%, color-mix(in srgb, var(--color-rose) 10%, transparent), transparent 60%),
+        radial-gradient(900px 600px at 80% 22%, color-mix(in srgb, var(--color-blue) 7%, transparent), transparent 55%),
         linear-gradient(180deg, #0A0710 0%, #0B0814 42%, #08060F 100%);
     background-attachment: fixed;
 }
@@ -20,7 +20,7 @@ body::before {
     inset: 0;
     z-index: -2;
     pointer-events: none;
-    background: linear-gradient(180deg, transparent, rgba(255,107,157,.04) 50%, transparent);
+    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--color-rose) 4%, transparent) 50%, transparent);
 }
 
 /* 各 .section 顶部/底部微光，柔化相邻板块的接缝 */
@@ -33,7 +33,7 @@ body::before {
     height: 88px;
     z-index: -1;
     pointer-events: none;
-    background: linear-gradient(to bottom, rgba(255,107,157,.06), transparent);
+    background: linear-gradient(to bottom, color-mix(in srgb, var(--color-rose) 6%, transparent), transparent);
 }
 
 .section::after {
@@ -43,5 +43,5 @@ body::before {
     height: 88px;
     z-index: -1;
     pointer-events: none;
-    background: linear-gradient(to top, rgba(107,138,255,.06), transparent);
+    background: linear-gradient(to top, color-mix(in srgb, var(--color-blue) 6%, transparent), transparent);
 }

@@ -157,7 +157,7 @@
     -webkit-text-fill-color: transparent;
     display: inline-block;
     animation: gradientShift 6s ease-in-out infinite;
-    filter: drop-shadow(0 0 30px rgba(255, 107, 157, 0.2));
+    filter: drop-shadow(0 0 30px color-mix(in srgb, var(--color-rose) 20%, transparent));
 }
 
 /* Dynamic gradient utility for buttons, borders, etc. */
@@ -191,7 +191,7 @@ body {
     background-image:
         radial-gradient(ellipse at 20% 0%, rgba(229, 132, 168, 0.12) 0%, transparent 50%),
         radial-gradient(ellipse at 80% 50%, rgba(245, 181, 68, 0.06) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 100%, rgba(107, 138, 255, 0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 100%, color-mix(in srgb, var(--color-blue) 5%, transparent) 0%, transparent 50%),
         linear-gradient(180deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 50%, var(--bg-gradient-3) 100%);
     background-attachment: fixed;
     min-height: 100vh;
@@ -232,9 +232,9 @@ button {
     height: 72%;
     /* P0：用更大软渐变替代 filter:blur(40px)，避免全屏层持续合成卡顿 */
     background: radial-gradient(ellipse at center,
-        rgba(255, 107, 157, 0.14) 0%,
+        color-mix(in srgb, var(--color-rose) 14%, transparent) 0%,
         rgba(255, 143, 176, 0.07) 28%,
-        rgba(182, 107, 255, 0.04) 48%,
+        color-mix(in srgb, var(--color-purple) 4%, transparent) 48%,
         transparent 72%
     );
     animation: galaxyDrift 28s ease-in-out infinite;
@@ -248,9 +248,9 @@ button {
     width: 80%;
     height: 80%;
     background: radial-gradient(ellipse at center,
-        rgba(107, 138, 255, 0.13) 0%,
-        rgba(168, 216, 255, 0.06) 28%,
-        rgba(182, 107, 255, 0.04) 48%,
+        color-mix(in srgb, var(--color-blue) 13%, transparent) 0%,
+        color-mix(in srgb, var(--color-blue-light) 6%, transparent) 28%,
+        color-mix(in srgb, var(--color-purple) 4%, transparent) 48%,
         transparent 72%
     );
     animation: galaxyDrift 34s ease-in-out infinite reverse;
@@ -276,9 +276,9 @@ button {
     width: 960px;
     height: 960px;
     background: radial-gradient(circle,
-        rgba(255, 107, 157, 0.11) 0%,
-        rgba(107, 138, 255, 0.07) 28%,
-        rgba(182, 107, 255, 0.04) 48%,
+        color-mix(in srgb, var(--color-rose) 11%, transparent) 0%,
+        color-mix(in srgb, var(--color-blue) 7%, transparent) 28%,
+        color-mix(in srgb, var(--color-purple) 4%, transparent) 48%,
         transparent 72%
     );
     transform: translate(-50%, -50%);
@@ -293,8 +293,8 @@ button {
     width: 520px;
     height: 520px;
     background: radial-gradient(circle,
-        rgba(255, 255, 255, 0.06) 0%,
-        rgba(168, 216, 255, 0.045) 22%,
+        color-mix(in srgb, var(--color-white) 6%, transparent) 0%,
+        color-mix(in srgb, var(--color-blue-light) 5%, transparent) 22%,
         transparent 62%
     );
     transform: translate(-50%, -50%);
@@ -317,12 +317,12 @@ button {
     pointer-events: none;
     opacity: 0.35;
     background-image:
-        linear-gradient(30deg, rgba(255, 107, 157, 0.03) 12%, transparent 12.5%, transparent 87%, rgba(255, 107, 157, 0.03) 87.5%, rgba(255, 107, 157, 0.03)),
-        linear-gradient(150deg, rgba(107, 138, 255, 0.03) 12%, transparent 12.5%, transparent 87%, rgba(107, 138, 255, 0.03) 87.5%, rgba(107, 138, 255, 0.03)),
-        linear-gradient(30deg, rgba(182, 107, 255, 0.03) 12%, transparent 12.5%, transparent 87%, rgba(182, 107, 255, 0.03) 87.5%, rgba(182, 107, 255, 0.03)),
-        linear-gradient(150deg, rgba(168, 216, 255, 0.03) 12%, transparent 12.5%, transparent 87%, rgba(168, 216, 255, 0.03) 87.5%, rgba(168, 216, 255, 0.03)),
-        linear-gradient(60deg, rgba(255, 215, 0, 0.02) 25%, transparent 25.5%, transparent 75%, rgba(255, 215, 0, 0.02) 75%, rgba(255, 215, 0, 0.02)),
-        linear-gradient(60deg, rgba(255, 215, 0, 0.02) 25%, transparent 25.5%, transparent 75%, rgba(255, 215, 0, 0.02) 75%, rgba(255, 215, 0, 0.02));
+        linear-gradient(30deg, color-mix(in srgb, var(--color-rose) 3%, transparent) 12%, transparent 12.5%, transparent 87%, color-mix(in srgb, var(--color-rose) 3%, transparent) 87.5%, color-mix(in srgb, var(--color-rose) 3%, transparent)),
+        linear-gradient(150deg, color-mix(in srgb, var(--color-blue) 3%, transparent) 12%, transparent 12.5%, transparent 87%, color-mix(in srgb, var(--color-blue) 3%, transparent) 87.5%, color-mix(in srgb, var(--color-blue) 3%, transparent)),
+        linear-gradient(30deg, color-mix(in srgb, var(--color-purple) 3%, transparent) 12%, transparent 12.5%, transparent 87%, color-mix(in srgb, var(--color-purple) 3%, transparent) 87.5%, color-mix(in srgb, var(--color-purple) 3%, transparent)),
+        linear-gradient(150deg, color-mix(in srgb, var(--color-blue-light) 3%, transparent) 12%, transparent 12.5%, transparent 87%, color-mix(in srgb, var(--color-blue-light) 3%, transparent) 87.5%, color-mix(in srgb, var(--color-blue-light) 3%, transparent)),
+        linear-gradient(60deg, color-mix(in srgb, var(--color-gold) 2%, transparent) 25%, transparent 25.5%, transparent 75%, color-mix(in srgb, var(--color-gold) 2%, transparent) 75%, color-mix(in srgb, var(--color-gold) 2%, transparent)),
+        linear-gradient(60deg, color-mix(in srgb, var(--color-gold) 2%, transparent) 25%, transparent 25.5%, transparent 75%, color-mix(in srgb, var(--color-gold) 2%, transparent) 75%, color-mix(in srgb, var(--color-gold) 2%, transparent));
     background-size: 80px 140px;
     animation: hexPulse 12s ease-in-out infinite;
 }
@@ -352,11 +352,11 @@ button {
         90deg,
         transparent 0,
         transparent 48px,
-        rgba(168, 216, 255, 0.015) 48px,
-        rgba(168, 216, 255, 0.015) 49px
+        color-mix(in srgb, var(--color-blue-light) 2%, transparent) 48px,
+        color-mix(in srgb, var(--color-blue-light) 2%, transparent) 49px
     );
-    mask-image: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0.4) 70%, transparent 100%);
-    -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0.4) 70%, transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 0%, color-mix(in srgb, black 40%, transparent) 30%, color-mix(in srgb, black 40%, transparent) 70%, transparent 100%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, color-mix(in srgb, black 40%, transparent) 30%, color-mix(in srgb, black 40%, transparent) 70%, transparent 100%);
 }
 
 .data-rain::after {
@@ -367,12 +367,12 @@ button {
         180deg,
         transparent 0,
         transparent 120px,
-        rgba(255, 107, 157, 0.01) 120px,
-        rgba(255, 107, 157, 0.01) 121px,
+        color-mix(in srgb, var(--color-rose) 1%, transparent) 120px,
+        color-mix(in srgb, var(--color-rose) 1%, transparent) 121px,
         transparent 121px,
         transparent 240px,
-        rgba(107, 138, 255, 0.015) 240px,
-        rgba(107, 138, 255, 0.015) 241px
+        color-mix(in srgb, var(--color-blue) 2%, transparent) 240px,
+        color-mix(in srgb, var(--color-blue) 2%, transparent) 241px
     );
     animation: dataRainDrift 20s linear infinite;
 }
@@ -416,11 +416,11 @@ button {
     height: 42%;
     background: linear-gradient(105deg,
         transparent 0%,
-        rgba(255, 107, 157, 0.03) 15%,
-        rgba(182, 107, 255, 0.045) 30%,
-        rgba(107, 138, 255, 0.04) 50%,
-        rgba(168, 216, 255, 0.03) 70%,
-        rgba(255, 182, 217, 0.02) 85%,
+        color-mix(in srgb, var(--color-rose) 3%, transparent) 15%,
+        color-mix(in srgb, var(--color-purple) 5%, transparent) 30%,
+        color-mix(in srgb, var(--color-blue) 4%, transparent) 50%,
+        color-mix(in srgb, var(--color-blue-light) 3%, transparent) 70%,
+        color-mix(in srgb, var(--color-pink-warm) 2%, transparent) 85%,
         transparent 100%
     );
     transform: rotate(-8deg);
@@ -436,9 +436,9 @@ button {
     height: 36%;
     background: linear-gradient(75deg,
         transparent 0%,
-        rgba(168, 216, 255, 0.03) 20%,
-        rgba(107, 138, 255, 0.04) 40%,
-        rgba(255, 107, 157, 0.03) 60%,
+        color-mix(in srgb, var(--color-blue-light) 3%, transparent) 20%,
+        color-mix(in srgb, var(--color-blue) 4%, transparent) 40%,
+        color-mix(in srgb, var(--color-rose) 3%, transparent) 60%,
         transparent 100%
     );
     transform: rotate(5deg);
@@ -474,7 +474,7 @@ button {
     position: absolute;
     width: 3px;
     height: 3px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.9), transparent);
+    background: radial-gradient(circle, color-mix(in srgb, var(--color-white) 90%, transparent), transparent);
     border-radius: 50%;
     animation: sparkleFloat linear infinite;
 }
@@ -550,8 +550,8 @@ button {
     height: 3px;
     background: white;
     border-radius: 50%;
-    box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.8),
-                0 0 16px 4px rgba(255, 107, 157, 0.4);
+    box-shadow: 0 0 8px 2px color-mix(in srgb, var(--color-white) 80%, transparent),
+                0 0 16px 4px color-mix(in srgb, var(--color-rose) 40%, transparent);
     opacity: 0;
 }
 
@@ -563,9 +563,9 @@ button {
     width: var(--trail-w, 80px);
     height: var(--trail-h, 2px);
     background: linear-gradient(to left,
-        rgba(255, 255, 255, 0.9) 0%,
-        rgba(255, 182, 217, 0.6) 30%,
-        rgba(168, 216, 255, 0.3) 60%,
+        color-mix(in srgb, var(--color-white) 90%, transparent) 0%,
+        color-mix(in srgb, var(--color-pink-warm) 60%, transparent) 30%,
+        color-mix(in srgb, var(--color-blue-light) 30%, transparent) 60%,
         transparent 100%
     );
     transform: translateY(-50%);
@@ -633,9 +633,9 @@ button {
 .css-snowflake {
     position: absolute;
     top: -10%;
-    color: rgba(255, 255, 255, 0.85);
+    color: color-mix(in srgb, var(--color-white) 85%, transparent);
     opacity: 0.85;
-    text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 16px rgba(168, 216, 255, 0.25);
+    text-shadow: 0 0 8px color-mix(in srgb, var(--color-white) 60%, transparent), 0 0 16px color-mix(in srgb, var(--color-blue-light) 25%, transparent);
     animation: cssSnowFall linear infinite;
     user-select: none;
     /* P0：避免常驻 will-change 占合成层；离屏雪花靠 content 自然降载 */
@@ -644,7 +644,7 @@ button {
 .css-snowflake[data-layer="ethereal"] {
     color: rgba(232, 244, 255, 0.35);
     opacity: 0.35;
-    text-shadow: 0 0 6px rgba(168, 216, 255, 0.35);
+    text-shadow: 0 0 6px color-mix(in srgb, var(--color-blue-light) 35%, transparent);
 }
 
 [data-theme="light"] .css-snowflake {
@@ -687,18 +687,18 @@ button {
     z-index: -1;
     pointer-events: none;
     background-image:
-        radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.8), transparent),
-        radial-gradient(2px 2px at 40px 70px, rgba(255, 182, 217, 0.6), transparent),
-        radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.6), transparent),
-        radial-gradient(2px 2px at 130px 80px, rgba(107, 138, 255, 0.6), transparent),
-        radial-gradient(1px 1px at 160px 20px, rgba(255, 255, 255, 0.5), transparent),
-        radial-gradient(2px 2px at 200px 60px, rgba(255, 107, 157, 0.5), transparent),
-        radial-gradient(1px 1px at 230px 90px, rgba(255, 255, 255, 0.4), transparent),
-        radial-gradient(2px 2px at 280px 50px, rgba(168, 216, 255, 0.5), transparent),
-        radial-gradient(1px 1px at 320px 30px, rgba(255, 182, 217, 0.5), transparent),
-        radial-gradient(2px 2px at 350px 70px, rgba(255, 255, 255, 0.6), transparent),
-        radial-gradient(1px 1px at 400px 20px, rgba(107, 138, 255, 0.5), transparent),
-        radial-gradient(2px 2px at 440px 80px, rgba(255, 107, 157, 0.4), transparent);
+        radial-gradient(2px 2px at 20px 30px, color-mix(in srgb, var(--color-white) 80%, transparent), transparent),
+        radial-gradient(2px 2px at 40px 70px, color-mix(in srgb, var(--color-pink-warm) 60%, transparent), transparent),
+        radial-gradient(1px 1px at 90px 40px, color-mix(in srgb, var(--color-white) 60%, transparent), transparent),
+        radial-gradient(2px 2px at 130px 80px, color-mix(in srgb, var(--color-blue) 60%, transparent), transparent),
+        radial-gradient(1px 1px at 160px 20px, color-mix(in srgb, var(--color-white) 50%, transparent), transparent),
+        radial-gradient(2px 2px at 200px 60px, color-mix(in srgb, var(--color-rose) 50%, transparent), transparent),
+        radial-gradient(1px 1px at 230px 90px, color-mix(in srgb, var(--color-white) 40%, transparent), transparent),
+        radial-gradient(2px 2px at 280px 50px, color-mix(in srgb, var(--color-blue-light) 50%, transparent), transparent),
+        radial-gradient(1px 1px at 320px 30px, color-mix(in srgb, var(--color-pink-warm) 50%, transparent), transparent),
+        radial-gradient(2px 2px at 350px 70px, color-mix(in srgb, var(--color-white) 60%, transparent), transparent),
+        radial-gradient(1px 1px at 400px 20px, color-mix(in srgb, var(--color-blue) 50%, transparent), transparent),
+        radial-gradient(2px 2px at 440px 80px, color-mix(in srgb, var(--color-rose) 40%, transparent), transparent);
     background-size: 450px 120px;
     opacity: 0.75;
 }
@@ -716,8 +716,8 @@ button {
     border-radius: var(--radius-md);
     /* R17 液态玻璃：内折射边 + 内阴影模拟物理边缘 */
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.10),
-        inset 0 0 24px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 color-mix(in srgb, var(--color-white) 10%, transparent),
+        inset 0 0 24px color-mix(in srgb, black 22%, transparent),
         var(--shadow-card);
     transition: all var(--transition-base);
 }
@@ -725,8 +725,8 @@ button {
 .glass:hover {
     border-color: var(--glass-border-hover);
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.14),
-        inset 0 0 28px rgba(0, 0, 0, 0.20),
+        inset 0 1px 0 color-mix(in srgb, var(--color-white) 14%, transparent),
+        inset 0 0 28px color-mix(in srgb, black 20%, transparent),
         0 0 22px var(--c-accent-dim),
         var(--shadow-hover);
 }
@@ -735,7 +735,7 @@ button {
     background: rgba(14, 12, 18, 0.92);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    border: 1px solid color-mix(in srgb, var(--color-white) 16%, transparent);
     border-radius: var(--radius-full);
     padding: 6px 16px;
     display: inline-flex;
@@ -780,7 +780,7 @@ button {
     border: 1px solid rgba(244, 114, 155, 0.35);
     border-radius: var(--radius-md);
     padding: 8px;
-    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.55);
+    box-shadow: 0 16px 50px color-mix(in srgb, black 55%, transparent);
     opacity: 0;
     visibility: hidden;
     transform: translateX(-50%) translateY(-8px) scale(0.95);
@@ -861,8 +861,8 @@ button {
     background-size: 200% 200%;
     animation: gradientShift 6s ease-in-out infinite;
     -webkit-mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
+        linear-gradient(var(--color-white) 0 0) content-box,
+        linear-gradient(var(--color-white) 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     opacity: 0;
@@ -916,7 +916,7 @@ button {
     width: 28px;
     height: 28px;
     animation: rotate-slow 20s linear infinite;
-    filter: drop-shadow(0 0 8px rgba(107, 138, 255, 0.45)) drop-shadow(0 0 14px rgba(168, 216, 255, 0.25));
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--color-blue) 45%, transparent)) drop-shadow(0 0 14px color-mix(in srgb, var(--color-blue-light) 25%, transparent));
 }
 
 @keyframes rotate-slow {
@@ -969,11 +969,11 @@ button {
     gap: 6px;
     padding: 5px 12px 5px 10px;
     border-radius: var(--radius-full);
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.12), rgba(182, 107, 255, 0.12));
-    border: 1px solid rgba(255, 215, 0, 0.35);
-    color: #FFD9A8;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.25);
-    box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-gold) 12%, transparent), color-mix(in srgb, var(--color-purple) 12%, transparent));
+    border: 1px solid color-mix(in srgb, var(--color-gold) 35%, transparent);
+    color: var(--color-rose-soft);
+    text-shadow: 0 0 10px color-mix(in srgb, var(--color-gold) 25%, transparent);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-gold) 0%, transparent);
     transition: color 0.25s ease, border-color 0.25s ease, box-shadow 0.35s ease, transform 0.25s ease;
 }
 
@@ -983,22 +983,22 @@ button {
 
 .nav-link-admin:hover,
 .nav-link-admin.active {
-    color: #FFF2CC;
-    border-color: rgba(255, 215, 0, 0.7);
-    box-shadow: 0 0 18px rgba(255, 215, 0, 0.25), inset 0 0 10px rgba(255, 215, 0, 0.08);
+    color: var(--color-gold-pale);
+    border-color: color-mix(in srgb, var(--color-gold) 70%, transparent);
+    box-shadow: 0 0 18px color-mix(in srgb, var(--color-gold) 25%, transparent), inset 0 0 10px color-mix(in srgb, var(--color-gold) 8%, transparent);
     transform: translateY(-1px);
 }
 
 .nav-link-admin-icon {
     width: 16px;
     height: 16px;
-    filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.45));
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--color-gold) 45%, transparent));
     animation: admin-star-pulse 2.4s ease-in-out infinite;
 }
 
 @keyframes admin-star-pulse {
-    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.45)); }
-    50% { transform: scale(1.15); filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8)); }
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px color-mix(in srgb, var(--color-gold) 45%, transparent)); }
+    50% { transform: scale(1.15); filter: drop-shadow(0 0 10px color-mix(in srgb, var(--color-gold) 80%, transparent)); }
 }
 
 .nav-actions {
@@ -1031,13 +1031,13 @@ button {
 .nav-account-btn:hover,
 .nav-account.open .nav-account-btn {
     background: var(--glass-bg-hover);
-    border-color: rgba(168, 216, 255, 0.45);
-    color: #A8D8FF;
-    box-shadow: 0 0 16px rgba(107, 138, 255, 0.18);
+    border-color: color-mix(in srgb, var(--color-blue-light) 45%, transparent);
+    color: var(--color-blue-light);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--color-blue) 18%, transparent);
 }
 
 .nav-account-icon {
-    color: #FF6B9D;
+    color: var(--color-rose);
     font-size: 0.9rem;
 }
 
@@ -1057,8 +1057,8 @@ button {
     padding: 16px;
     border-radius: 16px;
     background: rgba(18, 20, 36, 0.94);
-    border: 1px solid rgba(168, 216, 255, 0.22);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 107, 157, 0.08);
+    border: 1px solid color-mix(in srgb, var(--color-blue-light) 22%, transparent);
+    box-shadow: 0 12px 40px color-mix(in srgb, black 45%, transparent), 0 0 0 1px color-mix(in srgb, var(--color-rose) 8%, transparent);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
 }
@@ -1067,14 +1067,14 @@ button {
     margin: 0 0 12px;
     font-size: 0.78rem;
     line-height: 1.5;
-    color: rgba(255, 255, 255, 0.55);
+    color: color-mix(in srgb, var(--color-white) 55%, transparent);
 }
 
 .account-tabs {
     display: flex;
     gap: 4px;
     margin-bottom: 14px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
 }
 
 .account-tab {
@@ -1082,7 +1082,7 @@ button {
     padding: 8px 4px;
     border: none;
     background: transparent;
-    color: rgba(255, 255, 255, 0.45);
+    color: color-mix(in srgb, var(--color-white) 45%, transparent);
     font-size: 0.85rem;
     font-family: inherit;
     cursor: pointer;
@@ -1090,7 +1090,7 @@ button {
 }
 
 .account-tab.active {
-    color: #A8D8FF;
+    color: var(--color-blue-light);
 }
 
 .account-tab.active::after {
@@ -1101,7 +1101,7 @@ button {
     bottom: -1px;
     height: 2px;
     border-radius: 2px;
-    background: linear-gradient(90deg, #FF6B9D, #6B8AFF);
+    background: linear-gradient(90deg, var(--color-rose), var(--color-blue));
 }
 
 .account-tab-panel[hidden] {
@@ -1114,7 +1114,7 @@ button {
     gap: 6px;
     margin-bottom: 10px;
     font-size: var(--fs-micro);
-    color: rgba(255, 255, 255, 0.55);
+    color: color-mix(in srgb, var(--color-white) 55%, transparent);
 }
 
 .account-field .form-input {
@@ -1135,12 +1135,12 @@ button {
 
 .account-user-role {
     font-size: 0.8rem;
-    color: #A8D8FF;
+    color: var(--color-blue-light);
 }
 
 .account-user-email {
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.85);
+    color: color-mix(in srgb, var(--color-white) 85%, transparent);
     word-break: break-all;
 }
 
@@ -1148,11 +1148,11 @@ button {
     margin: 0 0 12px;
     padding: 10px;
     border-radius: 10px;
-    background: rgba(255, 107, 157, 0.1);
-    border: 1px solid rgba(255, 107, 157, 0.25);
+    background: color-mix(in srgb, var(--color-rose) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-rose) 25%, transparent);
     font-size: 0.78rem;
     line-height: 1.5;
-    color: #FFB6D9;
+    color: var(--color-pink-warm);
 }
 
 .account-resend-btn {
@@ -1177,7 +1177,7 @@ button {
     padding: 0;
     border: none;
     background: none;
-    color: rgba(168, 216, 255, 0.85);
+    color: color-mix(in srgb, var(--color-blue-light) 85%, transparent);
     font-size: 0.78rem;
     text-align: center;
     cursor: pointer;
@@ -1356,8 +1356,8 @@ button {
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255, 107, 157, 0.5); }
-    50% { opacity: 0.6; box-shadow: 0 0 0 8px rgba(255, 107, 157, 0); }
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-rose) 50%, transparent); }
+    50% { opacity: 0.6; box-shadow: 0 0 0 8px color-mix(in srgb, var(--color-rose) 0%, transparent); }
 }
 
 /* R18: hero 接入系统化衬线 Display 语言，与 .section-title 统一字号/字重/行高节奏 */
@@ -1410,16 +1410,16 @@ button {
     transition: transform var(--btn-transition), box-shadow var(--btn-transition), filter var(--btn-transition);
     /* v10 爱弥斯核心渐变：粉 → 白 → 浅蓝 流动（去金/紫，贴合粉·白·浅蓝核心） */
     background: linear-gradient(135deg,
-        #F4729B 0%, #FFB6D9 14%, #F0F4FF 25%,
-        #FFF5F8 36%, #A8D8FF 48%, #6B8AFF 55%,
-        #F0F4FF 68%, #F4729B 82%, #FFB6D9 100%
+        var(--color-rose-soft) 0%, var(--color-pink-warm) 14%, var(--color-snow) 25%,
+        var(--color-pink-pale) 36%, var(--color-blue-light) 48%, var(--color-blue) 55%,
+        var(--color-snow) 68%, var(--color-rose-soft) 82%, var(--color-pink-warm) 100%
     );
     background-size: 300% 300%;
     animation: aimisiFlow 8s ease-in-out infinite;
     box-shadow:
         0 4px 20px rgba(244, 114, 155, 0.30),
-        0 0 15px rgba(168, 216, 255, 0.18),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        0 0 15px color-mix(in srgb, var(--color-blue-light) 18%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--color-white) 30%, transparent);
 }
 
 /* 能量核心层: 爱弥斯共振脉冲 — 金白光带旋转 */
@@ -1429,17 +1429,17 @@ button {
     inset: 0;
     border-radius: inherit;
     background:
-        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.22) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--color-white) 22%, transparent) 0%, transparent 40%),
         conic-gradient(from 0deg,
-            rgba(255, 107, 157, 0.0) 0deg,
-            rgba(255, 215, 0, 0.28) 40deg,
-            rgba(255, 255, 255, 0.35) 80deg,
-            rgba(255, 182, 217, 0.22) 120deg,
-            rgba(255, 215, 0, 0.28) 160deg,
-            rgba(255, 107, 157, 0.0) 200deg,
-            rgba(255, 215, 0, 0.18) 240deg,
-            rgba(255, 255, 255, 0.28) 280deg,
-            rgba(255, 107, 157, 0.0) 360deg
+            color-mix(in srgb, var(--color-rose) 0%, transparent) 0deg,
+            color-mix(in srgb, var(--color-gold) 28%, transparent) 40deg,
+            color-mix(in srgb, var(--color-white) 35%, transparent) 80deg,
+            color-mix(in srgb, var(--color-pink-warm) 22%, transparent) 120deg,
+            color-mix(in srgb, var(--color-gold) 28%, transparent) 160deg,
+            color-mix(in srgb, var(--color-rose) 0%, transparent) 200deg,
+            color-mix(in srgb, var(--color-gold) 18%, transparent) 240deg,
+            color-mix(in srgb, var(--color-white) 28%, transparent) 280deg,
+            color-mix(in srgb, var(--color-rose) 0%, transparent) 360deg
         );
     animation: aimisiCore 6s linear infinite;
     mix-blend-mode: screen;
@@ -1457,11 +1457,11 @@ button {
     height: 100%;
     background: linear-gradient(100deg,
         transparent 0%,
-        rgba(255, 255, 255, 0.0) 20%,
+        color-mix(in srgb, var(--color-white) 0%, transparent) 20%,
         rgba(255, 245, 248, 0.40) 40%,
-        rgba(255, 215, 0, 0.35) 48%,
-        rgba(255, 255, 255, 0.40) 55%,
-        rgba(255, 255, 255, 0.0) 72%,
+        color-mix(in srgb, var(--color-gold) 35%, transparent) 48%,
+        color-mix(in srgb, var(--color-white) 40%, transparent) 55%,
+        color-mix(in srgb, var(--color-white) 0%, transparent) 72%,
         transparent 100%
     );
     filter: blur(2px);
@@ -1497,10 +1497,10 @@ button {
 .btn-primary:hover {
     transform: translateY(-3px) scale(var(--btn-scale-hover));
     box-shadow:
-        0 8px 30px rgba(255, 107, 157, 0.5),
-        0 0 40px rgba(255, 215, 0, 0.25),
-        0 0 60px rgba(255, 182, 217, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        0 8px 30px color-mix(in srgb, var(--color-rose) 50%, transparent),
+        0 0 40px color-mix(in srgb, var(--color-gold) 25%, transparent),
+        0 0 60px color-mix(in srgb, var(--color-pink-warm) 15%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--color-white) 40%, transparent);
 }
 
 .btn-primary:hover::before {
@@ -1520,8 +1520,8 @@ button {
 .btn-primary:active {
     transform: translateY(-1px) scale(var(--btn-scale-active));
     box-shadow:
-        0 2px 10px rgba(255, 107, 157, 0.4),
-        0 0 20px rgba(255, 215, 0, 0.2),
+        0 2px 10px color-mix(in srgb, var(--color-rose) 40%, transparent),
+        0 0 20px color-mix(in srgb, var(--color-gold) 20%, transparent),
         inset 0 2px 8px rgba(232, 76, 126, 0.3);
     transition: transform var(--btn-transition-fast), box-shadow var(--btn-transition-fast);
 }
@@ -1534,7 +1534,7 @@ button {
     cursor: not-allowed;
     transform: none;
     animation: none;
-    box-shadow: 0 2px 8px rgba(255, 107, 157, 0.1);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-rose) 10%, transparent);
 }
 
 .btn-primary:disabled::before,
@@ -1570,12 +1570,12 @@ button {
         rgba(8, 16, 45, 0.7) 65%,
         rgba(12, 8, 30, 0.65) 100%
     );
-    border: 1px solid rgba(107, 138, 255, 0.3);
+    border: 1px solid color-mix(in srgb, var(--color-blue) 30%, transparent);
     backdrop-filter: blur(12px) saturate(160%);
     -webkit-backdrop-filter: blur(12px) saturate(160%);
     box-shadow:
-        inset 0 1px 0 rgba(168, 216, 255, 0.1),
-        0 4px 16px rgba(0, 0, 0, 0.25);
+        inset 0 1px 0 color-mix(in srgb, var(--color-blue-light) 10%, transparent),
+        0 4px 16px color-mix(in srgb, black 25%, transparent);
 }
 
 /* 星云漂移层: 蓝紫宇宙云团缓慢流动 */
@@ -1585,9 +1585,9 @@ button {
     inset: 0;
     border-radius: inherit;
     background:
-        radial-gradient(ellipse 70% 50% at 25% 40%, rgba(74, 106, 224, 0.25), transparent 65%),
+        radial-gradient(ellipse 70% 50% at 25% 40%, color-mix(in srgb, var(--color-blue-deep) 25%, transparent), transparent 65%),
         radial-gradient(ellipse 50% 70% at 75% 60%, rgba(155, 107, 255, 0.20), transparent 65%),
-        radial-gradient(circle at 50% 100%, rgba(168, 216, 255, 0.12), transparent 50%);
+        radial-gradient(circle at 50% 100%, color-mix(in srgb, var(--color-blue-light) 12%, transparent), transparent 50%);
     animation: nebulaDrift 10s ease-in-out infinite alternate;
     mix-blend-mode: screen;
     opacity: 0.85;
@@ -1601,17 +1601,17 @@ button {
     inset: 0;
     border-radius: inherit;
     background:
-        radial-gradient(1.5px 1.5px at 20% 30%, rgba(255, 255, 255, 0.7), transparent),
-        radial-gradient(1px 1px at 45% 70%, rgba(168, 216, 255, 0.6), transparent),
-        radial-gradient(1.5px 1.5px at 70% 25%, rgba(255, 255, 255, 0.5), transparent),
-        radial-gradient(1px 1px at 85% 55%, rgba(107, 138, 255, 0.5), transparent),
-        radial-gradient(1px 1px at 35% 85%, rgba(255, 255, 255, 0.4), transparent),
-        radial-gradient(1.5px 1.5px at 60% 45%, rgba(182, 107, 255, 0.3), transparent),
+        radial-gradient(1.5px 1.5px at 20% 30%, color-mix(in srgb, var(--color-white) 70%, transparent), transparent),
+        radial-gradient(1px 1px at 45% 70%, color-mix(in srgb, var(--color-blue-light) 60%, transparent), transparent),
+        radial-gradient(1.5px 1.5px at 70% 25%, color-mix(in srgb, var(--color-white) 50%, transparent), transparent),
+        radial-gradient(1px 1px at 85% 55%, color-mix(in srgb, var(--color-blue) 50%, transparent), transparent),
+        radial-gradient(1px 1px at 35% 85%, color-mix(in srgb, var(--color-white) 40%, transparent), transparent),
+        radial-gradient(1.5px 1.5px at 60% 45%, color-mix(in srgb, var(--color-purple) 30%, transparent), transparent),
         linear-gradient(110deg,
             transparent 30%,
-            rgba(168, 216, 255, 0.14) 45%,
-            rgba(255, 255, 255, 0.20) 50%,
-            rgba(168, 216, 255, 0.14) 55%,
+            color-mix(in srgb, var(--color-blue-light) 14%, transparent) 45%,
+            color-mix(in srgb, var(--color-white) 20%, transparent) 50%,
+            color-mix(in srgb, var(--color-blue-light) 14%, transparent) 55%,
             transparent 70%
         );
     background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 250% 100%;
@@ -1638,12 +1638,12 @@ button {
 /* Hover: 星空激活 */
 .btn-ghost:hover {
     transform: translateY(-3px) scale(var(--btn-scale-hover));
-    border-color: rgba(168, 216, 255, 0.5);
+    border-color: color-mix(in srgb, var(--color-blue-light) 50%, transparent);
     box-shadow:
-        inset 0 1px 0 rgba(168, 216, 255, 0.2),
-        0 0 30px rgba(107, 138, 255, 0.35),
-        0 0 55px rgba(168, 216, 255, 0.15),
-        0 4px 20px rgba(0, 0, 0, 0.3);
+        inset 0 1px 0 color-mix(in srgb, var(--color-blue-light) 20%, transparent),
+        0 0 30px color-mix(in srgb, var(--color-blue) 35%, transparent),
+        0 0 55px color-mix(in srgb, var(--color-blue-light) 15%, transparent),
+        0 4px 20px color-mix(in srgb, black 30%, transparent);
 }
 
 .btn-ghost:hover::before {
@@ -1663,8 +1663,8 @@ button {
 .btn-ghost:active {
     transform: translateY(-1px) scale(var(--btn-scale-active));
     box-shadow:
-        inset 0 2px 8px rgba(0, 0, 0, 0.4),
-        0 0 15px rgba(107, 138, 255, 0.3);
+        inset 0 2px 8px color-mix(in srgb, black 40%, transparent),
+        0 0 15px color-mix(in srgb, var(--color-blue) 30%, transparent);
     transition: transform var(--btn-transition-fast), box-shadow var(--btn-transition-fast);
 }
 
@@ -1675,7 +1675,7 @@ button {
     opacity: 0.4;
     cursor: not-allowed;
     transform: none;
-    border-color: rgba(107, 138, 255, 0.1);
+    border-color: color-mix(in srgb, var(--color-blue) 10%, transparent);
 }
 
 .btn-ghost:disabled::before,
@@ -1702,15 +1702,15 @@ button {
     position: relative;
     overflow: hidden;
     isolation: isolate;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid color-mix(in srgb, var(--color-white) 15%, transparent);
     cursor: pointer;
     transition: transform var(--btn-transition), box-shadow var(--btn-transition), border-color var(--btn-transition);
     /* 双形态暗色底: 深蓝黑+紫黑 */
     background:
-        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.08) 0%, transparent 25%),
-        radial-gradient(circle at 70% 70%, rgba(107, 138, 255, 0.12) 0%, transparent 30%),
+        radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--color-white) 8%, transparent) 0%, transparent 25%),
+        radial-gradient(circle at 70% 70%, color-mix(in srgb, var(--color-blue) 12%, transparent) 0%, transparent 30%),
         linear-gradient(135deg, #1A1A2E 0%, #0F0F1F 50%, #1A1228 100%);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 20px color-mix(in srgb, black 35%, transparent), inset 0 1px 0 color-mix(in srgb, var(--color-white) 10%, transparent);
 }
 
 /* 黑胶沟槽层: 唱片纹路旋转 */
@@ -1723,7 +1723,7 @@ button {
         repeating-radial-gradient(
             circle at center,
             transparent 0, transparent 2px,
-            rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.04) 4px
+            color-mix(in srgb, var(--color-white) 4%, transparent) 3px, color-mix(in srgb, var(--color-white) 4%, transparent) 4px
         );
     opacity: 0.6;
     z-index: -1;
@@ -1739,12 +1739,12 @@ button {
     padding: 2px;
     background: conic-gradient(
         from 0deg,
-        #FF6B9D, #FFB6D9, #F0F4FF,
-        #A8D8FF, #6B8AFF, #FF6B9D
+        var(--color-rose), var(--color-pink-warm), var(--color-snow),
+        var(--color-blue-light), var(--color-blue), var(--color-rose)
     );
     -webkit-mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
+        linear-gradient(var(--color-white) 0 0) content-box,
+        linear-gradient(var(--color-white) 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     opacity: 0.7;
@@ -1756,7 +1756,7 @@ button {
     width: 18px;
     height: 18px;
     transition: transform var(--btn-transition);
-    filter: drop-shadow(0 0 6px rgba(168, 216, 255, 0.5));
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--color-blue-light) 50%, transparent));
     animation: notePulse 2s ease-in-out infinite;
 }
 
@@ -1771,18 +1771,18 @@ button {
 }
 
 @keyframes notePulse {
-    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px rgba(168, 216, 255, 0.5)); }
-    50% { transform: scale(1.12); filter: drop-shadow(0 0 12px rgba(255, 107, 157, 0.7)); }
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--color-blue-light) 50%, transparent)); }
+    50% { transform: scale(1.12); filter: drop-shadow(0 0 12px color-mix(in srgb, var(--color-rose) 70%, transparent)); }
 }
 
 /* Hover: 频谱增幅 */
 .btn-music:hover {
     transform: translateY(-3px) scale(var(--btn-scale-hover));
     box-shadow:
-        0 8px 30px rgba(107, 138, 255, 0.3),
-        0 0 40px rgba(182, 107, 255, 0.2),
-        0 0 20px rgba(255, 215, 0, 0.15);
-    border-color: rgba(168, 216, 255, 0.4);
+        0 8px 30px color-mix(in srgb, var(--color-blue) 30%, transparent),
+        0 0 40px color-mix(in srgb, var(--color-purple) 20%, transparent),
+        0 0 20px color-mix(in srgb, var(--color-gold) 15%, transparent);
+    border-color: color-mix(in srgb, var(--color-blue-light) 40%, transparent);
 }
 
 .btn-music:hover::after {
@@ -1799,8 +1799,8 @@ button {
 .btn-music:active {
     transform: translateY(-1px) scale(var(--btn-scale-active));
     box-shadow:
-        0 2px 10px rgba(0, 0, 0, 0.4),
-        inset 0 2px 8px rgba(0, 0, 0, 0.3);
+        0 2px 10px color-mix(in srgb, black 40%, transparent),
+        inset 0 2px 8px color-mix(in srgb, black 30%, transparent);
     transition: transform var(--btn-transition-fast), box-shadow var(--btn-transition-fast);
 }
 
@@ -1811,7 +1811,7 @@ button {
     opacity: 0.45;
     cursor: not-allowed;
     transform: none;
-    border-color: rgba(255, 255, 255, 0.05);
+    border-color: color-mix(in srgb, var(--color-white) 5%, transparent);
 }
 
 .btn-music:disabled::before,
@@ -1970,7 +1970,7 @@ button {
     background: white;
     border-radius: 50%;
     animation: twinkle 3s ease-in-out var(--d) infinite;
-    box-shadow: 0 0 6px white, 0 0 12px rgba(255, 107, 157, 0.5);
+    box-shadow: 0 0 6px white, 0 0 12px color-mix(in srgb, var(--color-rose) 50%, transparent);
 }
 
 @keyframes twinkle {
@@ -2070,7 +2070,7 @@ button {
 .profile-verified {
     color: var(--color-blue);
     display: flex;
-    filter: drop-shadow(0 0 4px rgba(107, 138, 255, 0.4));
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--color-blue) 40%, transparent));
 }
 
 .profile-handle {
@@ -2106,22 +2106,22 @@ button {
 }
 
 .tag-pink {
-    background: rgba(255, 107, 157, 0.15);
+    background: color-mix(in srgb, var(--color-rose) 15%, transparent);
     color: var(--color-pink);
 }
 
 .tag-purple {
-    background: rgba(182, 107, 255, 0.15);
+    background: color-mix(in srgb, var(--color-purple) 15%, transparent);
     color: var(--color-purple);
 }
 
 .tag-blue {
-    background: rgba(107, 138, 255, 0.15);
+    background: color-mix(in srgb, var(--color-blue) 15%, transparent);
     color: var(--color-blue);
 }
 
 .tag-white {
-    background: rgba(255, 255, 255, 0.12);
+    background: color-mix(in srgb, var(--color-white) 12%, transparent);
     color: var(--color-snow);
 }
 
@@ -2199,7 +2199,7 @@ button {
     border-radius: 50%;
     background: var(--c-primary);
     border: 3px solid var(--bg-primary);
-    box-shadow: 0 0 12px rgba(255, 107, 157, 0.4);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--color-rose) 40%, transparent);
     z-index: 1;
 }
 
@@ -2255,23 +2255,23 @@ button {
     font-size: 0.72rem;
     padding: 4px 10px;
     border-radius: var(--radius-full);
-    background: rgba(255, 107, 157, 0.12);
+    background: color-mix(in srgb, var(--color-rose) 12%, transparent);
     color: var(--color-pink);
     font-weight: 500;
 }
 
 .badge-purple {
-    background: rgba(182, 107, 255, 0.12);
+    background: color-mix(in srgb, var(--color-purple) 12%, transparent);
     color: var(--color-purple);
 }
 
 .badge-blue {
-    background: rgba(107, 138, 255, 0.12);
+    background: color-mix(in srgb, var(--color-blue) 12%, transparent);
     color: var(--color-blue);
 }
 
 .badge-white {
-    background: rgba(255, 255, 255, 0.12);
+    background: color-mix(in srgb, var(--color-white) 12%, transparent);
     color: var(--color-snow);
 }
 
@@ -2301,14 +2301,14 @@ button {
 .post-image-snow {
     height: 200px;
     background:
-        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 5%),
-        radial-gradient(circle at 40% 50%, rgba(168,216,255,0.5) 0%, transparent 4%),
-        radial-gradient(circle at 60% 20%, rgba(255,255,255,0.6) 0%, transparent 4%),
-        radial-gradient(circle at 80% 70%, rgba(107,138,255,0.5) 0%, transparent 5%),
-        radial-gradient(circle at 30% 80%, rgba(255,107,157,0.35) 0%, transparent 4%),
-        radial-gradient(circle at 70% 40%, rgba(255,182,217,0.35) 0%, transparent 4%),
+        radial-gradient(circle at 20% 30%, color-mix(in srgb, var(--color-white) 60%, transparent) 0%, transparent 5%),
+        radial-gradient(circle at 40% 50%, color-mix(in srgb, var(--color-blue-light) 50%, transparent) 0%, transparent 4%),
+        radial-gradient(circle at 60% 20%, color-mix(in srgb, var(--color-white) 60%, transparent) 0%, transparent 4%),
+        radial-gradient(circle at 80% 70%, color-mix(in srgb, var(--color-blue) 50%, transparent) 0%, transparent 5%),
+        radial-gradient(circle at 30% 80%, color-mix(in srgb, var(--color-rose) 35%, transparent) 0%, transparent 4%),
+        radial-gradient(circle at 70% 40%, color-mix(in srgb, var(--color-pink-warm) 35%, transparent) 0%, transparent 4%),
         /* Depth: ground-level glow */
-        radial-gradient(ellipse 80% 20% at 50% 95%, rgba(168,216,255,0.15), transparent),
+        radial-gradient(ellipse 80% 20% at 50% 95%, color-mix(in srgb, var(--color-blue-light) 15%, transparent), transparent),
         linear-gradient(135deg, #1A1A2E 0%, #2A1A3E 50%, #1A2A4E 100%);
     position: relative;
     overflow: hidden;
@@ -2321,7 +2321,7 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(255,255,255,0.2);
+    color: color-mix(in srgb, var(--color-white) 20%, transparent);
     font-size: 2rem;
     letter-spacing: 0.5em;
     flex-wrap: wrap;
@@ -2337,7 +2337,7 @@ button {
 .post-image-smiley {
     height: 200px;
     background:
-        radial-gradient(circle at 50% 50%, rgba(255,107,157,0.12) 0%, transparent 30%),
+        radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--color-rose) 12%, transparent) 0%, transparent 30%),
         linear-gradient(135deg, #0F0F1F 0%, #1A0F2F 100%);
     display: flex;
     align-items: center;
@@ -2351,15 +2351,15 @@ button {
     font-size: 5rem;
     font-weight: 900;
     color: var(--color-pink);
-    text-shadow: 0 0 40px var(--color-pink), 0 0 60px rgba(168, 216, 255, 0.5);
+    text-shadow: 0 0 40px var(--color-pink), 0 0 60px color-mix(in srgb, var(--color-blue-light) 50%, transparent);
     opacity: 0.5;
     font-family: monospace;
     animation: smileyPulse 3s ease-in-out infinite;
 }
 
 @keyframes smileyPulse {
-    0%, 100% { opacity: 0.5; text-shadow: 0 0 40px var(--color-pink), 0 0 60px rgba(168, 216, 255, 0.5); }
-    50% { opacity: 0.7; text-shadow: 0 0 50px var(--color-pink), 0 0 80px rgba(168, 216, 255, 0.6), 0 0 100px rgba(182,107,255,0.3); }
+    0%, 100% { opacity: 0.5; text-shadow: 0 0 40px var(--color-pink), 0 0 60px color-mix(in srgb, var(--color-blue-light) 50%, transparent); }
+    50% { opacity: 0.7; text-shadow: 0 0 50px var(--color-pink), 0 0 80px color-mix(in srgb, var(--color-blue-light) 60%, transparent), 0 0 100px color-mix(in srgb, var(--color-purple) 30%, transparent); }
 }
 
 .post-image-stars {
@@ -2367,21 +2367,21 @@ button {
     background:
         radial-gradient(2px 2px at 15% 25%, white, transparent),
         radial-gradient(1px 1px at 25% 60%, white, transparent),
-        radial-gradient(2px 2px at 40% 30%, rgba(255,182,217,0.8), transparent),
-        radial-gradient(1px 1px at 50% 70%, rgba(255,107,157,0.8), transparent),
+        radial-gradient(2px 2px at 40% 30%, color-mix(in srgb, var(--color-pink-warm) 80%, transparent), transparent),
+        radial-gradient(1px 1px at 50% 70%, color-mix(in srgb, var(--color-rose) 80%, transparent), transparent),
         radial-gradient(2px 2px at 65% 20%, white, transparent),
-        radial-gradient(1px 1px at 75% 50%, rgba(107,138,255,0.8), transparent),
-        radial-gradient(2px 2px at 85% 65%, rgba(168,216,255,0.8), transparent),
-        radial-gradient(1px 1px at 35% 80%, rgba(255,182,217,0.6), transparent),
-        radial-gradient(2px 2px at 55% 45%, rgba(255,107,157,0.8), transparent),
-        radial-gradient(2px 2px at 70% 35%, rgba(107,138,255,0.8), transparent),
+        radial-gradient(1px 1px at 75% 50%, color-mix(in srgb, var(--color-blue) 80%, transparent), transparent),
+        radial-gradient(2px 2px at 85% 65%, color-mix(in srgb, var(--color-blue-light) 80%, transparent), transparent),
+        radial-gradient(1px 1px at 35% 80%, color-mix(in srgb, var(--color-pink-warm) 60%, transparent), transparent),
+        radial-gradient(2px 2px at 55% 45%, color-mix(in srgb, var(--color-rose) 80%, transparent), transparent),
+        radial-gradient(2px 2px at 70% 35%, color-mix(in srgb, var(--color-blue) 80%, transparent), transparent),
         /* Signal river — flowing band across the sky */
         linear-gradient(110deg,
             transparent 20%,
-            rgba(168,216,255,0.08) 35%,
-            rgba(255,107,157,0.12) 45%,
-            rgba(182,107,255,0.10) 50%,
-            rgba(168,216,255,0.08) 55%,
+            color-mix(in srgb, var(--color-blue-light) 8%, transparent) 35%,
+            color-mix(in srgb, var(--color-rose) 12%, transparent) 45%,
+            color-mix(in srgb, var(--color-purple) 10%, transparent) 50%,
+            color-mix(in srgb, var(--color-blue-light) 8%, transparent) 55%,
             transparent 70%
         ),
         linear-gradient(180deg, #050510 0%, #0A0A20 50%, #0F0A2A 100%);
@@ -2398,10 +2398,10 @@ button {
     height: 2px;
     background: linear-gradient(90deg,
         transparent 0%,
-        rgba(168,216,255,0.3) 20%,
-        rgba(255,107,157,0.4) 40%,
-        rgba(182,107,255,0.3) 60%,
-        rgba(168,216,255,0.3) 80%,
+        color-mix(in srgb, var(--color-blue-light) 30%, transparent) 20%,
+        color-mix(in srgb, var(--color-rose) 40%, transparent) 40%,
+        color-mix(in srgb, var(--color-purple) 30%, transparent) 60%,
+        color-mix(in srgb, var(--color-blue-light) 30%, transparent) 80%,
         transparent 100%
     );
     filter: blur(1px);
@@ -2415,7 +2415,7 @@ button {
 
 .post-image-music {
     padding: 24px;
-    background: linear-gradient(135deg, rgba(255,107,157,0.08) 0%, rgba(107,138,255,0.08) 100%);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-rose) 8%, transparent) 0%, color-mix(in srgb, var(--color-blue) 8%, transparent) 100%);
 }
 
 .music-wave {
@@ -2663,8 +2663,8 @@ button {
     flex-direction: column;
     padding: 24px;
     background: linear-gradient(135deg,
-        rgba(255, 107, 157, 0.06) 0%,
-        rgba(107, 138, 255, 0.06) 100%
+        color-mix(in srgb, var(--color-rose) 6%, transparent) 0%,
+        color-mix(in srgb, var(--color-blue) 6%, transparent) 100%
     );
     border-bottom: 1px solid var(--glass-border);
 }
@@ -2675,7 +2675,7 @@ button {
     margin-bottom: 20px;
     border-radius: var(--radius-sm);
     overflow: hidden;
-    background: rgba(0, 0, 0, 0.15);
+    background: color-mix(in srgb, black 15%, transparent);
 }
 
 [data-theme="light"] .music-visualizer {
@@ -2758,7 +2758,7 @@ button {
 .music-btn:hover {
     background: var(--glass-bg-hover);
     color: var(--color-blue-light);
-    border-color: rgba(168, 216, 255, 0.35);
+    border-color: color-mix(in srgb, var(--color-blue-light) 35%, transparent);
     transform: scale(1.08);
     box-shadow: var(--shadow-card);
 }
@@ -2777,7 +2777,7 @@ button {
 .music-btn-play {
     width: 52px;
     height: 52px;
-    background: linear-gradient(135deg, #F4729B 0%, #A8D8FF 50%, #6B8AFF 100%);
+    background: linear-gradient(135deg, var(--color-rose-soft) 0%, var(--color-blue-light) 50%, var(--color-blue) 100%);
     background-size: 200% 200%;
     animation: gradientShift 6s ease-in-out infinite;
     color: white;
@@ -2850,7 +2850,7 @@ button {
     font-size: 0.7rem;
     padding: 2px 10px;
     border-radius: var(--radius-full);
-    background: rgba(255, 107, 157, 0.12);
+    background: color-mix(in srgb, var(--color-rose) 12%, transparent);
     color: var(--color-pink);
     font-weight: 500;
 }
@@ -2939,7 +2939,7 @@ button {
 
 .easter-egg-card:hover {
     border-color: var(--color-pink);
-    box-shadow: 0 0 60px rgba(255, 107, 157, 0.25), 0 0 30px rgba(107, 138, 255, 0.15);
+    box-shadow: 0 0 60px color-mix(in srgb, var(--color-rose) 25%, transparent), 0 0 30px color-mix(in srgb, var(--color-blue) 15%, transparent);
 }
 
 .egg-glow {
@@ -2948,7 +2948,7 @@ button {
     left: 50%;
     width: 300px;
     height: 300px;
-    background: radial-gradient(circle, rgba(255,107,157,0.12) 0%, rgba(107,138,255,0.12) 50%, transparent 70%);
+    background: radial-gradient(circle, color-mix(in srgb, var(--color-rose) 12%, transparent) 0%, color-mix(in srgb, var(--color-blue) 12%, transparent) 50%, transparent 70%);
     transform: translate(-50%, -50%);
     animation: eggPulse 4s ease-in-out infinite;
     pointer-events: none;
@@ -2974,7 +2974,7 @@ button {
     height: 80px;
     color: var(--color-pink);
     animation: eggFloat 3s ease-in-out infinite;
-    filter: drop-shadow(0 0 10px rgba(255, 107, 157, 0.4));
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--color-rose) 40%, transparent));
 }
 
 /* Snowflake — crystalline blue-white, 3D depth, slow rotation + float + glow */
@@ -2982,9 +2982,9 @@ button {
     width: 100px;
     height: 100px;
     filter:
-        drop-shadow(0 0 8px rgba(168, 216, 255, 0.6))
-        drop-shadow(0 0 16px rgba(107, 138, 255, 0.4))
-        drop-shadow(0 2px 4px rgba(107, 138, 255, 0.3));
+        drop-shadow(0 0 8px color-mix(in srgb, var(--color-blue-light) 60%, transparent))
+        drop-shadow(0 0 16px color-mix(in srgb, var(--color-blue) 40%, transparent))
+        drop-shadow(0 2px 4px color-mix(in srgb, var(--color-blue) 30%, transparent));
     animation: snowFloat 5s ease-in-out infinite, snowRotate 30s linear infinite, snowGlow 4s ease-in-out infinite;
 }
 
@@ -3001,16 +3001,16 @@ button {
 @keyframes snowGlow {
     0%, 100% {
         filter:
-            drop-shadow(0 0 8px rgba(168, 216, 255, 0.6))
-            drop-shadow(0 0 16px rgba(107, 138, 255, 0.4))
-            drop-shadow(0 2px 4px rgba(107, 138, 255, 0.3));
+            drop-shadow(0 0 8px color-mix(in srgb, var(--color-blue-light) 60%, transparent))
+            drop-shadow(0 0 16px color-mix(in srgb, var(--color-blue) 40%, transparent))
+            drop-shadow(0 2px 4px color-mix(in srgb, var(--color-blue) 30%, transparent));
     }
 
     50% {
         filter:
-            drop-shadow(0 0 14px rgba(255, 255, 255, 0.7))
-            drop-shadow(0 0 28px rgba(168, 216, 255, 0.5))
-            drop-shadow(0 2px 6px rgba(107, 138, 255, 0.4));
+            drop-shadow(0 0 14px color-mix(in srgb, var(--color-white) 70%, transparent))
+            drop-shadow(0 0 28px color-mix(in srgb, var(--color-blue-light) 50%, transparent))
+            drop-shadow(0 2px 6px color-mix(in srgb, var(--color-blue) 40%, transparent));
     }
 }
 
@@ -3096,11 +3096,11 @@ button {
     transition: transform var(--btn-transition), box-shadow var(--btn-transition), filter var(--btn-transition);
     /* 信号渐变: 频谱青→蓝→紫→粉 */
     background: linear-gradient(135deg,
-        #00E5FF 0%, #6B8AFF 30%, #B66BFF 60%, #FF6B9D 100%
+        var(--color-cyan) 0%, var(--color-blue) 30%, var(--color-purple) 60%, var(--color-rose) 100%
     );
     background-size: 250% 250%;
     animation: signalFlow 6s ease-in-out infinite;
-    box-shadow: 0 4px 20px rgba(0, 229, 255, 0.25), 0 0 15px rgba(107, 138, 255, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 229, 255, 0.25), 0 0 15px color-mix(in srgb, var(--color-blue) 20%, transparent);
 }
 
 /* 扫描线层: 水平光带扫描 */
@@ -3114,7 +3114,7 @@ button {
     background: linear-gradient(90deg,
         transparent,
         rgba(0, 229, 255, 0.35),
-        rgba(255, 255, 255, 0.40),
+        color-mix(in srgb, var(--color-white) 40%, transparent),
         rgba(0, 229, 255, 0.35),
         transparent
     );
@@ -3161,8 +3161,8 @@ button {
     transform: translateY(-3px) scale(var(--btn-scale-hover));
     box-shadow:
         0 8px 30px rgba(0, 229, 255, 0.35),
-        0 0 40px rgba(107, 138, 255, 0.25),
-        0 0 20px rgba(182, 107, 255, 0.15);
+        0 0 40px color-mix(in srgb, var(--color-blue) 25%, transparent),
+        0 0 20px color-mix(in srgb, var(--color-purple) 15%, transparent);
 }
 
 .egg-btn:hover::before {
@@ -3247,7 +3247,7 @@ button {
 .footer-logo-icon {
     width: 24px;
     height: 24px;
-    filter: drop-shadow(0 0 6px rgba(107, 138, 255, 0.45)) drop-shadow(0 0 10px rgba(168, 216, 255, 0.25));
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--color-blue) 45%, transparent)) drop-shadow(0 0 10px color-mix(in srgb, var(--color-blue-light) 25%, transparent));
 }
 
 .footer-desc {
@@ -3332,8 +3332,8 @@ button {
 }
 
 .sync-now-btn {
-    background: rgba(107, 138, 255, 0.12);
-    border: 1px solid rgba(107, 138, 255, 0.35);
+    background: color-mix(in srgb, var(--color-blue) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-blue) 35%, transparent);
     border-radius: 50%;
     color: var(--text-secondary);
     cursor: pointer;
@@ -3351,10 +3351,10 @@ button {
 }
 
 .sync-now-btn:hover {
-    background: rgba(107, 138, 255, 0.25);
-    border-color: rgba(107, 138, 255, 0.6);
+    background: color-mix(in srgb, var(--color-blue) 25%, transparent);
+    border-color: color-mix(in srgb, var(--color-blue) 60%, transparent);
     transform: scale(1.12);
-    box-shadow: 0 0 12px rgba(107, 138, 255, 0.3);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--color-blue) 30%, transparent);
 }
 
 .sync-now-btn:active {
@@ -3547,7 +3547,7 @@ button {
 
 /* ============ Selection ============ */
 ::selection {
-    background: rgba(255, 107, 157, 0.3);
+    background: color-mix(in srgb, var(--color-rose) 30%, transparent);
     color: var(--text-primary);
 }
 
@@ -3555,7 +3555,7 @@ button {
 .resonance-ripple {
     position: absolute;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+    background: radial-gradient(circle, color-mix(in srgb, var(--color-white) 40%, transparent) 0%, transparent 70%);
     pointer-events: none;
     animation: rippleExpand 0.6s ease-out;
     z-index: 10;
@@ -3655,8 +3655,8 @@ button {
 }
 
 .comment-item:hover {
-    background: rgba(255, 255, 255, 0.055);
-    border-color: rgba(255, 107, 157, 0.15);
+    background: color-mix(in srgb, var(--color-white) 6%, transparent);
+    border-color: color-mix(in srgb, var(--color-rose) 15%, transparent);
 }
 
 [data-theme="light"] .comment-item {
@@ -3681,7 +3681,7 @@ button {
     font-weight: 700;
     color: white;
     background: linear-gradient(135deg, var(--color-pink), var(--color-blue));
-    box-shadow: 0 2px 8px rgba(255, 107, 157, 0.2);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-rose) 20%, transparent);
     transition: transform var(--transition-fast);
 }
 .comment-avatar:hover { transform: scale(1.15); }
@@ -3746,8 +3746,8 @@ button {
 
 .comment-form-input:focus {
     outline: none;
-    border-color: rgba(168, 216, 255, 0.55);
-    box-shadow: 0 0 0 2px rgba(168, 216, 255, 0.12);
+    border-color: color-mix(in srgb, var(--color-blue-light) 55%, transparent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-blue-light) 12%, transparent);
 }
 
 .comment-form-input::placeholder {
@@ -3774,7 +3774,7 @@ button {
 
 .comment-submit-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(255, 107, 157, 0.3);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-rose) 30%, transparent);
 }
 
 .comment-submit-btn:active {
@@ -3810,7 +3810,7 @@ button {
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid color-mix(in srgb, var(--color-white) 15%, transparent);
     background: rgba(255, 50, 50, 0.08);
     color: rgba(255, 100, 100, 0.7);
     font-size: var(--fs-micro);
@@ -3824,7 +3824,7 @@ button {
 
 .comment-delete-btn:hover {
     background: rgba(255, 50, 50, 0.25);
-    color: #fff;
+    color: var(--color-white);
     border-color: rgba(255, 100, 100, 0.5);
     transform: scale(1.15);
     box-shadow: 0 0 8px rgba(255, 50, 50, 0.3);
@@ -3841,18 +3841,18 @@ button {
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: rgba(255, 215, 0, 0.08);
-    color: rgba(255, 215, 0, 0.7);
+    border: 1px solid color-mix(in srgb, var(--color-white) 15%, transparent);
+    background: color-mix(in srgb, var(--color-gold) 8%, transparent);
+    color: color-mix(in srgb, var(--color-gold) 70%, transparent);
     cursor: pointer;
     transition: all 0.25s ease;
     padding: 0;
 }
 
 .comment-hide-btn:hover {
-    background: rgba(255, 215, 0, 0.25);
-    color: #fff;
-    border-color: rgba(255, 215, 0, 0.5);
+    background: color-mix(in srgb, var(--color-gold) 25%, transparent);
+    color: var(--color-white);
+    border-color: color-mix(in srgb, var(--color-gold) 50%, transparent);
     transform: scale(1.15);
 }
 
@@ -3917,8 +3917,8 @@ button {
 
 .form-input:focus {
     outline: none;
-    border-color: rgba(168, 216, 255, 0.55);
-    box-shadow: 0 0 0 2px rgba(168, 216, 255, 0.12);
+    border-color: color-mix(in srgb, var(--color-blue-light) 55%, transparent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-blue-light) 12%, transparent);
 }
 
 .form-input::placeholder {
@@ -3987,7 +3987,7 @@ button {
     background: linear-gradient(135deg, var(--color-pink), var(--color-blue));
     color: white;
     border-color: transparent;
-    box-shadow: 0 4px 16px rgba(255, 107, 157, 0.3);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-rose) 30%, transparent);
 }
 
 .community-grid {
@@ -4013,7 +4013,7 @@ button {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(255, 107, 157, 0.04), transparent 50%);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-rose) 4%, transparent), transparent 50%);
     opacity: 0;
     transition: opacity var(--transition-base);
     pointer-events: none;
@@ -4021,8 +4021,8 @@ button {
 
 .community-card:hover {
     transform: translateY(-3px);
-    border-color: rgba(168, 216, 255, 0.22);
-    background: rgba(255, 255, 255, 0.07);
+    border-color: color-mix(in srgb, var(--color-blue-light) 22%, transparent);
+    background: color-mix(in srgb, var(--color-white) 7%, transparent);
     box-shadow: var(--shadow-hover);
 }
 
@@ -4047,7 +4047,7 @@ button {
     font-weight: 700;
     color: white;
     background: linear-gradient(135deg, var(--color-pink), var(--color-blue));
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px color-mix(in srgb, black 20%, transparent);
 }
 
 .community-card-info {
@@ -4074,11 +4074,11 @@ button {
     color: white;
 }
 
-.community-card-badge[data-type="text"] { background: linear-gradient(135deg, #6B8AFF, #A8D8FF); }
-.community-card-badge[data-type="story"] { background: linear-gradient(135deg, #FF6B9D, #FFB6D9); }
-.community-card-badge[data-type="poem"] { background: linear-gradient(135deg, #F4729B, #A8D8FF); }
-.community-card-badge[data-type="art"] { background: linear-gradient(135deg, #6B8AFF, #FFB6D9); }
-.community-card-badge[data-type="music"] { background: linear-gradient(135deg, #5B8DEF, #E584A8); }
+.community-card-badge[data-type="text"] { background: linear-gradient(135deg, var(--color-blue), var(--color-blue-light)); }
+.community-card-badge[data-type="story"] { background: linear-gradient(135deg, var(--color-rose), var(--color-pink-warm)); }
+.community-card-badge[data-type="poem"] { background: linear-gradient(135deg, var(--color-rose-soft), var(--color-blue-light)); }
+.community-card-badge[data-type="art"] { background: linear-gradient(135deg, var(--color-blue), var(--color-pink-warm)); }
+.community-card-badge[data-type="music"] { background: linear-gradient(135deg, var(--color-blue-warm), #E584A8); }
 
 .community-card-title {
     /* R18: Title 层级 — 无衬线 + 700 字重 */
@@ -4281,14 +4281,14 @@ article, section, nav, footer, header {
     background: rgba(20, 20, 35, 0.92);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid color-mix(in srgb, var(--color-white) 12%, transparent);
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.85);
+    color: color-mix(in srgb, var(--color-white) 85%, transparent);
     z-index: 9999;
     transition: all 0.3s ease;
     opacity: 0.85;
     user-select: none;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 4px 24px color-mix(in srgb, black 35%, transparent);
 }
 
 .sync-indicator:hover {
@@ -4310,9 +4310,9 @@ article, section, nav, footer, header {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    border: 1px solid rgba(107, 138, 255, 0.45);
-    background: rgba(107, 138, 255, 0.18);
-    color: #fff;
+    border: 1px solid color-mix(in srgb, var(--color-blue) 45%, transparent);
+    background: color-mix(in srgb, var(--color-blue) 18%, transparent);
+    color: var(--color-white);
     font-size: 16px;
     line-height: 1;
     cursor: pointer;
@@ -4324,9 +4324,9 @@ article, section, nav, footer, header {
 }
 
 .sync-indicator-btn:hover {
-    background: rgba(107, 138, 255, 0.35);
+    background: color-mix(in srgb, var(--color-blue) 35%, transparent);
     transform: scale(1.08);
-    box-shadow: 0 0 16px rgba(107, 138, 255, 0.4);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--color-blue) 40%, transparent);
 }
 
 .sync-indicator-btn:active {
@@ -4359,7 +4359,7 @@ article, section, nav, footer, header {
 .sync-dot-live    { background: #3ddc84; box-shadow: 0 0 6px rgba(61, 220, 132, 0.6); }
 .sync-dot-poll    { background: #ffd166; box-shadow: 0 0 6px rgba(255, 209, 102, 0.6); }
 .sync-dot-off     { background: #6b6f85; }
-.sync-dot-syncing { background: #6B8AFF; box-shadow: 0 0 6px rgba(107, 138, 255, 0.6); }
+.sync-dot-syncing { background: var(--color-blue); box-shadow: 0 0 6px color-mix(in srgb, var(--color-blue) 60%, transparent); }
 
 .sync-indicator .sync-text {
     font-size: 12px;
@@ -4395,13 +4395,13 @@ article, section, nav, footer, header {
     background: rgba(14, 18, 34, 0.92);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(107, 138, 255, 0.42);
+    border: 1px solid color-mix(in srgb, var(--color-blue) 42%, transparent);
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.9);
+    color: color-mix(in srgb, var(--color-white) 90%, transparent);
     text-decoration: none;
     opacity: 0.88;
     user-select: none;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(232, 197, 106, 0.12);
+    box-shadow: 0 4px 24px color-mix(in srgb, black 35%, transparent), 0 0 0 1px rgba(232, 197, 106, 0.12);
     transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     max-width: calc(100vw - 32px);
 }
@@ -4410,7 +4410,7 @@ article, section, nav, footer, header {
     opacity: 1;
     transform: translateY(-2px);
     border-color: rgba(232, 197, 106, 0.45);
-    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.45), 0 0 20px rgba(107, 138, 255, 0.22), 0 0 12px rgba(232, 197, 106, 0.12);
+    box-shadow: 0 6px 28px color-mix(in srgb, black 45%, transparent), 0 0 20px color-mix(in srgb, var(--color-blue) 22%, transparent), 0 0 12px rgba(232, 197, 106, 0.12);
 }
 .forum-entry-fab:active { transform: translateY(0) scale(0.98); }
 
@@ -4425,8 +4425,8 @@ article, section, nav, footer, header {
     height: 36px;
     border-radius: 50%;
     border: 1px solid rgba(232, 197, 106, 0.4);
-    background: linear-gradient(135deg, rgba(107, 138, 255, 0.28), rgba(232, 197, 106, 0.18));
-    color: #fff;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-blue) 28%, transparent), rgba(232, 197, 106, 0.18));
+    color: var(--color-white);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -4434,9 +4434,9 @@ article, section, nav, footer, header {
 }
 
 .forum-entry-fab:hover .forum-entry-fab-icon {
-    background: linear-gradient(135deg, rgba(107, 138, 255, 0.42), rgba(232, 197, 106, 0.28));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-blue) 42%, transparent), rgba(232, 197, 106, 0.28));
     transform: scale(1.08);
-    box-shadow: 0 0 16px rgba(107, 138, 255, 0.4);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--color-blue) 40%, transparent);
 }
 
 .forum-entry-fab-text {
@@ -4471,25 +4471,25 @@ article, section, nav, footer, header {
 
 /* ---- 拖拽上传区域 ---- */
 .upload-drop-zone {
-    border: 2px dashed rgba(107, 138, 255, 0.3);
+    border: 2px dashed color-mix(in srgb, var(--color-blue) 30%, transparent);
     border-radius: 12px;
     padding: 40px 20px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    background: rgba(107, 138, 255, 0.03);
+    background: color-mix(in srgb, var(--color-blue) 3%, transparent);
     margin-bottom: 16px;
 }
 
 .upload-drop-zone:hover {
-    border-color: rgba(107, 138, 255, 0.6);
-    background: rgba(107, 138, 255, 0.08);
+    border-color: color-mix(in srgb, var(--color-blue) 60%, transparent);
+    background: color-mix(in srgb, var(--color-blue) 8%, transparent);
 }
 
 .upload-drop-zone.drag-active {
-    border-color: #6B8AFF;
+    border-color: var(--color-blue);
     border-style: solid;
-    background: rgba(107, 138, 255, 0.15);
+    background: color-mix(in srgb, var(--color-blue) 15%, transparent);
     transform: scale(1.02);
 }
 
@@ -4501,13 +4501,13 @@ article, section, nav, footer, header {
 
 .upload-drop-zone .upload-hint {
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.6);
+    color: color-mix(in srgb, var(--color-white) 60%, transparent);
     margin: 4px 0;
 }
 
 .upload-drop-zone .upload-formats {
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.4);
+    color: color-mix(in srgb, var(--color-white) 40%, transparent);
     margin-top: 8px;
 }
 
@@ -4517,14 +4517,14 @@ article, section, nav, footer, header {
     margin-top: 12px;
     height: 24px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.1);
+    background: color-mix(in srgb, var(--color-white) 10%, transparent);
     overflow: hidden;
     position: relative;
 }
 
 .upload-progress .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #6B8AFF, #A8D8FF);
+    background: linear-gradient(90deg, var(--color-blue), var(--color-blue-light));
     transition: width 0.3s ease;
     border-radius: 12px;
 }
@@ -4535,8 +4535,8 @@ article, section, nav, footer, header {
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 12px;
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    color: var(--color-white);
+    text-shadow: 0 1px 2px color-mix(in srgb, black 50%, transparent);
 }
 
 /* ---- 标签 UI ---- */
@@ -4550,20 +4550,20 @@ article, section, nav, footer, header {
     cursor: pointer;
     transition: all 0.2s ease;
     border: 1px solid transparent;
-    background: rgba(107, 138, 255, 0.1);
-    color: #A8D8FF;
+    background: color-mix(in srgb, var(--color-blue) 10%, transparent);
+    color: var(--color-blue-light);
     margin: 2px;
 }
 
 .tag-chip:hover {
-    background: rgba(107, 138, 255, 0.2);
-    border-color: rgba(107, 138, 255, 0.4);
+    background: color-mix(in srgb, var(--color-blue) 20%, transparent);
+    border-color: color-mix(in srgb, var(--color-blue) 40%, transparent);
 }
 
 .tag-chip.tag-selected {
-    background: rgba(107, 138, 255, 0.3);
-    border-color: #6B8AFF;
-    color: #fff;
+    background: color-mix(in srgb, var(--color-blue) 30%, transparent);
+    border-color: var(--color-blue);
+    color: var(--color-white);
 }
 
 .tag-chip .tag-remove {
@@ -4578,7 +4578,7 @@ article, section, nav, footer, header {
 
 .tag-category-label {
     font-size: 11px;
-    color: rgba(255, 255, 255, 0.4);
+    color: color-mix(in srgb, var(--color-white) 40%, transparent);
     text-transform: uppercase;
     margin: 8px 0 4px;
 }
@@ -4588,7 +4588,7 @@ article, section, nav, footer, header {
     flex-wrap: wrap;
     gap: 4px;
     padding: 12px;
-    background: rgba(255, 255, 255, 0.03);
+    background: color-mix(in srgb, var(--color-white) 3%, transparent);
     border-radius: 8px;
     margin-bottom: 12px;
 }
@@ -4603,19 +4603,19 @@ article, section, nav, footer, header {
     font-size: 13px;
     cursor: pointer;
     transition: all 0.2s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid color-mix(in srgb, var(--color-white) 10%, transparent);
     background: transparent;
-    color: rgba(255, 255, 255, 0.6);
+    color: color-mix(in srgb, var(--color-white) 60%, transparent);
 }
 
 .bookmark-btn:hover {
-    border-color: rgba(255, 215, 0, 0.4);
+    border-color: color-mix(in srgb, var(--color-gold) 40%, transparent);
     color: var(--c-accent);
 }
 
 .bookmark-btn.bookmarked {
-    background: rgba(255, 215, 0, 0.1);
-    border-color: rgba(255, 215, 0, 0.3);
+    background: color-mix(in srgb, var(--color-gold) 10%, transparent);
+    border-color: color-mix(in srgb, var(--color-gold) 30%, transparent);
     color: var(--c-accent);
 }
 
@@ -4635,7 +4635,7 @@ article, section, nav, footer, header {
 .comment-action-btn {
     background: none;
     border: none;
-    color: rgba(255, 255, 255, 0.3);
+    color: color-mix(in srgb, var(--color-white) 30%, transparent);
     font-size: 11px;
     cursor: pointer;
     padding: 2px 6px;
@@ -4649,8 +4649,8 @@ article, section, nav, footer, header {
 }
 
 .comment-action-btn.mod-action:hover {
-    color: rgba(255, 215, 0, 0.8);
-    background: rgba(255, 215, 0, 0.1);
+    color: color-mix(in srgb, var(--color-gold) 80%, transparent);
+    background: color-mix(in srgb, var(--color-gold) 10%, transparent);
 }
 
 /* ---- 发送按钮冷却状态 ---- */
@@ -4666,26 +4666,26 @@ article, section, nav, footer, header {
     gap: 8px;
     padding: 6px 12px;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.05);
+    background: color-mix(in srgb, var(--color-white) 5%, transparent);
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.6);
+    color: color-mix(in srgb, var(--color-white) 60%, transparent);
 }
 
 .auth-status-bar.auth-registered {
-    background: rgba(107, 138, 255, 0.1);
-    color: #A8D8FF;
+    background: color-mix(in srgb, var(--color-blue) 10%, transparent);
+    color: var(--color-blue-light);
 }
 
 .auth-status-bar.auth-admin {
-    background: rgba(255, 215, 0, 0.1);
+    background: color-mix(in srgb, var(--color-gold) 10%, transparent);
     color: var(--c-accent);
 }
 
 .auth-upgrade-toggle {
     margin-left: auto;
-    border: 1px solid rgba(168, 216, 255, 0.3);
-    background: rgba(107, 138, 255, 0.12);
-    color: #A8D8FF;
+    border: 1px solid color-mix(in srgb, var(--color-blue-light) 30%, transparent);
+    background: color-mix(in srgb, var(--color-blue) 12%, transparent);
+    color: var(--color-blue-light);
     border-radius: 999px;
     padding: 4px 10px;
     font-size: var(--fs-micro);
@@ -4694,7 +4694,7 @@ article, section, nav, footer, header {
 }
 
 .auth-upgrade-toggle:hover {
-    background: rgba(107, 138, 255, 0.22);
+    background: color-mix(in srgb, var(--color-blue) 22%, transparent);
 }
 
 .auth-status-bar {
@@ -4778,8 +4778,8 @@ article, section, nav, footer, header {
     gap: 6px;
     padding: 10px 12px;
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: color-mix(in srgb, var(--color-white) 3%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
 }
 
 [data-theme="light"] .submission-tag-selector {
@@ -4792,21 +4792,21 @@ article, section, nav, footer, header {
     border-radius: 16px;
     font-size: 12px;
     cursor: pointer;
-    border: 1px solid rgba(107, 138, 255, 0.2);
+    border: 1px solid color-mix(in srgb, var(--color-blue) 20%, transparent);
     background: transparent;
-    color: rgba(255, 255, 255, 0.5);
+    color: color-mix(in srgb, var(--color-white) 50%, transparent);
     transition: all 0.2s ease;
 }
 
 .submission-tag-selector .tag-chip:hover {
-    border-color: rgba(107, 138, 255, 0.5);
-    color: rgba(255, 255, 255, 0.8);
+    border-color: color-mix(in srgb, var(--color-blue) 50%, transparent);
+    color: color-mix(in srgb, var(--color-white) 80%, transparent);
 }
 
 .submission-tag-selector .tag-chip.active {
-    background: rgba(107, 138, 255, 0.15);
-    border-color: #6B8AFF;
-    color: #A8D8FF;
+    background: color-mix(in srgb, var(--color-blue) 15%, transparent);
+    border-color: var(--color-blue);
+    color: var(--color-blue-light);
 }
 
 [data-theme="light"] .submission-tag-selector .tag-chip {
@@ -4820,7 +4820,7 @@ article, section, nav, footer, header {
 
 .form-hint {
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.35);
+    color: color-mix(in srgb, var(--color-white) 35%, transparent);
     font-weight: 400;
 }
 
@@ -4834,7 +4834,7 @@ article, section, nav, footer, header {
     font-size: 13px;
     border: none;
     background: transparent;
-    color: rgba(255, 255, 255, 0.4);
+    color: color-mix(in srgb, var(--color-white) 40%, transparent);
     cursor: pointer;
     transition: all 0.2s ease;
     display: inline-flex;
@@ -4888,7 +4888,7 @@ article, section, nav, footer, header {
     overflow: auto;
     padding: 20px;
     border-radius: 20px;
-    border: 1px solid rgba(255, 107, 157, 0.25);
+    border: 1px solid color-mix(in srgb, var(--color-rose) 25%, transparent);
 }
 
 .bookmarks-panel-header {
@@ -4901,7 +4901,7 @@ article, section, nav, footer, header {
 .bookmarks-panel-header h3 {
     margin: 0;
     font-size: 1.1rem;
-    background: linear-gradient(90deg, #FF6B9D, #6B8AFF);
+    background: linear-gradient(90deg, var(--color-rose), var(--color-blue));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -4934,15 +4934,15 @@ article, section, nav, footer, header {
     padding: 12px 14px;
     margin-bottom: 8px;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid color-mix(in srgb, var(--color-white) 10%, transparent);
+    background: color-mix(in srgb, var(--color-white) 4%, transparent);
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
 }
 
 .bookmarks-item-btn:hover {
-    border-color: rgba(255, 107, 157, 0.4);
-    background: rgba(255, 107, 157, 0.08);
+    border-color: color-mix(in srgb, var(--color-rose) 40%, transparent);
+    background: color-mix(in srgb, var(--color-rose) 8%, transparent);
 }
 
 .bookmarks-item-title {
@@ -4966,14 +4966,14 @@ article, section, nav, footer, header {
 }
 
 .community-card.bookmark-highlight {
-    box-shadow: 0 0 0 2px rgba(168, 216, 255, 0.45);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-blue-light) 45%, transparent);
     transition: box-shadow 0.3s ease;
 }
 
 .comment-item-reply {
     margin-left: 28px;
     padding-left: 12px;
-    border-left: 2px solid rgba(107, 138, 255, 0.35);
+    border-left: 2px solid color-mix(in srgb, var(--color-blue) 35%, transparent);
 }
 
 .comment-reply-btn {
@@ -4981,20 +4981,20 @@ article, section, nav, footer, header {
     font-size: 0.72rem;
     border: none;
     border-radius: 8px;
-    background: rgba(107, 138, 255, 0.15);
-    color: #A8D8FF;
+    background: color-mix(in srgb, var(--color-blue) 15%, transparent);
+    color: var(--color-blue-light);
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .comment-reply-btn:hover {
-    background: rgba(255, 107, 157, 0.2);
-    color: #FFB6D9;
+    background: color-mix(in srgb, var(--color-rose) 20%, transparent);
+    color: var(--color-pink-warm);
 }
 
 .comment-reply-tag {
     font-size: 0.72rem;
-    color: #6B8AFF;
+    color: var(--color-blue);
     margin-right: 4px;
 }
 
@@ -5006,9 +5006,9 @@ article, section, nav, footer, header {
     padding: 6px 10px;
     margin-bottom: 8px;
     border-radius: 10px;
-    background: rgba(107, 138, 255, 0.12);
+    background: color-mix(in srgb, var(--color-blue) 12%, transparent);
     font-size: 0.78rem;
-    color: #A8D8FF;
+    color: var(--color-blue-light);
 }
 
 .comment-reply-bar[hidden] {
@@ -5018,7 +5018,7 @@ article, section, nav, footer, header {
 .comment-reply-cancel {
     border: none;
     background: none;
-    color: rgba(255, 107, 157, 0.9);
+    color: color-mix(in srgb, var(--color-rose) 90%, transparent);
     cursor: pointer;
     font-size: var(--fs-micro);
 }
@@ -5027,8 +5027,8 @@ article, section, nav, footer, header {
     margin-top: 12px;
     padding: 12px;
     border-radius: 12px;
-    border: 1px solid rgba(255, 107, 157, 0.25);
-    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid color-mix(in srgb, var(--color-rose) 25%, transparent);
+    background: color-mix(in srgb, var(--color-white) 4%, transparent);
 }
 
 .upload-preview[hidden] {
@@ -5053,15 +5053,15 @@ article, section, nav, footer, header {
     padding: 4px 12px;
     font-size: var(--fs-micro);
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid color-mix(in srgb, var(--color-white) 15%, transparent);
     background: transparent;
     color: rgba(250, 248, 255, 0.75);
     cursor: pointer;
 }
 
 .upload-preview-clear:hover {
-    border-color: rgba(255, 107, 157, 0.4);
-    color: #FFB6D9;
+    border-color: color-mix(in srgb, var(--color-rose) 40%, transparent);
+    color: var(--color-pink-warm);
 }
 
 /* ===== v9.3 角色专题 / 模态框 / 管理后台 / 收藏夹分组 ===== */
@@ -5088,7 +5088,7 @@ article, section, nav, footer, header {
     gap: 6px;
     padding: 20px 18px;
     border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid color-mix(in srgb, var(--color-white) 10%, transparent);
     cursor: pointer;
     transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
     text-align: left;
@@ -5096,7 +5096,7 @@ article, section, nav, footer, header {
 
 .character-card:hover {
     transform: translateY(-3px);
-    border-color: rgba(168, 216, 255, 0.3);
+    border-color: color-mix(in srgb, var(--color-blue-light) 30%, transparent);
     box-shadow: var(--shadow-hover);
 }
 
@@ -5137,25 +5137,25 @@ article, section, nav, footer, header {
 .bookmarks-col-chip {
     padding: 4px 10px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid color-mix(in srgb, var(--color-white) 15%, transparent);
+    background: color-mix(in srgb, var(--color-white) 4%, transparent);
     color: rgba(250, 248, 255, 0.8);
     font-size: var(--fs-micro);
     cursor: pointer;
 }
 
 .bookmarks-col-chip.active {
-    border-color: rgba(255, 107, 157, 0.5);
-    background: rgba(255, 107, 157, 0.15);
-    color: #FFB6D9;
+    border-color: color-mix(in srgb, var(--color-rose) 50%, transparent);
+    background: color-mix(in srgb, var(--color-rose) 15%, transparent);
+    color: var(--color-pink-warm);
 }
 
 .bookmarks-new-collection {
     padding: 4px 10px;
     border-radius: 999px;
-    border: 1px dashed rgba(107, 138, 255, 0.4);
+    border: 1px dashed color-mix(in srgb, var(--color-blue) 40%, transparent);
     background: transparent;
-    color: #A8D8FF;
+    color: var(--color-blue-light);
     font-size: var(--fs-micro);
     cursor: pointer;
 }
@@ -5165,8 +5165,8 @@ article, section, nav, footer, header {
     margin-top: 6px;
     padding: 4px 8px;
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid color-mix(in srgb, var(--color-white) 12%, transparent);
+    background: color-mix(in srgb, black 20%, transparent);
     color: #FAF8FF;
     font-size: var(--fs-micro);
 }
@@ -5193,7 +5193,7 @@ article, section, nav, footer, header {
     overflow: auto;
     padding: 20px;
     border-radius: 20px;
-    border: 1px solid rgba(255, 107, 157, 0.25);
+    border: 1px solid color-mix(in srgb, var(--color-rose) 25%, transparent);
 }
 
 .modal-panel.admin-panel-wide {
@@ -5229,7 +5229,7 @@ article, section, nav, footer, header {
 
 .guidelines-note {
     font-size: 0.85rem;
-    color: rgba(168, 216, 255, 0.85);
+    color: color-mix(in srgb, var(--color-blue-light) 85%, transparent);
     margin-top: 12px;
 }
 
@@ -5238,7 +5238,7 @@ article, section, nav, footer, header {
     font-size: 0.68rem;
     border: none;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.06);
+    background: color-mix(in srgb, var(--color-white) 6%, transparent);
     color: rgba(250, 248, 255, 0.45);
     cursor: pointer;
     transition: all 0.2s ease;
@@ -5246,13 +5246,13 @@ article, section, nav, footer, header {
 
 .comment-report-btn:hover {
     color: #ff8a9a;
-    background: rgba(255, 107, 157, 0.12);
+    background: color-mix(in srgb, var(--color-rose) 12%, transparent);
 }
 
 .admin-section-title {
     font-size: 0.9rem;
     margin: 16px 0 8px;
-    color: #A8D8FF;
+    color: var(--color-blue-light);
 }
 
 .admin-list {
@@ -5265,8 +5265,8 @@ article, section, nav, footer, header {
     padding: 10px 12px;
     margin-bottom: 8px;
     border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
+    background: color-mix(in srgb, var(--color-white) 3%, transparent);
     font-size: 0.8rem;
 }
 
@@ -5302,9 +5302,9 @@ article, section, nav, footer, header {
 .admin-action-btn {
     padding: 4px 10px;
     border-radius: 8px;
-    border: 1px solid rgba(255, 107, 157, 0.35);
-    background: rgba(255, 107, 157, 0.12);
-    color: #FFB6D9;
+    border: 1px solid color-mix(in srgb, var(--color-rose) 35%, transparent);
+    background: color-mix(in srgb, var(--color-rose) 12%, transparent);
+    color: var(--color-pink-warm);
     font-size: var(--fs-micro);
     cursor: pointer;
 }
@@ -5325,7 +5325,7 @@ article, section, nav, footer, header {
 .admin-tab {
     padding: 6px 14px;
     border-radius: 999px;
-    border: 1px solid rgba(168, 216, 255, 0.25);
+    border: 1px solid color-mix(in srgb, var(--color-blue-light) 25%, transparent);
     background: transparent;
     color: var(--color-text-muted, #ccc);
     cursor: pointer;
@@ -5333,9 +5333,9 @@ article, section, nav, footer, header {
 }
 
 .admin-tab.active {
-    background: rgba(107, 138, 255, 0.2);
-    border-color: rgba(107, 138, 255, 0.5);
-    color: #A8D8FF;
+    background: color-mix(in srgb, var(--color-blue) 20%, transparent);
+    border-color: color-mix(in srgb, var(--color-blue) 50%, transparent);
+    color: var(--color-blue-light);
 }
 
 .admin-tab-panel {
@@ -5350,8 +5350,8 @@ article, section, nav, footer, header {
     padding: 10px 12px;
     margin-bottom: 12px;
     border-radius: 10px;
-    background: rgba(107, 138, 255, 0.08);
-    border: 1px solid rgba(107, 138, 255, 0.2);
+    background: color-mix(in srgb, var(--color-blue) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-blue) 20%, transparent);
     font-size: 0.85rem;
 }
 
@@ -5372,9 +5372,9 @@ article, section, nav, footer, header {
 .bookmarks-delete-col-btn {
     padding: 4px 10px;
     border-radius: 8px;
-    border: 1px solid rgba(168, 216, 255, 0.25);
-    background: rgba(107, 138, 255, 0.1);
-    color: #A8D8FF;
+    border: 1px solid color-mix(in srgb, var(--color-blue-light) 25%, transparent);
+    background: color-mix(in srgb, var(--color-blue) 10%, transparent);
+    color: var(--color-blue-light);
     font-size: var(--fs-micro);
     cursor: pointer;
 }
@@ -5389,8 +5389,8 @@ article, section, nav, footer, header {
     margin-bottom: 24px;
     padding: 20px 24px;
     border-radius: 16px;
-    border: 1px solid rgba(255, 215, 0, 0.25);
-    background: linear-gradient(135deg, rgba(255, 107, 157, 0.08), rgba(107, 138, 255, 0.08));
+    border: 1px solid color-mix(in srgb, var(--color-gold) 25%, transparent);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-rose) 8%, transparent), color-mix(in srgb, var(--color-blue) 8%, transparent));
 }
 
 .today-pick-label {
@@ -5424,7 +5424,7 @@ article, section, nav, footer, header {
     padding: 0;
     border: none;
     background: none;
-    color: #A8D8FF;
+    color: var(--color-blue-light);
     cursor: pointer;
     font-size: 0.85rem;
 }
@@ -5442,17 +5442,17 @@ article, section, nav, footer, header {
     min-width: 36px;
     padding: 6px 12px;
     border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid color-mix(in srgb, var(--color-white) 12%, transparent);
+    background: color-mix(in srgb, var(--color-white) 5%, transparent);
     color: #FAF8FF;
     font-size: 0.85rem;
     cursor: pointer;
 }
 
 .community-page-btn.active {
-    border-color: rgba(255, 107, 157, 0.5);
-    background: rgba(255, 107, 157, 0.2);
-    color: #FFB6D9;
+    border-color: color-mix(in srgb, var(--color-rose) 50%, transparent);
+    background: color-mix(in srgb, var(--color-rose) 20%, transparent);
+    color: var(--color-pink-warm);
 }
 
 .community-page-btn:disabled {
@@ -5472,7 +5472,7 @@ article, section, nav, footer, header {
     object-fit: cover;
     border-radius: 12px;
     margin-bottom: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
 }
 
 .community-card-owner-actions {
@@ -5484,16 +5484,16 @@ article, section, nav, footer, header {
 .community-owner-btn {
     padding: 2px 8px;
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid color-mix(in srgb, var(--color-white) 15%, transparent);
+    background: color-mix(in srgb, black 20%, transparent);
     color: rgba(250, 248, 255, 0.7);
     font-size: 0.72rem;
     cursor: pointer;
 }
 
 .community-owner-btn:hover {
-    border-color: rgba(255, 107, 157, 0.4);
-    color: #FFB6D9;
+    border-color: color-mix(in srgb, var(--color-rose) 40%, transparent);
+    color: var(--color-pink-warm);
 }
 
 .comment-load-more {
@@ -5502,9 +5502,9 @@ article, section, nav, footer, header {
     margin-top: 10px;
     padding: 8px;
     border-radius: 10px;
-    border: 1px dashed rgba(168, 216, 255, 0.35);
+    border: 1px dashed color-mix(in srgb, var(--color-blue-light) 35%, transparent);
     background: transparent;
-    color: #A8D8FF;
+    color: var(--color-blue-light);
     font-size: 0.82rem;
     cursor: pointer;
 }
@@ -5517,8 +5517,8 @@ article, section, nav, footer, header {
     margin: 10px 0 14px;
     padding: 10px 12px;
     border-radius: 10px;
-    background: rgba(107, 138, 255, 0.08);
-    border: 1px solid rgba(107, 138, 255, 0.2);
+    background: color-mix(in srgb, var(--color-blue) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-blue) 20%, transparent);
 }
 
 .bookmarks-public-toggle {
@@ -5530,9 +5530,9 @@ article, section, nav, footer, header {
 .bookmarks-share-btn {
     padding: 4px 12px;
     border-radius: 8px;
-    border: 1px solid rgba(168, 216, 255, 0.35);
-    background: rgba(168, 216, 255, 0.1);
-    color: #A8D8FF;
+    border: 1px solid color-mix(in srgb, var(--color-blue-light) 35%, transparent);
+    background: color-mix(in srgb, var(--color-blue-light) 10%, transparent);
+    color: var(--color-blue-light);
     font-size: 0.78rem;
     cursor: pointer;
 }
@@ -5608,14 +5608,14 @@ article, section, nav, footer, header {
     text-align: left;
     padding: 12px 14px;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
+    background: color-mix(in srgb, var(--color-white) 4%, transparent);
     color: #FAF8FF;
     cursor: pointer;
 }
 
 .public-collection-list button:hover {
-    border-color: rgba(255, 107, 157, 0.35);
+    border-color: color-mix(in srgb, var(--color-rose) 35%, transparent);
 }
 
 .public-collection-empty {
@@ -5661,28 +5661,28 @@ textarea:focus-visible,
 .character-card:active,
 .profile-card:active {
     box-shadow: var(--shadow-card);
-    border-color: rgba(168, 216, 255, 0.18);
+    border-color: color-mix(in srgb, var(--color-blue-light) 18%, transparent);
 }
 
 .bookmarks-item-btn:hover,
 .bookmarks-item-btn:focus-visible {
-    border-color: rgba(168, 216, 255, 0.35);
-    background: rgba(107, 138, 255, 0.08);
+    border-color: color-mix(in srgb, var(--color-blue-light) 35%, transparent);
+    background: color-mix(in srgb, var(--color-blue) 8%, transparent);
     box-shadow: none;
 }
 
 .bookmarks-col-chip.active {
-    border-color: rgba(168, 216, 255, 0.45);
-    background: rgba(107, 138, 255, 0.15);
-    color: #A8D8FF;
+    border-color: color-mix(in srgb, var(--color-blue-light) 45%, transparent);
+    background: color-mix(in srgb, var(--color-blue) 15%, transparent);
+    color: var(--color-blue-light);
 }
 
 .public-collection-list button:hover {
-    border-color: rgba(168, 216, 255, 0.35);
+    border-color: color-mix(in srgb, var(--color-blue-light) 35%, transparent);
 }
 
 .sync-indicator-btn:hover {
-    box-shadow: 0 0 12px rgba(107, 138, 255, 0.25);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--color-blue) 25%, transparent);
 }
 
 .btn-primary:focus-visible,
@@ -5695,11 +5695,11 @@ textarea:focus-visible,
 }
 
 .btn-primary:active {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 2px 10px color-mix(in srgb, black 25%, transparent);
 }
 
 .btn-ghost:active {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px color-mix(in srgb, black 20%, transparent);
 }
 
 /* ============================================================
@@ -5728,8 +5728,8 @@ textarea:focus-visible,
 .archive-intro {
     padding: 32px;
     border-radius: 20px;
-    background: linear-gradient(135deg, rgba(255,107,157,0.08), rgba(107,138,255,0.08), rgba(182,107,255,0.06));
-    border: 1px solid rgba(255,107,157,0.15);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-rose) 8%, transparent), color-mix(in srgb, var(--color-blue) 8%, transparent), color-mix(in srgb, var(--color-purple) 6%, transparent));
+    border: 1px solid color-mix(in srgb, var(--color-rose) 15%, transparent);
 }
 
 .archive-intro-text {
@@ -5749,7 +5749,7 @@ textarea:focus-visible,
     gap: 8px;
     margin-top: 20px;
     padding-top: 20px;
-    border-top: 1px solid rgba(255,255,255,0.06);
+    border-top: 1px solid color-mix(in srgb, var(--color-white) 6%, transparent);
 }
 
 .archive-info-tag {
@@ -5760,8 +5760,8 @@ textarea:focus-visible,
     border-radius: 100px;
     font-size: 0.8rem;
     font-weight: 500;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: color-mix(in srgb, var(--color-white) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
     color: var(--text-secondary, #a8b0c0);
 }
 
@@ -5813,7 +5813,7 @@ textarea:focus-visible,
     top: 4px;
     bottom: 4px;
     width: 2px;
-    background: linear-gradient(180deg, rgba(255,107,157,0.4), rgba(107,138,255,0.4), rgba(182,107,255,0.2));
+    background: linear-gradient(180deg, color-mix(in srgb, var(--color-rose) 40%, transparent), color-mix(in srgb, var(--color-blue) 40%, transparent), color-mix(in srgb, var(--color-purple) 20%, transparent));
     border-radius: 2px;
 }
 
@@ -5836,8 +5836,8 @@ textarea:focus-visible,
     height: 10px;
     border-radius: 50%;
     background: var(--text-primary, #e8ecf4);
-    border: 2px solid rgba(255,107,157,0.3);
-    box-shadow: 0 0 8px rgba(255,107,157,0.2);
+    border: 2px solid color-mix(in srgb, var(--color-rose) 30%, transparent);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--color-rose) 20%, transparent);
 }
 
 .archive-timeline-era {
@@ -5845,7 +5845,7 @@ textarea:focus-visible,
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: rgba(255,107,157,0.7);
+    color: color-mix(in srgb, var(--color-rose) 70%, transparent);
     margin-bottom: 4px;
 }
 
@@ -5863,7 +5863,7 @@ textarea:focus-visible,
 
 .archive-trait-item {
     padding: 10px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-white) 4%, transparent);
     font-size: 0.88rem;
     line-height: 1.6;
     color: var(--text-secondary, #b8c0d0);
@@ -5895,7 +5895,7 @@ textarea:focus-visible,
     width: 72px;
     font-size: var(--fs-micro);
     font-weight: 600;
-    color: rgba(168,216,255,0.6);
+    color: color-mix(in srgb, var(--color-blue-light) 60%, transparent);
     padding-top: 2px;
 }
 
@@ -5942,8 +5942,8 @@ textarea:focus-visible,
     gap: 12px;
     padding: 10px 14px;
     border-radius: 10px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.05);
+    background: color-mix(in srgb, var(--color-white) 3%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 5%, transparent);
 }
 
 .archive-music-icon {
@@ -5951,7 +5951,7 @@ textarea:focus-visible,
     width: 36px;
     height: 36px;
     border-radius: 8px;
-    background: linear-gradient(135deg, rgba(255,107,157,0.15), rgba(107,138,255,0.15));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-rose) 15%, transparent), color-mix(in srgb, var(--color-blue) 15%, transparent));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -5979,8 +5979,8 @@ textarea:focus-visible,
     text-align: center;
     padding: 36px 32px;
     border-radius: 16px;
-    background: linear-gradient(135deg, rgba(255,107,157,0.04), rgba(107,138,255,0.04));
-    border: 1px solid rgba(255,255,255,0.06);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-rose) 4%, transparent), color-mix(in srgb, var(--color-blue) 4%, transparent));
+    border: 1px solid color-mix(in srgb, var(--color-white) 6%, transparent);
 }
 
 .archive-quote-text {
@@ -6003,13 +6003,13 @@ textarea:focus-visible,
     line-height: 1.6;
     padding: 16px 20px;
     border-radius: 10px;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.04);
+    background: color-mix(in srgb, var(--color-white) 2%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 4%, transparent);
     grid-column: 1 / -1;
 }
 
 .archive-source-note a {
-    color: rgba(168,216,255,0.7);
+    color: color-mix(in srgb, var(--color-blue-light) 70%, transparent);
     text-decoration: none;
 }
 
@@ -6054,7 +6054,7 @@ textarea:focus-visible,
     gap: 0.5rem;
     padding: 1.6rem 1.6rem 1.3rem;
     text-decoration: none;
-    color: #fff;
+    color: var(--color-white);
     border: 1px solid color-mix(in srgb, var(--char) 38%, transparent);
     border-radius: 18px;
     background: linear-gradient(160deg, color-mix(in srgb, var(--char) 15%, var(--surface-card)) 0%, var(--surface-card) 72%);
@@ -6075,7 +6075,7 @@ textarea:focus-visible,
     place-items: center;
     border-radius: 50%;
     background: var(--char);
-    color: #fff;
+    color: var(--color-white);
     box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--char) 70%, transparent);
     margin-bottom: 0.3rem;
 }
@@ -6084,7 +6084,7 @@ textarea:focus-visible,
     width: 30px;
     height: 30px;
     fill: none;
-    stroke: #fff;
+    stroke: var(--color-white);
     stroke-width: 1.8;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -6098,13 +6098,13 @@ textarea:focus-visible,
 
 .character-entry-alias {
     font-size: 0.85rem;
-    color: color-mix(in srgb, var(--char) 78%, #fff);
+    color: color-mix(in srgb, var(--char) 78%, var(--color-white));
     font-weight: 500;
 }
 
 .character-entry-tagline {
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.7);
+    color: color-mix(in srgb, var(--color-white) 70%, transparent);
     line-height: 1.6;
 }
 
@@ -6120,7 +6120,7 @@ textarea:focus-visible,
     padding: 0.2rem 0.6rem;
     border-radius: 999px;
     background: color-mix(in srgb, var(--char) 16%, transparent);
-    color: color-mix(in srgb, var(--char) 72%, #fff);
+    color: color-mix(in srgb, var(--char) 72%, var(--color-white));
     border: 1px solid color-mix(in srgb, var(--char) 30%, transparent);
 }
 
@@ -6152,7 +6152,7 @@ textarea:focus-visible,
 }
 
 .character-entry--locked .character-entry-cta {
-    color: rgba(255, 255, 255, 0.7);
+    color: color-mix(in srgb, var(--color-white) 70%, transparent);
 }
 
 /* ---- 替换 emoji 的内联 SVG 图标统一尺寸 ---- */
@@ -6189,16 +6189,16 @@ textarea:focus-visible,
     justify-content: space-between;
     gap: 1rem;
     padding: 0.8rem 1.2rem;
-    background: rgba(10, 12, 24, 0.9);
+    background: color-mix(in srgb, var(--neutral-900) 90%, transparent);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
 }
 
 .zone-topbar .zone-home {
     font-family: var(--font-serif, "Noto Serif SC");
     font-weight: 700;
-    color: #fff;
+    color: var(--color-white);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
@@ -6223,19 +6223,19 @@ textarea:focus-visible,
     padding: 0.3rem 0.8rem;
     border-radius: 999px;
     text-decoration: none;
-    color: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: color-mix(in srgb, var(--color-white) 70%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 12%, transparent);
     white-space: nowrap;
     flex: none;
 }
 
 .zone-switch a:hover {
-    color: #fff;
+    color: var(--color-white);
     border-color: var(--char, #F4729B);
 }
 
 .zone-switch .is-active {
-    color: #fff;
+    color: var(--color-white);
     background: color-mix(in srgb, var(--char, #F4729B) 22%, transparent);
     border-color: var(--char, #F4729B);
 }
@@ -6261,7 +6261,7 @@ textarea:focus-visible,
     display: grid;
     place-items: center;
     background: var(--char);
-    color: #fff;
+    color: var(--color-white);
     box-shadow: 0 10px 30px -10px color-mix(in srgb, var(--char) 70%, transparent);
 }
 
@@ -6269,7 +6269,7 @@ textarea:focus-visible,
     width: 44px;
     height: 44px;
     fill: none;
-    stroke: #fff;
+    stroke: var(--color-white);
     stroke-width: 1.6;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -6279,19 +6279,19 @@ textarea:focus-visible,
     font-family: var(--font-serif, "Noto Serif SC");
     font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 900;
-    color: #fff;
+    color: var(--color-white);
 }
 
 .zone-hero-alias {
     font-size: var(--fs-body);
-    color: color-mix(in srgb, var(--char) 75%, #fff);
+    color: color-mix(in srgb, var(--char) 75%, var(--color-white));
     margin-top: 0.3rem;
 }
 
 .zone-hero-tagline {
     max-width: 640px;
     margin: 0.8rem auto 0;
-    color: rgba(255, 255, 255, 0.72);
+    color: color-mix(in srgb, var(--color-white) 72%, transparent);
     line-height: 1.7;
 }
 
@@ -6300,16 +6300,16 @@ textarea:focus-visible,
     margin: 1.5rem auto 0;
     padding: 0 1.2rem;
     font-size: 0.82rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: color-mix(in srgb, var(--color-white) 60%, transparent);
 }
 
 .zone-breadcrumb a {
-    color: rgba(255, 255, 255, 0.6);
+    color: color-mix(in srgb, var(--color-white) 60%, transparent);
     text-decoration: none;
 }
 
 .zone-breadcrumb a:hover {
-    color: #fff;
+    color: var(--color-white);
 }
 
 .zone-breadcrumb .sep {
@@ -6336,13 +6336,13 @@ textarea:focus-visible,
 
 .zone-stat-label {
     font-size: 0.72rem;
-    color: rgba(255, 255, 255, 0.5);
+    color: color-mix(in srgb, var(--color-white) 50%, transparent);
     letter-spacing: 0.05em;
 }
 
 .zone-stat-value {
     font-size: 0.92rem;
-    color: #fff;
+    color: var(--color-white);
     margin-top: 0.3rem;
     line-height: 1.5;
     word-break: break-word;
@@ -6369,7 +6369,7 @@ textarea:focus-visible,
 }
 
 .module[open] {
-    border-color: color-mix(in srgb, var(--char, #F4729B) 40%, rgba(255,255,255,0.12));
+    border-color: color-mix(in srgb, var(--char, #F4729B) 40%, color-mix(in srgb, var(--color-white) 12%, transparent));
 }
 
 .module > summary {
@@ -6382,7 +6382,7 @@ textarea:focus-visible,
     font-family: var(--font-serif, "Noto Serif SC");
     font-size: 1.15rem;
     font-weight: 700;
-    color: #fff;
+    color: var(--color-white);
 }
 
 .module > summary::-webkit-details-marker {
@@ -6405,7 +6405,7 @@ textarea:focus-visible,
     width: 1.2rem;
     height: 1.2rem;
     fill: none;
-    stroke: rgba(255, 255, 255, 0.5);
+    stroke: color-mix(in srgb, var(--color-white) 50%, transparent);
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -6434,9 +6434,9 @@ textarea:focus-visible,
     margin: 0 auto 3rem;
     padding: 1.2rem 1.2rem 0;
     font-size: 0.78rem;
-    color: rgba(255, 255, 255, 0.55);
+    color: color-mix(in srgb, var(--color-white) 55%, transparent);
     line-height: 1.7;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
 }
 
 [data-char="aimisi"]  { --char: var(--aimisi-pink); }
@@ -6456,9 +6456,9 @@ textarea:focus-visible,
     font-weight: 600;
     letter-spacing: 0.04em;
     color: #E8ECFF;
-    background: linear-gradient(135deg, rgba(107,138,255,0.35), rgba(184,156,217,0.35));
-    border: 1px solid rgba(168,216,255,0.5);
-    box-shadow: 0 0 12px rgba(107,138,255,0.25);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-blue) 35%, transparent), rgba(184,156,217,0.35));
+    border: 1px solid color-mix(in srgb, var(--color-blue-light) 50%, transparent);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--color-blue) 25%, transparent);
 }
 
 .archive-note {
@@ -6467,8 +6467,8 @@ textarea:focus-visible,
     font-size: 0.85rem;
     line-height: 1.7;
     color: rgba(232,236,255,0.78);
-    background: rgba(107,138,255,0.08);
-    border-left: 3px solid rgba(168,216,255,0.55);
+    background: color-mix(in srgb, var(--color-blue) 8%, transparent);
+    border-left: 3px solid color-mix(in srgb, var(--color-blue-light) 55%, transparent);
     border-radius: 0 10px 10px 0;
 }
 
@@ -6623,23 +6623,64 @@ textarea:focus-visible,
 .admin-modal {
     width: 100%; max-width: 380px;
     background: rgba(18, 18, 32, 0.96);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid color-mix(in srgb, var(--color-white) 12%, transparent);
     border-radius: 18px;
     padding: 1.6rem 1.5rem 1.4rem;
-    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    box-shadow: 0 24px 60px color-mix(in srgb, black 50%, transparent);
 }
-.admin-modal h3 { margin: 0 0 0.3rem; color: #F0F4FF; font-size: 1.15rem; }
-.admin-modal-hint { margin: 0 0 1rem; font-size: 0.82rem; color: rgba(255,255,255,0.6); }
+.admin-modal h3 { margin: 0 0 0.3rem; color: var(--color-snow); font-size: 1.15rem; }
+.admin-modal-hint { margin: 0 0 1rem; font-size: 0.82rem; color: color-mix(in srgb, var(--color-white) 60%, transparent); }
 
 .admin-modal-input {
     width: 100%; box-sizing: border-box;
     padding: 0.7rem 0.9rem; margin-bottom: 0.6rem;
     font-size: 1rem;
-    color: #F0F4FF; background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.18); border-radius: 10px;
+    color: var(--color-snow); background: color-mix(in srgb, var(--color-white) 6%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 18%, transparent); border-radius: 10px;
     outline: none;
 }
-.admin-modal-input:focus { border-color: rgba(168,216,255,0.7); }
+.admin-modal-input:focus { border-color: color-mix(in srgb, var(--color-blue-light) 70%, transparent); }
 .admin-modal-error { margin: 0 0 0.6rem; font-size: 0.8rem; color: #FF9BB5; }
 .admin-modal-error[hidden] { display: none; }
 .admin-modal-actions { display: flex; gap: 0.7rem; justify-content: flex-end; margin-top: 0.4rem; }
+
+/* ============ Inline Style Cleanup: Utility Classes ============ */
+.icon-sprite {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.u-hidden {
+    display: none !important;
+}
+
+.u-full-width {
+    width: 100%;
+}
+
+.u-mt-3 {
+    margin-top: 0.75rem;
+}
+
+.u-mt-4 {
+    margin-top: 1rem;
+}
+
+.u-text-center {
+    text-align: center;
+}
+
+.link-blue-light {
+    color: var(--color-blue-light);
+}
+
+.form-hint-compact {
+    margin: 0 0 0.5rem;
+}
+
+.btn-block {
+    width: 100%;
+    margin-top: 0.75rem;
+}

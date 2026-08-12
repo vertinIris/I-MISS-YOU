@@ -1,0 +1,27 @@
+name = "i-miss-you"
+version = 2
+private = true
+
+origin = ""
+compatibility_date = "2026-08-11"
+compatibility_flags = []
+workers_dev = false
+route_summary = [{pattern = "i-miss-you.pages.dev", zone_name = ""}]
+match = "i-miss-you.pages.dev/*"
+exclude = []
+
+# Pages Assets
+assets = {directory = ".", binding = "ASSETS"}
+
+# Bindings
+[[kv_namespace]]
+  binding = "KV"
+  id = "prebuild_assets"
+
+# Routes (manual config for static site)
+routes = [
+  {pattern = "dist/*", zone_name = ""},
+  {pattern = "forum/*", zone_name = ""},
+  {pattern = "characters/*", zone_name = ""},
+  {pattern = "/*", zone_name = ""},
+]

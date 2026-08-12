@@ -38,8 +38,8 @@ ul, ol { list-style: none; }
     border-radius: var(--radius-md);
     /* R17 液态玻璃：内折射边 + 内阴影模拟物理边缘 */
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.10),
-        inset 0 0 24px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 color-mix(in srgb, var(--color-white) 10%, transparent),
+        inset 0 0 24px color-mix(in srgb, black 22%, transparent),
         var(--shadow-card);
     transition: all var(--transition-base);
 }
@@ -47,8 +47,8 @@ ul, ol { list-style: none; }
 .glass:hover {
     border-color: var(--glass-border-hover);
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.14),
-        inset 0 0 28px rgba(0, 0, 0, 0.20),
+        inset 0 1px 0 color-mix(in srgb, var(--color-white) 14%, transparent),
+        inset 0 0 28px color-mix(in srgb, black 20%, transparent),
         0 0 22px var(--c-accent-dim),
         var(--shadow-hover);
 }
@@ -57,7 +57,7 @@ ul, ol { list-style: none; }
     background: rgba(14, 12, 18, 0.92);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    border: 1px solid color-mix(in srgb, var(--color-white) 16%, transparent);
     border-radius: var(--radius-full);
     padding: 6px 16px;
     display: inline-flex;
@@ -112,7 +112,7 @@ ul, ol { list-style: none; }
     width: 28px;
     height: 28px;
     animation: rotate-slow 20s linear infinite;
-    filter: drop-shadow(0 0 8px rgba(107, 138, 255, 0.45)) drop-shadow(0 0 14px rgba(168, 216, 255, 0.25));
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--color-blue) 45%, transparent)) drop-shadow(0 0 14px color-mix(in srgb, var(--color-blue-light) 25%, transparent));
 }
 
 @keyframes rotate-slow {
@@ -165,11 +165,11 @@ ul, ol { list-style: none; }
     gap: 6px;
     padding: 5px 12px 5px 10px;
     border-radius: var(--radius-full);
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.12), rgba(182, 107, 255, 0.12));
-    border: 1px solid rgba(255, 215, 0, 0.35);
-    color: #FFD9A8;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.25);
-    box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-gold) 12%, transparent), color-mix(in srgb, var(--color-purple) 12%, transparent));
+    border: 1px solid color-mix(in srgb, var(--color-gold) 35%, transparent);
+    color: var(--color-rose-soft);
+    text-shadow: 0 0 10px color-mix(in srgb, var(--color-gold) 25%, transparent);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-gold) 0%, transparent);
     transition: color 0.25s ease, border-color 0.25s ease, box-shadow 0.35s ease, transform 0.25s ease;
 }
 
@@ -179,22 +179,22 @@ ul, ol { list-style: none; }
 
 .nav-link-admin:hover,
 .nav-link-admin.active {
-    color: #FFF2CC;
-    border-color: rgba(255, 215, 0, 0.7);
-    box-shadow: 0 0 18px rgba(255, 215, 0, 0.25), inset 0 0 10px rgba(255, 215, 0, 0.08);
+    color: var(--color-gold-pale);
+    border-color: color-mix(in srgb, var(--color-gold) 70%, transparent);
+    box-shadow: 0 0 18px color-mix(in srgb, var(--color-gold) 25%, transparent), inset 0 0 10px color-mix(in srgb, var(--color-gold) 8%, transparent);
     transform: translateY(-1px);
 }
 
 .nav-link-admin-icon {
     width: 16px;
     height: 16px;
-    filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.45));
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--color-gold) 45%, transparent));
     animation: admin-star-pulse 2.4s ease-in-out infinite;
 }
 
 @keyframes admin-star-pulse {
-    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.45)); }
-    50% { transform: scale(1.15); filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8)); }
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px color-mix(in srgb, var(--color-gold) 45%, transparent)); }
+    50% { transform: scale(1.15); filter: drop-shadow(0 0 10px color-mix(in srgb, var(--color-gold) 80%, transparent)); }
 }
 
 .nav-actions {
@@ -227,13 +227,13 @@ ul, ol { list-style: none; }
 .nav-account-btn:hover,
 .nav-account.open .nav-account-btn {
     background: var(--glass-bg-hover);
-    border-color: rgba(168, 216, 255, 0.45);
-    color: #A8D8FF;
-    box-shadow: 0 0 16px rgba(107, 138, 255, 0.18);
+    border-color: color-mix(in srgb, var(--color-blue-light) 45%, transparent);
+    color: var(--color-blue-light);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--color-blue) 18%, transparent);
 }
 
 .nav-account-icon {
-    color: #FF6B9D;
+    color: var(--color-rose);
     font-size: 0.9rem;
 }
 
@@ -253,8 +253,8 @@ ul, ol { list-style: none; }
     padding: 16px;
     border-radius: 16px;
     background: rgba(18, 20, 36, 0.94);
-    border: 1px solid rgba(168, 216, 255, 0.22);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 107, 157, 0.08);
+    border: 1px solid color-mix(in srgb, var(--color-blue-light) 22%, transparent);
+    box-shadow: 0 12px 40px color-mix(in srgb, black 45%, transparent), 0 0 0 1px color-mix(in srgb, var(--color-rose) 8%, transparent);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
 }
@@ -263,14 +263,14 @@ ul, ol { list-style: none; }
     margin: 0 0 12px;
     font-size: 0.78rem;
     line-height: 1.5;
-    color: rgba(255, 255, 255, 0.55);
+    color: color-mix(in srgb, var(--color-white) 55%, transparent);
 }
 
 .account-tabs {
     display: flex;
     gap: 4px;
     margin-bottom: 14px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
 }
 
 .account-tab {
@@ -278,7 +278,7 @@ ul, ol { list-style: none; }
     padding: 8px 4px;
     border: none;
     background: transparent;
-    color: rgba(255, 255, 255, 0.45);
+    color: color-mix(in srgb, var(--color-white) 45%, transparent);
     font-size: 0.85rem;
     font-family: inherit;
     cursor: pointer;
@@ -286,7 +286,7 @@ ul, ol { list-style: none; }
 }
 
 .account-tab.active {
-    color: #A8D8FF;
+    color: var(--color-blue-light);
 }
 
 .account-tab.active::after {
@@ -297,7 +297,7 @@ ul, ol { list-style: none; }
     bottom: -1px;
     height: 2px;
     border-radius: 2px;
-    background: linear-gradient(90deg, #FF6B9D, #6B8AFF);
+    background: linear-gradient(90deg, var(--color-rose), var(--color-blue));
 }
 
 .account-tab-panel[hidden] {
@@ -310,7 +310,7 @@ ul, ol { list-style: none; }
     gap: 6px;
     margin-bottom: 10px;
     font-size: var(--fs-micro);
-    color: rgba(255, 255, 255, 0.55);
+    color: color-mix(in srgb, var(--color-white) 55%, transparent);
 }
 
 .account-field .form-input {
@@ -331,12 +331,12 @@ ul, ol { list-style: none; }
 
 .account-user-role {
     font-size: 0.8rem;
-    color: #A8D8FF;
+    color: var(--color-blue-light);
 }
 
 .account-user-email {
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.85);
+    color: color-mix(in srgb, var(--color-white) 85%, transparent);
     word-break: break-all;
 }
 
@@ -344,11 +344,11 @@ ul, ol { list-style: none; }
     margin: 0 0 12px;
     padding: 10px;
     border-radius: 10px;
-    background: rgba(255, 107, 157, 0.1);
-    border: 1px solid rgba(255, 107, 157, 0.25);
+    background: color-mix(in srgb, var(--color-rose) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-rose) 25%, transparent);
     font-size: 0.78rem;
     line-height: 1.5;
-    color: #FFB6D9;
+    color: var(--color-pink-warm);
 }
 
 .account-resend-btn {
@@ -373,7 +373,7 @@ ul, ol { list-style: none; }
     padding: 0;
     border: none;
     background: none;
-    color: rgba(168, 216, 255, 0.85);
+    color: color-mix(in srgb, var(--color-blue-light) 85%, transparent);
     font-size: 0.78rem;
     text-align: center;
     cursor: pointer;
@@ -534,16 +534,16 @@ ul, ol { list-style: none; }
     transition: transform var(--btn-transition), box-shadow var(--btn-transition), filter var(--btn-transition);
     /* v10 爱弥斯核心渐变：粉 → 白 → 浅蓝 流动（去金/紫，贴合粉·白·浅蓝核心） */
     background: linear-gradient(135deg,
-        #F4729B 0%, #FFB6D9 14%, #F0F4FF 25%,
-        #FFF5F8 36%, #A8D8FF 48%, #6B8AFF 55%,
-        #F0F4FF 68%, #F4729B 82%, #FFB6D9 100%
+        var(--color-rose-soft) 0%, var(--color-pink-warm) 14%, var(--color-snow) 25%,
+        var(--color-pink-pale) 36%, var(--color-blue-light) 48%, var(--color-blue) 55%,
+        var(--color-snow) 68%, var(--color-rose-soft) 82%, var(--color-pink-warm) 100%
     );
     background-size: 300% 300%;
     animation: aimisiFlow 8s ease-in-out infinite;
     box-shadow:
         0 4px 20px rgba(244, 114, 155, 0.30),
-        0 0 15px rgba(168, 216, 255, 0.18),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        0 0 15px color-mix(in srgb, var(--color-blue-light) 18%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--color-white) 30%, transparent);
 }
 
 /* 能量核心层: 爱弥斯共振脉冲 — 金白光带旋转 */
@@ -553,17 +553,17 @@ ul, ol { list-style: none; }
     inset: 0;
     border-radius: inherit;
     background:
-        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.22) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--color-white) 22%, transparent) 0%, transparent 40%),
         conic-gradient(from 0deg,
-            rgba(255, 107, 157, 0.0) 0deg,
-            rgba(255, 215, 0, 0.28) 40deg,
-            rgba(255, 255, 255, 0.35) 80deg,
-            rgba(255, 182, 217, 0.22) 120deg,
-            rgba(255, 215, 0, 0.28) 160deg,
-            rgba(255, 107, 157, 0.0) 200deg,
-            rgba(255, 215, 0, 0.18) 240deg,
-            rgba(255, 255, 255, 0.28) 280deg,
-            rgba(255, 107, 157, 0.0) 360deg
+            color-mix(in srgb, var(--color-rose) 0%, transparent) 0deg,
+            color-mix(in srgb, var(--color-gold) 28%, transparent) 40deg,
+            color-mix(in srgb, var(--color-white) 35%, transparent) 80deg,
+            color-mix(in srgb, var(--color-pink-warm) 22%, transparent) 120deg,
+            color-mix(in srgb, var(--color-gold) 28%, transparent) 160deg,
+            color-mix(in srgb, var(--color-rose) 0%, transparent) 200deg,
+            color-mix(in srgb, var(--color-gold) 18%, transparent) 240deg,
+            color-mix(in srgb, var(--color-white) 28%, transparent) 280deg,
+            color-mix(in srgb, var(--color-rose) 0%, transparent) 360deg
         );
     animation: aimisiCore 6s linear infinite;
     mix-blend-mode: screen;
@@ -581,11 +581,11 @@ ul, ol { list-style: none; }
     height: 100%;
     background: linear-gradient(100deg,
         transparent 0%,
-        rgba(255, 255, 255, 0.0) 20%,
+        color-mix(in srgb, var(--color-white) 0%, transparent) 20%,
         rgba(255, 245, 248, 0.40) 40%,
-        rgba(255, 215, 0, 0.35) 48%,
-        rgba(255, 255, 255, 0.40) 55%,
-        rgba(255, 255, 255, 0.0) 72%,
+        color-mix(in srgb, var(--color-gold) 35%, transparent) 48%,
+        color-mix(in srgb, var(--color-white) 40%, transparent) 55%,
+        color-mix(in srgb, var(--color-white) 0%, transparent) 72%,
         transparent 100%
     );
     filter: blur(2px);
@@ -621,10 +621,10 @@ ul, ol { list-style: none; }
 .btn-primary:hover {
     transform: translateY(-3px) scale(var(--btn-scale-hover));
     box-shadow:
-        0 8px 30px rgba(255, 107, 157, 0.5),
-        0 0 40px rgba(255, 215, 0, 0.25),
-        0 0 60px rgba(255, 182, 217, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        0 8px 30px color-mix(in srgb, var(--color-rose) 50%, transparent),
+        0 0 40px color-mix(in srgb, var(--color-gold) 25%, transparent),
+        0 0 60px color-mix(in srgb, var(--color-pink-warm) 15%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--color-white) 40%, transparent);
 }
 
 .btn-primary:hover::before {
@@ -644,8 +644,8 @@ ul, ol { list-style: none; }
 .btn-primary:active {
     transform: translateY(-1px) scale(var(--btn-scale-active));
     box-shadow:
-        0 2px 10px rgba(255, 107, 157, 0.4),
-        0 0 20px rgba(255, 215, 0, 0.2),
+        0 2px 10px color-mix(in srgb, var(--color-rose) 40%, transparent),
+        0 0 20px color-mix(in srgb, var(--color-gold) 20%, transparent),
         inset 0 2px 8px rgba(232, 76, 126, 0.3);
     transition: transform var(--btn-transition-fast), box-shadow var(--btn-transition-fast);
 }
@@ -658,7 +658,7 @@ ul, ol { list-style: none; }
     cursor: not-allowed;
     transform: none;
     animation: none;
-    box-shadow: 0 2px 8px rgba(255, 107, 157, 0.1);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-rose) 10%, transparent);
 }
 
 .btn-primary:disabled::before,
@@ -694,12 +694,12 @@ ul, ol { list-style: none; }
         rgba(8, 16, 45, 0.7) 65%,
         rgba(12, 8, 30, 0.65) 100%
     );
-    border: 1px solid rgba(107, 138, 255, 0.3);
+    border: 1px solid color-mix(in srgb, var(--color-blue) 30%, transparent);
     backdrop-filter: blur(12px) saturate(160%);
     -webkit-backdrop-filter: blur(12px) saturate(160%);
     box-shadow:
-        inset 0 1px 0 rgba(168, 216, 255, 0.1),
-        0 4px 16px rgba(0, 0, 0, 0.25);
+        inset 0 1px 0 color-mix(in srgb, var(--color-blue-light) 10%, transparent),
+        0 4px 16px color-mix(in srgb, black 25%, transparent);
 }
 
 /* 星云漂移层: 蓝紫宇宙云团缓慢流动 */
@@ -709,9 +709,9 @@ ul, ol { list-style: none; }
     inset: 0;
     border-radius: inherit;
     background:
-        radial-gradient(ellipse 70% 50% at 25% 40%, rgba(74, 106, 224, 0.25), transparent 65%),
+        radial-gradient(ellipse 70% 50% at 25% 40%, color-mix(in srgb, var(--color-blue-deep) 25%, transparent), transparent 65%),
         radial-gradient(ellipse 50% 70% at 75% 60%, rgba(155, 107, 255, 0.20), transparent 65%),
-        radial-gradient(circle at 50% 100%, rgba(168, 216, 255, 0.12), transparent 50%);
+        radial-gradient(circle at 50% 100%, color-mix(in srgb, var(--color-blue-light) 12%, transparent), transparent 50%);
     animation: nebulaDrift 10s ease-in-out infinite alternate;
     mix-blend-mode: screen;
     opacity: 0.85;
@@ -725,17 +725,17 @@ ul, ol { list-style: none; }
     inset: 0;
     border-radius: inherit;
     background:
-        radial-gradient(1.5px 1.5px at 20% 30%, rgba(255, 255, 255, 0.7), transparent),
-        radial-gradient(1px 1px at 45% 70%, rgba(168, 216, 255, 0.6), transparent),
-        radial-gradient(1.5px 1.5px at 70% 25%, rgba(255, 255, 255, 0.5), transparent),
-        radial-gradient(1px 1px at 85% 55%, rgba(107, 138, 255, 0.5), transparent),
-        radial-gradient(1px 1px at 35% 85%, rgba(255, 255, 255, 0.4), transparent),
-        radial-gradient(1.5px 1.5px at 60% 45%, rgba(182, 107, 255, 0.3), transparent),
+        radial-gradient(1.5px 1.5px at 20% 30%, color-mix(in srgb, var(--color-white) 70%, transparent), transparent),
+        radial-gradient(1px 1px at 45% 70%, color-mix(in srgb, var(--color-blue-light) 60%, transparent), transparent),
+        radial-gradient(1.5px 1.5px at 70% 25%, color-mix(in srgb, var(--color-white) 50%, transparent), transparent),
+        radial-gradient(1px 1px at 85% 55%, color-mix(in srgb, var(--color-blue) 50%, transparent), transparent),
+        radial-gradient(1px 1px at 35% 85%, color-mix(in srgb, var(--color-white) 40%, transparent), transparent),
+        radial-gradient(1.5px 1.5px at 60% 45%, color-mix(in srgb, var(--color-purple) 30%, transparent), transparent),
         linear-gradient(110deg,
             transparent 30%,
-            rgba(168, 216, 255, 0.14) 45%,
-            rgba(255, 255, 255, 0.20) 50%,
-            rgba(168, 216, 255, 0.14) 55%,
+            color-mix(in srgb, var(--color-blue-light) 14%, transparent) 45%,
+            color-mix(in srgb, var(--color-white) 20%, transparent) 50%,
+            color-mix(in srgb, var(--color-blue-light) 14%, transparent) 55%,
             transparent 70%
         );
     background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 250% 100%;
@@ -762,12 +762,12 @@ ul, ol { list-style: none; }
 /* Hover: 星空激活 */
 .btn-ghost:hover {
     transform: translateY(-3px) scale(var(--btn-scale-hover));
-    border-color: rgba(168, 216, 255, 0.5);
+    border-color: color-mix(in srgb, var(--color-blue-light) 50%, transparent);
     box-shadow:
-        inset 0 1px 0 rgba(168, 216, 255, 0.2),
-        0 0 30px rgba(107, 138, 255, 0.35),
-        0 0 55px rgba(168, 216, 255, 0.15),
-        0 4px 20px rgba(0, 0, 0, 0.3);
+        inset 0 1px 0 color-mix(in srgb, var(--color-blue-light) 20%, transparent),
+        0 0 30px color-mix(in srgb, var(--color-blue) 35%, transparent),
+        0 0 55px color-mix(in srgb, var(--color-blue-light) 15%, transparent),
+        0 4px 20px color-mix(in srgb, black 30%, transparent);
 }
 
 .btn-ghost:hover::before {
@@ -787,8 +787,8 @@ ul, ol { list-style: none; }
 .btn-ghost:active {
     transform: translateY(-1px) scale(var(--btn-scale-active));
     box-shadow:
-        inset 0 2px 8px rgba(0, 0, 0, 0.4),
-        0 0 15px rgba(107, 138, 255, 0.3);
+        inset 0 2px 8px color-mix(in srgb, black 40%, transparent),
+        0 0 15px color-mix(in srgb, var(--color-blue) 30%, transparent);
     transition: transform var(--btn-transition-fast), box-shadow var(--btn-transition-fast);
 }
 
@@ -799,7 +799,7 @@ ul, ol { list-style: none; }
     opacity: 0.4;
     cursor: not-allowed;
     transform: none;
-    border-color: rgba(107, 138, 255, 0.1);
+    border-color: color-mix(in srgb, var(--color-blue) 10%, transparent);
 }
 
 .btn-ghost:disabled::before,
@@ -826,15 +826,15 @@ ul, ol { list-style: none; }
     position: relative;
     overflow: hidden;
     isolation: isolate;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid color-mix(in srgb, var(--color-white) 15%, transparent);
     cursor: pointer;
     transition: transform var(--btn-transition), box-shadow var(--btn-transition), border-color var(--btn-transition);
     /* 双形态暗色底: 深蓝黑+紫黑 */
     background:
-        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.08) 0%, transparent 25%),
-        radial-gradient(circle at 70% 70%, rgba(107, 138, 255, 0.12) 0%, transparent 30%),
+        radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--color-white) 8%, transparent) 0%, transparent 25%),
+        radial-gradient(circle at 70% 70%, color-mix(in srgb, var(--color-blue) 12%, transparent) 0%, transparent 30%),
         linear-gradient(135deg, #1A1A2E 0%, #0F0F1F 50%, #1A1228 100%);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 20px color-mix(in srgb, black 35%, transparent), inset 0 1px 0 color-mix(in srgb, var(--color-white) 10%, transparent);
 }
 
 /* 黑胶沟槽层: 唱片纹路旋转 */
@@ -847,7 +847,7 @@ ul, ol { list-style: none; }
         repeating-radial-gradient(
             circle at center,
             transparent 0, transparent 2px,
-            rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.04) 4px
+            color-mix(in srgb, var(--color-white) 4%, transparent) 3px, color-mix(in srgb, var(--color-white) 4%, transparent) 4px
         );
     opacity: 0.6;
     z-index: -1;
@@ -863,12 +863,12 @@ ul, ol { list-style: none; }
     padding: 2px;
     background: conic-gradient(
         from 0deg,
-        #FF6B9D, #FFB6D9, #F0F4FF,
-        #A8D8FF, #6B8AFF, #FF6B9D
+        var(--color-rose), var(--color-pink-warm), var(--color-snow),
+        var(--color-blue-light), var(--color-blue), var(--color-rose)
     );
     -webkit-mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
+        linear-gradient(var(--color-white) 0 0) content-box,
+        linear-gradient(var(--color-white) 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     opacity: 0.7;
@@ -880,7 +880,7 @@ ul, ol { list-style: none; }
     width: 18px;
     height: 18px;
     transition: transform var(--btn-transition);
-    filter: drop-shadow(0 0 6px rgba(168, 216, 255, 0.5));
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--color-blue-light) 50%, transparent));
     animation: notePulse 2s ease-in-out infinite;
 }
 
@@ -895,18 +895,18 @@ ul, ol { list-style: none; }
 }
 
 @keyframes notePulse {
-    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px rgba(168, 216, 255, 0.5)); }
-    50% { transform: scale(1.12); filter: drop-shadow(0 0 12px rgba(255, 107, 157, 0.7)); }
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--color-blue-light) 50%, transparent)); }
+    50% { transform: scale(1.12); filter: drop-shadow(0 0 12px color-mix(in srgb, var(--color-rose) 70%, transparent)); }
 }
 
 /* Hover: 频谱增幅 */
 .btn-music:hover {
     transform: translateY(-3px) scale(var(--btn-scale-hover));
     box-shadow:
-        0 8px 30px rgba(107, 138, 255, 0.3),
-        0 0 40px rgba(182, 107, 255, 0.2),
-        0 0 20px rgba(255, 215, 0, 0.15);
-    border-color: rgba(168, 216, 255, 0.4);
+        0 8px 30px color-mix(in srgb, var(--color-blue) 30%, transparent),
+        0 0 40px color-mix(in srgb, var(--color-purple) 20%, transparent),
+        0 0 20px color-mix(in srgb, var(--color-gold) 15%, transparent);
+    border-color: color-mix(in srgb, var(--color-blue-light) 40%, transparent);
 }
 
 .btn-music:hover::after {
@@ -923,8 +923,8 @@ ul, ol { list-style: none; }
 .btn-music:active {
     transform: translateY(-1px) scale(var(--btn-scale-active));
     box-shadow:
-        0 2px 10px rgba(0, 0, 0, 0.4),
-        inset 0 2px 8px rgba(0, 0, 0, 0.3);
+        0 2px 10px color-mix(in srgb, black 40%, transparent),
+        inset 0 2px 8px color-mix(in srgb, black 30%, transparent);
     transition: transform var(--btn-transition-fast), box-shadow var(--btn-transition-fast);
 }
 
@@ -935,7 +935,7 @@ ul, ol { list-style: none; }
     opacity: 0.45;
     cursor: not-allowed;
     transform: none;
-    border-color: rgba(255, 255, 255, 0.05);
+    border-color: color-mix(in srgb, var(--color-white) 5%, transparent);
 }
 
 .btn-music:disabled::before,
@@ -1318,8 +1318,8 @@ ul, ol { list-style: none; }
 
 .form-input:focus {
     outline: none;
-    border-color: rgba(168, 216, 255, 0.55);
-    box-shadow: 0 0 0 2px rgba(168, 216, 255, 0.12);
+    border-color: color-mix(in srgb, var(--color-blue-light) 55%, transparent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-blue-light) 12%, transparent);
 }
 
 .form-input::placeholder {
@@ -1371,20 +1371,20 @@ ul, ol { list-style: none; }
     cursor: pointer;
     transition: all 0.2s ease;
     border: 1px solid transparent;
-    background: rgba(107, 138, 255, 0.1);
-    color: #A8D8FF;
+    background: color-mix(in srgb, var(--color-blue) 10%, transparent);
+    color: var(--color-blue-light);
     margin: 2px;
 }
 
 .tag-chip:hover {
-    background: rgba(107, 138, 255, 0.2);
-    border-color: rgba(107, 138, 255, 0.4);
+    background: color-mix(in srgb, var(--color-blue) 20%, transparent);
+    border-color: color-mix(in srgb, var(--color-blue) 40%, transparent);
 }
 
 .tag-chip.tag-selected {
-    background: rgba(107, 138, 255, 0.3);
-    border-color: #6B8AFF;
-    color: #fff;
+    background: color-mix(in srgb, var(--color-blue) 30%, transparent);
+    border-color: var(--color-blue);
+    color: var(--color-white);
 }
 
 .tag-chip .tag-remove {
@@ -1399,7 +1399,7 @@ ul, ol { list-style: none; }
 
 .tag-category-label {
     font-size: 11px;
-    color: rgba(255, 255, 255, 0.4);
+    color: color-mix(in srgb, var(--color-white) 40%, transparent);
     text-transform: uppercase;
     margin: 8px 0 4px;
 }
@@ -1409,7 +1409,7 @@ ul, ol { list-style: none; }
     flex-wrap: wrap;
     gap: 4px;
     padding: 12px;
-    background: rgba(255, 255, 255, 0.03);
+    background: color-mix(in srgb, var(--color-white) 3%, transparent);
     border-radius: 8px;
     margin-bottom: 12px;
 }
@@ -1425,8 +1425,8 @@ ul, ol { list-style: none; }
     gap: 6px;
     padding: 10px 12px;
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: color-mix(in srgb, var(--color-white) 3%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
 }
 
 [data-theme="light"] .submission-tag-selector {
@@ -1439,21 +1439,21 @@ ul, ol { list-style: none; }
     border-radius: 16px;
     font-size: 12px;
     cursor: pointer;
-    border: 1px solid rgba(107, 138, 255, 0.2);
+    border: 1px solid color-mix(in srgb, var(--color-blue) 20%, transparent);
     background: transparent;
-    color: rgba(255, 255, 255, 0.5);
+    color: color-mix(in srgb, var(--color-white) 50%, transparent);
     transition: all 0.2s ease;
 }
 
 .submission-tag-selector .tag-chip:hover {
-    border-color: rgba(107, 138, 255, 0.5);
-    color: rgba(255, 255, 255, 0.8);
+    border-color: color-mix(in srgb, var(--color-blue) 50%, transparent);
+    color: color-mix(in srgb, var(--color-white) 80%, transparent);
 }
 
 .submission-tag-selector .tag-chip.active {
-    background: rgba(107, 138, 255, 0.15);
-    border-color: #6B8AFF;
-    color: #A8D8FF;
+    background: color-mix(in srgb, var(--color-blue) 15%, transparent);
+    border-color: var(--color-blue);
+    color: var(--color-blue-light);
 }
 
 [data-theme="light"] .submission-tag-selector .tag-chip {
@@ -1467,8 +1467,12 @@ ul, ol { list-style: none; }
 
 .form-hint {
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.35);
+    color: color-mix(in srgb, var(--color-white) 35%, transparent);
     font-weight: 400;
+}
+
+.form-hint-compact {
+    margin: 0 0 0.5rem;
 }
 
 [data-theme="light"] .form-hint {
@@ -1492,8 +1496,8 @@ ul, ol { list-style: none; }
 .archive-intro {
     padding: 32px;
     border-radius: 20px;
-    background: linear-gradient(135deg, rgba(255,107,157,0.08), rgba(107,138,255,0.08), rgba(182,107,255,0.06));
-    border: 1px solid rgba(255,107,157,0.15);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-rose) 8%, transparent), color-mix(in srgb, var(--color-blue) 8%, transparent), color-mix(in srgb, var(--color-purple) 6%, transparent));
+    border: 1px solid color-mix(in srgb, var(--color-rose) 15%, transparent);
 }
 
 .archive-intro-text {
@@ -1513,7 +1517,7 @@ ul, ol { list-style: none; }
     gap: 8px;
     margin-top: 20px;
     padding-top: 20px;
-    border-top: 1px solid rgba(255,255,255,0.06);
+    border-top: 1px solid color-mix(in srgb, var(--color-white) 6%, transparent);
 }
 
 .archive-info-tag {
@@ -1524,8 +1528,8 @@ ul, ol { list-style: none; }
     border-radius: 100px;
     font-size: 0.8rem;
     font-weight: 500;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: color-mix(in srgb, var(--color-white) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
     color: var(--text-secondary, #a8b0c0);
 }
 
@@ -1577,7 +1581,7 @@ ul, ol { list-style: none; }
     top: 4px;
     bottom: 4px;
     width: 2px;
-    background: linear-gradient(180deg, rgba(255,107,157,0.4), rgba(107,138,255,0.4), rgba(182,107,255,0.2));
+    background: linear-gradient(180deg, color-mix(in srgb, var(--color-rose) 40%, transparent), color-mix(in srgb, var(--color-blue) 40%, transparent), color-mix(in srgb, var(--color-purple) 20%, transparent));
     border-radius: 2px;
 }
 
@@ -1600,8 +1604,8 @@ ul, ol { list-style: none; }
     height: 10px;
     border-radius: 50%;
     background: var(--text-primary, #e8ecf4);
-    border: 2px solid rgba(255,107,157,0.3);
-    box-shadow: 0 0 8px rgba(255,107,157,0.2);
+    border: 2px solid color-mix(in srgb, var(--color-rose) 30%, transparent);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--color-rose) 20%, transparent);
 }
 
 .archive-timeline-era {
@@ -1609,7 +1613,7 @@ ul, ol { list-style: none; }
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: rgba(255,107,157,0.7);
+    color: color-mix(in srgb, var(--color-rose) 70%, transparent);
     margin-bottom: 4px;
 }
 
@@ -1627,7 +1631,7 @@ ul, ol { list-style: none; }
 
 .archive-trait-item {
     padding: 10px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-white) 4%, transparent);
     font-size: 0.88rem;
     line-height: 1.6;
     color: var(--text-secondary, #b8c0d0);
@@ -1659,7 +1663,7 @@ ul, ol { list-style: none; }
     width: 72px;
     font-size: var(--fs-micro);
     font-weight: 600;
-    color: rgba(168,216,255,0.6);
+    color: color-mix(in srgb, var(--color-blue-light) 60%, transparent);
     padding-top: 2px;
 }
 
@@ -1706,8 +1710,8 @@ ul, ol { list-style: none; }
     gap: 12px;
     padding: 10px 14px;
     border-radius: 10px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.05);
+    background: color-mix(in srgb, var(--color-white) 3%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 5%, transparent);
 }
 
 .archive-music-icon {
@@ -1715,7 +1719,7 @@ ul, ol { list-style: none; }
     width: 36px;
     height: 36px;
     border-radius: 8px;
-    background: linear-gradient(135deg, rgba(255,107,157,0.15), rgba(107,138,255,0.15));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-rose) 15%, transparent), color-mix(in srgb, var(--color-blue) 15%, transparent));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1743,8 +1747,8 @@ ul, ol { list-style: none; }
     text-align: center;
     padding: 36px 32px;
     border-radius: 16px;
-    background: linear-gradient(135deg, rgba(255,107,157,0.04), rgba(107,138,255,0.04));
-    border: 1px solid rgba(255,255,255,0.06);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-rose) 4%, transparent), color-mix(in srgb, var(--color-blue) 4%, transparent));
+    border: 1px solid color-mix(in srgb, var(--color-white) 6%, transparent);
 }
 
 .archive-quote-text {
@@ -1767,13 +1771,13 @@ ul, ol { list-style: none; }
     line-height: 1.6;
     padding: 16px 20px;
     border-radius: 10px;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.04);
+    background: color-mix(in srgb, var(--color-white) 2%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 4%, transparent);
     grid-column: 1 / -1;
 }
 
 .archive-source-note a {
-    color: rgba(168,216,255,0.7);
+    color: color-mix(in srgb, var(--color-blue-light) 70%, transparent);
     text-decoration: none;
 }
 
@@ -1818,7 +1822,7 @@ ul, ol { list-style: none; }
     gap: 0.5rem;
     padding: 1.6rem 1.6rem 1.3rem;
     text-decoration: none;
-    color: #fff;
+    color: var(--color-white);
     border: 1px solid color-mix(in srgb, var(--char) 38%, transparent);
     border-radius: 18px;
     background: linear-gradient(160deg, color-mix(in srgb, var(--char) 15%, var(--surface-card)) 0%, var(--surface-card) 72%);
@@ -1839,7 +1843,7 @@ ul, ol { list-style: none; }
     place-items: center;
     border-radius: 50%;
     background: var(--char);
-    color: #fff;
+    color: var(--color-white);
     box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--char) 70%, transparent);
     margin-bottom: 0.3rem;
 }
@@ -1848,7 +1852,7 @@ ul, ol { list-style: none; }
     width: 30px;
     height: 30px;
     fill: none;
-    stroke: #fff;
+    stroke: var(--color-white);
     stroke-width: 1.8;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -1862,13 +1866,13 @@ ul, ol { list-style: none; }
 
 .character-entry-alias {
     font-size: 0.85rem;
-    color: color-mix(in srgb, var(--char) 78%, #fff);
+    color: color-mix(in srgb, var(--char) 78%, var(--color-white));
     font-weight: 500;
 }
 
 .character-entry-tagline {
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.7);
+    color: color-mix(in srgb, var(--color-white) 70%, transparent);
     line-height: 1.6;
 }
 
@@ -1884,7 +1888,7 @@ ul, ol { list-style: none; }
     padding: 0.2rem 0.6rem;
     border-radius: 999px;
     background: color-mix(in srgb, var(--char) 16%, transparent);
-    color: color-mix(in srgb, var(--char) 72%, #fff);
+    color: color-mix(in srgb, var(--char) 72%, var(--color-white));
     border: 1px solid color-mix(in srgb, var(--char) 30%, transparent);
 }
 
@@ -1916,7 +1920,7 @@ ul, ol { list-style: none; }
 }
 
 .character-entry--locked .character-entry-cta {
-    color: rgba(255, 255, 255, 0.7);
+    color: color-mix(in srgb, var(--color-white) 70%, transparent);
 }
 
 /* ---- 替换 emoji 的内联 SVG 图标统一尺寸 ---- */
@@ -1956,7 +1960,7 @@ ul, ol { list-style: none; }
     gap: 0.5rem;
     padding: 1.6rem 1.6rem 1.3rem;
     text-decoration: none;
-    color: #fff;
+    color: var(--color-white);
     border: 1px solid color-mix(in srgb, var(--char) 38%, transparent);
     border-radius: 18px;
     background: linear-gradient(160deg, color-mix(in srgb, var(--char) 15%, var(--surface-card)) 0%, var(--surface-card) 72%);
@@ -1977,7 +1981,7 @@ ul, ol { list-style: none; }
     place-items: center;
     border-radius: 50%;
     background: var(--char);
-    color: #fff;
+    color: var(--color-white);
     box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--char) 70%, transparent);
     margin-bottom: 0.3rem;
 }
@@ -1986,7 +1990,7 @@ ul, ol { list-style: none; }
     width: 30px;
     height: 30px;
     fill: none;
-    stroke: #fff;
+    stroke: var(--color-white);
     stroke-width: 1.8;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -2000,13 +2004,13 @@ ul, ol { list-style: none; }
 
 .character-entry-alias {
     font-size: 0.85rem;
-    color: color-mix(in srgb, var(--char) 78%, #fff);
+    color: color-mix(in srgb, var(--char) 78%, var(--color-white));
     font-weight: 500;
 }
 
 .character-entry-tagline {
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.7);
+    color: color-mix(in srgb, var(--color-white) 70%, transparent);
     line-height: 1.6;
 }
 
@@ -2022,7 +2026,7 @@ ul, ol { list-style: none; }
     padding: 0.2rem 0.6rem;
     border-radius: 999px;
     background: color-mix(in srgb, var(--char) 16%, transparent);
-    color: color-mix(in srgb, var(--char) 72%, #fff);
+    color: color-mix(in srgb, var(--char) 72%, var(--color-white));
     border: 1px solid color-mix(in srgb, var(--char) 30%, transparent);
 }
 
@@ -2054,7 +2058,7 @@ ul, ol { list-style: none; }
 }
 
 .character-entry--locked .character-entry-cta {
-    color: rgba(255, 255, 255, 0.7);
+    color: color-mix(in srgb, var(--color-white) 70%, transparent);
 }
 
 /* ---- 替换 emoji 的内联 SVG 图标统一尺寸 ---- */

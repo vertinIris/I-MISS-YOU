@@ -17,9 +17,9 @@
     background: rgba(20, 20, 35, 0.92);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 107, 157, 0.35);
+    border: 1px solid color-mix(in srgb, var(--color-rose) 35%, transparent);
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.9);
+    color: color-mix(in srgb, var(--color-white) 90%, transparent);
     text-decoration: none;
     opacity: 0.85;
     user-select: none;
@@ -32,7 +32,7 @@
 .donate-fab:hover {
     opacity: 1;
     transform: translateY(-2px);
-    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.45), 0 0 18px rgba(255, 107, 157, 0.22);
+    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.45), 0 0 18px color-mix(in srgb, var(--color-rose) 22%, transparent);
 }
 .donate-fab:active { transform: translateY(0) scale(0.98); }
 
@@ -46,9 +46,9 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    border: 1px solid rgba(255, 107, 157, 0.45);
-    background: linear-gradient(135deg, rgba(255, 107, 157, 0.22), rgba(182, 107, 255, 0.18));
-    color: #fff;
+    border: 1px solid color-mix(in srgb, var(--color-rose) 45%, transparent);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-rose) 22%, transparent), color-mix(in srgb, var(--color-purple) 18%, transparent));
+    color: var(--color-white);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -56,9 +56,9 @@
 }
 
 .donate-fab:hover .donate-fab-icon {
-    background: linear-gradient(135deg, rgba(255, 107, 157, 0.38), rgba(182, 107, 255, 0.28));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-rose) 38%, transparent), color-mix(in srgb, var(--color-purple) 28%, transparent));
     transform: scale(1.08) rotate(-8deg);
-    box-shadow: 0 0 16px rgba(255, 107, 157, 0.35);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--color-rose) 35%, transparent);
 }
 
 .donate-fab-text {
@@ -97,8 +97,8 @@
     border-radius: 24px;
     padding: 32px 28px 28px;
     background: rgba(16, 16, 28, 0.95);
-    border: 1px solid rgba(255, 107, 157, 0.25);
-    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), 0 0 40px rgba(255, 107, 157, 0.12);
+    border: 1px solid color-mix(in srgb, var(--color-rose) 25%, transparent);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), 0 0 40px color-mix(in srgb, var(--color-rose) 12%, transparent);
     transform: translateY(16px) scale(0.96);
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -115,8 +115,8 @@
     height: 34px;
     border-radius: 50%;
     border: none;
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.7);
+    background: color-mix(in srgb, var(--color-white) 8%, transparent);
+    color: color-mix(in srgb, var(--color-white) 70%, transparent);
     font-size: 1.4rem;
     line-height: 1;
     cursor: pointer;
@@ -124,8 +124,8 @@
 }
 
 .donate-close:hover {
-    background: rgba(255, 107, 157, 0.2);
-    color: #fff;
+    background: color-mix(in srgb, var(--color-rose) 20%, transparent);
+    color: var(--color-white);
     transform: rotate(90deg);
 }
 
@@ -138,14 +138,14 @@
     font-size: 2.8rem;
     line-height: 1;
     margin-bottom: 10px;
-    filter: drop-shadow(0 0 12px rgba(255, 107, 157, 0.35));
+    filter: drop-shadow(0 0 12px color-mix(in srgb, var(--color-rose) 35%, transparent));
 }
 
 .donate-title {
     font-size: 1.35rem;
     font-weight: 700;
     margin: 0 0 6px;
-    background: linear-gradient(90deg, #FFB6D9, #A8D8FF, #FFD9A8);
+    background: linear-gradient(90deg, var(--color-pink-warm), var(--color-blue-light), #FFD9A8);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -154,7 +154,7 @@
 .donate-subtitle {
     margin: 0;
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.65);
+    color: color-mix(in srgb, var(--color-white) 65%, transparent);
     line-height: 1.5;
 }
 
@@ -170,7 +170,7 @@
     width: 180px;
     height: 180px;
     border-radius: 16px;
-    background: #fff;
+    background: var(--color-white);
     padding: 10px;
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
     position: relative;
@@ -200,9 +200,9 @@
     gap: 6px;
     padding: 7px 14px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: rgba(255, 255, 255, 0.07);
-    color: rgba(255, 255, 255, 0.72);
+    border: 1px solid color-mix(in srgb, var(--color-white) 15%, transparent);
+    background: color-mix(in srgb, var(--color-white) 7%, transparent);
+    color: color-mix(in srgb, var(--color-white) 72%, transparent);
     font-size: 0.85rem;
     font-weight: 500;
     cursor: pointer;
@@ -210,33 +210,33 @@
 }
 
 .donate-tab:hover {
-    background: rgba(255, 255, 255, 0.13);
-    color: #fff;
+    background: color-mix(in srgb, var(--color-white) 13%, transparent);
+    color: var(--color-white);
     transform: translateY(-1px);
 }
 
 .donate-tab.is-active {
-    background: linear-gradient(135deg, rgba(107, 138, 255, 0.35), rgba(255, 107, 157, 0.32));
-    border-color: rgba(168, 216, 255, 0.45);
-    color: #fff;
-    box-shadow: 0 4px 14px rgba(107, 138, 255, 0.22);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-blue) 35%, transparent), color-mix(in srgb, var(--color-rose) 32%, transparent));
+    border-color: color-mix(in srgb, var(--color-blue-light) 45%, transparent);
+    color: var(--color-white);
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--color-blue) 22%, transparent);
 }
 
 .donate-tab-dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.35);
+    background: color-mix(in srgb, var(--color-white) 35%, transparent);
     transition: background 0.2s ease;
 }
-.donate-tab.is-active .donate-tab-dot { background: #A8D8FF; box-shadow: 0 0 6px rgba(168, 216, 255, 0.7); }
-.donate-tab[data-method="alipay"].is-active .donate-tab-dot { background: #A8D8FF; }
+.donate-tab.is-active .donate-tab-dot { background: var(--color-blue-light); box-shadow: 0 0 6px color-mix(in srgb, var(--color-blue-light) 70%, transparent); }
+.donate-tab[data-method="alipay"].is-active .donate-tab-dot { background: var(--color-blue-light); }
 .donate-tab[data-method="wechat"].is-active .donate-tab-dot { background: #7FD99E; }
 
 .donate-note {
     text-align: center;
     font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.55);
+    color: color-mix(in srgb, var(--color-white) 55%, transparent);
     line-height: 1.6;
     max-width: 300px;
 }
@@ -245,7 +245,7 @@
     margin: 12px 0 0;
     text-align: center;
     font-size: 0.82rem;
-    color: rgba(255, 255, 255, 0.72);
+    color: color-mix(in srgb, var(--color-white) 72%, transparent);
     max-width: 320px;
 }
 
@@ -254,9 +254,9 @@
     margin: 0 4px;
     padding: 2px 8px;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: #fff;
+    background: color-mix(in srgb, var(--color-white) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 12%, transparent);
+    color: var(--color-white);
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     font-size: 12px;
     user-select: all;
@@ -279,9 +279,9 @@
 .donate-btn {
     padding: 10px 20px;
     border-radius: var(--radius-full, 999px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: rgba(255, 255, 255, 0.08);
-    color: #fff;
+    border: 1px solid color-mix(in srgb, var(--color-white) 15%, transparent);
+    background: color-mix(in srgb, var(--color-white) 8%, transparent);
+    color: var(--color-white);
     font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
@@ -289,7 +289,7 @@
 }
 
 .donate-btn:hover {
-    background: rgba(255, 255, 255, 0.14);
+    background: color-mix(in srgb, var(--color-white) 14%, transparent);
     transform: translateY(-1px);
 }
 
@@ -299,10 +299,10 @@
 }
 
 .donate-btn-primary:hover {
-    box-shadow: 0 4px 16px rgba(255, 107, 157, 0.35);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-rose) 35%, transparent);
 }
 
-@media (max-width: 520px) {
+@media (max-width: 480px) {
     .donate-fab { padding: 7px 8px; gap: 8px; }
     .donate-fab-text { display: none; }
     .donate-panel { padding: 26px 20px 22px; }
@@ -315,27 +315,27 @@
 
 /* ---- 亮色主题覆盖 ---- */
 [data-theme="light"] .donate-fab {
-    background: rgba(255, 255, 255, 0.92);
-    border-color: rgba(255, 107, 157, 0.35);
+    background: color-mix(in srgb, var(--color-white) 92%, transparent);
+    border-color: color-mix(in srgb, var(--color-rose) 35%, transparent);
     color: rgba(0, 0, 0, 0.75);
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
 }
 
 [data-theme="light"] .donate-fab-icon {
-    border-color: rgba(255, 107, 157, 0.45);
-    background: linear-gradient(135deg, rgba(255, 107, 157, 0.14), rgba(182, 107, 255, 0.12));
+    border-color: color-mix(in srgb, var(--color-rose) 45%, transparent);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-rose) 14%, transparent), color-mix(in srgb, var(--color-purple) 12%, transparent));
     color: #D44D7A;
 }
 
 [data-theme="light"] .donate-fab:hover .donate-fab-icon {
-    background: linear-gradient(135deg, rgba(255, 107, 157, 0.24), rgba(182, 107, 255, 0.2));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-rose) 24%, transparent), color-mix(in srgb, var(--color-purple) 20%, transparent));
 }
 [data-theme="light"] .donate-modal { background: rgba(0, 0, 0, 0.35); }
 
 [data-theme="light"] .donate-panel {
-    background: rgba(255, 255, 255, 0.96);
-    border-color: rgba(255, 107, 157, 0.28);
-    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.18), 0 0 40px rgba(255, 107, 157, 0.08);
+    background: color-mix(in srgb, var(--color-white) 96%, transparent);
+    border-color: color-mix(in srgb, var(--color-rose) 28%, transparent);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.18), 0 0 40px color-mix(in srgb, var(--color-rose) 8%, transparent);
 }
 
 [data-theme="light"] .donate-close {
@@ -344,7 +344,7 @@
 }
 
 [data-theme="light"] .donate-close:hover {
-    background: rgba(255, 107, 157, 0.14);
+    background: color-mix(in srgb, var(--color-rose) 14%, transparent);
     color: #8A2348;
 }
 
@@ -370,10 +370,10 @@
 }
 
 [data-theme="light"] .donate-tab.is-active {
-    background: linear-gradient(135deg, rgba(107, 138, 255, 0.22), rgba(255, 107, 157, 0.18));
-    border-color: rgba(107, 138, 255, 0.4);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-blue) 22%, transparent), color-mix(in srgb, var(--color-rose) 18%, transparent));
+    border-color: color-mix(in srgb, var(--color-blue) 40%, transparent);
     color: rgba(0, 0, 0, 0.85);
 }
 [data-theme="light"] .donate-tab-dot { background: rgba(0, 0, 0, 0.25); }
-[data-theme="light"] .donate-tab.is-active .donate-tab-dot { background: #6B8AFF; box-shadow: none; }
+[data-theme="light"] .donate-tab.is-active .donate-tab-dot { background: var(--color-blue); box-shadow: none; }
 [data-theme="light"] .donate-tab[data-method="wechat"].is-active .donate-tab-dot { background: #2AA876; }

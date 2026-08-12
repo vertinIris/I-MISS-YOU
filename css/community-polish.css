@@ -29,7 +29,7 @@
 .community-filter-btn.active,
 .tag-chip.active {
     transform: translateY(-1px);
-    box-shadow: 0 8px 20px rgba(255,107,157,.22);
+    box-shadow: 0 8px 20px color-mix(in srgb, var(--color-rose) 22%, transparent);
 }
 
 /* 空状态：入场轻弹 */
@@ -58,8 +58,8 @@
     gap: 6px;
     padding: 5px 12px !important;
     border-radius: 999px;
-    border: 1px solid rgba(168, 216, 255, .32);
-    background: linear-gradient(120deg, rgba(107, 138, 255, .14), rgba(255, 107, 157, .12));
+    border: 1px solid color-mix(in srgb, var(--color-blue-light) 32%, transparent);
+    background: linear-gradient(120deg, color-mix(in srgb, var(--color-blue) 14%, transparent), color-mix(in srgb, var(--color-rose) 12%, transparent));
     color: var(--drifter-blue-light, #A8D8FF) !important;
     line-height: 1;
     transition: border-color .25s ease, background .25s ease, color .25s ease, transform .25s ease;
@@ -74,9 +74,9 @@
 
 .nav-link-forum:hover,
 .nav-link-forum:focus-visible {
-    color: #fff !important;
-    border-color: rgba(255, 107, 157, .55);
-    background: linear-gradient(120deg, rgba(107, 138, 255, .28), rgba(255, 107, 157, .26));
+    color: var(--color-white) !important;
+    border-color: color-mix(in srgb, var(--color-rose) 55%, transparent);
+    background: linear-gradient(120deg, color-mix(in srgb, var(--color-blue) 28%, transparent), color-mix(in srgb, var(--color-rose) 26%, transparent));
     transform: translateY(-1px);
 }
 .nav-link-forum:focus-visible { outline: 2px solid var(--aimisi-pink, #FF6B9D); outline-offset: 2px; }

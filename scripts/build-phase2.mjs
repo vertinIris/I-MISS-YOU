@@ -20,7 +20,7 @@ const DIST = path.join(ROOT, 'dist');
 // 1. 文件清单与顺序（严格按 index.html / forum/index.html 中 <script> 出现顺序）
 // ============================================================
 
-// 主站 18 个本地 JS（不含 CDN supabase.min.js）
+// 主站本地 JS（不含 CDN supabase.min.js）· v11.0 追加 signature-utils.js
 const MAIN_JS = [
   'js/security-shield.js',
   'js/content-utils.js',
@@ -39,11 +39,12 @@ const MAIN_JS = [
   'js/snow-realm.js',
   'js/modal-a11y.js',
   'js/app-toast.js',
+  'js/signature-utils.js',
   'js/main.js',
   'js/donation.js',
 ];
 
-// 论坛 15 个本地 JS（不含 CDN supabase.min.js；含跨目录引用的 ../js/*）
+// 论坛本地 JS（不含 CDN supabase.min.js；含跨目录引用的 ../js/*）· v11.0 追加 signature-utils.js
 const FORUM_JS = [
   'forum/js/forum-import-data.js',
   'forum/js/forum-data.js',
@@ -60,10 +61,11 @@ const FORUM_JS = [
   'forum/js/forum-cloud.js',
   'forum/js/forum-chat.js',
   'forum/js/forum-easter.js',
+  'js/signature-utils.js',       // ../js/signature-utils.js
   'js/donation.js',              // ../js/donation.js
 ];
 
-// 主站 CSS（index.html 中 <link> 顺序）
+// 主站 CSS（index.html 中 <link> 顺序）· v11.0 追加 snow-signature + snow-weapons
 const MAIN_CSS = [
   'css/tokens-base.css',
   'css/tokens-snow.css',
@@ -73,9 +75,11 @@ const MAIN_CSS = [
   'css/banding-fix.css',
   'css/donation.css',
   'css/snow-atmosphere.css',
+  'css/snow-signature.css',
+  'css/snow-weapons.css',
 ];
 
-// 论坛 CSS（forum/index.html 中 <link> 顺序）
+// 论坛 CSS（forum/index.html 中 <link> 顺序）· v11.0 追加 stf-signature + stf-weapons
 const FORUM_CSS = [
   'css/tokens-base.css',
   'css/forum-shared.css',
@@ -85,15 +89,18 @@ const FORUM_CSS = [
   'forum/forum-easter.css',
   'forum/forum-theme.css',
   'forum/forum-visual.css',
+  'css/stf-signature.css',
+  'css/stf-weapons.css',
 ];
 
-// 角色页 CSS（7 个角色页共用，5 个文件）
+// 角色页 CSS（7 个角色页共用）· v11.0 追加 snow-signature
 const ARCHIVE_CSS = [
   'css/tokens-base.css',
   'css/tokens-snow.css',
   'css/archive-subset.css',
   'css/snow-atmosphere.css',
   'css/zone-atmosphere.css',
+  'css/snow-signature.css',
 ];
 
 // 全局保留符号（与 Stage I 一致）
@@ -109,6 +116,7 @@ const RESERVED_GLOBALS = [
   'reconcileCommunityGrid','syncAllPostCommentCounts','manualRefreshAll',
   'toggleBookmark','openDonationModal','closeDonationModal','stripeCheckout',
   'FlyingEdelweissDonate','forumSupabase','StarTorchForum',
+  '__SNOW_SIG__',
 ];
 
 const TERSER_OPTS = {

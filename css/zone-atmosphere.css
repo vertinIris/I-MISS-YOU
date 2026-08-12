@@ -93,7 +93,7 @@ body[data-char] {
   font-size: 0.78rem !important;
   letter-spacing: 0.2em;
   text-transform: none;
-  color: color-mix(in srgb, var(--char, #e879a8) 70%, #fff) !important;
+  color: color-mix(in srgb, var(--char, #e879a8) 70%, var(--color-white)) !important;
   margin-top: 0.55rem !important;
 }
 

@@ -1,4 +1,4 @@
-﻿/* ========================================
+/* ========================================
    飞行雪绒 — Main Interaction System
    Theme Toggle · Scroll Reveal · Like · Easter Egg · Magnetic
    增强浏览器兼容性：Edge · 夸克 · Safari · 旧版浏览器
@@ -3399,7 +3399,8 @@
             : '';
         var cardCharColor = charColorForSubmission(s);
         var cardCharStyle = cardCharColor ? ' style="--char:' + cardCharColor + '"' : '';
-        return '<article class="community-card" data-id="' + escapeHTML(s.id) + '"' + cardCharStyle + '>' +
+        return '<article class="sn-letter-card community-card" data-id="' + escapeHTML(s.id) + '"' + cardCharStyle + '>' +
+            '<span class="sig-tape-corner sig-tape-corner--tr sig-tape-corner--loose"></span>' +
             '<div class="community-card-header">' +
             '<div class="community-card-avatar" style="background:' + bgColor + '">' + escapeHTML(initial) + '</div>' +
             '<div class="community-card-info">' +

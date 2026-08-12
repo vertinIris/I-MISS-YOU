@@ -91,8 +91,8 @@ ul, ol { list-style: none; }
 .archive-intro {
     padding: 32px;
     border-radius: 20px;
-    background: linear-gradient(135deg, rgba(255,107,157,0.08), rgba(107,138,255,0.08), rgba(182,107,255,0.06));
-    border: 1px solid rgba(255,107,157,0.15);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-rose) 8%, transparent), color-mix(in srgb, var(--color-blue) 8%, transparent), color-mix(in srgb, var(--color-purple) 6%, transparent));
+    border: 1px solid color-mix(in srgb, var(--color-rose) 15%, transparent);
 }
 
 .archive-intro-text {
@@ -112,7 +112,7 @@ ul, ol { list-style: none; }
     gap: 8px;
     margin-top: 20px;
     padding-top: 20px;
-    border-top: 1px solid rgba(255,255,255,0.06);
+    border-top: 1px solid color-mix(in srgb, var(--color-white) 6%, transparent);
 }
 
 .archive-info-tag {
@@ -123,8 +123,8 @@ ul, ol { list-style: none; }
     border-radius: 100px;
     font-size: 0.8rem;
     font-weight: 500;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: color-mix(in srgb, var(--color-white) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
     color: var(--text-secondary, #a8b0c0);
 }
 
@@ -176,7 +176,7 @@ ul, ol { list-style: none; }
     top: 4px;
     bottom: 4px;
     width: 2px;
-    background: linear-gradient(180deg, rgba(255,107,157,0.4), rgba(107,138,255,0.4), rgba(182,107,255,0.2));
+    background: linear-gradient(180deg, color-mix(in srgb, var(--color-rose) 40%, transparent), color-mix(in srgb, var(--color-blue) 40%, transparent), color-mix(in srgb, var(--color-purple) 20%, transparent));
     border-radius: 2px;
 }
 
@@ -199,8 +199,8 @@ ul, ol { list-style: none; }
     height: 10px;
     border-radius: 50%;
     background: var(--text-primary, #e8ecf4);
-    border: 2px solid rgba(255,107,157,0.3);
-    box-shadow: 0 0 8px rgba(255,107,157,0.2);
+    border: 2px solid color-mix(in srgb, var(--color-rose) 30%, transparent);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--color-rose) 20%, transparent);
 }
 
 .archive-timeline-era {
@@ -208,7 +208,7 @@ ul, ol { list-style: none; }
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: rgba(255,107,157,0.7);
+    color: color-mix(in srgb, var(--color-rose) 70%, transparent);
     margin-bottom: 4px;
 }
 
@@ -226,7 +226,7 @@ ul, ol { list-style: none; }
 
 .archive-trait-item {
     padding: 10px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-white) 4%, transparent);
     font-size: 0.88rem;
     line-height: 1.6;
     color: var(--text-secondary, #b8c0d0);
@@ -258,7 +258,7 @@ ul, ol { list-style: none; }
     width: 72px;
     font-size: var(--fs-micro);
     font-weight: 600;
-    color: rgba(168,216,255,0.6);
+    color: color-mix(in srgb, var(--color-blue-light) 60%, transparent);
     padding-top: 2px;
 }
 
@@ -305,8 +305,8 @@ ul, ol { list-style: none; }
     gap: 12px;
     padding: 10px 14px;
     border-radius: 10px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.05);
+    background: color-mix(in srgb, var(--color-white) 3%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 5%, transparent);
 }
 
 .archive-music-icon {
@@ -314,7 +314,7 @@ ul, ol { list-style: none; }
     width: 36px;
     height: 36px;
     border-radius: 8px;
-    background: linear-gradient(135deg, rgba(255,107,157,0.15), rgba(107,138,255,0.15));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-rose) 15%, transparent), color-mix(in srgb, var(--color-blue) 15%, transparent));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -342,8 +342,8 @@ ul, ol { list-style: none; }
     text-align: center;
     padding: 36px 32px;
     border-radius: 16px;
-    background: linear-gradient(135deg, rgba(255,107,157,0.04), rgba(107,138,255,0.04));
-    border: 1px solid rgba(255,255,255,0.06);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-rose) 4%, transparent), color-mix(in srgb, var(--color-blue) 4%, transparent));
+    border: 1px solid color-mix(in srgb, var(--color-white) 6%, transparent);
 }
 
 .archive-quote-text {
@@ -366,13 +366,13 @@ ul, ol { list-style: none; }
     line-height: 1.6;
     padding: 16px 20px;
     border-radius: 10px;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.04);
+    background: color-mix(in srgb, var(--color-white) 2%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 4%, transparent);
     grid-column: 1 / -1;
 }
 
 .archive-source-note a {
-    color: rgba(168,216,255,0.7);
+    color: color-mix(in srgb, var(--color-blue-light) 70%, transparent);
     text-decoration: none;
 }
 
@@ -417,7 +417,7 @@ ul, ol { list-style: none; }
     gap: 0.5rem;
     padding: 1.6rem 1.6rem 1.3rem;
     text-decoration: none;
-    color: #fff;
+    color: var(--color-white);
     border: 1px solid color-mix(in srgb, var(--char) 38%, transparent);
     border-radius: 18px;
     background: linear-gradient(160deg, color-mix(in srgb, var(--char) 15%, var(--surface-card)) 0%, var(--surface-card) 72%);
@@ -438,7 +438,7 @@ ul, ol { list-style: none; }
     place-items: center;
     border-radius: 50%;
     background: var(--char);
-    color: #fff;
+    color: var(--color-white);
     box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--char) 70%, transparent);
     margin-bottom: 0.3rem;
 }
@@ -447,7 +447,7 @@ ul, ol { list-style: none; }
     width: 30px;
     height: 30px;
     fill: none;
-    stroke: #fff;
+    stroke: var(--color-white);
     stroke-width: 1.8;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -461,13 +461,13 @@ ul, ol { list-style: none; }
 
 .character-entry-alias {
     font-size: 0.85rem;
-    color: color-mix(in srgb, var(--char) 78%, #fff);
+    color: color-mix(in srgb, var(--char) 78%, var(--color-white));
     font-weight: 500;
 }
 
 .character-entry-tagline {
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.7);
+    color: color-mix(in srgb, var(--color-white) 70%, transparent);
     line-height: 1.6;
 }
 
@@ -483,7 +483,7 @@ ul, ol { list-style: none; }
     padding: 0.2rem 0.6rem;
     border-radius: 999px;
     background: color-mix(in srgb, var(--char) 16%, transparent);
-    color: color-mix(in srgb, var(--char) 72%, #fff);
+    color: color-mix(in srgb, var(--char) 72%, var(--color-white));
     border: 1px solid color-mix(in srgb, var(--char) 30%, transparent);
 }
 
@@ -515,7 +515,7 @@ ul, ol { list-style: none; }
 }
 
 .character-entry--locked .character-entry-cta {
-    color: rgba(255, 255, 255, 0.7);
+    color: color-mix(in srgb, var(--color-white) 70%, transparent);
 }
 
 /* ---- 替换 emoji 的内联 SVG 图标统一尺寸 ---- */
@@ -552,16 +552,16 @@ ul, ol { list-style: none; }
     justify-content: space-between;
     gap: 1rem;
     padding: 0.8rem 1.2rem;
-    background: rgba(10, 12, 24, 0.9);
+    background: color-mix(in srgb, var(--neutral-900) 90%, transparent);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
 }
 
 .zone-topbar .zone-home {
     font-family: var(--font-serif, "Noto Serif SC");
     font-weight: 700;
-    color: #fff;
+    color: var(--color-white);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
@@ -586,19 +586,19 @@ ul, ol { list-style: none; }
     padding: 0.3rem 0.8rem;
     border-radius: 999px;
     text-decoration: none;
-    color: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: color-mix(in srgb, var(--color-white) 70%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 12%, transparent);
     white-space: nowrap;
     flex: none;
 }
 
 .zone-switch a:hover {
-    color: #fff;
+    color: var(--color-white);
     border-color: var(--char, #F4729B);
 }
 
 .zone-switch .is-active {
-    color: #fff;
+    color: var(--color-white);
     background: color-mix(in srgb, var(--char, #F4729B) 22%, transparent);
     border-color: var(--char, #F4729B);
 }
@@ -624,7 +624,7 @@ ul, ol { list-style: none; }
     display: grid;
     place-items: center;
     background: var(--char);
-    color: #fff;
+    color: var(--color-white);
     box-shadow: 0 10px 30px -10px color-mix(in srgb, var(--char) 70%, transparent);
 }
 
@@ -632,7 +632,7 @@ ul, ol { list-style: none; }
     width: 44px;
     height: 44px;
     fill: none;
-    stroke: #fff;
+    stroke: var(--color-white);
     stroke-width: 1.6;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -642,19 +642,19 @@ ul, ol { list-style: none; }
     font-family: var(--font-serif, "Noto Serif SC");
     font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 900;
-    color: #fff;
+    color: var(--color-white);
 }
 
 .zone-hero-alias {
     font-size: var(--fs-body);
-    color: color-mix(in srgb, var(--char) 75%, #fff);
+    color: color-mix(in srgb, var(--char) 75%, var(--color-white));
     margin-top: 0.3rem;
 }
 
 .zone-hero-tagline {
     max-width: 640px;
     margin: 0.8rem auto 0;
-    color: rgba(255, 255, 255, 0.72);
+    color: color-mix(in srgb, var(--color-white) 72%, transparent);
     line-height: 1.7;
 }
 
@@ -663,16 +663,16 @@ ul, ol { list-style: none; }
     margin: 1.5rem auto 0;
     padding: 0 1.2rem;
     font-size: 0.82rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: color-mix(in srgb, var(--color-white) 60%, transparent);
 }
 
 .zone-breadcrumb a {
-    color: rgba(255, 255, 255, 0.6);
+    color: color-mix(in srgb, var(--color-white) 60%, transparent);
     text-decoration: none;
 }
 
 .zone-breadcrumb a:hover {
-    color: #fff;
+    color: var(--color-white);
 }
 
 .zone-breadcrumb .sep {
@@ -699,13 +699,13 @@ ul, ol { list-style: none; }
 
 .zone-stat-label {
     font-size: 0.72rem;
-    color: rgba(255, 255, 255, 0.5);
+    color: color-mix(in srgb, var(--color-white) 50%, transparent);
     letter-spacing: 0.05em;
 }
 
 .zone-stat-value {
     font-size: 0.92rem;
-    color: #fff;
+    color: var(--color-white);
     margin-top: 0.3rem;
     line-height: 1.5;
     word-break: break-word;
@@ -732,7 +732,7 @@ ul, ol { list-style: none; }
 }
 
 .module[open] {
-    border-color: color-mix(in srgb, var(--char, #F4729B) 40%, rgba(255,255,255,0.12));
+    border-color: color-mix(in srgb, var(--char, #F4729B) 40%, color-mix(in srgb, var(--color-white) 12%, transparent));
 }
 
 .module > summary {
@@ -745,7 +745,7 @@ ul, ol { list-style: none; }
     font-family: var(--font-serif, "Noto Serif SC");
     font-size: 1.15rem;
     font-weight: 700;
-    color: #fff;
+    color: var(--color-white);
 }
 
 .module > summary::-webkit-details-marker {
@@ -768,7 +768,7 @@ ul, ol { list-style: none; }
     width: 1.2rem;
     height: 1.2rem;
     fill: none;
-    stroke: rgba(255, 255, 255, 0.5);
+    stroke: color-mix(in srgb, var(--color-white) 50%, transparent);
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -797,9 +797,9 @@ ul, ol { list-style: none; }
     margin: 0 auto 3rem;
     padding: 1.2rem 1.2rem 0;
     font-size: 0.78rem;
-    color: rgba(255, 255, 255, 0.55);
+    color: color-mix(in srgb, var(--color-white) 55%, transparent);
     line-height: 1.7;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
 }
 
 [data-char="aimisi"]  { --char: var(--aimisi-pink); }
@@ -819,9 +819,9 @@ ul, ol { list-style: none; }
     font-weight: 600;
     letter-spacing: 0.04em;
     color: #E8ECFF;
-    background: linear-gradient(135deg, rgba(107,138,255,0.35), rgba(184,156,217,0.35));
-    border: 1px solid rgba(168,216,255,0.5);
-    box-shadow: 0 0 12px rgba(107,138,255,0.25);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-blue) 35%, transparent), rgba(184,156,217,0.35));
+    border: 1px solid color-mix(in srgb, var(--color-blue-light) 50%, transparent);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--color-blue) 25%, transparent);
 }
 
 .archive-note {
@@ -830,8 +830,8 @@ ul, ol { list-style: none; }
     font-size: 0.85rem;
     line-height: 1.7;
     color: rgba(232,236,255,0.78);
-    background: rgba(107,138,255,0.08);
-    border-left: 3px solid rgba(168,216,255,0.55);
+    background: color-mix(in srgb, var(--color-blue) 8%, transparent);
+    border-left: 3px solid color-mix(in srgb, var(--color-blue-light) 55%, transparent);
     border-radius: 0 10px 10px 0;
 }
 

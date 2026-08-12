@@ -13,7 +13,7 @@
     margin: 0;
     font-size: 12px;
     letter-spacing: 0.04em;
-    color: rgba(240, 244, 255, 0.42);
+    color: color-mix(in srgb, var(--color-snow) 42%, transparent);
 }
 
 .stf-hidden-trigger {
@@ -23,7 +23,7 @@
     width: 16px;
     height: 16px;
     margin: 0 4px;
-    color: rgba(240,244,255,.35);
+    color: color-mix(in srgb, var(--color-snow) 35%, transparent);
     cursor: pointer;
     vertical-align: middle;
     transition: color .25s, transform .25s;
@@ -67,7 +67,7 @@
     width: 160px;
     height: 160px;
     border-radius: 50%;
-    background: conic-gradient(from 0deg, #FF6B9D, #A8D8FF, #B66BFF, #FF6B9D);
+    background: conic-gradient(from 0deg, var(--color-rose), var(--color-blue-light), var(--color-purple), var(--color-rose));
     opacity: 0;
     filter: blur(6px);
     transform: scale(.2);
@@ -138,7 +138,7 @@
     position: absolute;
     inset: 18%;
     border-radius: 50%;
-    border: 2px solid rgba(168,216,255,.5);
+    border: 2px solid color-mix(in srgb, var(--color-blue-light) 50%, transparent);
     opacity: 0;
 }
 
@@ -147,12 +147,12 @@
 }
 
 .stf-easter-overlay.is-active .stf-resonance-wave--2 {
-    border-color: rgba(182,107,255,.5);
+    border-color: color-mix(in srgb, var(--color-purple) 50%, transparent);
     animation-delay: .5s;
 }
 
 .stf-easter-overlay.is-active .stf-resonance-wave--3 {
-    border-color: rgba(255,107,157,.55);
+    border-color: color-mix(in srgb, var(--color-rose) 55%, transparent);
     animation-delay: 1s;
 }
 
@@ -166,7 +166,7 @@
     position: absolute;
     inset: 24%;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,182,217,.55), rgba(168,216,255,.2) 45%, transparent 70%);
+    background: radial-gradient(circle, color-mix(in srgb, var(--color-pink-warm) 55%, transparent), color-mix(in srgb, var(--color-blue-light) 20%, transparent) 45%, transparent 70%);
     filter: blur(8px);
     opacity: 0;
 }
@@ -184,7 +184,7 @@
     position: relative;
     width: 62%;
     height: 62%;
-    filter: drop-shadow(0 0 18px rgba(255,107,157,.6));
+    filter: drop-shadow(0 0 18px color-mix(in srgb, var(--color-rose) 60%, transparent));
     animation: stf-flake-spin 14s linear infinite;
 }
 
@@ -200,9 +200,9 @@
     gap: 8px;
     padding: 18px 30px;
     border-radius: 20px;
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(168,216,255,.22);
-    box-shadow: 0 18px 48px rgba(0,0,0,.4), inset 0 0 30px color-mix(in srgb, var(--stf-brand, #6d8fd6) 8%, transparent);
+    background: color-mix(in srgb, var(--color-white) 5%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-blue-light) 22%, transparent);
+    box-shadow: 0 18px 48px color-mix(in srgb, black 40%, transparent), inset 0 0 30px color-mix(in srgb, var(--stf-brand, #6d8fd6) 8%, transparent);
     backdrop-filter: blur(8px);
     opacity: 0;
     transform: translateY(14px);
@@ -216,7 +216,7 @@
 
 .stf-freq-label {
     font-size: 11px; letter-spacing: .34em;
-    color: rgba(168,216,255,.8); text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-blue-light) 80%, transparent); text-transform: uppercase;
 }
 
 .stf-freq-digits {
@@ -227,29 +227,29 @@
 }
 
 .stf-freq-digit {
-    background: linear-gradient(180deg, #FFF, #FFB6D9 60%, #FF6B9D);
+    background: linear-gradient(180deg, var(--color-white), var(--color-pink-warm) 60%, var(--color-rose));
     -webkit-background-clip: text; background-clip: text; color: transparent;
-    text-shadow: 0 0 26px rgba(255,107,157,.35);
+    text-shadow: 0 0 26px color-mix(in srgb, var(--color-rose) 35%, transparent);
 }
 
 .stf-freq-line {
     width: 70%; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(168,216,255,.7), transparent);
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-blue-light) 70%, transparent), transparent);
 }
 .stf-freq-line i { display: block; }
 
 .stf-freq-sub {
     font-size: 13px; letter-spacing: .12em;
-    color: rgba(240,244,255,.72);
+    color: color-mix(in srgb, var(--color-snow) 72%, transparent);
 }
 
 /* 屏幕轻微粉闪（进入另一世界） */
 .stf-easter-overlay.is-active { animation: stf-screen-flash 2s ease forwards; }
 
 @keyframes stf-screen-flash {
-    0%   { box-shadow: inset 0 0 0 0 rgba(255,107,157,0); }
-    40%  { box-shadow: inset 0 0 160px 40px rgba(255,107,157,.18); }
-    100% { box-shadow: inset 0 0 0 0 rgba(255,107,157,0); }
+    0%   { box-shadow: inset 0 0 0 0 color-mix(in srgb, var(--color-rose) 0%, transparent); }
+    40%  { box-shadow: inset 0 0 160px 40px color-mix(in srgb, var(--color-rose) 18%, transparent); }
+    100% { box-shadow: inset 0 0 0 0 color-mix(in srgb, var(--color-rose) 0%, transparent); }
 }
 
 /* 音符粒子（从像素角色身边飘散） */
@@ -258,7 +258,7 @@
     z-index: 3;
     font-size: 20px;
     color: var(--aimisi-pink, #FF6B9D);
-    text-shadow: 0 0 10px rgba(255,107,157,.8);
+    text-shadow: 0 0 10px color-mix(in srgb, var(--color-rose) 80%, transparent);
     opacity: 0;
     pointer-events: none;
 }
@@ -339,8 +339,8 @@
     background-clip: text;
     color: transparent;
 }
-.stf-welcome p { font-size: 14px; line-height: 1.8; color: rgba(240,244,255,.78); margin: 0 0 16px; }
-.stf-welcome-hint { font-size: 13px; color: rgba(240,244,255,.55); margin-bottom: 0; }
+.stf-welcome p { font-size: 14px; line-height: 1.8; color: color-mix(in srgb, var(--color-snow) 78%, transparent); margin: 0 0 16px; }
+.stf-welcome-hint { font-size: 13px; color: color-mix(in srgb, var(--color-snow) 55%, transparent); margin-bottom: 0; }
 .stf-welcome-hint b { color: var(--stf-gold, #E8C56A); font-weight: 600; }
 .stf-welcome-actions { margin-top: 26px; }
 
@@ -351,7 +351,7 @@
     margin: 0;
     font-size: 14px;
     letter-spacing: .2em;
-    color: rgba(240,244,255,.7);
+    color: color-mix(in srgb, var(--color-snow) 70%, transparent);
     opacity: 0;
     transform: translateY(10px);
 }
@@ -379,8 +379,8 @@
     gap: 10px;
     padding: 26px 24px 22px;
     border-radius: 22px;
-    background: rgba(255,255,255,.045);
-    border: 1px solid rgba(255,255,255,.09);
+    background: color-mix(in srgb, var(--color-white) 4.5%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-white) 9%, transparent);
     border-top: 3px solid var(--char, var(--aimisi-pink));
     text-decoration: none;
     color: inherit;
@@ -400,7 +400,7 @@
 
 .character-archive-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 22px 50px rgba(0,0,0,.4);
+    box-shadow: 0 22px 50px color-mix(in srgb, black 40%, transparent);
     border-color: color-mix(in srgb, var(--char, #FF6B9D) 55%, transparent);
 }
 .character-archive-card:hover::after { opacity: 1; }
@@ -427,7 +427,7 @@
 
 .character-archive-line {
     font-size: 14px;
-    color: rgba(240,244,255,.7);
+    color: color-mix(in srgb, var(--color-snow) 70%, transparent);
     line-height: 1.7;
     margin: 0;
 }
@@ -446,7 +446,7 @@
     appearance: none;
     border: none;
     background: transparent;
-    color: rgba(168, 216, 255, 0.35);
+    color: color-mix(in srgb, var(--color-blue-light) 35%, transparent);
     font: inherit;
     font-size: 12px;
     letter-spacing: 0.14em;
@@ -464,7 +464,7 @@
 }
 
 .stf-corridor-mark.is-found {
-    color: rgba(255, 107, 157, 0.75);
+    color: color-mix(in srgb, var(--color-rose) 75%, transparent);
 }
 
 .stf-easter-toast {
@@ -477,15 +477,15 @@
     padding: 12px 18px;
     border-radius: 12px;
     background: rgba(10, 12, 22, 0.92);
-    border: 1px solid rgba(168, 216, 255, 0.28);
-    color: rgba(240, 244, 255, 0.9);
+    border: 1px solid color-mix(in srgb, var(--color-blue-light) 28%, transparent);
+    color: color-mix(in srgb, var(--color-snow) 90%, transparent);
     font-size: 0.88rem;
     letter-spacing: 0.04em;
     text-align: center;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.4s ease, transform 0.4s ease;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 16px 40px color-mix(in srgb, black 45%, transparent);
 }
 
 .stf-easter-toast.is-visible {

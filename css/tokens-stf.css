@@ -4,9 +4,13 @@
  * display: Noto Serif SC · axes: dark / roman-serif-cjk / cool-blue · nav: N6 · footer: Ft1
  * signature: 频率刻度条 .sig-freqbar (--sig-*) · shared base: tokens-base.css
  * pre-emit critique: P5 H5 E4 S5 R5 V5
+ *
+ * All color values reference tokens-base.css shared tokens where possible.
+ * Forum-specific brand colors (blue-gold academy) override shared tokens.
  */
 
 :root {
+  /* Paper / ink — academic perceptual space */
   --stf-paper: oklch(14% 0.03 250deg);
   --stf-paper-2: oklch(18% 0.035 250deg);
   --stf-paper-3: oklch(22% 0.04 252deg);
@@ -14,17 +18,23 @@
   --stf-ink-2: oklch(78% 0.03 250deg);
   --stf-ink-3: oklch(62% 0.03 250deg);
 
-  /* 学院蓝权威值（统一旧硬编码 #6B8AFF / #6d8fd6 → 本令牌） */
-  --stf-brand: #6d8fd6;
-  --stf-brand-light: #a8c4f0;
-  --stf-brand-deep: #3d5aa8;
-  --stf-gold: #c9a227;
-  --stf-gold-soft: #e4c86a;
+  /* 学院蓝权威值 → shared tokens mapped */
+  --stf-brand: var(--color-blue);
+  --stf-brand-light: var(--color-blue-light);
+  --stf-brand-deep: var(--color-blue-deep);
+  --stf-gold: var(--color-gold);
+  --stf-gold-soft: var(--color-gold-warm);
+
+  /* Background layers */
   --stf-bg-top: #0a101c;
   --stf-bg-mid: #0c1220;
   --stf-bg-bottom: #080e18;
-  --stf-text: #eef3fb;
+
+  /* Text */
+  --stf-text: var(--color-mist);
   --stf-text-muted: oklch(78% 0.03 250deg / 0.68);
+
+  /* Surface system */
   --stf-surface-0: oklch(14% 0.03 250deg / 0.96);
   --stf-surface-1: oklch(96% 0.01 250deg / 0.04);
   --stf-surface-2: oklch(96% 0.01 250deg / 0.08);
@@ -38,42 +48,91 @@
   --sig-accent: var(--stf-brand-light);
   --sig-accent-strong: var(--stf-gold);
   --sig-ink: var(--stf-ink);
-  --stf-z-nav: var(--z-nav, 900);
-  --stf-z-fab-tuner: var(--z-fab-tuner, 960);
-  --stf-z-fab-donate: var(--z-fab-donate, 970);
-  --stf-z-edge: var(--z-edge, 980);
-  --stf-z-chat-backdrop: var(--z-chat-backdrop, 1090);
-  --stf-z-chat-expand: var(--z-chat-expand, 1100);
-  --stf-z-modal: var(--z-modal, 1200);
-  --stf-z-toast: var(--z-toast, 1300);
-  --stf-z-easter: var(--z-easter, 1400);
+
+  /* Z-axis overrides (forum uses shared z-ladder) */
+  --stf-z-nav: var(--z-nav);
+  --stf-z-fab-tuner: var(--z-fab-tuner);
+  --stf-z-fab-donate: var(--z-fab-donate);
+  --stf-z-edge: var(--z-edge);
+  --stf-z-chat-backdrop: var(--z-chat-backdrop);
+  --stf-z-chat-expand: var(--z-chat-expand);
+  --stf-z-modal: var(--z-modal);
+  --stf-z-toast: var(--z-toast);
+  --stf-z-easter: var(--z-easter);
 
   /* Override pink legacy tokens → academy blue (forum only) */
-  --aimisi-pink: #6d8fd6;
-  --aimisi-pink-light: #a8c4f0;
-  --aimisi-pink-soft: #8aa8e0;
-  --aimisi-pink-deep: #3d5aa8;
-  --color-pink: #6d8fd6;
-  --color-pink-light: #a8c4f0;
-  --color-pink-soft: #8aa8e0;
-  --color-pink-deep: #3d5aa8;
-  --c-primary: #6d8fd6;
-  --c-primary-strong: #3d5aa8;
-  --c-primary-soft: #a8c4f0;
+  --aimisi-pink: var(--color-blue);
+  --aimisi-pink-light: var(--color-blue-light);
+  --aimisi-pink-soft: var(--color-blue-soft);
+  --aimisi-pink-deep: var(--color-blue-deep);
+  --color-pink: var(--color-blue);
+  --color-pink-light: var(--color-blue-light);
+  --color-pink-soft: var(--color-blue-soft);
+  --color-pink-deep: var(--color-blue-deep);
+  --c-primary: var(--color-blue);
+  --c-primary-strong: var(--color-blue-deep);
+  --c-primary-soft: var(--color-blue-light);
   --c-primary-dim: oklch(68% 0.12 255deg / 0.14);
+  --c-core-white: var(--color-snow);
+  --c-core-blue: var(--color-blue);
+  --c-core-blue-light: var(--color-blue-light);
+
+  /* Surface & shadow */
   --surface-accent: oklch(68% 0.12 255deg / 0.14);
   --surface-accent-border: oklch(68% 0.12 255deg / 0.35);
   --shadow-glow: 0 0 22px oklch(68% 0.12 255deg / 0.12);
   --focus-ring: oklch(78% 0.06 250deg / 0.55);
 
-  /* Google Fonts 可选；断网/屏蔽时走系统 CJK 栈 */
+  /* Character identity aliases → shared tokens */
+  --aimisi-gold: var(--color-gold);
+  --aimisi-gold-soft: var(--color-gold-soft);
+  --aimisi-white: var(--color-snow);
+  --drifter-blue: var(--color-blue);
+  --drifter-blue-light: var(--color-blue-light);
+  --drifter-blue-deep: var(--color-blue-deep);
+  --drifter-purple: var(--color-purple);
+  --drifter-purple-deep: var(--color-purple-deep);
+  --drifter-starlight: var(--color-blue-pale);
+
+  /* Forum text overrides */
+  --text-primary: var(--stf-text);
+  --text-secondary: var(--stf-ink-2);
+  --text-tertiary: var(--stf-ink-3);
+
+  /* Forum bg overrides */
+  --bg-primary: var(--stf-bg-top);
+  --bg-secondary: var(--stf-bg-mid);
+  --bg-tertiary: var(--stf-bg-bottom);
+  --bg-gradient-1: var(--stf-bg-top);
+  --bg-gradient-2: var(--stf-bg-mid);
+  --bg-gradient-3: var(--stf-bg-bottom);
+
+  /* Glass — forum variant */
+  --glass-bg: oklch(96% 0.01 250deg / 0.04);
+  --glass-bg-hover: oklch(96% 0.01 250deg / 0.07);
+  --glass-border: oklch(96% 0.01 250deg / 0.1);
+  --glass-border-hover: oklch(78% 0.06 250deg / 0.4);
+  --glass-blur: blur(12px) saturate(120%);
+
+  /* Surface — forum variant */
+  --surface-card: oklch(96% 0.01 250deg / 0.045);
+  --surface-card-border: oklch(96% 0.01 250deg / 0.1);
+  --surface-inset: oklch(96% 0.01 250deg / 0.03);
+  --nav-bg: oklch(14% 0.03 250deg / 0.82);
+
+  /* Font stacks */
   --font-display: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
   --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
   --font-sans: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "Cascadia Code", ui-monospace, "Consolas", monospace;
+
+  /* Brand-specific radius & motion */
   --stf-radius-sm: 6px;
   --stf-radius-md: 10px;
   --stf-radius-lg: 14px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --dur-fast: 140ms;
   --dur-base: 240ms;
