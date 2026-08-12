@@ -3,12 +3,43 @@
   'use strict';
   if (!('serviceWorker' in navigator)) return;
 
-  window.addEventListener('load', function () {
-    navigator.serviceWorker.register('./sw.js?v=11.1').then(function (reg) {
-      console.log('[SW] registered, scope:', reg.scope);
-    }).catch(function (err) {
-      console.warn('[SW] registration failed:', err);
+  // 干净更新策略：新 SW 安装完成后自动接管，并在接管后重载一次页面，
+  // 避免停留于「旧缓存已删、新缓存未接管」的样式空窗（无需手动清缓存）。
+  function setupCleanUpdate(reg) {
+    // 若页面加载时已有等待中的新 SW，直接命令其接管
+    if (reg.waiting) {
+      reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+    }
+    reg.addEventListener('updatefound', function () {
+      var newWorker = reg.installing;
+      if (!newWorker) return;
+      newWorker.addEventListener('statechange', function () {
+        // 新 SW 已安装且当前有旧 SW 在控制 → 立即接管
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          newWorker.postMessage({ type: 'SKIP_WAITING' });
+        }
+      });
     });
+  }
+
+  // 当新 SW 真正接管页面（controllerchange），自动重载一次以进入干净状态
+  var isReloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', function () {
+    if (isReloading) return;
+    isReloading = true;
+    window.location.reload();
+  });
+
+  window.addEventListener('load', function () {
+    navigator.serviceWorker
+      .register('./sw.js?v=11.2')
+      .then(function (reg) {
+        console.log('[SW] registered, scope:', reg.scope);
+        setupCleanUpdate(reg);
+      })
+      .catch(function (err) {
+        console.warn('[SW] registration failed:', err);
+      });
   });
 
   // 投稿离线队列：断网时存 IndexedDB，联网后 Background Sync 重放

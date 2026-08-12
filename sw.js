@@ -1,5 +1,6 @@
 // Service Worker — 飞行雪绒 · 星炬学院
-const CACHE_VERSION = 'snowfluff-v11.1';
+// 设计目标：宁可走网络，也绝不返回空响应导致整页裸奔（无样式）。
+const CACHE_VERSION = 'snowfluff-v11.2';
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -19,56 +20,94 @@ const SHELL_ASSETS = [
   './assets/favicon.svg'
 ];
 
-// 安装：预缓存 app shell
+// 安装：必须等 SHELL 全部预缓存成功，再 skipWaiting 接管。
+// 若 addAll 任一资源失败，安装整体 reject → 旧 SW 继续控制 → 不会出现样式空窗。
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(SHELL_CACHE).then((cache) => cache.addAll(SHELL_ASSETS)).then(() => self.skipWaiting())
+    caches.open(SHELL_CACHE)
+      .then((cache) => cache.addAll(SHELL_ASSETS))
+      .then(() => self.skipWaiting())
+      .catch((err) => {
+        console.error('[SW] shell precache failed, keeping old worker:', err);
+        // 不 skipWaiting，让旧 SW 继续服务
+      })
   );
 });
 
-// 激活：清理旧缓存
+// 激活：仅删除旧的 snowfluff-* 缓存；新 SHELL 已在 install 阶段填满，无需担心空窗。
+// 逐条 catch，避免单条删除失败导致整个 claim 失败。
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.filter((key) => !key.startsWith(CACHE_VERSION)).map((key) => caches.delete(key))
+    (async () => {
+      const keys = await caches.keys();
+      await Promise.all(
+        keys
+          .filter((key) => key.startsWith('snowfluff-') && key !== SHELL_CACHE && key !== RUNTIME_CACHE)
+          .map((key) => caches.delete(key).catch(() => {}))
       );
-    }).then(() => self.clients.claim())
+      await self.clients.claim();
+    })()
   );
 });
 
-// 请求拦截：缓存优先，网络回退
+// 请求拦截：任何分支都必须返回有效响应，绝不返回 undefined / 空体。
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  // HTML 请求：网络优先，回退缓存
+  // 文档：网络优先，回退缓存，再回退根 index（离线兜底）
   if (request.mode === 'navigate' || request.destination === 'document') {
     event.respondWith(
-      fetch(request).then((res) => {
-        const copy = res.clone();
-        caches.open(RUNTIME_CACHE).then((cache) => cache.put(request, copy));
-        return res;
-      }).catch(() => caches.match(request).then((cached) => cached || caches.match('./index.html')))
+      (async () => {
+        try {
+          const res = await fetch(request);
+          const copy = res.clone();
+          caches.open(RUNTIME_CACHE).then((cache) => cache.put(request, copy)).catch(() => {});
+          return res;
+        } catch (e) {
+          const cached = await caches.match(request, { ignoreVary: true });
+          if (cached) return cached;
+          const fallback = await caches.match('./index.html', { ignoreVary: true });
+          if (fallback) return fallback;
+          return new Response('Offline', { status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+        }
+      })()
     );
     return;
   }
 
-  // 静态资源：缓存优先，网络回退
+  // 静态资源：缓存优先，未命中则网络，网络失败则任意缓存兜底（含旧缓存，避免裸奔）
   event.respondWith(
-    caches.match(request).then((cached) => {
+    (async () => {
+      const cached = await caches.match(request, { ignoreVary: true });
       if (cached) return cached;
-      return fetch(request).then((res) => {
-        if (res.ok && res.type === 'basic') {
+      try {
+        const res = await fetch(request);
+        if (res && (res.ok || res.type === 'opaque')) {
           const copy = res.clone();
-          caches.open(RUNTIME_CACHE).then((cache) => cache.put(request, copy));
+          caches.open(RUNTIME_CACHE).then((cache) => cache.put(request, copy)).catch(() => {});
         }
+        // 即使非 ok（如 404），也回退到任意缓存，避免返回损坏资源
+        if (res && (res.ok || res.type === 'opaque')) return res;
+        const any = await caches.match(request, { ignoreVary: true });
+        if (any) return any;
         return res;
-      });
-    })
+      } catch (e) {
+        const any = await caches.match(request, { ignoreVary: true });
+        if (any) return any;
+        return new Response('', { status: 504, statusText: 'offline' });
+      }
+    })()
   );
+});
+
+// 消息：客户端请求立即接管
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 // Background Sync：投稿离线队列
@@ -101,7 +140,7 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const url = event.notification.data && event.notification.data.url || '/';
+  const url = (event.notification.data && event.notification.data.url) || '/';
   event.waitUntil(
     self.clients.matchAll({ type: 'window' }).then((clients) => {
       for (const c of clients) { if (c.url.includes(url) && 'focus' in c) return c.focus(); }
