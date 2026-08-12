@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>飞行雪绒 · UI 重设计原型（方案 B 材质分层）</title>
+<style>
+/* ============================================================
+   Design System Tokens — 方案 B 材质分层（2026-08-12 确认）
+   源：design-docs/UI-REDESIGN-PLAN-2026-08-12.md §5.1
+   原型仅预览，不接入生产代码
+   ============================================================ */
+:root {
+  /* Paper / ink — Material 式分层 */
+  --sn-paper: #121212;                        /* 背景基线（原 oklch(12%) ≈ #0A0A12） */
+  --sn-paper-2: #1E1E2E;                      /* surface 卡片层（蓝 tint） */
+  --sn-paper-3: #252536;                      /* 最高 elevation：抽屉/弹层 */
+  --sn-ink: oklch(96% 0.01 350deg);           /* 主文本 */
+  --sn-ink-2: oklch(88% 0.018 350deg);        /* secondary（原 82%） */
+  --sn-ink-3: oklch(74% 0.022 350deg);        /* 辅助（原 68%） */
+  --sn-ink-4: oklch(60% 0.02 350deg);         /* 占位/禁用（新增层级） */
+  --sn-rule: oklch(40% 0.04 350deg / 0.35);
+
+  /* Accent — 雪绒粉，降饱和 20%（0.14 → 0.11）用于大面积 */
+  --sn-accent: oklch(72% 0.11 350deg);
+  --sn-accent-strong: oklch(64% 0.13 348deg);
+  --sn-accent-soft: oklch(84% 0.07 350deg);
+  --sn-ice: oklch(78% 0.06 230deg);
+  --c-core-blue: #6B8AFF;
+  --c-core-blue-soft: #A8D8FF;
+
+  /* Glass & Surface — 提亮后的背板 */
+  --glass-bg: oklch(96% 0.01 350deg / 0.08);
+  --glass-bg-hover: oklch(96% 0.01 350deg / 0.12);
+  --glass-border: oklch(96% 0.01 350deg / 0.14);
+  --glass-border-hover: oklch(72% 0.11 350deg / 0.45);
+  --glass-blur: blur(14px) saturate(130%);
+  --surface-card: oklch(96% 0.01 350deg / 0.09);
+  --surface-card-border: oklch(96% 0.01 350deg / 0.14);
+  --surface-inset: oklch(96% 0.01 350deg / 0.05);
+
+  /* Shadow & focus */
+  --shadow-card: 0 10px 32px rgba(0,0,0,.35), 0 2px 8px rgba(0,0,0,.25);
+  --shadow-glow: 0 0 28px oklch(72% 0.11 350deg / 0.14);
+  --focus-ring: 0 0 0 2px var(--sn-paper), 0 0 0 4px oklch(72% 0.11 350deg / 0.6);
+
+  /* Radius & motion */
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 160ms;
+  --dur-base: 280ms;
+  --dur-slow: 520ms;
+
+  /* Fonts（原型用系统栈，与 tokens-snow.css 同栈） */
+  --font-display: "ZCOOL XiaoWei", "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
+  --font-sans: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+
+  color-scheme: dark;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background:
+    radial-gradient(1200px 600px at 85% -10%, oklch(28% 0.05 285deg / 0.35), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, oklch(30% 0.06 350deg / 0.28), transparent 55%),
+    var(--sn-paper);
+  background-attachment: fixed;
+  color: var(--sn-ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* 原型说明条 */
+.proto-banner {
+  position: sticky; top: 0; z-index: 60;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 24px;
+  background: var(--sn-paper-3);
+  border-bottom: 1px solid var(--glass-border);
+  font-size: 13px; color: var(--sn-ink-2);
+}
+.proto-banner strong { color: var(--sn-accent-soft); font-weight: 600; }
+.proto-banner .tag {
+  padding: 3px 10px; border-radius: 999px;
+  background: oklch(72% 0.11 350deg / 0.18);
+  border: 1px solid oklch(72% 0.11 350deg / 0.35);
+  color: var(--sn-accent-soft); font-size: 12px;
+}
+
+/* ============ 迷你导航 ============ */
+.nav {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; padding: 16px 32px;
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  background: var(--glass-bg);
+  border-bottom: 1px solid var(--glass-border);
+  position: relative; z-index: 40;
+}
+.nav-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 20px; letter-spacing: .06em; }
+.nav-brand .dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--sn-accent), var(--c-core-blue));
+  box-shadow: var(--shadow-glow);
+}
+.nav-links { display: flex; gap: 4px; list-style: none; }
+.nav-links a {
+  display: inline-block; padding: 8px 16px; border-radius: 999px;
+  color: var(--sn-ink-2); text-decoration: none; font-size: 14px;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.nav-links a:hover { background: var(--glass-bg-hover); color: var(--sn-ink); }
+.nav-links a:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.nav-links a[aria-current="page"] {
+  background: oklch(72% 0.11 350deg / 0.16);
+  color: var(--sn-accent-soft);
+}
+
+main { max-width: 1080px; margin: 0 auto; padding: 40px 24px 120px; }
+
+/* ============ 章节标题 ============ */
+.section-head { display: flex; align-items: baseline; gap: 14px; margin: 48px 0 22px; }
+.section-head .kicker {
+  font-family: var(--font-mono, monospace); font-size: 12px; letter-spacing: .18em;
+  color: var(--c-core-blue-soft); text-transform: uppercase;
+}
+.section-head h2 { font-family: var(--font-display); font-size: 26px; font-weight: 500; letter-spacing: .05em; }
+.section-head .note { margin-left: auto; font-size: 13px; color: var(--sn-ink-3); }
+
+/* ============ 1. 表面层级演示 ============ */
+.swatches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.swatch {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--surface-card-border);
+  box-shadow: var(--shadow-card);
+  padding: 20px;
+  min-height: 128px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.swatch .sw-name { font-size: 13px; font-weight: 600; }
+.swatch .sw-val { font-family: var(--font-mono, monospace); font-size: 12px; color: var(--sn-ink-3); }
+.swatch .sw-sample { font-size: 14px; color: var(--sn-ink-2); margin-top: auto; }
+.swatch[data-level="bg"]    { background: var(--sn-paper); }
+.swatch[data-level="card"]  { background: var(--sn-paper-2); }
+.swatch[data-level="raised"]{ background: var(--sn-paper-3); }
+.ink-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.ink-chip {
+  padding: 8px 14px; border-radius: var(--radius-sm);
+  background: var(--surface-card); border: 1px solid var(--surface-card-border);
+  font-size: 13px;
+}
+.ink-chip[data-ink="1"] { color: var(--sn-ink); }
+.ink-chip[data-ink="2"] { color: var(--sn-ink-2); }
+.ink-chip[data-ink="3"] { color: var(--sn-ink-3); }
+.ink-chip[data-ink="4"] { color: var(--sn-ink-4); }
+
+/* ============ 2. 杂志式时间线（日记） ============ */
+.timeline { position: relative; display: flex; flex-direction: column; gap: 20px; }
+/* 轴线 */
+.timeline::before {
+  content: ""; position: absolute; left: 21px; top: 8px; bottom: 8px;
+  width: 1px; background: linear-gradient(var(--glass-border), var(--sn-accent) 40%, var(--c-core-blue) 80%, transparent);
+  opacity: .55;
+}
+.diary-card {
+  position: relative; margin-left: 52px;
+  background: var(--surface-card);
+  border: 1px solid var(--surface-card-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  padding: 20px 22px;
+  transition: border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.diary-card:hover { border-color: var(--glass-border-hover); background: var(--glass-bg-hover); transform: translateY(-1px); }
+.diary-card:focus-within { box-shadow: var(--focus-ring); }
+/* 时间节点圆点 */
+.diary-card::before {
+  content: ""; position: absolute; left: -40px; top: 26px;
+  width: 11px; height: 11px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--sn-accent), var(--c-core-blue));
+  box-shadow: 0 0 0 4px var(--sn-paper), var(--shadow-glow);
+}
+.diary-card.is-featured::before { width: 15px; height: 15px; left: -42px; top: 24px; }
+
+.diary-card-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.diary-date {
+  font-family: var(--font-display);
+  color: var(--sn-accent-soft);
+  white-space: nowrap;
+  font-size: 15px;
+}
+.diary-date .day { font-size: 22px; margin-right: 4px; }
+.diary-title {
+  font-family: var(--font-display); font-size: 19px; font-weight: 500;
+  letter-spacing: .04em; color: var(--sn-ink);
+}
+.diary-card.is-featured .diary-title { font-size: 22px; }
+
+.diary-body { margin-top: 10px; color: var(--sn-ink-2); font-size: 14.5px; }
+.diary-body p {
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.diary-card.is-open .diary-body p { display: block; }
+.diary-expand {
+  margin-top: 8px; padding: 2px 0;
+  background: none; border: none; cursor: pointer;
+  color: var(--c-core-blue-soft); font-size: 13px; font-family: var(--font-sans);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.diary-expand:hover { color: var(--sn-accent-soft); }
+.diary-expand:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 4px; }
+
+.diary-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.diary-tag {
+  padding: 2px 10px; border-radius: 999px; font-size: 12px;
+  background: oklch(96% 0.01 350deg / 0.06);
+  border: 1px solid oklch(96% 0.01 350deg / 0.1);
+  color: var(--sn-ink-3);
+}
+.diary-tag[data-tone="pink"] { color: var(--sn-accent-soft); border-color: oklch(72% 0.11 350deg / 0.3); }
+.diary-tag[data-tone="blue"] { color: var(--c-core-blue-soft); border-color: oklch(78% 0.1 250deg / 0.3); }
+
+/* ============ 3. 表单背板示例 ============ */
+.form-card {
+  max-width: 640px;
+  background: var(--sn-paper-2);
+  border: 1px solid var(--surface-card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 28px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.form-card h3 { font-family: var(--font-display); font-size: 20px; font-weight: 500; }
+.form-row { display: flex; flex-direction: column; gap: 8px; }
+.form-row label { font-size: 13px; color: var(--sn-ink-2); }
+.form-row input, .form-row textarea, .form-row select {
+  font-family: var(--font-sans); font-size: 14px; color: var(--sn-ink);
+  background: var(--surface-inset);
+  border: 1px solid var(--surface-card-border);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.form-row input::placeholder, .form-row textarea::placeholder { color: var(--sn-ink-4); }
+.form-row input:hover, .form-row textarea:hover { border-color: var(--glass-border-hover); }
+.form-row input:focus, .form-row textarea:focus, .form-row select:focus {
+  outline: none; border-color: var(--sn-accent);
+  box-shadow: 0 0 0 3px oklch(72% 0.11 350deg / 0.22);
+  background: oklch(96% 0.01 350deg / 0.07);
+}
+.form-actions { display: flex; gap: 12px; margin-top: 4px; }
+.btn {
+  padding: 10px 22px; border-radius: 999px; border: none; cursor: pointer;
+  font-family: var(--font-sans); font-size: 14px;
+  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.btn-primary {
+  background: linear-gradient(135deg, var(--sn-accent), var(--c-core-blue));
+  color: #fff; font-weight: 600;
+  box-shadow: var(--shadow-glow);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 0 34px oklch(72% 0.11 350deg / 0.3); }
+.btn-primary:active { transform: translateY(0); }
+.btn-ghost {
+  background: transparent; color: var(--sn-ink-2);
+  border: 1px solid var(--surface-card-border);
+}
+.btn-ghost:hover { background: var(--glass-bg-hover); color: var(--sn-ink); }
+
+/* 对比注记：缺背板 vs 有背板 */
+.compare-note {
+  margin-top: 18px; padding: 14px 18px; border-radius: var(--radius-sm);
+  border-left: 3px solid var(--sn-accent);
+  background: oklch(72% 0.11 350deg / 0.08);
+  color: var(--sn-ink-2); font-size: 13.5px; max-width: 640px;
+}
+.compare-note strong { color: var(--sn-accent-soft); }
+
+/* ============ 4. 侧边捐赠卡（桌面） ============ */
+.support-dock { position: fixed; right: 24px; bottom: 96px; z-index: 50; width: 280px; }
+
+.support-toggle {
+  position: fixed; right: 24px; bottom: 96px; z-index: 55;
+  width: 56px; height: 56px; border-radius: 50%; border: none; cursor: pointer;
+  background: linear-gradient(135deg, var(--sn-accent), var(--c-core-blue));
+  color: #fff; font-size: 22px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.4), var(--shadow-glow);
+  display: grid; place-items: center;
+  transition: transform var(--dur-base) var(--ease-out);
+  animation: breathe 3.2s ease-in-out infinite;
+}
+.support-toggle:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.support-toggle:hover { transform: scale(1.06); }
+.support-toggle:active { transform: scale(.97); }
+@keyframes breathe {
+  0%, 100% { box-shadow: 0 6px 24px rgba(0,0,0,.4), 0 0 18px oklch(72% 0.11 350deg / 0.18); }
+  50%      { box-shadow: 0 6px 24px rgba(0,0,0,.4), 0 0 30px oklch(72% 0.11 350deg / 0.38); }
+}
+
+.support-card {
+  display: none;
+  background: var(--sn-paper-3);
+  border: 1px solid var(--surface-card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 48px rgba(0,0,0,.5), var(--shadow-card);
+  padding: 20px;
+  transform-origin: bottom right;
+  animation: pop-in var(--dur-base) var(--ease-out);
+}
+.support-dock.is-open .support-card { display: block; }
+.support-dock.is-open .support-toggle { display: none; }
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(12px) scale(.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.support-card-head { display: flex; align-items: flex-start; gap: 12px; }
+.support-avatar {
+  width: 42px; height: 42px; border-radius: 50%; flex: none;
+  background: linear-gradient(135deg, var(--sn-accent), var(--c-core-blue));
+  display: grid; place-items: center; font-size: 20px;
+  box-shadow: var(--shadow-glow);
+}
+.support-title { font-family: var(--font-display); font-size: 16px; font-weight: 500; }
+.support-desc { font-size: 12.5px; color: var(--sn-ink-3); margin-top: 2px; }
+.support-minimize {
+  margin-left: auto; width: 28px; height: 28px; border-radius: 50%;
+  border: 1px solid var(--surface-card-border); background: transparent;
+  color: var(--sn-ink-3); cursor: pointer; font-size: 13px; line-height: 1;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.support-minimize:hover { background: var(--glass-bg-hover); color: var(--sn-ink); }
+.support-minimize:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.support-methods {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+  background: var(--surface-inset); border: 1px solid var(--surface-card-border);
+  border-radius: 999px; padding: 4px; margin-top: 16px;
+}
+.support-method {
+  padding: 8px 0; border: none; border-radius: 999px; cursor: pointer;
+  background: transparent; color: var(--sn-ink-3);
+  font-family: var(--font-sans); font-size: 13px;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.support-method:hover { color: var(--sn-ink-2); }
+.support-method:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.support-method.is-active {
+  background: linear-gradient(135deg, var(--sn-accent), var(--c-core-blue));
+  color: #fff; font-weight: 600;
+}
+
+.support-qr {
+  margin-top: 16px; border-radius: var(--radius-md);
+  background: #fff; padding: 14px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.support-qr .qr-holder {
+  width: 168px; height: 168px; border-radius: 8px; overflow: hidden;
+}
+.support-qr img { width: 100%; height: 100%; display: none; object-fit: cover; }
+.support-qr img.is-active { display: block; }
+.support-qr figcaption { font-size: 12px; color: #555; text-align: center; }
+.support-note { margin-top: 12px; font-size: 12px; color: var(--sn-ink-3); text-align: center; }
+
+/* ============ 响应式 ============ */
+@media (max-width: 1024px) {
+  .swatches { grid-template-columns: 1fr; }
+  .support-dock { right: 16px; bottom: 84px; }
+  .support-toggle { right: 16px; bottom: 84px; }
+}
+@media (max-width: 768px) {
+  main { padding: 24px 16px 140px; }
+  .nav { padding: 12px 16px; }
+  .nav-links { display: none; }
+  .section-head { margin: 36px 0 18px; flex-wrap: wrap; }
+  .section-head .note { margin-left: 0; width: 100%; }
+
+  .timeline::before { left: 15px; }
+  .diary-card { margin-left: 38px; padding: 16px; }
+  .diary-card::before { left: -30px; width: 9px; height: 9px; }
+  .diary-card.is-featured::before { left: -32px; width: 13px; height: 13px; }
+  .diary-card-head { gap: 8px; }
+  .diary-date .day { font-size: 18px; }
+
+  /* 捐赠卡 → 底部抽屉 */
+  .support-dock { right: 0; bottom: 0; left: 0; width: 100%; }
+  .support-dock.is-open .support-card {
+    display: block; border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-bottom: none; padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  }
+  .support-dock.is-open .support-toggle { display: grid; right: 16px; bottom: 24px; }
+  .support-toggle { right: 16px; bottom: 24px; }
+}
+@media (min-width: 769px) {
+  .support-dock.is-open .support-toggle { display: none; }
+}
+
+/* ============ 无障碍：减少动效 ============ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+  .support-toggle { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="proto-banner" role="note">
+  <span><strong>高保真原型</strong> · 方案 B 材质分层 / 侧边捐赠卡 / 杂志式时间线 · 仅预览，未接入生产</span>
+  <span class="tag">v0 · 2026-08-12</span>
+</div>
+
+<header class="nav">
+  <div class="nav-brand"><span class="dot" aria-hidden="true"></span>飞行雪绒</div>
+  <nav aria-label="主导航">
+    <ul class="nav-links">
+      <li><a href="#" aria-current="page">首页</a></li>
+      <li><a href="#">角色</a></li>
+      <li><a href="#">论坛</a></li>
+      <li><a href="#">投稿</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <!-- 1. 表面层级演示 -->
+  <section aria-labelledby="sw-title">
+    <div class="section-head">
+      <span class="kicker">Material Layering</span>
+      <h2 id="sw-title">提亮后的表面层级</h2>
+      <span class="note">方案 B · 背景 #121212 ＜ 卡片 #1E1E2E ＜ 弹层 #252536</span>
+    </div>
+    <div class="swatches">
+      <div class="swatch" data-level="bg">
+        <span class="sw-name">背景 layer-0</span>
+        <span class="sw-val">--sn-paper · #121212</span>
+        <span class="sw-sample">全局基底，替代原近黑 #0A0A12</span>
+      </div>
+      <div class="swatch" data-level="card">
+        <span class="sw-name">卡片 layer-1</span>
+        <span class="sw-val">--sn-paper-2 · #1E1E2E</span>
+        <span class="sw-sample">表单 / 日记 / 面板背板，解决"缺背板不明显"</span>
+      </div>
+      <div class="swatch" data-level="raised">
+        <span class="sw-name">弹层 layer-2</span>
+        <span class="sw-val">--sn-paper-3 · #252536</span>
+        <span class="sw-sample">抽屉 / 模态最高 elevation</span>
+      </div>
+    </div>
+    <div class="ink-row" aria-label="文本层级">
+      <span class="ink-chip" data-ink="1">主文本 96%</span>
+      <span class="ink-chip" data-ink="2">正文 88% ↑</span>
+      <span class="ink-chip" data-ink="3">辅助 74% ↑</span>
+      <span class="ink-chip" data-ink="4">占位 60%（新增）</span>
+    </div>
+  </section>
+
+  <!-- 2. 杂志式时间线 -->
+  <section aria-labelledby="diary-title">
+    <div class="section-head">
+      <span class="kicker">Star Log</span>
+      <h2 id="diary-title">飞行日志</h2>
+      <span class="note">日期 + 标题同行 · 正文折叠 · 点击展开</span>
+    </div>
+
+    <div class="timeline">
+      <article class="diary-card is-featured is-open">
+        <header class="diary-card-head">
+          <time class="diary-date" datetime="2026-08-03"><span class="day">03</span>八月</time>
+          <h3 class="diary-title">环流与归途</h3>
+        </header>
+        <div class="diary-body">
+          <p>今夜的风从北边来，把云层推成一道道长长的尾巴。我在机翼下写这封信——说"信"其实不太对，这只是今晚广播台没有听众的一档节目。起落架上的霜化了又结，结成细小的六角星。据说每颗星都听过很多愿望，那今晚这条环流，能不能替我载一段，绕回你所在的那片海岸？</p>
+        </div>
+        <footer class="diary-tags" aria-label="标签">
+          <span class="diary-tag" data-tone="blue">#环流</span>
+          <span class="diary-tag" data-tone="pink">#夜航</span>
+          <span class="diary-tag">#爱弥斯</span>
+        </footer>
+      </article>
+
+      <article class="diary-card">
+        <header class="diary-card-head">
+          <time class="diary-date" datetime="2026-07-28"><span class="day">28</span>七月</time>
+          <h3 class="diary-title">收到一封远方来信</h3>
+        </header>
+        <div class="diary-body">
+          <p>信箱里躺着一封没有邮戳的信，纸张带着海盐的味道。字迹歪歪扭扭，像是边赶路边写的。信里问，雪绒花在夏天还开着吗。我提笔回信，写到一半发现窗外真的下起了雨，雨点敲在频率刻度条上，叮叮咚咚，像一首跑调的摇篮曲。</p>
+        </div>
+        <button class="diary-expand" aria-expanded="false">展开全文</button>
+        <footer class="diary-tags" aria-label="标签">
+          <span class="diary-tag" data-tone="blue">#来信</span>
+          <span class="diary-tag">#达妮娅</span>
+        </footer>
+      </article>
+
+      <article class="diary-card">
+        <header class="diary-card-head">
+          <time class="diary-date" datetime="2026-07-19"><span class="day">19</span>七月</time>
+          <h3 class="diary-title">夜航日志 · 第 47 页</h3>
+        </header>
+        <div class="diary-body">
+          <p>今天的航线很低，低到能看见地面上的灯火连成银河。座舱里只剩仪表盘的光。我想起第一次独自夜航，手心全是汗，把操纵杆攥得发烫。现在反而喜欢这样的时刻——安静的、只属于天空的、什么都可以不必想的时刻。</p>
+        </div>
+        <button class="diary-expand" aria-expanded="false">展开全文</button>
+        <footer class="diary-tags" aria-label="标签">
+          <span class="diary-tag" data-tone="pink">#夜航</span>
+          <span class="diary-tag">#漂泊者</span>
+        </footer>
+      </article>
+
+      <article class="diary-card">
+        <header class="diary-card-head">
+          <time class="diary-date" datetime="2026-07-11"><span class="day">11</span>七月</time>
+          <h3 class="diary-title">落雪练习</h3>
+        </header>
+        <div class="diary-body">
+          <p>把飞行高度调到雪线以上，机舱外的气温降到零下。她们说我的机翼涂装像一片雪花，那不如就认真地落一次。失重三秒，拉起，再落。云在脚下裂开一道缝，阳光从那道缝里漏进来，我数了数，一共七种颜色。</p>
+        </div>
+        <button class="diary-expand" aria-expanded="false">展开全文</button>
+        <footer class="diary-tags" aria-label="标签">
+          <span class="diary-tag" data-tone="blue">#飞行</span>
+          <span class="diary-tag" data-tone="pink">#机翼</span>
+          <span class="diary-tag">#爱弥斯</span>
+        </footer>
+      </article>
+
+      <article class="diary-card">
+        <header class="diary-card-head">
+          <time class="diary-date" datetime="2026-07-02"><span class="day">02</span>七月</time>
+          <h3 class="diary-title">云层之上的频率</h3>
+        </header>
+        <div class="diary-body">
+          <p>把广播频率调到 87.5，理论上这附近没有电台会占用它。我对着麦克风说了句"晚上好"，然后等了三秒。当然不会有回应——但那种"可能被谁听见"的错觉，还是让手心微微出汗。我猜这就是人们喜欢写信的原因。</p>
+        </div>
+        <button class="diary-expand" aria-expanded="false">展开全文</button>
+        <footer class="diary-tags" aria-label="标签">
+          <span class="diary-tag" data-tone="pink">#频率</span>
+          <span class="diary-tag">#广播</span>
+        </footer>
+      </article>
+
+      <article class="diary-card">
+        <header class="diary-card-head">
+          <time class="diary-date" datetime="2026-06-25"><span class="day">25</span>六月</time>
+          <h3 class="diary-title">渐湖</h3>
+        </header>
+        <div class="diary-body">
+          <p>今天在数据系统里翻了拉海洛的旧地图，找到一处标记为"渐湖"的地方。名字真好听，像一句没说完的话。决定下一次航线绕道去那里看看。湖面会不会倒映出雪绒花呢？如果会，那大概就是天空在照镜子吧。</p>
+        </div>
+        <button class="diary-expand" aria-expanded="false">展开全文</button>
+        <footer class="diary-tags" aria-label="标签">
+          <span class="diary-tag" data-tone="blue">#航线</span>
+          <span class="diary-tag">#拉海洛</span>
+        </footer>
+      </article>
+    </div>
+  </section>
+
+  <!-- 3. 表单背板示例 -->
+  <section aria-labelledby="form-title">
+    <div class="section-head">
+      <span class="kicker">Surface Fix</span>
+      <h2 id="form-title">背板修复示例 · 投稿表单</h2>
+      <span class="note">同样的表单，换上新 surface 背板</span>
+    </div>
+    <form class="form-card" aria-label="投稿表单示例">
+      <h3>向星空投稿</h3>
+      <div class="form-row">
+        <label for="f-title">标题</label>
+        <input id="f-title" type="text" placeholder="给这篇作品起个名字" autocomplete="off">
+      </div>
+      <div class="form-row">
+        <label for="f-tags">标签（逗号分隔）</label>
+        <input id="f-tags" type="text" placeholder="例如：爱弥斯, 夜航, 治愈">
+      </div>
+      <div class="form-row">
+        <label for="f-body">正文</label>
+        <textarea id="f-body" rows="4" placeholder="写下你的故事……"></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-primary">提交投稿</button>
+        <button type="button" class="btn btn-ghost">存为草稿</button>
+      </div>
+    </form>
+    <p class="compare-note">
+      <strong>对比旧版：</strong>旧表单直接浮在星空背景上（无 surface 背板、输入框仅 3% 白 inset），低亮度下"融进背景"。新版表单用 <code>#1E1E2E</code> 卡片承载，输入框 <code>5%</code> 白 inset + 14% 边框，聚焦时 3px 粉光圈——层级从"看不见"到"看得清"。
+    </p>
+  </section>
+</main>
+
+<!-- 4. 侧边捐赠卡 -->
+<div class="support-dock" id="support-dock">
+  <button class="support-toggle" id="support-toggle" aria-label="打开赞助面板" aria-expanded="false" aria-controls="support-card">☕</button>
+  <section class="support-card" id="support-card" aria-label="赞助支持">
+    <header class="support-card-head">
+      <span class="support-avatar" aria-hidden="true">☕</span>
+      <div>
+        <h3 class="support-title">请制作人喝杯咖啡</h3>
+        <p class="support-desc">每一份支持都会变成星空下更稳定的信号。</p>
+      </div>
+      <button class="support-minimize" id="support-minimize" aria-label="收起赞助面板">−</button>
+    </header>
+    <div class="support-methods" role="tablist" aria-label="支付方式">
+      <button class="support-method is-active" role="tab" aria-selected="true" data-method="wechat">微信支付</button>
+      <button class="support-method" role="tab" aria-selected="false" data-method="alipay">支付宝</button>
+    </div>
+    <figure class="support-qr">
+      <div class="qr-holder">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='336' height='336'%3E%3Crect width='336' height='336' fill='%23ffffff'/%3E%3Cg fill='%23000'%3E%3Crect x='24' y='24' width='120' height='120'/%3E%3Crect x='192' y='24' width='120' height='120'/%3E%3Crect x='24' y='192' width='120' height='120'/%3E%3Crect x='192' y='192' width='120' height='120'/%3E%3Crect x='164' y='164' width='8' height='8'/%3E%3C/g%3E%3Cg fill='%23000'%3E%3Crect x='56' y='56' width='56' height='56' fill='%23fff'/%3E%3Crect x='224' y='56' width='56' height='56' fill='%23fff'/%3E%3Crect x='56' y='224' width='56' height='56' fill='%23fff'/%3E%3Crect x='224' y='224' width='56' height='56' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E"
+             alt="微信收款码（原型示意）" data-method="wechat" class="is-active">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='336' height='336'%3E%3Crect width='336' height='336' fill='%23ffffff'/%3E%3Cg fill='%23007fff'%3E%3Crect x='24' y='24' width='120' height='120'/%3E%3Crect x='192' y='24' width='120' height='120'/%3E%3Crect x='24' y='192' width='120' height='120'/%3E%3Crect x='192' y='192' width='120' height='120'/%3E%3Crect x='164' y='164' width='8' height='8'/%3E%3C/g%3E%3Cg fill='%23007fff'%3E%3Crect x='56' y='56' width='56' height='56' fill='%23fff'/%3E%3Crect x='224' y='56' width='56' height='56' fill='%23fff'/%3E%3Crect x='56' y='224' width='56' height='56' fill='%23fff'/%3E%3Crect x='224' y='224' width='56' height='56' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E"
+             alt="支付宝收款码（原型示意）" data-method="alipay">
+      </div>
+      <figcaption>原型阶段以示意码代替真实收款码</figcaption>
+    </figure>
+    <p class="support-note">选择方式后扫码即可。你的陪伴，是这里继续发光的理由。</p>
+  </section>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* 捐赠卡：展开 / 收起 */
+  var dock = document.getElementById('support-dock');
+  var toggle = document.getElementById('support-toggle');
+  var minimize = document.getElementById('support-minimize');
+
+  function setOpen(open) {
+    dock.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', open ? 'false' : 'true');
+    minimize.setAttribute('aria-expanded', String(open));
+  }
+  toggle.addEventListener('click', function () { setOpen(true); });
+  minimize.addEventListener('click', function () { setOpen(false); });
+
+  /* 捐赠卡：支付方式切换 */
+  var methods = dock.querySelectorAll('.support-method');
+  var qrs = dock.querySelectorAll('.support-qr img');
+  methods.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      methods.forEach(function (b) {
+        b.classList.toggle('is-active', b === btn);
+        b.setAttribute('aria-selected', String(b === btn));
+      });
+      var m = btn.getAttribute('data-method');
+      qrs.forEach(function (img) {
+        img.classList.toggle('is-active', img.getAttribute('data-method') === m);
+      });
+    });
+  });
+
+  /* 日记：展开 / 收起 */
+  document.querySelectorAll('.diary-card').forEach(function (card) {
+    var btn = card.querySelector('.diary-expand');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var open = card.classList.toggle('is-open');
+      btn.textContent = open ? '收起' : '展开全文';
+      btn.setAttribute('aria-expanded', String(open));
+    });
+  });
+})();
+</script>
+</body>
+</html>

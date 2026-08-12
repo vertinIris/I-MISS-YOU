@@ -1,9 +1,10 @@
 # 飞行雪绒 UI/UX 前期规划方案
 
 > 范围：捐赠区域重构、主题模式收敛、日记/时间线布局优化  
-> 阶段：前期规划（不执行代码修改）  
+> 阶段：前期规划（不执行代码修改）→ ✅ 已确认方向，进入原型阶段  
 > 日期：2026-08-12  
-> 依据：用户截图 × 当前代码审查 × GitHub 优秀案例 × 本地已安装设计 Skill
+> 依据：用户截图 × 当前代码审查 × GitHub 优秀案例 × 本地已安装设计 Skill  
+> **用户已确认**：调亮 = 方案 B 材质分层；捐赠区 = 桌面侧边固定卡；日记 = 杂志式时间线
 
 ---
 
@@ -75,27 +76,35 @@
 - 文件：`css/donation.css`、`js/donation.js`、`index.html` 底部
 - 实现：`.donate-fab` 固定右下角 → 点击打开 `.donate-modal` 全屏遮罩 → 展示二维码
 
-#### 目标设计
-在主站内容流中嵌入一个**可见的赞助支持卡片**，位置建议：
+#### 目标设计（✅ 已确认：桌面侧边固定卡）
 
-1. **首选位置**：`#diary` 模块下方的独立 section（与日志、音乐、投稿并列）  
-2. **备选位置**：页脚前的 `Ft5 statement` 区域上方，作为全宽横幅卡片  
-3. **论坛沿用**：保持当前论坛侧栏 `.stf-discuss-aside` 已有风格，主站用同构组件但粉蓝配色
+在主站右侧以**常驻悬浮卡片**承载赞助支持（替换现有 FAB+Modal 位置）：
+
+1. **桌面端（≥1024px）**：右侧固定悬浮卡（`position: fixed; right: 24px; bottom: 96px`），卡片内嵌"星炬论坛式"捐赠内容：标题 + 支付方式分段切换 + 二维码 + 最小化按钮
+2. **移动端（<1024px）**：收起为右侧圆形入口按钮，点击展开底部抽屉（bottom sheet）而非全屏 modal
+3. **论坛沿用**：论坛侧栏 `.stf-discuss-aside` 已有同构风格，主站卡片用粉蓝配色、论坛用蓝金，禁止"同款换色皮"
+
+> 设计动机：访客"随手支持"不应被全屏打断；侧边卡常驻可见但可一键收起，兼顾曝光与打扰程度。与 FAB 相比：不遮页面主内容、信息一屏看全。
 
 #### 组件结构（规划）
 
 ```html
-<section class="support-section" aria-labelledby="support-title">
-  <div class="support-card glass">
-    <div class="support-header">
-      <span class="support-icon" aria-hidden="true">☕</span>
+<!-- 桌面侧边固定卡（替换 .donate-fab + .donate-modal） -->
+<div class="support-dock" aria-label="赞助支持">
+  <button class="support-dock-toggle is-open" aria-expanded="true" aria-controls="support-card">
+    <span class="support-dock-icon" aria-hidden="true">☕</span>
+    <span class="support-dock-label">支持站点</span>
+  </button>
+  <section class="support-card glass" id="support-card">
+    <header class="support-card-header">
       <div>
-        <h2 class="support-title" id="support-title">请制作人喝杯咖啡</h2>
+        <h2 class="support-title">请制作人喝杯咖啡</h2>
         <p class="support-desc">每一份支持都会变成星空下更稳定的信号。</p>
       </div>
-    </div>
+      <button class="support-minimize" aria-label="收起">—</button>
+    </header>
     <div class="support-methods" role="tablist">
-      <button class="support-method is-active" data-method="wechat">微信支付</button>
+      <button class="support-method is-active" data-method="wechat">微信</button>
       <button class="support-method" data-method="alipay">支付宝</button>
     </div>
     <div class="support-qr">
@@ -103,26 +112,32 @@
       <img src="assets/qrcode-alipay.jpg" alt="支付宝二维码" data-method="alipay">
     </div>
     <p class="support-note">选择方式后扫码即可。你的陪伴，是这里继续发光的理由。</p>
-  </div>
-</section>
+  </section>
+</div>
+
+<!-- 移动端：入口按钮 + 底部抽屉（同 DOM，CSS 控制形态） -->
 ```
 
 #### 视觉规范
-- 卡片背景：`var(--surface-card)` 提升为 `oklch(96% 0.01 350 / 0.08)`（比现在 4.5% 更亮）
+- 卡片宽度：约 280px，`position: fixed; right: 24px; bottom: 96px; z-index: 50`
+- 卡片背景：`var(--surface-card)`（方案 B 提亮后）
 - 边框：`var(--surface-card-border)` 提升为 10% 白
 - 图标区：圆形渐变徽章，粉→蓝
-- 支付方式切换：用胶囊分段器（segmented control）替代 tabs
-- 二维码容器：白色内衬 + 圆角 + 内阴影，保证扫码识别
+- 支付方式切换：胶囊分段器（segmented control）
+- 二维码容器：白色内衬 + 圆角 + 内阴影，保证扫码识别（白色底是扫码硬要求）
+- 收起态：仅剩圆形 ☕ 按钮，带未读感的呼吸光圈提醒存在感
 
 #### 交互
-- 默认展开二维码，减少一步点击
+- 默认展开卡片，二维码默认显示微信（第一支付方式）
 - 切换支付方式时二维码 cross-fade
-- 保留一个轻量的"关闭/最小化"按钮，让反感赞助的用户可收起
+- 卡片头部的"收起"按钮 → 最小化为圆形 ☕ 按钮（`aria-expanded` 联动）
+- 移动端收起 → 显示为底部导航条右侧的圆形入口，点击弹出 bottom sheet
+- 保留"最小化"而非"关闭"，让反感赞助的用户可收起、不打扰
 
 #### 影响文件
-- `css/donation.css`：重写为 section/widget 样式
-- `js/donation.js`：移除 modal 逻辑，改为 tab 切换 + 收起状态
-- `index.html`：移除 FAB/modal DOM，在目标位置插入 support-section
+- `css/donation.css`：重写为 dock/card 样式
+- `js/donation.js`：移除 modal 逻辑，改为 tab 切换 + 收起/展开状态
+- `index.html`：移除 FAB/modal DOM，插入 support-dock
 - `forum/index.html` 与 `forum/forum-theme.css`：论坛已有 aside，可复用结构；删除 `.donate-fab` 相关覆盖
 
 ---
@@ -140,24 +155,19 @@
 - 论坛主题 bootstrap 只保留 dark（可保留 auto 检测，但 eff 固定 dark）
 - 提升 dark 界面整体亮度与可读性
 
-#### 调亮策略（三选一，等待用户确认）
+#### 调亮策略（✅ 已确认：方案 B 材质分层）
 
-**方案 A：保守提亮（推荐）**
-- `sn-paper`: `oklch(12% ...)` → `oklch(14% 0.022 350)`
-- `sn-paper-2`: `oklch(16% ...)` → `oklch(19% 0.026 348)`
-- `sn-paper-3`: `oklch(20% ...)` → `oklch(24% 0.03 348)`
-- 玻璃/卡片背景：4% → 8% 白
-- 文本主色：保持 `oklch(96% ...)`，secondary 从 82% 提到 88%
+**方案 B：Material 式分层（已选定）**
+- 背景用 `#121212` 等价 `oklch(21% 0 0)` 替代当前 `#0A0A12`，抬升全局亮度基线
+- 卡片 surface 用 `#1E1E2E`（带粉/蓝 tint，蓝向 `oklch(24% 0.012 285)`）
+- 最高 elevation（弹层/抽屉）用 `#252536`（`oklch(28% 0.014 285)`）
+- 玻璃层与卡片背板 alpha 提到 8%–9% 白，边框 14% 白
+- 文本分层：主 96% 白、secondary 88%、辅助 74%
+- 强调色（粉/蓝）饱和度降低 15%–20%，大面积填充不刺眼，焦点色保持
 
-**方案 B：Material 式分层**
-- 背景用 `#121212` 等价 oklch(21% 0 0) 替代当前 #0A0A12
-- 卡片 surface 用 `#1E1E2E`（带粉/蓝 tint）
-- 强调色降低饱和度 15%–20%
-
-**方案 C：OLED 夜电台 + 暖灰**
-- 背景保持近黑，但用暖灰 `#120D14` 替代冷黑
-- 卡片用 12% 白叠底 + 更亮的内高光
-- 适合夜间沉浸，但白天可读性仍受限
+**（备选记录，未采用）**
+- ~~方案 A：保守提亮~~ —— 只动 token 亮度，改动最小，但用户选 B
+- ~~方案 C：OLED 暖灰~~ —— 偏离粉蓝冷调，未选
 
 #### 实施要点
 - 删除 `css/style.css` 中所有 `[data-theme="light"]` 规则
@@ -180,11 +190,13 @@
 - 多篇日记连续堆叠，缺少视觉锚点和阅读停顿
 - 标题与日期分属左右，视线来回跳动
 
-#### 目标设计："星历卡片" 时间线
+#### 目标设计（✅ 已确认：杂志式时间线）
+
+**"星历卡片" 时间线 —— 杂志式（已选定）**
 
 **桌面端（≥1024px）**
-- 采用**中心轴线 + 左右交替卡片**：日期圆点在中轴，卡片左右错落
-- 或采用**Bento 网格**：精选/长文占 2×1，短文占 1×1
+- 单列时间轴 + 日期/标题同行 + 正文折叠预览，右侧 tag 行
+- 长文卡片可跨列，形成杂志节奏（`grid-template-columns: repeat(6, 1fr)`，卡片按内容权重跨 4–6 列）
 
 **平板端（768px–1024px）**
 - 左对齐时间轴：竖线 + 圆点在左，卡片在右
@@ -240,18 +252,21 @@
 
 ## 五、设计 Token 调整草案
 
-### 5.1 主站暗色提亮（方案 A 数值）
+### 5.1 主站暗色提亮（✅ 方案 B 材质分层数值）
 
 | Token | 当前值 | 建议值 | 说明 |
 |---|---|---|---|
-| `--sn-paper` | `oklch(12% 0.02 350)` | `oklch(14% 0.022 350)` | 背景提亮 2% |
-| `--sn-paper-2` | `oklch(16% 0.025 350)` | `oklch(19% 0.026 348)` | 次级表面 |
-| `--sn-paper-3` | `oklch(20% 0.03 348)` | `oklch(24% 0.03 348)` | 最高 elevation |
+| `--sn-paper` | `oklch(12% 0.02 350)` ≈ #0A0A12 | `#121212` ≈ `oklch(21% 0 0)` | 全局亮度基线抬升（背景） |
+| `--sn-paper-2` | `oklch(16% 0.025 350)` | `#1E1E2E` ≈ `oklch(24% 0.012 285)` | surface 卡片层（带蓝 tint） |
+| `--sn-paper-3` | `oklch(20% 0.03 348)` | `#252536` ≈ `oklch(28% 0.014 285)` | 最高 elevation（抽屉/弹层） |
 | `--glass-bg` | `oklch(96% 0.01 350 / 0.04)` | `oklch(96% 0.01 350 / 0.08)` | 玻璃提亮 |
 | `--glass-border` | `oklch(96% 0.01 350 / 0.10)` | `oklch(96% 0.01 350 / 0.14)` | 边框可见 |
-| `--surface-card` | `oklch(96% 0.01 350 / 0.045)` | `oklch(96% 0.01 350 / 0.085)` | 卡片背板 |
+| `--surface-card` | `oklch(96% 0.01 350 / 0.045)` | `oklch(96% 0.01 350 / 0.09)` | 卡片背板（在 1E1E2E 底上再叠白） |
 | `--sn-ink-2` | `oklch(82% 0.02 350)` | `oklch(88% 0.018 350)` | 正文 secondary 提亮 |
 | `--sn-ink-3` | `oklch(68% 0.025 350)` | `oklch(74% 0.022 350)` | 辅助信息提亮 |
+| `--sn-ink-4` | —（新增） | `oklch(60% 0.02 350)` | 占位/禁用文本层级 |
+
+> 分层关系（Material 式）：背景 `#121212` ＜ 卡片 `#1E1E2E` ＜ 弹层 `#252536`，配合 8%–9% 白玻璃叠加与 14% 白边框，形成明确的 elevation 层级。
 
 ### 5.2 强调色降饱和
 
@@ -285,9 +300,14 @@
 
 ---
 
-## 八、下一步建议
+## 八、决策记录与下一步
 
-1. **用户确认方向**：请从 4.2 的 A/B/C 三种调亮方案中选择一个。
-2. **确认捐赠区位置**：首选（日记下方独立 section）还是备选（页脚上方全宽横幅）？
-3. **确认日记布局**：交替时间轴 / Bento 网格 / 左对齐时间轴，三选一。
-4. 确认后，进入 `make-prototype` 阶段，生成高保真 HTML 原型供预览，再落地到项目代码。
+### ✅ 用户已确认（2026-08-12）
+1. **调亮方案**：方案 B 材质分层（背景 #121212 / 卡片 #1E1E2E / 弹层 #252536）
+2. **捐赠区位置**：桌面侧边固定卡（替换 FAB+Modal，移动端退化为底部抽屉）
+3. **日记布局**：杂志式时间线（日期+标题同行、正文折叠、tag 行）
+
+### 下一步
+1. ~~用户确认方向~~（已完成）
+2. 进入 `make-prototype` 阶段：按本文档 Token 与结构生成**高保真 HTML 原型**（独立预览文件，不改生产代码），供用户预览三个模块效果
+3. 原型确认后，按「六、实施优先级」P0→P5 落地到项目代码，并自行 commit + push
