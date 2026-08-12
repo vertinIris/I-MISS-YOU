@@ -1,5 +1,5 @@
 // Service Worker — 飞行雪绒 · 星炬学院
-const CACHE_VERSION = 'snowfluff-v11.0';
+const CACHE_VERSION = 'snowfluff-v11.1';
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
