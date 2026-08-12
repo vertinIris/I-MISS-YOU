@@ -6,7 +6,8 @@
 非商业同人创作：叙事、音乐合成、社区互动与角色档案。
 
 **当前版本**: **v10.0**（见 [`docs/STATUS.md`](docs/STATUS.md)）  
-**线上**: https://vertiniris.github.io/I-MISS-YOU/  
+**线上（主）**: https://i-miss-you-bcu.pages.dev/ （Cloudflare Pages，大陆访问更稳）  
+**线上（备）**: https://vertiniris.github.io/I-MISS-YOU/ （GitHub Pages 源站）  
 **`package.json`**: `10.0.0`
 
 ---
@@ -61,7 +62,7 @@ npm run serve          # 或双击「打开本地预览.bat」/ .\run.ps1
 | 前端 | HTML5 + CSS3 + 原生 JS（零框架） |
 | 后端 | Supabase（PostgreSQL + Auth + Realtime + RLS） |
 | 音频 | Web Audio API |
-| 部署 | GitHub Pages |
+| 部署 | Cloudflare Pages（主）+ GitHub Pages（备） |
 
 字体：Noto Sans/Serif SC（Google Fonts 非阻塞加载）→ 系统 CJK 回退（PingFang / 微软雅黑 / 宋体）。
 
