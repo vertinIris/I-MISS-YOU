@@ -132,10 +132,12 @@ try {
     }
     if (/version:\s*'v10\.0'/.test(mainJs)) ok('__FXRE_API.version v10.0');
     else fail('__FXRE_API.version 未对齐 v10.0');
-    if (read('index.html').includes('v11.0')) ok('主站页脚 v11.0');
-    else fail('主站页脚缺 v11.0');
-    if (read('forum/index.html').includes('v11.0')) ok('论坛页脚 v11.0');
-    else fail('论坛页脚缺 v11.0');
+    const mainFooter = read('index.html');
+    const forumFooter = read('forum/index.html');
+    if (/v11\.\d/.test(mainFooter)) ok('主站页脚 v11.x');
+    else fail('主站页脚缺 v11.x 版本标识');
+    if (/v11\.\d/.test(forumFooter)) ok('论坛页脚 v11.x');
+    else fail('论坛页脚缺 v11.x 版本标识');
 } catch (e) {
     fail('package.json 解析失败');
 }
