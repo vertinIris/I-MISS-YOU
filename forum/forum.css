@@ -8,26 +8,99 @@
 
 .forum-hero {
     position: relative;
-    min-height: 78vh;
+    min-height: 56vh;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 120px 24px 80px;
+    padding: 104px 24px 64px;
     overflow: hidden;
 }
 
 .forum-hero::before {
     content: "";
     position: absolute;
-    inset: 0;
+    inset: 20px;
+    border-radius: 24px;
     background:
-        radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent), transparent 45%),
-        radial-gradient(circle at 80% 30%, color-mix(in srgb, var(--color-gold-warm) 10%, transparent), transparent 45%),
-        radial-gradient(circle at 50% 90%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 12%, transparent), transparent 50%);
+        radial-gradient(circle at 22% 18%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent), transparent 46%),
+        radial-gradient(circle at 78% 28%, color-mix(in srgb, var(--color-gold-warm) 10%, transparent), transparent 44%),
+        radial-gradient(circle at 50% 92%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 10%, transparent), transparent 50%);
     pointer-events: none;
 }
 .forum-hero-content { position: relative; z-index: 1; max-width: 760px; }
+
+/* 背板：噪点绒感材质（防 AI 纯色渐变味）——inset 与 ::before 一致，光晕透出表面 */
+.forum-hero__backplate {
+    position: absolute;
+    inset: 20px;
+    border-radius: 24px;
+    border: 1px solid color-mix(in srgb, var(--stf-edge, oklch(78% 0.06 250deg / 0.22)) 92%, transparent);
+    background:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E"),
+        radial-gradient(110% 80% at 50% -10%, color-mix(in srgb, var(--stf-brand, #6d8fd6) 12%, transparent), transparent 55%),
+        linear-gradient(180deg, color-mix(in srgb, var(--stf-surface-1, oklch(96% 0.01 250deg / 0.085)) 70%, #0B0E1A) 0%, #0A0D18 100%);
+    background-size: 150px 150px, auto, auto;
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, white 7%, transparent),
+        0 30px 70px -30px rgba(3, 5, 12, 0.7),
+        0 0 40px color-mix(in srgb, var(--stf-brand, #6d8fd6) 6%, transparent);
+    pointer-events: none;
+}
+
+/* 动效差异化：星炬为「信号尘埃」——蓝金圆点缓升，区别于主站横向流星 */
+.stf-hero-sparks {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+.stf-hero-sparks i {
+    position: absolute;
+    bottom: -12px;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--color-gold-warm, #E8C56A);
+    box-shadow: 0 0 10px 2px color-mix(in srgb, var(--color-gold-warm, #E8C56A) 55%, transparent);
+    opacity: 0;
+    animation: stf-spark-rise 11s linear infinite;
+}
+.stf-hero-sparks i:nth-child(2),
+.stf-hero-sparks i:nth-child(4),
+.stf-hero-sparks i:nth-child(6) {
+    background: var(--color-blue-light, #A8D8FF);
+    box-shadow: 0 0 10px 2px color-mix(in srgb, var(--color-blue-light, #A8D8FF) 55%, transparent);
+}
+.stf-hero-sparks i:nth-child(1) { left: 14%; animation-delay: 0s; }
+.stf-hero-sparks i:nth-child(2) { left: 33%; animation-delay: 2.6s; }
+.stf-hero-sparks i:nth-child(3) { left: 52%; animation-delay: 5.2s; }
+.stf-hero-sparks i:nth-child(4) { left: 69%; animation-delay: 1.4s; }
+.stf-hero-sparks i:nth-child(5) { left: 84%; animation-delay: 3.8s; }
+.stf-hero-sparks i:nth-child(6) { left: 94%; animation-delay: 6.8s; }
+@keyframes stf-spark-rise {
+    0%   { transform: translateY(0) scale(0.6); opacity: 0; }
+    14%  { opacity: 0.75; }
+    72%  { opacity: 0.35; }
+    100% { transform: translateY(-52vh) scale(1.1); opacity: 0; }
+}
+
+/* 可访问性：键盘跳转到主内容 */
+.skip-link {
+    position: fixed;
+    top: -48px; left: 16px;
+    z-index: 1200;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: var(--stf-surface-2);
+    border: 1px solid var(--stf-edge-strong);
+    color: var(--stf-brand-light, #A8D8FF);
+    font-size: 13px;
+    text-decoration: none;
+    transition: top .2s ease;
+}
+.skip-link:focus { top: 12px; }
 
 .forum-hero-label {
     display: inline-block;
@@ -48,15 +121,13 @@
     font-weight: 900;
     line-height: 1.05;
     margin: 0 0 18px;
-    background: linear-gradient(100deg, var(--color-blue), var(--char-lucilla), var(--color-blue-light), var(--color-blue));
-    background-size: 300% 100%;
+    background: linear-gradient(100deg, var(--color-blue), var(--color-blue-light));
+    background-size: 100% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    animation: forum-flow 16s ease-in-out infinite;
 }
 
-@keyframes forum-flow { to { background-position: 300% 0; } }
 
 /* Hero ???????? ?? ??????? */
 .forum-hero-quicknav {
@@ -316,7 +387,7 @@
 }
 
 .stf-chat-message.is-self .stf-chat-bubble {
-    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 26%, transparent), color-mix(in srgb, var(--color-blue-light) 12%, transparent));
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 18%, transparent);
     border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 30%, transparent);
 }
 
@@ -431,10 +502,7 @@
     font-size: 28px;
     font-weight: 700;
     line-height: 1;
-    background: linear-gradient(100deg, var(--color-blue), var(--char-lucilla));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--color-blue-light);
 }
 .stf-stat span { font-size: 12px; color: color-mix(in srgb, var(--color-snow) 60%, transparent); letter-spacing: .08em; }
 
@@ -453,7 +521,7 @@
     transition: all .25s;
 }
 .stf-sort-btn:hover { color: var(--color-white); }
-.stf-sort-btn.active { background: linear-gradient(100deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 35%, transparent), color-mix(in srgb, var(--color-gold-warm) 28%, transparent)); color: var(--color-white); }
+.stf-sort-btn.active { background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 24%, transparent); color: var(--color-white); }
 
 /* ??? + ???? */
 .archive-float {
@@ -714,7 +782,7 @@ html.archive-orbit-active .archive-album-shelf {
     padding: 4px 12px;
     border-radius: 999px;
     color: var(--color-white);
-    background: linear-gradient(100deg, var(--color-rose), var(--char-lucilla));
+    background: var(--color-rose);
     box-shadow: 0 6px 16px color-mix(in srgb, var(--color-rose) 28%, transparent);
 }
 
@@ -964,7 +1032,7 @@ html.archive-orbit-active .archive-album-shelf {
 .stf-filter-btn:hover { background: color-mix(in srgb, var(--color-white) 10%, transparent); }
 
 .stf-filter-btn.active {
-    background: linear-gradient(100deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 35%, transparent), color-mix(in srgb, var(--color-purple) 35%, transparent));
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 26%, transparent);
     border-color: color-mix(in srgb, var(--color-blue-light) 35%, transparent);
     color: var(--color-white);
     box-shadow: 0 6px 18px color-mix(in srgb, var(--stf-brand, #6d8fd6) 22%, transparent);
@@ -1470,7 +1538,7 @@ html.archive-orbit-active .archive-album-shelf {
 
 .stf-account-avatar.is-signed {
     box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-blue-light) 28%, transparent), 0 0 14px color-mix(in srgb, var(--stf-brand, #6d8fd6) 35%, transparent);
-    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 55%, transparent), color-mix(in srgb, var(--color-gold-warm) 40%, transparent));
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 45%, transparent);
 }
 
 /* ?????????? / ????????????? */
@@ -1526,11 +1594,11 @@ html.archive-orbit-active .archive-album-shelf {
 }
 /* ?? / ??????? */
 .stf-auth-module[data-auth-module="login"] .stf-auth-tab.active {
-    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 22%, transparent), color-mix(in srgb, var(--stf-brand, #6d8fd6) 8%, transparent));
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent);
 }
 
 .stf-auth-module[data-auth-module="register"] .stf-auth-tab.active {
-    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 18%, transparent), color-mix(in srgb, var(--color-gold-warm) 14%, transparent));
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent);
 }
 
 .stf-auth-form {
@@ -1574,7 +1642,7 @@ html.archive-orbit-active .archive-album-shelf {
 
 [data-mode-scope="login"].stf-auth-mode-btn.active,
 [data-mode-scope="register"].stf-auth-mode-btn.active {
-    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 24%, transparent), color-mix(in srgb, var(--color-gold-warm) 12%, transparent));
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 18%, transparent);
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-blue-light) 28%, transparent);
 }
 
@@ -1596,9 +1664,7 @@ html.archive-orbit-active .archive-album-shelf {
     display: flex; align-items: center; gap: 14px;
     padding: 14px 16px;
     border-radius: 14px;
-    background:
-        linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 12%, transparent), color-mix(in srgb, var(--color-gold-warm) 6%, transparent)),
-        color-mix(in srgb, var(--color-white) 4%, transparent);
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 8%, transparent);
     border: 1px solid color-mix(in srgb, var(--color-blue-light) 22%, transparent);
     box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-white) 6%, transparent);
 }
@@ -1608,7 +1674,7 @@ html.archive-orbit-active .archive-album-shelf {
     border-radius: 50%;
     display: grid; place-items: center;
     font-size: 22px; font-weight: 700; color: var(--color-white);
-    background: linear-gradient(135deg, var(--stf-brand, #6d8fd6), var(--stf-gold, #E8C56A));
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 32%, transparent);
     box-shadow: 0 0 18px color-mix(in srgb, var(--stf-brand, #6d8fd6) 35%, transparent);
     flex: none;
 }
@@ -1661,9 +1727,7 @@ html.archive-orbit-active .archive-album-shelf {
     height: 42px;
     border-radius: 50%;
     border: 1.5px solid color-mix(in srgb, var(--color-gold-warm) 55%, transparent);
-    background:
-        radial-gradient(circle at 40% 35%, color-mix(in srgb, var(--color-white) 35%, transparent), transparent 45%),
-        linear-gradient(145deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 55%, transparent), color-mix(in srgb, var(--color-gold-warm) 35%, transparent));
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 40%, transparent);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--stf-brand, #6d8fd6) 12%, transparent), 0 0 18px color-mix(in srgb, var(--stf-brand, #6d8fd6) 25%, transparent);
 }
 .stf-passport-titles { min-width: 0; }
@@ -2303,7 +2367,7 @@ html.archive-orbit-active .archive-album-shelf {
     padding: 7px 14px;
     border-radius: 999px;
     border: 1px solid color-mix(in srgb, var(--color-blue-light) 22%, transparent);
-    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 22%, transparent), color-mix(in srgb, var(--color-purple) 22%, transparent));
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 24%, transparent);
     color: var(--color-white);
     font-size: 13px;
     cursor: pointer;
@@ -2314,7 +2378,7 @@ html.archive-orbit-active .archive-album-shelf {
 .stf-sync-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 6px 18px color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent);
-    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 34%, transparent), color-mix(in srgb, var(--color-purple) 34%, transparent));
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 34%, transparent);
 }
 
 .stf-sync-btn:focus-visible {
@@ -2582,7 +2646,7 @@ html.archive-orbit-active .archive-album-shelf {
     font-weight: 600;
     letter-spacing: 0.04em;
     color: #1a1408;
-    background: linear-gradient(100deg, var(--char-lucilla), #FF9E7A);
+    background: var(--char-lucilla);
 }
 .stf-staff-hint { flex: 1; min-width: 160px; }
 

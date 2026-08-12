@@ -668,7 +668,13 @@
         var start = communityPage * COMMUNITY_PAGE_SIZE;
         var pageItems = filtered.slice(start, start + COMMUNITY_PAGE_SIZE);
 
-        grid.innerHTML = pageItems.map(buildCardHTML).join('');
+        // 星轨时间线：每条卡片包 stf-timeline__item，前置节点圆点对齐 rail（样式见 css/stf-weapons.css / stf-signature.css）
+        grid.innerHTML = pageItems.map(function (s) {
+            return '<div class="stf-timeline__item">' +
+                '<span class="sig-timeline-node" aria-hidden="true"></span>' +
+                buildCardHTML(s) +
+                '</div>';
+        }).join('');
 
         restoreCommentForms();
         pageItems.forEach(function (s) { renderComments(s.id); });

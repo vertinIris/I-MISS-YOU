@@ -56,6 +56,7 @@
     </script>
 </head>
 <body id="top" class="forum-page">
+    <a class="skip-link" href="#stf-main">跳到主要内容</a>
 
     <nav class="nav-glass" id="navbar">
         <div class="nav-container">
@@ -127,7 +128,12 @@
         </div>
     </nav>
 
+    <main id="stf-main">
     <header class="forum-hero">
+        <div class="forum-hero__backplate" aria-hidden="true"></div>
+        <div class="stf-hero-sparks" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
         <div class="forum-hero-content">
             <h1 class="forum-hero-brand">星炬学院</h1>
             <div class="sig-freqbar" aria-hidden="true">
@@ -355,15 +361,8 @@
                                 <span class="stf-pinned-label">置顶</span>
                                 <button type="button" class="stf-pinned-toggle" id="stf-pinned-toggle" aria-expanded="true">收起</button>
                             </div>
-                            <!-- 置顶首卡星轨节点示范：forum.js 渲染每条 li 时，需在 .stf-card 前插入对应节点 -->
+                            <!-- 置顶为紧凑快捷列表（非星轨卡片），forum.js 渲染 -->
                             <ul class="stf-pinned-list" id="stf-pinned-list">
-                                <!-- forum.js 渲染模板参考：
-                                <li>
-                                    <span class="sig-timeline-node sig-timeline-node--fresh sig-timeline-node--off-2"></span>
-                                    <article class="stf-card stf-card--stack stf-timeline__item">…</article>
-                                </li>
-                                -->
-                            </ul>
                         </div>
 
                     <div class="stf-composer" id="stf-composer">
@@ -450,13 +449,7 @@
                         </form>
                     </div>
 
-                    <!-- 信息流 stf-feed：每条 .stf-card 由 forum.js 动态渲染。
-                         forum.js 适配要求：
-                         1. 每条卡片外层添加 class stf-timeline__item
-                         2. 每张 .stf-card 前插入星轨节点圆点：
-                            <span class="sig-timeline-node sig-timeline-node--off-1"></span>
-                         3. .stf-card 同时添加 class stf-card--stack（预览内容 mask 渐隐，折叠高度由 CSS 控制）
-                    -->
+                    <!-- 信息流 stf-feed：forum.js 渲染，每条卡片包 stf-timeline__item 并前置星轨节点圆点（rail 形态） -->
                     <div class="stf-feed" id="stf-community-grid" aria-label="讨论帖列表">
                         <!-- JS 渲染 -->
                     </div>
@@ -980,6 +973,7 @@
             <span class="stf-freq-sub">信号已接通 · 飞行雪绒正在播出</span>
         </div>
     </div>
+    </main>
 
     <!-- ============ Footer: Ft1 Archive-Card + Dewey-Decimal-Code ============ -->
     <footer class="stf-footer">
@@ -1213,7 +1207,15 @@
         <div class="donate-panel" tabindex="-1">
             <button type="button" class="donate-close" aria-label="关闭">×</button>
             <div class="donate-header">
-                <div class="donate-emoji" aria-hidden="true">☕</div>
+                <div class="donate-emoji" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5.5 11.5c1.4-1.8 3.2-1.8 4.3 0 1.1-1.8 2.9-1.8 4.4 0 1.1-1.8 2.9-1.8 4.3 0"/>
+                        <path d="M6.5 11.5v6a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2v-6"/>
+                        <path d="M9 19.5l.9-2.2h4.2l.9 2.2"/>
+                        <circle cx="12" cy="7.5" r="1.5"/>
+                        <path d="M12 6V4.5"/>
+                    </svg>
+                </div>
                 <h2 class="donate-title" id="donate-title">请制作人喝杯咖啡</h2>
                 <p class="donate-subtitle">每一份支持，都会变成星空下更稳定的信号。<br>如果你认可这个创作角落，欢迎请制作人喝杯咖啡。</p>
             </div>
@@ -1264,7 +1266,7 @@
     <!-- Stage II: 15 个本地 JS 合并为 1 个 bundle（696KB→534KB ↓23.3%）+ SRI 完整性校验 -->
     <!-- forum-supabase.js 内含 waitForSDK 轮询，不依赖 CDN SDK 严格顺序；bundle 可安全先于 SDK 加载 -->
     <script defer src="../dist/bundle-forum.js"
-            integrity="sha384-8U8QS0Ve7Jkg4MgbfoCC1AfiBVMz4WKz3MEnoBiTXyaG4Omie8EAnxrRzCKbWgLk"
+            integrity="sha384-5wNhaM52hUgyftzakuYYdfmExOqjVGnkW0mobk+WrrMEGKvk/htrmYSjNLuDglbj"
             crossorigin="anonymous"></script>
     <!-- 论坛上云：Supabase 客户端 + 云端适配器（与主站共用同一项目，账号自动打通）
          v10.1: 内联脚本 + onerror 提取为外部文件 forum-supabase-loader.js，配合 CSP 加固 -->

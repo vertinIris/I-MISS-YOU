@@ -36,12 +36,12 @@
 
   /* Surface system */
   --stf-surface-0: oklch(14% 0.03 250deg / 0.96);
-  --stf-surface-1: oklch(96% 0.01 250deg / 0.04);
-  --stf-surface-2: oklch(96% 0.01 250deg / 0.08);
-  --stf-edge: oklch(78% 0.06 250deg / 0.16);
-  --stf-edge-strong: oklch(78% 0.06 250deg / 0.3);
-  --stf-inset: inset 0 1px 0 oklch(96% 0.01 250deg / 0.08);
-  --stf-metal: 0 0 0 1px oklch(78% 0.06 250deg / 0.14), var(--stf-inset);
+  --stf-surface-1: oklch(96% 0.01 250deg / 0.085);
+  --stf-surface-2: oklch(96% 0.01 250deg / 0.12);
+  --stf-edge: oklch(78% 0.06 250deg / 0.22);
+  --stf-edge-strong: oklch(78% 0.06 250deg / 0.38);
+  --stf-inset: inset 0 1px 0 oklch(96% 0.01 250deg / 0.1);
+  --stf-metal: 0 0 0 1px oklch(78% 0.06 250deg / 0.2), var(--stf-inset);
   --stf-focus: 0 0 0 2px oklch(14% 0.03 250deg / 0.95), 0 0 0 4px oklch(78% 0.06 250deg / 0.55);
 
   /* Scene → signature */
@@ -108,16 +108,16 @@
   --bg-gradient-3: var(--stf-bg-bottom);
 
   /* Glass — forum variant */
-  --glass-bg: oklch(96% 0.01 250deg / 0.04);
-  --glass-bg-hover: oklch(96% 0.01 250deg / 0.07);
-  --glass-border: oklch(96% 0.01 250deg / 0.1);
-  --glass-border-hover: oklch(78% 0.06 250deg / 0.4);
+  --glass-bg: oklch(96% 0.01 250deg / 0.075);
+  --glass-bg-hover: oklch(96% 0.01 250deg / 0.1);
+  --glass-border: oklch(96% 0.01 250deg / 0.14);
+  --glass-border-hover: oklch(78% 0.06 250deg / 0.5);
   --glass-blur: blur(12px) saturate(120%);
 
   /* Surface — forum variant */
-  --surface-card: oklch(96% 0.01 250deg / 0.045);
-  --surface-card-border: oklch(96% 0.01 250deg / 0.1);
-  --surface-inset: oklch(96% 0.01 250deg / 0.03);
+  --surface-card: oklch(96% 0.01 250deg / 0.085);
+  --surface-card-border: oklch(96% 0.01 250deg / 0.14);
+  --surface-inset: oklch(96% 0.01 250deg / 0.05);
   --nav-bg: oklch(14% 0.03 250deg / 0.82);
 
   /* Font stacks */

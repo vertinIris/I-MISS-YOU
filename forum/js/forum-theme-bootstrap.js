@@ -4,10 +4,8 @@
        原为 forum/index.html 内联脚本，CSP 加固（移除 'unsafe-inline'）后提取为外部文件。
        必须在 CSS 加载前同步执行，避免 FOUC 闪烁。 */
     try {
-        var t = localStorage.getItem('snowfluff-theme') || 'dark';
-        var eff = t;
-        if (t === 'auto') eff = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', eff);
+        /* v11: 仅保留暗色主题（星空氛围）——light/auto 模式已移除 */
+        document.documentElement.setAttribute('data-theme', 'dark');
     } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
 
     var LOC_REALM = {

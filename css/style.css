@@ -116,31 +116,6 @@
 
 /* Light Theme - 爱弥斯温柔白 */
 /* P2：浅色主题去薰衣草紫底 → 雪绒纸白 / 暖金纸感 */
-[data-theme="light"] {
-    --bg-primary: #FFFCF7;
-    --bg-secondary: #FFF8EF;
-    --bg-tertiary: #F5EDE0;
-    --bg-gradient-1: #FFF5F8;
-    --bg-gradient-2: #FFF6E8;
-    --bg-gradient-3: #FFF9F0;
-    --text-primary: #1C1610;
-    --text-secondary: #5A4A38;
-    --text-tertiary: #8A7A68;
-    --glass-bg: rgba(255, 255, 255, 0.65);
-    --glass-bg-hover: rgba(255, 255, 255, 0.85);
-    --glass-border: rgba(255, 255, 255, 0.8);
-    /* R17 浅色主题强调色同步为金 */
-    --glass-border-hover: rgba(245, 181, 68, 0.30);
-    --glass-blur: blur(20px) saturate(150%);
-    --shadow-glow: 0 0 28px rgba(229, 132, 168, 0.10);
-    --shadow-card: 0 8px 32px rgba(60, 40, 20, 0.08);
-    --shadow-hover: 0 12px 40px rgba(60, 40, 20, 0.10);
-    --shadow-pink: none;
-    --focus-ring: rgba(245, 181, 68, 0.50);
-    --nav-bg: rgba(255, 252, 247, 0.85);
-    --particle-color: 245, 181, 68;
-    --particle-alpha: 0.35;
-}
 
 /* ============ Dynamic Gradient Animation ============ */
 @keyframes gradientShift {
@@ -382,18 +357,6 @@ button {
     100% { transform: translateY(120px); }
 }
 
-[data-theme="light"] .hex-shield {
-    opacity: 0.18;
-}
-
-[data-theme="light"] .ult-energy-core::before {
-    background: radial-gradient(circle,
-        rgba(255, 107, 157, 0.08) 0%,
-        rgba(107, 138, 255, 0.06) 25%,
-        rgba(182, 107, 255, 0.04) 45%,
-        transparent 70%
-    );
-}
 
 /* Galaxy river — flowing star band with organic variation */
 .galaxy-river {
@@ -506,9 +469,6 @@ button {
     }
 }
 
-[data-theme="light"] .sparkle {
-    background: radial-gradient(circle, rgba(107, 138, 255, 0.7), transparent);
-}
 
 @keyframes galaxyDrift {
     0%, 100% { transform: translate(0, 0) rotate(0deg); }
@@ -516,21 +476,6 @@ button {
     66% { transform: translate(-20px, 30px) rotate(-1deg); }
 }
 
-[data-theme="light"] .pink-galaxy::before {
-    background: radial-gradient(ellipse at center,
-        rgba(255, 107, 157, 0.12) 0%,
-        rgba(255, 143, 176, 0.08) 30%,
-        transparent 60%
-    );
-}
-
-[data-theme="light"] .pink-galaxy::after {
-    background: radial-gradient(ellipse at center,
-        rgba(107, 138, 255, 0.12) 0%,
-        rgba(168, 216, 255, 0.08) 30%,
-        transparent 60%
-    );
-}
 
 /* ============ Shooting Star Animation ============ */
 .shooting-star-container {
@@ -647,15 +592,6 @@ button {
     text-shadow: 0 0 6px color-mix(in srgb, var(--color-blue-light) 35%, transparent);
 }
 
-[data-theme="light"] .css-snowflake {
-    color: rgba(107, 138, 255, 0.55);
-    text-shadow: 0 0 5px rgba(168, 216, 255, 0.25);
-}
-
-[data-theme="light"] .css-snowflake[data-layer="ethereal"] {
-    color: rgba(107, 138, 255, 0.25);
-    opacity: 0.25;
-}
 
 @keyframes cssSnowFall {
     0% {
@@ -703,9 +639,6 @@ button {
     opacity: 0.75;
 }
 
-[data-theme="light"] .star-field {
-    opacity: 0.25;
-}
 
 /* ============ Glass Utility ============ */
 .glass {
@@ -788,11 +721,6 @@ button {
     z-index: 300;
 }
 
-[data-theme="light"] .location-dropdown {
-    background: rgba(255, 255, 255, 0.98);
-    border-color: rgba(255, 107, 157, 0.35);
-    box-shadow: 0 16px 50px rgba(45, 27, 78, 0.12);
-}
 
 .location-selector.open .location-dropdown {
     opacity: 1;
@@ -1204,32 +1132,6 @@ button {
     display: none !important;
 }
 
-[data-theme="light"] .account-panel-inner {
-    background: rgba(255, 255, 255, 0.96);
-    border-color: rgba(107, 138, 255, 0.25);
-    box-shadow: 0 12px 36px rgba(80, 100, 160, 0.18);
-}
-
-[data-theme="light"] .account-panel-hint,
-[data-theme="light"] .account-field {
-    color: rgba(0, 0, 0, 0.5);
-}
-
-[data-theme="light"] .account-tab {
-    color: rgba(0, 0, 0, 0.4);
-}
-
-[data-theme="light"] .account-tab.active {
-    color: #4A6AE0;
-}
-
-[data-theme="light"] .account-user-email {
-    color: rgba(0, 0, 0, 0.8);
-}
-
-[data-theme="light"] .nav-account-btn {
-    color: rgba(0, 0, 0, 0.55);
-}
 
 /* Theme Toggle */
 .theme-toggle {
@@ -1270,17 +1172,6 @@ button {
     color: var(--color-blue-light);
 }
 
-[data-theme="light"] .theme-icon-sun {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-    color: var(--color-pink);
-}
-
-[data-theme="auto"] .theme-icon-auto {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-    color: var(--color-blue);
-}
 
 /* Mobile Menu Button */
 .nav-menu-btn {
@@ -2803,9 +2694,6 @@ button {
     background: color-mix(in srgb, black 15%, transparent);
 }
 
-[data-theme="light"] .music-visualizer {
-    background: rgba(255, 255, 255, 0.15);
-}
 
 #viz-canvas {
     width: 100%;
@@ -3852,15 +3740,6 @@ button {
     border-color: color-mix(in srgb, var(--color-rose) 15%, transparent);
 }
 
-[data-theme="light"] .comment-item {
-    background: rgba(0, 0, 0, 0.03);
-    border-color: rgba(0, 0, 0, 0.06);
-}
-
-[data-theme="light"] .comment-item:hover {
-    background: rgba(0, 0, 0, 0.05);
-    border-color: rgba(255, 107, 157, 0.2);
-}
 
 .comment-avatar {
     width: 32px;
@@ -4443,15 +4322,6 @@ button {
         background: rgba(20, 20, 35, 0.85);
     }
 
-    [data-theme="light"] .glass,
-    [data-theme="light"] .nav-glass,
-    [data-theme="light"] .glass-chip,
-    [data-theme="light"] .btn-ghost,
-    [data-theme="light"] .btn-music,
-    [data-theme="light"] .footer {
-        background: rgba(255, 255, 255, 0.92);
-    }
-}
 
 article, section, nav, footer, header {
     display: block;
@@ -4894,74 +4764,6 @@ article, section, nav, footer, header {
     cursor: pointer;
 }
 
-/* ---- Light theme overrides for new components ---- */
-[data-theme="light"] .sync-indicator {
-    background: rgba(255, 255, 255, 0.9);
-    border-color: rgba(0, 0, 0, 0.1);
-    color: rgba(0, 0, 0, 0.6);
-}
-
-[data-theme="light"] .forum-entry-fab {
-    background: rgba(255, 255, 255, 0.9);
-    border-color: rgba(0, 0, 0, 0.1);
-    color: rgba(0, 0, 0, 0.6);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-}
-
-[data-theme="light"] .forum-entry-fab:hover {
-    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.16), 0 0 18px rgba(107, 138, 255, 0.12);
-}
-
-[data-theme="light"] .forum-entry-fab-icon {
-    border-color: rgba(107, 138, 255, 0.45);
-    background: rgba(107, 138, 255, 0.12);
-    color: #4A6AE0;
-}
-
-[data-theme="light"] .forum-entry-fab:hover .forum-entry-fab-icon {
-    background: rgba(107, 138, 255, 0.22);
-}
-
-[data-theme="light"] .nav-link-admin {
-    background: linear-gradient(135deg, rgba(255, 183, 77, 0.12), rgba(182, 107, 255, 0.12));
-    border-color: rgba(255, 167, 38, 0.45);
-    color: #B76E00;
-    text-shadow: none;
-}
-
-[data-theme="light"] .nav-link-admin:hover,
-[data-theme="light"] .nav-link-admin.active {
-    color: #8A4B00;
-    border-color: rgba(255, 167, 38, 0.8);
-    box-shadow: 0 0 16px rgba(255, 167, 38, 0.18), inset 0 0 8px rgba(255, 167, 38, 0.06);
-}
-
-[data-theme="light"] .upload-drop-zone {
-    border-color: rgba(107, 138, 255, 0.3);
-    background: rgba(107, 138, 255, 0.05);
-}
-
-[data-theme="light"] .upload-drop-zone:hover {
-    background: rgba(107, 138, 255, 0.1);
-}
-
-[data-theme="light"] .upload-drop-zone .upload-hint {
-    color: rgba(0, 0, 0, 0.5);
-}
-
-[data-theme="light"] .tag-chip {
-    background: rgba(107, 138, 255, 0.1);
-    color: #4A6AE0;
-}
-
-[data-theme="light"] .comment-action-btn {
-    color: rgba(0, 0, 0, 0.3);
-}
-
-[data-theme="light"] .auth-status-bar {
-    background: rgba(0, 0, 0, 0.05);
-    color: rgba(0, 0, 0, 0.6);
-}
 
 /* ---- v9.0 投稿标签选择器 ---- */
 .submission-tag-selector {
@@ -4975,10 +4777,6 @@ article, section, nav, footer, header {
     border: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
 }
 
-[data-theme="light"] .submission-tag-selector {
-    background: rgba(0, 0, 0, 0.03);
-    border-color: rgba(0, 0, 0, 0.08);
-}
 
 .submission-tag-selector .tag-chip {
     padding: 4px 12px;
@@ -5002,14 +4800,6 @@ article, section, nav, footer, header {
     color: var(--color-blue-light);
 }
 
-[data-theme="light"] .submission-tag-selector .tag-chip {
-    color: rgba(0, 0, 0, 0.5);
-}
-
-[data-theme="light"] .submission-tag-selector .tag-chip.active {
-    background: rgba(107, 138, 255, 0.1);
-    color: #4EC89A;
-}
 
 .form-hint {
     font-size: 12px;
@@ -5017,9 +4807,6 @@ article, section, nav, footer, header {
     font-weight: 400;
 }
 
-[data-theme="light"] .form-hint {
-    color: rgba(0, 0, 0, 0.35);
-}
 
 /* ---- v9.0 社区卡片书签按钮 ---- */
 .community-card-action.bookmark-btn {
@@ -5043,9 +4830,6 @@ article, section, nav, footer, header {
     color: var(--c-accent);
 }
 
-[data-theme="light"] .community-card-action.bookmark-btn {
-    color: rgba(0, 0, 0, 0.4);
-}
 
 /* ===== v9.2 收藏面板 / 评论回复 / 上传预览 ===== */
 .community-toolbar {

@@ -334,10 +334,7 @@
     font-family: "Noto Serif SC", serif;
     font-size: 26px;
     margin: 0 0 14px;
-    background: linear-gradient(100deg, var(--stf-brand, #6d8fd6), var(--stf-gold, #E8C56A));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--stf-brand-light, #A8D8FF);
 }
 .stf-welcome p { font-size: 14px; line-height: 1.8; color: color-mix(in srgb, var(--color-snow) 78%, transparent); margin: 0 0 16px; }
 .stf-welcome-hint { font-size: 13px; color: color-mix(in srgb, var(--color-snow) 55%, transparent); margin-bottom: 0; }

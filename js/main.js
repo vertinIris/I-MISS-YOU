@@ -15,32 +15,17 @@
         try { return window.localStorage.getItem(key); } catch(_) { return null; }
     }
 
-    function addMediaListener(query, callback) {
-        var mql = window.matchMedia(query);
-        if (!mql) return;
-        if (typeof mql.addEventListener === 'function') mql.addEventListener('change', callback);
-        else if (typeof mql.addListener === 'function') mql.addListener(callback);
-    }
-
     var rAF = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function(cb) { return setTimeout(cb, 16); };
 
-    var THEME_KEY = 'snowfluff-theme';
-    var themes = ['dark', 'light', 'auto'];
-    var currentThemeIndex = 0;
-
-    function getStoredTheme() { var s = safeGetItem(THEME_KEY); return (s && themes.indexOf(s) !== -1) ? s : 'dark'; }
-    function getEffectiveTheme(theme) { if (theme === 'auto') { var m = window.matchMedia('(prefers-color-scheme: dark)'); return (m && m.matches) ? 'dark' : 'light'; } return theme; }
-
-    function applyTheme(theme) {
+    /* v11: 固定暗色主题（星空氛围）——light/auto 模式已移除 */
+    function applyTheme() {
         var html = document.documentElement;
-        html.setAttribute('data-theme', getEffectiveTheme(theme));
-        if (theme === 'auto') html.setAttribute('data-theme-pref', 'auto'); else html.removeAttribute('data-theme-pref');
+        html.setAttribute('data-theme', 'dark');
+        html.removeAttribute('data-theme-pref');
         if (window.SnowParticles && window.SnowParticles.updateTheme) window.SnowParticles.updateTheme();
     }
 
-    function cycleTheme() { currentThemeIndex = (currentThemeIndex + 1) % themes.length; safeSetItem(THEME_KEY, themes[currentThemeIndex]); applyTheme(themes[currentThemeIndex]); }
-
-    function initTheme() { currentThemeIndex = themes.indexOf(getStoredTheme()); applyTheme(themes[currentThemeIndex]); addMediaListener('(prefers-color-scheme: dark)', function() { if (themes[currentThemeIndex] === 'auto') applyTheme('auto'); }); }
+    function initTheme() { applyTheme(); }
 
     function initMobileMenu() {
         var menuBtn = document.getElementById('menu-btn'), navLinks = document.getElementById('nav-links');
@@ -4647,12 +4632,6 @@
 
         handleDeepLinks();
         window.addEventListener('hashchange', handleDeepLinks);
-
-        var themeToggle = document.getElementById('theme-toggle');
-        if (themeToggle) {
-            themeToggle.addEventListener('click', cycleTheme);
-            themeToggle.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cycleTheme(); } });
-        }
 
         if (window.console && window.console.log) {
             console.log('%c\u2744 \u98de\u884c\u96ea\u7ed2 \u2728', 'color: #FF6B9D; font-size: 16px; font-weight: bold;');

@@ -400,32 +400,6 @@ ul, ol { list-style: none; }
     display: none !important;
 }
 
-[data-theme="light"] .account-panel-inner {
-    background: rgba(255, 255, 255, 0.96);
-    border-color: rgba(107, 138, 255, 0.25);
-    box-shadow: 0 12px 36px rgba(80, 100, 160, 0.18);
-}
-
-[data-theme="light"] .account-panel-hint,
-[data-theme="light"] .account-field {
-    color: rgba(0, 0, 0, 0.5);
-}
-
-[data-theme="light"] .account-tab {
-    color: rgba(0, 0, 0, 0.4);
-}
-
-[data-theme="light"] .account-tab.active {
-    color: #4A6AE0;
-}
-
-[data-theme="light"] .account-user-email {
-    color: rgba(0, 0, 0, 0.8);
-}
-
-[data-theme="light"] .nav-account-btn {
-    color: rgba(0, 0, 0, 0.55);
-}
 
 /* Theme Toggle */
 .theme-toggle {
@@ -466,17 +440,6 @@ ul, ol { list-style: none; }
     color: var(--color-blue-light);
 }
 
-[data-theme="light"] .theme-icon-sun {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-    color: var(--color-pink);
-}
-
-[data-theme="auto"] .theme-icon-auto {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-    color: var(--color-blue);
-}
 
 /* Mobile Menu Button */
 .nav-menu-btn {
@@ -1429,10 +1392,6 @@ ul, ol { list-style: none; }
     border: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
 }
 
-[data-theme="light"] .submission-tag-selector {
-    background: rgba(0, 0, 0, 0.03);
-    border-color: rgba(0, 0, 0, 0.08);
-}
 
 .submission-tag-selector .tag-chip {
     padding: 4px 12px;
@@ -1456,14 +1415,6 @@ ul, ol { list-style: none; }
     color: var(--color-blue-light);
 }
 
-[data-theme="light"] .submission-tag-selector .tag-chip {
-    color: rgba(0, 0, 0, 0.5);
-}
-
-[data-theme="light"] .submission-tag-selector .tag-chip.active {
-    background: rgba(107, 138, 255, 0.1);
-    color: #4EC89A;
-}
 
 .form-hint {
     font-size: 12px;
@@ -1473,10 +1424,6 @@ ul, ol { list-style: none; }
 
 .form-hint-compact {
     margin: 0 0 0.5rem;
-}
-
-[data-theme="light"] .form-hint {
-    color: rgba(0, 0, 0, 0.35);
 }
 
 

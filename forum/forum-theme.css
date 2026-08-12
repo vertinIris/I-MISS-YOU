@@ -125,8 +125,8 @@ body::after {
 
 /* ---------- B2 · Hero / 导航 / 帖流 / 侧栏 / 通行证 ---------- */
 .forum-hero {
-    min-height: 72vh;
-    padding: 112px 24px 64px;
+    min-height: 56vh;
+    padding: 100px 24px 56px;
 }
 
 .forum-hero::before {
@@ -152,19 +152,14 @@ body::after {
 }
 
 .forum-hero-title {
-    background: linear-gradient(105deg, var(--stf-brand-light) 0%, var(--stf-brand) 42%, var(--stf-gold) 78%, var(--stf-brand-light) 100%);
-    background-size: 220% 100%;
+    background: linear-gradient(100deg, var(--color-blue), var(--color-blue-light));
+    background-size: 100% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    animation: stf-title-drift 16s ease-in-out infinite;
     letter-spacing: 0.02em;
 }
 
-@keyframes stf-title-drift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-}
 
 .forum-hero-sub {
     color: color-mix(in srgb, var(--color-snow) 72%, transparent);
@@ -285,7 +280,7 @@ body .nav-logo span {
 }
 
 .forum-entry-ribbon {
-    background: linear-gradient(100deg, var(--stf-brand), var(--stf-gold));
+    background: var(--stf-brand);
     box-shadow: 0 6px 16px color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent);
     animation: none;
 }
@@ -321,10 +316,7 @@ body .nav-logo span {
 }
 
 .stf-stat b {
-    background: linear-gradient(100deg, var(--stf-brand), var(--stf-gold));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--stf-brand-light);
 }
 
 .stf-filter-btn.active {
@@ -362,7 +354,7 @@ body .nav-logo span {
 }
 .stf-fab:hover { box-shadow: 0 16px 36px color-mix(in srgb, var(--stf-brand, #6d8fd6) 40%, transparent); }
 
-/* 帖流：材质边 + 内高光 + 12/10/8 节奏 */
+/* 帖流：材质边 + 内高光 + 12/10/8 节奏；恢复星轨 rail（stf-weapons 定义，此处仅布局） */
 .stf-timeline,
 .stf-feed {
     display: flex;
@@ -371,10 +363,12 @@ body .nav-logo span {
     max-width: none;
     margin: 16px 0 0;
     position: relative;
-    padding-left: 0;
 }
+.stf-timeline { padding-left: 24px; }
+.stf-feed { padding-left: 0; }
 .stf-timeline::before { display: none; }
 .stf-node { display: none; }
+.stf-feed .stf-timeline__item { margin: 0; }
 
 .stf-feed .stf-card,
 .stf-timeline .stf-card {
@@ -513,7 +507,7 @@ body .nav-logo span {
     width: 36px; height: 36px;
     border-radius: 50%;
     display: grid; place-items: center;
-    background: linear-gradient(100deg, var(--stf-brand), var(--stf-gold));
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 22%, transparent);
     color: var(--color-white); font-size: 16px;
     flex: none;
 }
@@ -522,7 +516,7 @@ body .nav-logo span {
     font-size: 12px;
     padding: 4px 12px;
     border-radius: 999px;
-    background: linear-gradient(100deg, var(--stf-brand), var(--stf-gold));
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 24%, transparent);
     color: var(--color-white);
 }
 
@@ -590,11 +584,11 @@ body .nav-logo span {
 }
 
 .stf-sync-btn {
-    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent), rgba(232, 197, 106, 0.14));
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 24%, transparent);
 }
 
 .stf-sync-btn:hover {
-    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 40%, transparent), rgba(232, 197, 106, 0.2));
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 34%, transparent);
 }
 .stf-sync-dot.is-error { background: #FF8A8A; }
 
@@ -728,11 +722,11 @@ body.forum-page .donate-fab:focus-visible {
 
 body.forum-page .donate-fab-icon {
     border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 40%, transparent) !important;
-    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 20%, transparent), rgba(232, 197, 106, 0.14)) !important;
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 18%, transparent) !important;
 }
 
 body.forum-page .donate-fab:hover .donate-fab-icon {
-    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 34%, transparent), rgba(232, 197, 106, 0.22)) !important;
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 30%, transparent) !important;
     box-shadow: 0 0 14px color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent);
     transform: scale(1.06) !important;
 }
@@ -844,7 +838,7 @@ body.forum-page .donate-btn-primary {
 }
 
 .card-featured-ribbon {
-    background: linear-gradient(100deg, var(--color-rose), var(--char-lucilla));
+    background: var(--color-rose);
     box-shadow: 0 6px 14px color-mix(in srgb, var(--color-rose) 22%, transparent);
 }
 
@@ -881,7 +875,7 @@ body.forum-page .donate-btn-primary {
 }
 
 .stf-chat-message.is-self .stf-chat-bubble {
-    background: linear-gradient(135deg, color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent), color-mix(in srgb, var(--color-blue-light) 10%, transparent));
+    background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 18%, transparent);
     border-color: color-mix(in srgb, var(--stf-brand, #6d8fd6) 32%, transparent);
 }
 

@@ -197,8 +197,8 @@
         geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
 
-        var theme = document.documentElement.getAttribute('data-theme') || 'dark';
-        var color = theme === 'light' ? new THREE.Color(0xFF8FB0) : new THREE.Color(0xFFB6D9);
+        /* v11: 固定暗色主题粒子色（粉白雪花） */
+        var color = new THREE.Color(0xFFB6D9);
         var spriteTexture = createCircleTexture();
 
         particleMaterial = new THREE.PointsMaterial({
@@ -328,9 +328,9 @@
 
     function updateTheme() {
         if (!particleMaterial) return;
-        var theme = document.documentElement.getAttribute('data-theme') || 'dark';
-        particleMaterial.color = theme === 'light' ? new THREE.Color(0xFF8FB0) : new THREE.Color(0xFFB6D9);
-        particleMaterial.opacity = theme === 'light' ? 0.5 : 0.75;
+        /* v11: 仅暗色主题 —— 保持粉白雪花 */
+        particleMaterial.color = new THREE.Color(0xFFB6D9);
+        particleMaterial.opacity = 0.75;
         if (particleMaterial.needsUpdate) particleMaterial.needsUpdate = true;
     }
 
