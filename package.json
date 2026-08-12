@@ -87,6 +87,7 @@
     "eslint": "^9.39.5",
     "prettier": "^3.9.6",
     "stylelint": "^16.26.1",
-    "stylelint-config-standard": "^36.0.1"
+    "stylelint-config-standard": "^36.0.1",
+    "ws": "^8.21.3"
   }
 }

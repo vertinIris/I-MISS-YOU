@@ -61,6 +61,8 @@
 </head>
 <body>
 
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+
     <!-- P3-3: External SVG Sprite loader (assets/icons.svg, currentColor) -->
     <svg style="display:none" aria-hidden="true"><use href="assets/icons.svg#ic-snow-book"/></svg>
 
@@ -75,7 +77,7 @@
     <div class="css-snow-container" id="css-snow" aria-hidden="true"></div>
 
     <!-- ============ Particle Background Canvas ============ -->
-    <canvas id="particle-canvas"></canvas>
+    <canvas id="particle-canvas" aria-hidden="true"></canvas>
 
     <!-- ============ Navigation ============ -->
     <nav class="nav-glass" id="navbar">
@@ -223,6 +225,8 @@
             </div>
         </div>
     </nav>
+
+    <main id="main-content">
 
     <!-- ============ Hero Section ============ -->
     <section class="hero" id="hero">
@@ -1506,7 +1510,7 @@
                         <div class="upload-hint">拖拽文件到此处，或点击选择文件</div>
                         <div class="upload-formats">支持: .txt .md .json .csv · .jpg .png .gif .webp .avif .bmp .svg | 限制: 文本 30MB / 图片 15MB</div>
                     </div>
-                    <input type="file" id="upload-file-input" class="u-hidden" accept=".txt,.md,.json,.csv,.jpg,.jpeg,.png,.gif,.webp,.avif,.bmp,.svg">
+                    <input type="file" id="upload-file-input" class="u-hidden" aria-label="上传附件" accept=".txt,.md,.json,.csv,.jpg,.jpeg,.png,.gif,.webp,.avif,.bmp,.svg">
                     <div class="upload-progress" id="upload-progress" style="display:none;">
                         <div class="progress-fill" id="upload-progress-fill"></div>
                         <span class="progress-text" id="upload-progress-text">0%</span>
@@ -1701,110 +1705,6 @@
     </div>
 
     <!-- ============ Footer: Ft5 Frequency-Spectrum + Credits ============ -->
-    <footer class="sn-footer">
-        <div class="sn-footer__spectrum" aria-hidden="true">
-            <div class="sn-footer__eq">
-                <!-- 31 根 EQ 柱（模拟频谱条），高度由 CSS 随机决定 -->
-                <span style="--eqh:30%"></span><span style="--eqh:55%"></span><span style="--eqh:42%"></span>
-                <span style="--eqh:70%"></span><span style="--eqh:48%"></span><span style="--eqh:28%"></span>
-                <span style="--eqh:82%"></span><span style="--eqh:36%"></span><span style="--eqh:58%"></span>
-                <span style="--eqh:44%"></span><span style="--eqh:66%"></span><span style="--eqh:32%"></span>
-                <span style="--eqh:74%"></span><span style="--eqh:52%"></span><span style="--eqh:40%"></span>
-                <span style="--eqh:88%"></span><span style="--eqh:38%"></span><span style="--eqh:60%"></span>
-                <span style="--eqh:46%"></span><span style="--eqh:78%"></span><span style="--eqh:34%"></span>
-                <span style="--eqh:68%"></span><span style="--eqh:50%"></span><span style="--eqh:26%"></span>
-                <span style="--eqh:72%"></span><span style="--eqh:44%"></span><span style="--eqh:56%"></span>
-                <span style="--eqh:80%"></span><span style="--eqh:36%"></span><span style="--eqh:62%"></span>
-                <span style="--eqh:48%"></span>
-            </div>
-            <div class="sn-footer__freq-row">
-                <span class="sn-footer__freq-label">FREQ · 90.72 MHz</span>
-                <span class="sn-footer__onair">
-                    <span class="sn-footer__dot"></span>
-                    ON AIR · 飞行雪绒夜电台
-                </span>
-                <span class="sn-footer__time" id="sn-footer-time">--:--</span>
-            </div>
-        </div>
-        <div class="sn-footer__credits">
-            <div class="sn-footer__col">
-                <div class="sn-footer__brand">
-                    <svg class="nav-logo-icon" viewBox="0 0 40 40" aria-hidden="true">
-                        <g stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.9">
-                            <line x1="20" y1="4" x2="20" y2="36"/>
-                            <line x1="4" y1="12" x2="36" y2="28"/>
-                            <line x1="4" y1="28" x2="36" y2="12"/>
-                        </g>
-                        <circle cx="20" cy="20" r="3" fill="currentColor" opacity="0.85"/>
-                    </svg>
-                    <span>飞行雪绒</span>
-                </div>
-                <p class="sn-footer__tag">爱弥斯的夜电台。星炬学院的日常日志与听众来信。</p>
-            </div>
-            <div class="sn-footer__col sn-footer__col--links">
-                <h4>直达频段</h4>
-                <ul>
-                    <li><a href="#profile">电台档案</a></li>
-                    <li><a href="#music">夜播歌单</a></li>
-                    <li><a href="#diary">雪绒日志</a></li>
-                    <li><a href="#timeline">动态收听</a></li>
-                </ul>
-            </div>
-            <div class="sn-footer__col sn-footer__col--links">
-                <h4>跨站入口</h4>
-                <ul>
-                    <li><a href="forum/index.html">进入星炬学院 →</a></li>
-                    <li><a href="characters/aimisi/index.html">角色档案 · 爱弥斯</a></li>
-                </ul>
-            </div>
-            <div class="sn-footer__col sn-footer__col--meta">
-                <!-- S9 邮戳偏移装饰 -->
-                <div class="sig-postmark" style="position:static;margin-bottom:12px;display:inline-flex;align-items:center;justify-content:center;">
-                    <span>SENT · 9072</span>
-                </div>
-                <p>鸣潮同人创作项目 · 非官方非商业</p>
-                <p class="sn-footer__copy">© 飞行雪绒 · <span id="sn-footer-year">2026</span> · 以思念调频 · v11.0</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- 公开收藏夹浏览 -->
-    <div class="public-collection-panel" id="public-collection-panel" role="dialog" aria-modal="true" aria-label="公开收藏夹" tabindex="-1" hidden>
-        <div class="public-collection-inner glass">
-            <div class="public-collection-header">
-                <h3 id="public-collection-title">公开收藏夹</h3>
-                <button type="button" class="public-collection-close" id="public-collection-close" aria-label="关闭">×</button>
-            </div>
-            <p class="public-collection-desc" id="public-collection-desc"></p>
-            <ul class="public-collection-list" id="public-collection-list"></ul>
-            <p class="public-collection-empty" id="public-collection-empty" hidden>此收藏夹暂无公开作品</p>
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <!-- P0 Security: DOMPurify XSS 消毒（自托管 vendor，SRI 保护，defer 在 bundle 前执行） -->
-    <script defer src="vendor/dompurify/purify.min.js"
-            integrity="sha384-2m6jHxAbjK2Ek09HQz6ZgdZJUHtgE5lCktvnidnOVD5ecaGIpi67pb29q2cv5IGG"
-            crossorigin="anonymous"></script>
-    <!-- v10.1: Markdown 渲染（marked + highlight.js）— 评论/帖子代码块高亮 -->
-    <script defer src="vendor/marked/marked.min.js"></script>
-    <link rel="stylesheet" href="vendor/highlight.js/github.min.css">
-    <script defer src="vendor/highlight.js/highlight.min.js"></script>
-    <script defer src="js/markdown-renderer.js"></script>
-    <!-- P0 UX: Notyf Toast 通知（自托管 vendor，SRI 保护，defer 在 bundle 前执行） -->
-    <script defer src="vendor/notyf/notyf.min.js"
-            integrity="sha384-uuNfwJfjOG2ukYi4eAB11/t3lP4Zjf75a3UhgkLzEpiX8JpJfacpG7Ye+0tiVMxT"
-            crossorigin="anonymous"></script>
-    <!-- Phase 3: Supabase SDK (CDN) — v10.1: 提取为外部文件，消除内联 onerror，配合 CSP 加固 -->
-    <script defer src="js/supabase-loader.js"></script>
-    <div id="secret-portal-root"></div>
-    <!-- Stage II: 18 个本地 JS 合并为 1 个 bundle（477KB→222KB ↓53.4%）+ SRI 完整性校验 -->
-    <script defer src="dist/bundle-main.js"
-            integrity="sha384-xn9Xu9TN0RzaDFkPz1ntHsZMYdAf6aYjSoClA4TApBfDoDc4TgT2X/jDePIgfj9q"
-            crossorigin="anonymous"></script>
-    <!-- v10.1: web-vitals RUM 采集 — 匿名采集 LCP/INP/CLS/TTFB/FCP，写入 Supabase performance_metrics -->
-    <script type="module" src="js/web-vitals-collector.js"></script>
-    <!-- 管理员登录 Modal（替代原生 prompt，移动端友好） -->
     <div class="admin-modal-overlay" id="admin-login-modal" hidden>
         <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
             <h3 id="admin-modal-title">管理员登录</h3>
@@ -1873,6 +1773,114 @@
             </div>
         </div>
     </div>
+
+
+    <!-- 公开收藏夹浏览 -->
+    <div class="public-collection-panel" id="public-collection-panel" role="dialog" aria-modal="true" aria-label="公开收藏夹" tabindex="-1" hidden>
+        <div class="public-collection-inner glass">
+            <div class="public-collection-header">
+                <h3 id="public-collection-title">公开收藏夹</h3>
+                <button type="button" class="public-collection-close" id="public-collection-close" aria-label="关闭">×</button>
+            </div>
+            <p class="public-collection-desc" id="public-collection-desc"></p>
+            <ul class="public-collection-list" id="public-collection-list"></ul>
+            <p class="public-collection-empty" id="public-collection-empty" hidden>此收藏夹暂无公开作品</p>
+        </div>
+    </div>
+    </main>
+
+    <footer class="sn-footer">
+        <div class="sn-footer__spectrum" aria-hidden="true">
+            <div class="sn-footer__eq">
+                <!-- 31 根 EQ 柱（模拟频谱条），高度由 CSS 随机决定 -->
+                <span style="--eqh:30%"></span><span style="--eqh:55%"></span><span style="--eqh:42%"></span>
+                <span style="--eqh:70%"></span><span style="--eqh:48%"></span><span style="--eqh:28%"></span>
+                <span style="--eqh:82%"></span><span style="--eqh:36%"></span><span style="--eqh:58%"></span>
+                <span style="--eqh:44%"></span><span style="--eqh:66%"></span><span style="--eqh:32%"></span>
+                <span style="--eqh:74%"></span><span style="--eqh:52%"></span><span style="--eqh:40%"></span>
+                <span style="--eqh:88%"></span><span style="--eqh:38%"></span><span style="--eqh:60%"></span>
+                <span style="--eqh:46%"></span><span style="--eqh:78%"></span><span style="--eqh:34%"></span>
+                <span style="--eqh:68%"></span><span style="--eqh:50%"></span><span style="--eqh:26%"></span>
+                <span style="--eqh:72%"></span><span style="--eqh:44%"></span><span style="--eqh:56%"></span>
+                <span style="--eqh:80%"></span><span style="--eqh:36%"></span><span style="--eqh:62%"></span>
+                <span style="--eqh:48%"></span>
+            </div>
+            <div class="sn-footer__freq-row">
+                <span class="sn-footer__freq-label">FREQ · 90.72 MHz</span>
+                <span class="sn-footer__onair">
+                    <span class="sn-footer__dot"></span>
+                    ON AIR · 飞行雪绒夜电台
+                </span>
+                <span class="sn-footer__time" id="sn-footer-time">--:--</span>
+            </div>
+        </div>
+        <div class="sn-footer__credits">
+            <div class="sn-footer__col">
+                <div class="sn-footer__brand">
+                    <svg class="nav-logo-icon" viewBox="0 0 40 40" aria-hidden="true">
+                        <g stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.9">
+                            <line x1="20" y1="4" x2="20" y2="36"/>
+                            <line x1="4" y1="12" x2="36" y2="28"/>
+                            <line x1="4" y1="28" x2="36" y2="12"/>
+                        </g>
+                        <circle cx="20" cy="20" r="3" fill="currentColor" opacity="0.85"/>
+                    </svg>
+                    <span>飞行雪绒</span>
+                </div>
+                <p class="sn-footer__tag">爱弥斯的夜电台。星炬学院的日常日志与听众来信。</p>
+            </div>
+            <div class="sn-footer__col sn-footer__col--links">
+                <h3 class="sn-footer__col-title">直达频段</h3>
+                <ul>
+                    <li><a href="#profile">电台档案</a></li>
+                    <li><a href="#music">夜播歌单</a></li>
+                    <li><a href="#diary">雪绒日志</a></li>
+                    <li><a href="#timeline">动态收听</a></li>
+                </ul>
+            </div>
+            <div class="sn-footer__col sn-footer__col--links">
+                <h3 class="sn-footer__col-title">跨站入口</h3>
+                <ul>
+                    <li><a href="forum/index.html">进入星炬学院 →</a></li>
+                    <li><a href="characters/aimisi/index.html">角色档案 · 爱弥斯</a></li>
+                </ul>
+            </div>
+            <div class="sn-footer__col sn-footer__col--meta">
+                <!-- S9 邮戳偏移装饰 -->
+                <div class="sig-postmark" style="position:static;margin-bottom:12px;display:inline-flex;align-items:center;justify-content:center;">
+                    <span>SENT · 9072</span>
+                </div>
+                <p>鸣潮同人创作项目 · 非官方非商业</p>
+                <p class="sn-footer__copy">© 飞行雪绒 · <span id="sn-footer-year">2026</span> · 以思念调频 · v11.0</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- Scripts -->
+    <!-- P0 Security: DOMPurify XSS 消毒（自托管 vendor，SRI 保护，defer 在 bundle 前执行） -->
+    <script defer src="vendor/dompurify/purify.min.js"
+            integrity="sha384-2m6jHxAbjK2Ek09HQz6ZgdZJUHtgE5lCktvnidnOVD5ecaGIpi67pb29q2cv5IGG"
+            crossorigin="anonymous"></script>
+    <!-- v10.1: Markdown 渲染（marked + highlight.js）— 评论/帖子代码块高亮 -->
+    <script defer src="vendor/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="vendor/highlight.js/github.min.css">
+    <script defer src="vendor/highlight.js/highlight.min.js"></script>
+    <script defer src="js/markdown-renderer.js"></script>
+    <!-- P0 UX: Notyf Toast 通知（自托管 vendor，SRI 保护，defer 在 bundle 前执行） -->
+    <script defer src="vendor/notyf/notyf.min.js"
+            integrity="sha384-uuNfwJfjOG2ukYi4eAB11/t3lP4Zjf75a3UhgkLzEpiX8JpJfacpG7Ye+0tiVMxT"
+            crossorigin="anonymous"></script>
+    <!-- Phase 3: Supabase SDK (CDN) — v10.1: 提取为外部文件，消除内联 onerror，配合 CSP 加固 -->
+    <script defer src="js/supabase-loader.js"></script>
+    <div id="secret-portal-root"></div>
+    <!-- Stage II: 18 个本地 JS 合并为 1 个 bundle（477KB→222KB ↓53.4%）+ SRI 完整性校验 -->
+    <script defer src="dist/bundle-main.js"
+            integrity="sha384-hkqCE3NAwKEo75MHqU8NCFMwEW28aCRJEEthS1Q3bIJBKZmjT1g7Zin619FwkxhK"
+            crossorigin="anonymous"></script>
+    <!-- v10.1: web-vitals RUM 采集 — 匿名采集 LCP/INP/CLS/TTFB/FCP，写入 Supabase performance_metrics -->
+    <script type="module" src="js/web-vitals-collector.js"></script>
+    <!-- 管理员登录 Modal（替代原生 prompt，移动端友好） -->
 
     <!-- donation.js 已合并入 bundle-main.js（Stage II） -->
     <script src="js/ui-variants.js" defer></script>

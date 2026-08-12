@@ -14,6 +14,31 @@
    --text-* / --glass-* / --surface-accent* / --focus-ring / --shadow-glow / --nav-bg
    等场景品牌令牌，避免加载顺序把 tokens-* 冲掉。
    ============================================================ */
+
+/* 跳转到主要内容链接 */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 12px;
+    z-index: 10000;
+    padding: 8px 14px;
+    background: var(--surface-card, rgba(255, 255, 255, 0.085));
+    border: 1px solid var(--surface-card-border, rgba(255, 255, 255, 0.12));
+    border-radius: 10px;
+    color: var(--text-primary, #F0F4FF);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: top 0.2s ease;
+}
+.skip-link:focus {
+    top: 12px;
+    outline: 2px solid var(--focus-ring, #A8D8FF);
+    outline-offset: 2px;
+}
+
 :root {
     /* 辅助色 Secondary — 中性结构（锌灰；非场景品牌） */
     --c-neutral-900: #0B0B14;

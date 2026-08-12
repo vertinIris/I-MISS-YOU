@@ -410,7 +410,8 @@ var SyncManager = (function() {
             if (typeof onManualSync === 'function') onManualSync(btn);
         });
 
-        document.body.appendChild(div);
+        var nav = document.querySelector('nav') || document.body;
+        nav.appendChild(div);
     }
 
     function setManualSyncHandler(fn) {
