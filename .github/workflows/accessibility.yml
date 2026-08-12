@@ -1,0 +1,49 @@
+name: Accessibility Audit
+
+# a11y 自动化检测：用 axe-core 对主站 + 论坛首页扫描 WCAG 2.1 AA 违规。
+# critical/serious 违规将阻断 PR；moderate/minor 仅 warn。
+# 本地等价：npx serve -l 8848 . & npx @axe-core/cli http://127.0.0.1:8848/ --tags wcag2a,wcag2aa,wcag21aa
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  axe:
+    name: axe-core a11y scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install axe-core CLI
+        run: npm install -g @axe-core/cli@4.10.x
+      - name: Start static server
+        run: |
+          npx --yes serve -l 8848 . &
+          sleep 3
+      - name: Scan main site
+        run: |
+          axe http://127.0.0.1:8848/ \
+            --tags wcag2a,wcag2aa,wcag21aa \
+            --exit \
+            --browser chrome \
+            --timeout 60000 \
+            --save axe-report-main.json
+      - name: Scan forum
+        run: |
+          axe http://127.0.0.1:8848/forum/ \
+            --tags wcag2a,wcag2aa,wcag21aa \
+            --exit \
+            --browser chrome \
+            --timeout 60000 \
+            --save axe-report-forum.json
+      - name: Upload axe reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: axe-a11y-reports
+          path: axe-report-*.json

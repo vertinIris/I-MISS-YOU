@@ -1,0 +1,29 @@
+# Cloudflare Pages 安全头 + 缓存策略
+# 文档：https://developers.cloudflare.com/pages/configuration/headers/
+# GitHub Pages 不识别此文件，CSP 由 HTML meta 标签兜底；Cloudflare 部署时此文件覆盖 meta CSP
+
+# 全站安全头
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' cdn.jsdelivr.net unpkg.com; style-src 'self' 'unsafe-inline' cdn.jsdelivr.net; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; font-src 'self' cdn.jsdelivr.net; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+
+# 静态资源长效缓存（文件名含 hash 或版本目录，可安全 immutable）
+/dist/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/vendor/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML 文件需重新验证，避免更新滞后
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/forum/*.html
+  Cache-Control: public, max-age=0, must-revalidate

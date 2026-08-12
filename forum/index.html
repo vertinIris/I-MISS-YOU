@@ -6,10 +6,10 @@
     <title>星炬学院 · 公共研讨频段</title>
     <meta name="description" content="星炬学院主论坛 —— 鸣潮角色档案、世界观考据、同人创作与社区讨论的独立聚合站。">
     <meta name="theme-color" content="#0A101C">
-    <!-- 对齐主站 CSP；论坛 Supabase 容错需 unpkg.com — P3-1: fonts self-hosted, removed Google Fonts CDN -->
+    <!-- v10.1: CSP 加固 — 移除 script-src 'unsafe-inline'，内联脚本提取为外部文件；保留 unpkg.com 作为 SDK 备用 CDN -->
     <meta http-equiv="Content-Security-Policy"
           content="default-src 'self';
-                   script-src 'self' 'unsafe-inline' cdn.jsdelivr.net unpkg.com;
+                   script-src 'self' cdn.jsdelivr.net unpkg.com;
                    style-src 'self' 'unsafe-inline' cdn.jsdelivr.net;
                    img-src 'self' data: blob: https://*.supabase.co;
                    connect-src 'self' https://*.supabase.co wss://*.supabase.co;
@@ -17,6 +17,7 @@
                    base-uri 'self';
                    form-action 'self';
                    object-src 'none';
+                   frame-ancestors 'none';
                    upgrade-insecure-requests;">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="zh_CN">
@@ -34,6 +35,8 @@
     <meta name="twitter:image" content="https://vertiniris.github.io/I-MISS-YOU/assets/og-cover.webp">
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <!-- P3-1: Fonts self-hosted via css/fonts.css (merged into dist/css/forum.min.css) -->
+    <!-- v10.1: 主题偏好同步脚本提取为外部文件，配合 CSP 加固（移除 'unsafe-inline'）；必须在 CSS 前同步执行避免 FOUC -->
+    <script src="../js/forum-theme-bootstrap.js"></script>
     <!-- Styles (Stage II: 8 个 CSS 合并压缩为 1 个 → dist/css/forum.min.css，222KB→152KB) -->
     <link rel="stylesheet" href="../dist/css/forum.min.css">
     <!-- P0 UX: Notyf Toast 通知样式（自托管 vendor，SRI 保护） -->
@@ -50,35 +53,6 @@
       "inLanguage": "zh-CN",
       "creator": { "@type": "Person", "name": "同人创作" }
     }
-    </script>
-    <script>
-        /* 沿用主站主题偏好 + 地址/realm；仅做视觉同步；不影响功能独立性 */
-        (function () {
-            try {
-                var t = localStorage.getItem('snowfluff-theme') || 'dark';
-                var eff = t;
-                if (t === 'auto') eff = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-                document.documentElement.setAttribute('data-theme', eff);
-            } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
-
-            var LOC_REALM = {
-                '星炬学院': 'startorch',
-                '拉贝尔学部': 'labelle',
-                '拉海洛': 'lahairo',
-                '雪原小屋': 'snow-cabin',
-                '电子海': 'digital-sea'
-            };
-            try {
-                var loc = localStorage.getItem('snowfluff-location') || '星炬学院';
-                var realm = localStorage.getItem('snowfluff-realm') || LOC_REALM[loc] || 'startorch';
-                document.documentElement.setAttribute('data-realm', realm);
-                document.documentElement.setAttribute('data-location', loc);
-                window.__STF_REALM__ = { location: loc, realm: realm };
-            } catch (e2) {
-                document.documentElement.setAttribute('data-realm', 'startorch');
-                document.documentElement.setAttribute('data-location', '星炬学院');
-            }
-        })();
     </script>
 </head>
 <body id="top" class="forum-page">
@@ -1269,29 +1243,34 @@
     <script defer src="../vendor/dompurify/purify.min.js"
             integrity="sha384-2m6jHxAbjK2Ek09HQz6ZgdZJUHtgE5lCktvnidnOVD5ecaGIpi67pb29q2cv5IGG"
             crossorigin="anonymous"></script>
+    <!-- v10.1: Markdown 渲染（marked + highlight.js）— 帖子详情/评论代码块高亮 -->
+    <script defer src="../vendor/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="../vendor/highlight.js/github.min.css">
+    <script defer src="../vendor/highlight.js/highlight.min.js"></script>
+    <script defer src="../js/markdown-renderer.js"></script>
+    <!-- v10.1: PhotoSwipe 灯箱 — 帖子详情大图手势缩放浏览 -->
+    <link rel="stylesheet" href="../vendor/photoswipe/photoswipe.min.css">
+    <script type="module" src="../forum/js/photoswipe-init.js"></script>
+    <!-- v10.1: Just-Validate 表单验证增强 — 注册/登录前端校验 -->
+    <script defer src="../vendor/just-validate/just-validate.production.min.js"></script>
+    <script defer src="../forum/js/form-validator.js"></script>
     <!-- P0 UX: Notyf Toast 通知（自托管 vendor，SRI 保护，defer 在 bundle 前执行） -->
     <script defer src="../vendor/notyf/notyf.min.js"
             integrity="sha384-uuNfwJfjOG2ukYi4eAB11/t3lP4Zjf75a3UhgkLzEpiX8JpJfacpG7Ye+0tiVMxT"
             crossorigin="anonymous"></script>
+    <!-- v10.1: forum-import-data.js（416KB 种子数据）从 bundle 中拆出，单独 defer 加载，避免拖累 bundle-forum.js
+         必须在 bundle-forum.js 之前执行（defer 按顺序），以定义 window.StarTorchImportSeed -->
+    <script defer src="../forum/js/forum-import-data.js"></script>
     <!-- Stage II: 15 个本地 JS 合并为 1 个 bundle（696KB→534KB ↓23.3%）+ SRI 完整性校验 -->
     <!-- forum-supabase.js 内含 waitForSDK 轮询，不依赖 CDN SDK 严格顺序；bundle 可安全先于 SDK 加载 -->
     <script defer src="../dist/bundle-forum.js"
-            integrity="sha384-LgteZEmI5urraArncZwNs6rBDONIa1RBqbikB/42WnJT6BDG8TV8zco9Yow6vD7Q"
+            integrity="sha384-8U8QS0Ve7Jkg4MgbfoCC1AfiBVMz4WKz3MEnoBiTXyaG4Omie8EAnxrRzCKbWgLk"
             crossorigin="anonymous"></script>
-    <!-- 论坛上云：Supabase 客户端 + 云端适配器（与主站共用同一项目，账号自动打通） -->
-    <script>
-        /* CDN 容错：主 CDN 失败则自动切换备用 CDN，再失败则回退本地模式 */
-        window.__loadSupabaseSDK = function (src, onErr) {
-            var s = document.createElement('script');
-            s.src = src;
-            s.async = true;
-            s.crossOrigin = 'anonymous';
-            s.onerror = onErr;
-            document.head.appendChild(s);
-        };
-    </script>
-    <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
-            onerror="window.__loadSupabaseSDK('https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js', function(){ window.__loadSupabaseSDK('js/supabase.min.js', function(){ console.warn('[forum] Supabase SDK 所有来源均加载失败，回退纯本地模式'); }); });"></script>
+    <!-- 论坛上云：Supabase 客户端 + 云端适配器（与主站共用同一项目，账号自动打通）
+         v10.1: 内联脚本 + onerror 提取为外部文件 forum-supabase-loader.js，配合 CSP 加固 -->
+    <script defer src="../js/forum-supabase-loader.js"></script>
+    <!-- v10.1: web-vitals RUM 采集 — 匿名采集 LCP/INP/CLS/TTFB/FCP，写入 Supabase performance_metrics -->
+    <script type="module" src="../js/web-vitals-collector.js"></script>
     <!-- donation.js 已合并入 bundle-forum.js（Stage II） -->
     <script src="../js/sw-register.js" defer></script>
 </body>

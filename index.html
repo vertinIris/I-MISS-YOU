@@ -23,10 +23,11 @@
     <meta name="twitter:image" content="https://vertiniris.github.io/I-MISS-YOU/assets/og-cover.webp">
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
     <link rel="apple-touch-icon" href="assets/favicon.svg">
-    <!-- v9.0: Content Security Policy — P3-1: fonts self-hosted, removed Google Fonts CDN -->
+    <!-- v10.1: Content Security Policy 加固 — 移除 script-src 'unsafe-inline'，内联脚本已提取为外部文件
+         style-src 保留 'unsafe-inline' 因大量内联样式（待后续 hash 化）；_headers 文件补充 HSTS 等 -->
     <meta http-equiv="Content-Security-Policy"
           content="default-src 'self';
-                   script-src 'self' 'unsafe-inline' cdn.jsdelivr.net;
+                   script-src 'self' cdn.jsdelivr.net;
                    style-src 'self' 'unsafe-inline' cdn.jsdelivr.net;
                    img-src 'self' data: blob: https://*.supabase.co;
                    connect-src 'self' https://*.supabase.co wss://*.supabase.co;
@@ -34,6 +35,7 @@
                    base-uri 'self';
                    form-action 'self';
                    object-src 'none';
+                   frame-ancestors 'none';
                    upgrade-insecure-requests;">
     <title>飞行雪绒 · 星炬学院的日常</title>
 
@@ -1806,19 +1808,24 @@
     <script defer src="vendor/dompurify/purify.min.js"
             integrity="sha384-2m6jHxAbjK2Ek09HQz6ZgdZJUHtgE5lCktvnidnOVD5ecaGIpi67pb29q2cv5IGG"
             crossorigin="anonymous"></script>
+    <!-- v10.1: Markdown 渲染（marked + highlight.js）— 评论/帖子代码块高亮 -->
+    <script defer src="vendor/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="vendor/highlight.js/github.min.css">
+    <script defer src="vendor/highlight.js/highlight.min.js"></script>
+    <script defer src="js/markdown-renderer.js"></script>
     <!-- P0 UX: Notyf Toast 通知（自托管 vendor，SRI 保护，defer 在 bundle 前执行） -->
     <script defer src="vendor/notyf/notyf.min.js"
             integrity="sha384-uuNfwJfjOG2ukYi4eAB11/t3lP4Zjf75a3UhgkLzEpiX8JpJfacpG7Ye+0tiVMxT"
             crossorigin="anonymous"></script>
-    <!-- Phase 3: Supabase SDK (CDN) -->
-    <!-- Supabase SDK: async 加载，不阻塞页面渲染；弱网环境自动降级 -->
-    <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
-            onerror="console.warn('[Phase3] Supabase SDK CDN 加载失败，回退纯本地模式'); window.__supabaseLoadFailed=true;"></script>
+    <!-- Phase 3: Supabase SDK (CDN) — v10.1: 提取为外部文件，消除内联 onerror，配合 CSP 加固 -->
+    <script defer src="js/supabase-loader.js"></script>
     <div id="secret-portal-root"></div>
     <!-- Stage II: 18 个本地 JS 合并为 1 个 bundle（477KB→222KB ↓53.4%）+ SRI 完整性校验 -->
     <script defer src="dist/bundle-main.js"
             integrity="sha384-BzJzYvDzqUT5GPId0p3VpVqwyrVbNLsg8zp4ryvozNCn+BxPKC98mPSz7Q0y6ANU"
             crossorigin="anonymous"></script>
+    <!-- v10.1: web-vitals RUM 采集 — 匿名采集 LCP/INP/CLS/TTFB/FCP，写入 Supabase performance_metrics -->
+    <script type="module" src="js/web-vitals-collector.js"></script>
     <!-- 管理员登录 Modal（替代原生 prompt，移动端友好） -->
     <div class="admin-modal-overlay" id="admin-login-modal" hidden>
         <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">

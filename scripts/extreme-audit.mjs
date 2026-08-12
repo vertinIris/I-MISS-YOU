@@ -100,7 +100,7 @@ const forumCss = read('forum/forum.css');
 
 console.log('\n=== Migration 链 ===');
 const migFiles = existsSync(join(root, 'db')) ? readdirSync(join(root, 'db')) : [];
-for (let n = 1; n <= 28; n++) {
+for (let n = 1; n <= 30; n++) {
     const prefix = `migration-${String(n).padStart(3, '0')}`;
     if (migFiles.some(f => f.startsWith(prefix))) ok(prefix);
     else fail('缺 ' + prefix);
@@ -111,6 +111,10 @@ if (!migFiles.some(f => f.includes('027'))) note('027 nickname RLS 需在云端 
 if (!migFiles.some(f => f.includes('028'))) note('028 is_pinned + parent_id 需在云端 SQL Editor 执行');
 if (migFiles.some(f => f.includes('028') && read('db/' + migFiles.find(f => f.includes('028'))).includes('is_pinned'))) {
     ok('028 含 is_pinned');
+}
+if (!migFiles.some(f => f.includes('029'))) note('029 搜索 RPC 需在云端 SQL Editor 执行（可选增强）');
+if (migFiles.some(f => f.includes('029') && read('db/' + migFiles.find(f => f.includes('029'))).includes('search_forum_submissions'))) {
+    ok('029 含搜索 RPC');
 }
 console.log('\n=== package.json 脚本与版本 ===');
 try {

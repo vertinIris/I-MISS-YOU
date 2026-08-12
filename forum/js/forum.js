@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 星炬学院主论坛 · 独立前端逻辑
  * 不依赖飞行雪绒站 js/main.js 或 js/repository.js
  */
@@ -553,7 +553,7 @@
             '<button type="button" class="stf-comment-reply" data-action="reply-comment" data-parent-key="' + escapeHTML(commentKey(c)) + '" data-reply-name="' + escapeHTML(c.name) + '">回复</button>';
         return '<div class="stf-comment' + (isReply ? ' is-reply' : '') + '" data-comment-key="' + escapeHTML(commentKey(c)) + '">' +
             '<span class="stf-comment-name" style="color:' + sanitizeColor(c.color) + '">' + escapeHTML(c.name) + '</span>' +
-            '<span class="stf-comment-text">' + escapeHTML(c.text) + '</span>' +
+            '<span class="stf-comment-text">' + (window.renderMarkdown ? window.renderMarkdown(c.text) : escapeHTML(c.text)) + '</span>' +
             '<span class="stf-comment-time">' + escapeHTML(c.timeStr) + '</span>' +
             replyBtn +
             (isStaff() ? '<button type="button" class="stf-comment-hide" data-action="admin-hide-comment" data-hide-sub="' + targetId + '" data-hide-name="' + escapeHTML(c.name) + '" data-hide-text="' + escapeHTML(c.text) + '" title="版主/管理员：隐藏该评论">✕</button>' : '') +
@@ -930,7 +930,7 @@
             '</div>' +
             '<h2 class="stf-detail-title">' + escapeHTML(displayTitle(s)) + '</h2>' +
             (safeImg ? '<img class="stf-detail-cover" src="' + escapeHTML(safeImg) + '" alt="" loading="lazy">' : '') +
-            '<div class="stf-detail-content">' + escapeHTML(s.content).replace(/\n/g, '<br>') + '</div>' +
+            '<div class="stf-detail-content">' + (window.renderMarkdown ? window.renderMarkdown(s.content) : escapeHTML(s.content).replace(/\n/g, '<br>')) + '</div>' +
             '<div class="stf-detail-comments">' +
                 '<h3 class="stf-detail-comments-title">评论</h3>' +
                 '<div class="stf-comment-list" id="stf-detail-comment-list" data-target="' + escapeHTML(s.id) + '"></div>' +

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-12T07:02:11.236Z",
+  "generatedAt": "2026-08-12T07:21:38.503Z",
   "stage": "phase-2",
   "bundles": {
     "main": {
@@ -13,11 +13,11 @@
     },
     "forum": {
       "name": "bundle-forum.js",
-      "srcSize": 725486,
-      "dstSize": 552648,
-      "ratio": "76.2",
-      "saved": "23.8",
-      "sri": "sha384-LgteZEmI5urraArncZwNs6rBDONIa1RBqbikB/42WnJT6BDG8TV8zco9Yow6vD7Q",
+      "srcSize": 309092,
+      "dstSize": 149700,
+      "ratio": "48.4",
+      "saved": "51.6",
+      "sri": "sha384-8U8QS0Ve7Jkg4MgbfoCC1AfiBVMz4WKz3MEnoBiTXyaG4Omie8EAnxrRzCKbWgLk",
       "mapGenerated": true
     }
   },

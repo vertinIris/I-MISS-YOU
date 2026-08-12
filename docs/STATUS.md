@@ -96,7 +96,26 @@ node scripts/extreme-audit.mjs
 # node scripts/browser-probe.mjs http://127.0.0.1:8848
 ```
 
-CI：`.github/workflows/static-checks.yml`（默认 smoke + extreme；browser-probe 需仓库 Actions variable `PLAYWRIGHT_PROBE=1`）。
+CI：`.github/workflows/static-checks.yml`（默认 smoke + extreme；browser-probe 需仓库 Actions variable `PLAYWRIGHT_PROBE=1`）。  
+Lighthouse CI：`.github/workflows/lighthouse.yml`（a11y ≥ 0.9 阻断，性能/SEO warn 不阻塞）。
+
+### v10.1 安全加固 + 性能优化（2026-08-12）
+
+- **CSP 加固**：移除 `script-src 'unsafe-inline'`，内联脚本提取为外部文件（`js/supabase-loader.js`、`forum/js/forum-theme-bootstrap.js`、`forum/js/forum-supabase-loader.js`）；添加 `frame-ancestors 'none'`
+- **`_headers` 文件**：Cloudflare Pages 根目录新增，含 CSP/HSTS/X-Frame-Options/X-Content-Type-Options/Referrer-Policy/Permissions-Policy + 静态资源 immutable 缓存
+- **Lighthouse CI**：新增 `.github/workflows/lighthouse.yml` + `lighthouserc.json`，PR 性能回归防护
+- **migration-029**：论坛服务端搜索 RPC（`search_forum_submissions` + `search_forum_comments`），ILIKE 中文友好，客户端搜索仍保留
+- **bundle-forum.js 瘦身**：`forum-import-data.js`（416KB）从 bundle 拆出单独 defer 加载，bundle 534KB → 146.2KB（↓72.6%）
+- **main.js 模块化**：评估后暂缓（4564 行 IIFE 共享闭包变量，拆分风险高，需后续单独处理）
+
+### v10.1 库接入 + 监控 + a11y（2026-08-12 第二批）
+
+- **axe-core a11y CI**：新增 `.github/workflows/accessibility.yml`，扫描主站 + 论坛 WCAG 2.1 AA，critical/serious 阻断
+- **web-vitals RUM**：新增 `migration-030` + `js/web-vitals-collector.js`，匿名采集 LCP/INP/CLS/TTFB/FCP 写入 Supabase，RLS 仅 anon INSERT
+- **Markdown 渲染**：新增 `js/markdown-renderer.js`（marked + DOMPurify + highlight.js），论坛帖子详情 + 评论接入 `renderMarkdown`，非 MD 文本降级纯文本
+- **PhotoSwipe 灯箱**：新增 `forum/js/photoswipe-init.js`（ESM），论坛帖子详情大图手势缩放浏览
+- **Just-Validate 表单验证**：新增 `forum/js/form-validator.js`，注册/登录表单前端校验（邮箱格式/显示名长度/口令一致性），捕获阶段拦截 submit
+- **style-src 'unsafe-inline'**：评估后暂缓（28+ 处内联样式含 CSS 自定义属性 `--x/--tag-rot/--eqh` 是设计核心，移除风险高 ROI 低，业界普遍保留）
 
 ### Codex 不可用（替代闭环）
 

@@ -45,6 +45,8 @@
     "db:migrate-026": "echo 'Run db/migration-026-forum-moderation-align.sql in Supabase SQL Editor'",
     "db:migrate-027": "echo 'Run db/migration-027-profiles-nickname-rls.sql — REQUIRED for forum nickname upsert'",
     "db:migrate-028": "echo 'Run db/migration-028-forum-pin-replies.sql — is_pinned + forum_comments.parent_id (after 020-027)'",
+    "db:migrate-029": "echo 'Run db/migration-029-forum-search-rpc.sql — search_forum_submissions + search_forum_comments RPC (optional server-side search enhancement)'",
+    "db:migrate-030": "echo 'Run db/migration-030-perf-metrics-rum.sql — performance_metrics table for web-vitals RUM collection'",
     "content:build": "node scripts/build-forum-import.cjs",
     "content:pipeline": "node -e \"console.log('Source: 论坛内容/二创内容库 → npm run content:build → forum/js/forum-import-data.js → forum pull/seed → Supabase.\\nDocs: docs/CONTENT-PIPELINE.md')\"",
     "serve:win": "powershell -ExecutionPolicy Bypass -File ./run.ps1"

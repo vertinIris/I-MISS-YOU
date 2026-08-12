@@ -46,8 +46,8 @@ const MAIN_JS = [
 ];
 
 // 论坛本地 JS（不含 CDN supabase.min.js；含跨目录引用的 ../js/*）· v11.0 追加 signature-utils.js
+// v10.1: 移除 forum-import-data.js（416KB 种子数据），改为 HTML 中单独 defer 加载，避免拖累 bundle
 const FORUM_JS = [
-  'forum/js/forum-import-data.js',
   'forum/js/forum-data.js',
   'js/snow-realm.js',            // ../js/snow-realm.js
   'js/security-shield.js',       // ../js/security-shield.js

@@ -49,7 +49,7 @@ const symbolChecks = [
 ];
 
 /** 期望存在的 migration 前缀（020 有 tables/chat 双文件属历史命名，均计入） */
-const MIGRATION_MAX = 28;
+const MIGRATION_MAX = 30;
 
 let failed = 0;
 

@@ -1,0 +1,30 @@
+name: Lighthouse CI
+
+# 性能回归防护：对主站首页运行 Lighthouse，a11y 不达标则阻断，其余 warn 不阻塞。
+# 本地等价：npx serve -l 8848 . & npx @lhci/cli autorun --collect.url=http://127.0.0.1:8848/
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  lighthouse:
+    name: Lighthouse audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.13.x
+      - name: Start static server
+        run: |
+          npx --yes serve -l 8848 . &
+          sleep 3
+      - name: Run Lighthouse CI
+        run: lhci autorun --collect.url=http://127.0.0.1:8848/ --config=./lighthouserc.json
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
