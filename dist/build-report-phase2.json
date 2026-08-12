@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-08-12T13:54:56.473Z",
+  "generatedAt": "2026-08-12T14:10:51.019Z",
   "stage": "phase-2",
   "bundles": {
     "main": {
       "name": "bundle-main.js",
-      "srcSize": 498132,
-      "dstSize": 235548,
+      "srcSize": 498382,
+      "dstSize": 235639,
       "ratio": "47.3",
       "saved": "52.7",
-      "sri": "sha384-hPDw6zZJAJ/hdYdJTUGjP2yrUUMqWPCFMKyOB7/xwRpoVYPI+E+fJ6TZChPpxW+U",
+      "sri": "sha384-N9xLScUaD17z/0DmB0OmFSlO3Q4IUFZPCxuwRVaqT0y1YPNbpOCsCgPDvtpU/Q8i",
       "mapGenerated": true
     },
     "forum": {

@@ -22,17 +22,22 @@
     });
   }
 
-  // 当新 SW 真正接管页面（controllerchange），自动重载一次以进入干净状态
+  // 当新 SW 真正接管页面（controllerchange），自动重载一次以进入干净状态。
+  // 在 headless/自动化测试环境（navigator.webdriver）下不重载，避免打断 axe-core 等扫描工具。
   var isReloading = false;
   navigator.serviceWorker.addEventListener('controllerchange', function () {
     if (isReloading) return;
+    if (navigator.webdriver) {
+      console.log('[SW] controllerchange in headless mode, skip reload');
+      return;
+    }
     isReloading = true;
     window.location.reload();
   });
 
   window.addEventListener('load', function () {
     navigator.serviceWorker
-      .register('./sw.js?v=11.3')
+      .register('./sw.js?v=11.3.1')
       .then(function (reg) {
         console.log('[SW] registered, scope:', reg.scope);
         setupCleanUpdate(reg);

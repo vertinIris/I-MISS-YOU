@@ -1,6 +1,6 @@
 // Service Worker — 飞行雪绒 · 星炬学院
 // 设计目标：宁可走网络，也绝不返回空响应导致整页裸奔（无样式）。
-const CACHE_VERSION = 'snowfluff-v11.3';
+const CACHE_VERSION = 'snowfluff-v11.3.1';
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -21,23 +21,15 @@ const SHELL_ASSETS = [
 ];
 
 // 安装：必须等 SHELL 全部预缓存成功，再 skipWaiting 接管。
-// 关键：fetch 使用 cache: 'reload' 强制绕过浏览器 HTTP 磁盘缓存，
+// 关键：每个请求使用 cache: 'reload' 强制绕过浏览器 HTTP 磁盘缓存，
 // 避免旧 SW / 旧 dist 文件被重新写入新 SHELL 缓存导致样式/内容空窗。
+// 使用 cache.addAll(Request[]) 保持并行，避免顺序 fetch 拖慢安装。
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(SHELL_CACHE)
-      .then(async (cache) => {
-        for (const url of SHELL_ASSETS) {
-          const request = new Request(url, { cache: 'reload' });
-          const response = await fetch(request).catch((err) => {
-            console.error('[SW] shell fetch failed:', url, err);
-            return null;
-          });
-          if (!response || !response.ok) {
-            throw new Error(`SHELL fetch failed for ${url}: ${response ? response.status : 'network error'}`);
-          }
-          await cache.put(url, response);
-        }
+      .then((cache) => {
+        const requests = SHELL_ASSETS.map((url) => new Request(url, { cache: 'reload' }));
+        return cache.addAll(requests);
       })
       .then(() => self.skipWaiting())
       .catch((err) => {
