@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>飞行雪绒 · UI 重设计原型 v2（材质升级 + 论坛整合）</title>
+<style>
+/* ============================================================
+   Design System Tokens — v2 材质升级（2026-08-12 确认）
+   方向：方案 B 材质分层 + 侧边捐赠卡 + 杂志式时间线
+   新增：subtle 星空/绒感材质、简笔画小蛋糕图标、双域粒子动效
+   ============================================================ */
+:root {
+  /* Paper / ink — Material 式分层（亮度上调解决缺背板问题） */
+  --sn-paper: #121212;
+  --sn-paper-2: #1E1E2E;
+  --sn-paper-3: #252536;
+  --sn-paper-4: #2D2D42;
+  --sn-ink: oklch(96% 0.01 350deg);
+  --sn-ink-2: oklch(88% 0.018 350deg);
+  --sn-ink-3: oklch(74% 0.022 350deg);
+  --sn-ink-4: oklch(60% 0.02 350deg);
+  --sn-rule: oklch(40% 0.04 350deg / 0.35);
+
+  /* Accent — 雪绒粉，降饱和用于大面积 */
+  --sn-accent: oklch(72% 0.11 350deg);
+  --sn-accent-strong: oklch(64% 0.13 348deg);
+  --sn-accent-soft: oklch(84% 0.07 350deg);
+  --sn-ice: oklch(78% 0.06 230deg);
+  --c-core-blue: #6B8AFF;
+  --c-core-blue-soft: #A8D8FF;
+  --c-gold: #E8A23D;
+
+  /* Glass & Surface — 提亮背板 */
+  --glass-bg: oklch(96% 0.01 350deg / 0.08);
+  --glass-bg-hover: oklch(96% 0.01 350deg / 0.12);
+  --glass-border: oklch(96% 0.01 350deg / 0.14);
+  --glass-border-hover: oklch(72% 0.11 350deg / 0.45);
+  --glass-blur: blur(14px) saturate(130%);
+  --surface-card: oklch(96% 0.01 350deg / 0.09);
+  --surface-card-border: oklch(96% 0.01 350deg / 0.14);
+  --surface-inset: oklch(96% 0.01 350deg / 0.05);
+
+  /* 材质纹理 */
+  --tex-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  --tex-dot: radial-gradient(circle, oklch(96% 0.01 350deg / 0.06) 1px, transparent 1px);
+
+  /* Shadow & focus */
+  --shadow-card: 0 10px 32px rgba(0,0,0,.35), 0 2px 8px rgba(0,0,0,.25);
+  --shadow-glow: 0 0 28px oklch(72% 0.11 350deg / 0.14);
+  --focus-ring: 0 0 0 2px var(--sn-paper), 0 0 0 4px oklch(72% 0.11 350deg / 0.6);
+
+  /* Radius & motion */
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 160ms;
+  --dur-base: 280ms;
+  --dur-slow: 520ms;
+
+  /* Fonts */
+  --font-display: "ZCOOL XiaoWei", "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
+  --font-sans: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+
+  color-scheme: dark;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+/* 星空画布背景（所有页面共用，不同页面由 JS 注入不同粒子配置） */
+#starfield {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+}
+
+body {
+  position: relative; z-index: 1;
+  background:
+    var(--tex-noise),
+    radial-gradient(1200px 600px at 85% -10%, oklch(28% 0.05 285deg / 0.35), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, oklch(30% 0.06 350deg / 0.28), transparent 55%),
+    var(--sn-paper);
+  background-attachment: fixed, fixed, fixed, scroll;
+  color: var(--sn-ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* 全局绒感噪点叠加 */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: var(--tex-noise);
+  opacity: .35;
+  mix-blend-mode: overlay;
+}
+
+/* 原型说明条 */
+.proto-banner {
+  position: sticky; top: 0; z-index: 60;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 24px;
+  background: var(--sn-paper-3);
+  border-bottom: 1px solid var(--glass-border);
+  font-size: 13px; color: var(--sn-ink-2);
+}
+.proto-banner strong { color: var(--sn-accent-soft); font-weight: 600; }
+.proto-banner .tag {
+  padding: 3px 10px; border-radius: 999px;
+  background: oklch(72% 0.11 350deg / 0.18);
+  border: 1px solid oklch(72% 0.11 350deg / 0.35);
+  color: var(--sn-accent-soft); font-size: 12px;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute; top: -40px; left: 16px; z-index: 100;
+  padding: 8px 14px; border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  background: var(--sn-paper-3); border: 1px solid var(--glass-border);
+  color: var(--sn-ink); text-decoration: none; font-size: 13px;
+  transition: top var(--dur-fast) var(--ease-out);
+}
+.skip-link:focus { top: 0; outline: none; box-shadow: var(--focus-ring); }
+
+/* ============ 迷你导航 ============ */
+.nav {
+  position: relative; z-index: 40;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; padding: 16px 32px;
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  background: var(--glass-bg);
+  border-bottom: 1px solid var(--glass-border);
+}
+.nav-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 20px; letter-spacing: .06em; }
+.nav-brand .dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--sn-accent), var(--c-core-blue));
+  box-shadow: var(--shadow-glow);
+}
+.nav-links { display: flex; gap: 4px; list-style: none; }
+.nav-links a {
+  display: inline-block; padding: 8px 16px; border-radius: 999px;
+  color: var(--sn-ink-2); text-decoration: none; font-size: 14px;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.nav-links a:hover { background: var(--glass-bg-hover); color: var(--sn-ink); }
+.nav-links a:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.nav-links a[aria-current="page"] {
+  background: oklch(72% 0.11 350deg / 0.16);
+  color: var(--sn-accent-soft);
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+main { position: relative; z-index: 10; max-width: 1080px; margin: 0 auto; padding: 40px 24px 120px; }
+
+/* ============ 章节标题 ============ */
+.section-head { display: flex; align-items: baseline; gap: 14px; margin: 56px 0 22px; }
+.section-head .kicker {
+  font-family: var(--font-mono, monospace); font-size: 12px; letter-spacing: .18em;
+  color: var(--c-core-blue-soft); text-transform: uppercase;
+}
+.section-head h2 { font-family: var(--font-display); font-size: 26px; font-weight: 500; letter-spacing: .05em; }
+.section-head .note { margin-left: auto; font-size: 13px; color: var(--sn-ink-3); }
+
+/* ============ 1. 表面层级演示（带材质背板） ============ */
+.swatches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.swatch {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--surface-card-border);
+  box-shadow: var(--shadow-card);
+  padding: 20px;
+  min-height: 128px;
+  display: flex; flex-direction: column; gap: 8px;
+  background-image: var(--tex-dot); background-size: 24px 24px;
+}
+.swatch .sw-name { font-size: 13px; font-weight: 600; }
+.swatch .sw-val { font-family: var(--font-mono, monospace); font-size: 12px; color: var(--sn-ink-3); }
+.swatch .sw-sample { font-size: 14px; color: var(--sn-ink-2); margin-top: auto; }
+.swatch[data-level="bg"]    { background-color: var(--sn-paper); }
+.swatch[data-level="card"]  { background-color: var(--sn-paper-2); }
+.swatch[data-level="raised"]{ background-color: var(--sn-paper-3); }
+.ink-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.ink-chip {
+  padding: 8px 14px; border-radius: var(--radius-sm);
+  background: var(--surface-card); border: 1px solid var(--surface-card-border);
+  font-size: 13px;
+}
+.ink-chip[data-ink="1"] { color: var(--sn-ink); }
+.ink-chip[data-ink="2"] { color: var(--sn-ink-2); }
+.ink-chip[data-ink="3"] { color: var(--sn-ink-3); }
+.ink-chip[data-ink="4"] { color: var(--sn-ink-4); }
+
+/* ============ 2. 杂志式时间线（日记） ============ */
+.timeline { position: relative; display: flex; flex-direction: column; gap: 20px; }
+.timeline::before {
+  content: ""; position: absolute; left: 21px; top: 8px; bottom: 8px;
+  width: 1px;
+  background: linear-gradient(var(--glass-border), var(--sn-accent) 40%, var(--c-core-blue) 80%, transparent);
+  opacity: .55;
+}
+.diary-card {
+  position: relative; margin-left: 52px;
+  background: var(--surface-card);
+  border: 1px solid var(--surface-card-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  padding: 20px 22px;
+  transition: border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.diary-card:hover { border-color: var(--glass-border-hover); background: var(--glass-bg-hover); transform: translateY(-1px); }
+.diary-card:focus-within { box-shadow: var(--focus-ring); }
+.diary-card::before {
+  content: ""; position: absolute; left: -40px; top: 26px;
+  width: 11px; height: 11px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--sn-accent), var(--c-core-blue));
+  box-shadow: 0 0 0 4px var(--sn-paper), var(--shadow-glow);
+}
+.diary-card.is-featured::before { width: 15px; height: 15px; left: -42px; top: 24px; }
+
+.diary-card-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.diary-date {
+  font-family: var(--font-display);
+  color: var(--sn-accent-soft);
+  white-space: nowrap;
+  font-size: 15px;
+}
+.diary-date .day { font-size: 22px; margin-right: 4px; }
+.diary-title {
+  font-family: var(--font-display); font-size: 19px; font-weight: 500;
+  letter-spacing: .04em; color: var(--sn-ink);
+}
+.diary-card.is-featured .diary-title { font-size: 22px; }
+
+.diary-body { margin-top: 10px; color: var(--sn-ink-2); font-size: 14.5px; }
+.diary-body p {
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.diary-card.is-open .diary-body p { display: block; }
+.diary-expand {
+  margin-top: 8px; padding: 2px 0;
+  background: none; border: none; cursor: pointer;
+  color: var(--c-core-blue-soft); font-size: 13px; font-family: var(--font-sans);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.diary-expand:hover { color: var(--sn-accent-soft); }
+.diary-expand:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 4px; }
+
+.diary-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.diary-tag {
+  padding: 2px 10px; border-radius: 999px; font-size: 12px;
+  background: oklch(96% 0.01 350deg / 0.06);
+  border: 1px solid oklch(96% 0.01 350deg / 0.1);
+  color: var(--sn-ink-3);
+}
+.diary-tag[data-tone="pink"] { color: var(--sn-accent-soft); border-color: oklch(72% 0.11 350deg / 0.3); }
+.diary-tag[data-tone="blue"] { color: var(--c-core-blue-soft); border-color: oklch(78% 0.1 250deg / 0.3); }
+
+/* ============ 3. 表单背板示例 ============ */
+.form-card {
+  max-width: 640px;
+  background: var(--sn-paper-2);
+  border: 1px solid var(--surface-card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 28px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.form-card h3 { font-family: var(--font-display); font-size: 20px; font-weight: 500; }
+.form-row { display: flex; flex-direction: column; gap: 8px; }
+.form-row label { font-size: 13px; color: var(--sn-ink-2); }
+.form-row input, .form-row textarea, .form-row select {
+  font-family: var(--font-sans); font-size: 14px; color: var(--sn-ink);
+  background: var(--surface-inset);
+  border: 1px solid var(--surface-card-border);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.form-row input::placeholder, .form-row textarea::placeholder { color: var(--sn-ink-4); }
+.form-row input:hover, .form-row textarea:hover { border-color: var(--glass-border-hover); }
+.form-row input:focus, .form-row textarea:focus, .form-row select:focus {
+  outline: none; border-color: var(--sn-accent);
+  box-shadow: 0 0 0 3px oklch(72% 0.11 350deg / 0.22);
+  background: oklch(96% 0.01 350deg / 0.07);
+}
+.form-actions { display: flex; gap: 12px; margin-top: 4px; }
+.btn {
+  padding: 10px 22px; border-radius: 999px; border: none; cursor: pointer;
+  font-family: var(--font-sans); font-size: 14px;
+  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+/* 渐变收敛：blue→gold 仅保留主按钮 */
+.btn-primary {
+  background: linear-gradient(135deg, var(--sn-accent), var(--c-core-blue));
+  color: #fff; font-weight: 600;
+  box-shadow: var(--shadow-glow);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 0 34px oklch(72% 0.11 350deg / 0.3); }
+.btn-primary:active { transform: translateY(0); }
+.btn-ghost {
+  background: transparent; color: var(--sn-ink-2);
+  border: 1px solid var(--surface-card-border);
+}
+.btn-ghost:hover { background: var(--glass-bg-hover); color: var(--sn-ink); }
+
+.compare-note {
+  margin-top: 18px; padding: 14px 18px; border-radius: var(--radius-sm);
+  border-left: 3px solid var(--sn-accent);
+  background: oklch(72% 0.11 350deg / 0.08);
+  color: var(--sn-ink-2); font-size: 13.5px; max-width: 640px;
+}
+.compare-note strong { color: var(--sn-accent-soft); }
+
+/* ============ 4. 侧边捐赠卡（桌面）/ 底部抽屉（移动） ============ */
+.support-dock { position: fixed; right: 24px; bottom: 96px; z-index: 50; width: 280px; }
+
+.support-toggle {
+  position: fixed; right: 24px; bottom: 96px; z-index: 55;
+  width: 56px; height: 56px; border-radius: 50%; border: none; cursor: pointer;
+  background: linear-gradient(135deg, var(--sn-accent), var(--c-core-blue));
+  color: #fff;
+  box-shadow: 0 6px 24px rgba(0,0,0,.4), var(--shadow-glow);
+  display: grid; place-items: center;
+  transition: transform var(--dur-base) var(--ease-out);
+  animation: breathe 3.2s ease-in-out infinite;
+}
+.support-toggle:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.support-toggle:hover { transform: scale(1.06); }
+.support-toggle:active { transform: scale(.97); }
+.support-toggle svg { width: 28px; height: 28px; }
+@keyframes breathe {
+  0%, 100% { box-shadow: 0 6px 24px rgba(0,0,0,.4), 0 0 18px oklch(72% 0.11 350deg / 0.18); }
+  50%      { box-shadow: 0 6px 24px rgba(0,0,0,.4), 0 0 30px oklch(72% 0.11 350deg / 0.38); }
+}
+
+.support-card {
+  display: none;
+  background: var(--sn-paper-3);
+  border: 1px solid var(--surface-card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 48px rgba(0,0,0,.5), var(--shadow-card);
+  padding: 20px;
+  transform-origin: bottom right;
+  animation: pop-in var(--dur-base) var(--ease-out);
+}
+.support-dock.is-open .support-card { display: block; }
+.support-dock.is-open .support-toggle { display: none; }
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(12px) scale(.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.support-card-head { display: flex; align-items: flex-start; gap: 12px; }
+.support-avatar {
+  width: 42px; height: 42px; border-radius: 50%; flex: none;
+  background: linear-gradient(135deg, var(--sn-accent), var(--c-core-blue));
+  display: grid; place-items: center;
+  box-shadow: var(--shadow-glow);
+}
+.support-avatar svg { width: 24px; height: 24px; }
+.support-title { font-family: var(--font-display); font-size: 16px; font-weight: 500; }
+.support-desc { font-size: 12.5px; color: var(--sn-ink-3); margin-top: 2px; }
+.support-minimize {
+  margin-left: auto; width: 28px; height: 28px; border-radius: 50%;
+  border: 1px solid var(--surface-card-border); background: transparent;
+  color: var(--sn-ink-3); cursor: pointer; font-size: 13px; line-height: 1;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.support-minimize:hover { background: var(--glass-bg-hover); color: var(--sn-ink); }
+.support-minimize:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.support-methods {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+  background: var(--surface-inset); border: 1px solid var(--surface-card-border);
+  border-radius: 999px; padding: 4px; margin-top: 16px;
+}
+.support-method {
+  padding: 8px 0; border: none; border-radius: 999px; cursor: pointer;
+  background: transparent; color: var(--sn-ink-3);
+  font-family: var(--font-sans); font-size: 13px;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.support-method:hover { color: var(--sn-ink-2); }
+.support-method:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.support-method.is-active {
+  background: linear-gradient(135deg, var(--sn-accent), var(--c-core-blue));
+  color: #fff; font-weight: 600;
+}
+
+.support-qr {
+  margin-top: 16px; border-radius: var(--radius-md);
+  background: #fff; padding: 14px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.support-qr .qr-holder {
+  width: 168px; height: 168px; border-radius: 8px; overflow: hidden;
+}
+.support-qr img { width: 100%; height: 100%; display: none; object-fit: cover; }
+.support-qr img.is-active { display: block; }
+.support-qr figcaption { font-size: 12px; color: #555; text-align: center; }
+.support-note { margin-top: 12px; font-size: 12px; color: var(--sn-ink-3); text-align: center; }
+
+/* ============ 5. 星炬论坛 Hero（压缩高度 + 背板） ============ */
+.forum-hero {
+  position: relative; z-index: 10;
+  min-height: 220px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 40px 32px 32px;
+  margin: 0 -24px 40px;
+  border-bottom: 1px solid var(--glass-border);
+  background:
+    linear-gradient(180deg, transparent 0%, var(--sn-paper-2) 70%),
+    var(--tex-dot),
+    var(--sn-paper-2);
+  background-size: 100% 100%, 28px 28px, 100% 100%;
+}
+.forum-hero::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  border-bottom: 1px solid var(--glass-border);
+  background: linear-gradient(90deg, oklch(72% 0.11 350deg / 0.08), transparent 40%, transparent 60%, oklch(78% 0.06 230deg / 0.06));
+}
+.forum-hero-content { position: relative; z-index: 2; max-width: 1080px; margin: 0 auto; width: 100%; }
+.forum-hero h2 { font-family: var(--font-display); font-size: 30px; font-weight: 500; letter-spacing: .04em; }
+.forum-hero p { color: var(--sn-ink-3); margin-top: 8px; max-width: 560px; }
+.forum-hero-actions { display: flex; gap: 12px; margin-top: 20px; }
+.forum-hero .btn-gold {
+  background: linear-gradient(135deg, var(--c-gold), oklch(68% 0.14 65deg));
+  color: #121212; font-weight: 700;
+  box-shadow: 0 0 24px oklch(78% 0.12 65deg / 0.25);
+}
+.forum-hero .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 0 34px oklch(78% 0.12 65deg / 0.38); }
+
+/* ============ 6. 论坛索引卡（indexcard） ============ */
+.forum-index {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px;
+}
+.index-card {
+  position: relative;
+  background: var(--surface-card);
+  border: 1px solid var(--surface-card-border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  transition: border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.index-card:hover { border-color: var(--glass-border-hover); background: var(--glass-bg-hover); transform: translateY(-2px); }
+.index-card:focus-within { box-shadow: var(--focus-ring); }
+.index-card a { text-decoration: none; color: inherit; }
+.index-card a::after { content: ""; position: absolute; inset: 0; }
+.index-card a:focus { outline: none; }
+.index-card h3 { font-family: var(--font-display); font-size: 17px; font-weight: 500; }
+.index-card-meta { display: flex; gap: 12px; margin-top: 8px; font-size: 12px; color: var(--sn-ink-3); }
+.index-card-desc { margin-top: 10px; font-size: 13.5px; color: var(--sn-ink-2); line-height: 1.65; }
+.index-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.index-card-tag {
+  padding: 2px 8px; border-radius: 999px; font-size: 11px;
+  background: oklch(96% 0.01 350deg / 0.05);
+  border: 1px solid oklch(96% 0.01 350deg / 0.1);
+  color: var(--sn-ink-3);
+}
+
+/* ============ 7. 论坛 Rail 时间线 ============ */
+.forum-timeline { position: relative; display: flex; flex-direction: column; gap: 18px; margin-top: 24px; }
+.forum-timeline::before {
+  content: ""; position: absolute; left: 15px; top: 8px; bottom: 8px;
+  width: 2px;
+  background: linear-gradient(transparent, var(--c-gold) 15%, var(--c-core-blue) 70%, transparent);
+  opacity: .45;
+}
+.forum-tl-item {
+  position: relative; margin-left: 42px;
+  padding: 16px 18px;
+  background: var(--surface-card);
+  border: 1px solid var(--surface-card-border);
+  border-radius: var(--radius-md);
+  transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.forum-tl-item:hover { border-color: var(--glass-border-hover); background: var(--glass-bg-hover); }
+.forum-tl-item:focus-within { box-shadow: var(--focus-ring); }
+.forum-tl-item::before {
+  content: ""; position: absolute; left: -33px; top: 22px;
+  width: 10px; height: 10px; border-radius: 2px;
+  background: linear-gradient(135deg, var(--c-gold), var(--c-core-blue));
+  box-shadow: 0 0 0 3px var(--sn-paper);
+  transform: rotate(45deg);
+}
+.forum-tl-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.forum-tl-time { font-size: 12px; color: var(--sn-ink-3); font-family: var(--font-mono, monospace); }
+.forum-tl-title { font-family: var(--font-display); font-size: 16px; font-weight: 500; }
+.forum-tl-body { margin-top: 6px; font-size: 13.5px; color: var(--sn-ink-2); line-height: 1.6; }
+
+/* ============ 响应式 ============ */
+@media (max-width: 1024px) {
+  .swatches { grid-template-columns: 1fr; }
+  .support-dock { right: 16px; bottom: 84px; }
+  .support-toggle { right: 16px; bottom: 84px; }
+  .forum-index { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  main { padding: 24px 16px 140px; }
+  .nav { padding: 12px 16px; }
+  .nav-links { display: none; }
+  .section-head { margin: 36px 0 18px; flex-wrap: wrap; }
+  .section-head .note { margin-left: 0; width: 100%; }
+
+  .timeline::before { left: 15px; }
+  .diary-card { margin-left: 38px; padding: 16px; }
+  .diary-card::before { left: -30px; width: 9px; height: 9px; }
+  .diary-card.is-featured::before { left: -32px; width: 13px; height: 13px; }
+  .diary-card-head { gap: 8px; }
+  .diary-date .day { font-size: 18px; }
+
+  .forum-hero { min-height: 180px; padding: 32px 16px 24px; }
+  .forum-hero h2 { font-size: 24px; }
+
+  .support-dock { right: 0; bottom: 0; left: 0; width: 100%; }
+  .support-dock.is-open .support-card {
+    display: block; border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-bottom: none; padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  }
+  .support-dock.is-open .support-toggle { display: grid; right: 16px; bottom: 24px; }
+  .support-toggle { right: 16px; bottom: 24px; }
+}
+@media (min-width: 769px) {
+  .support-dock.is-open .support-toggle { display: none; }
+}
+
+/* ============ 无障碍：减少动效 ============ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+  .support-toggle { animation: none; }
+  #starfield { display: none; }
+}
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">跳转到主要内容</a>
+<canvas id="starfield" aria-hidden="true"></canvas>
+
+<div class="proto-banner" role="note">
+  <span><strong>高保真原型 v2</strong> · 材质升级 / 小蛋糕图标 / 双域星空动效 / 论坛整合 · 仅预览，未接入生产</span>
+  <span class="tag">v2 · 2026-08-12</span>
+</div>
+
+<header class="nav">
+  <div class="nav-brand"><span class="dot" aria-hidden="true"></span>飞行雪绒</div>
+  <nav aria-label="主导航">
+    <ul class="nav-links">
+      <li><a href="#main-content" aria-current="page">首页</a></li>
+      <li><a href="#forum">星炬论坛</a></li>
+      <li><a href="#diary">飞行日志</a></li>
+      <li><a href="#form">投稿</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main-content">
+  <h1 class="sr-only">飞行雪绒 · 星炬学院 UI 重设计原型</h1>
+
+  <!-- 1. 表面层级演示 -->
+  <section aria-labelledby="sw-title">
+    <div class="section-head">
+      <span class="kicker">Material Layering</span>
+      <h2 id="sw-title">提亮后的表面层级</h2>
+      <span class="note">v2 · 背景 #121212 ＜ 卡片 #1E1E2E ＜ 弹层 #252536 + 绒感噪点</span>
+    </div>
+    <div class="swatches">
+      <div class="swatch" data-level="bg">
+        <span class="sw-name">背景 layer-0</span>
+        <span class="sw-val">--sn-paper · #121212</span>
+        <span class="sw-sample">全局基底，覆盖 subtle noise 与星空粒子</span>
+      </div>
+      <div class="swatch" data-level="card">
+        <span class="sw-name">卡片 layer-1</span>
+        <span class="sw-val">--sn-paper-2 · #1E1E2E</span>
+        <span class="sw-sample">表单 / 日记 / 论坛索引卡背板</span>
+      </div>
+      <div class="swatch" data-level="raised">
+        <span class="sw-name">弹层 layer-2</span>
+        <span class="sw-val">--sn-paper-3 · #252536</span>
+        <span class="sw-sample">抽屉 / 模态 / 捐赠面板最高 elevation</span>
+      </div>
+    </div>
+    <div class="ink-row" aria-label="文本层级">
+      <span class="ink-chip" data-ink="1">主文本 96%</span>
+      <span class="ink-chip" data-ink="2">正文 88%</span>
+      <span class="ink-chip" data-ink="3">辅助 74%</span>
+      <span class="ink-chip" data-ink="4">占位 60%</span>
+    </div>
+  </section>
+
+  <!-- 2. 杂志式时间线 -->
+  <section aria-labelledby="diary-title" id="diary">
+    <div class="section-head">
+      <span class="kicker">Star Log</span>
+      <h2 id="diary-title">飞行日志</h2>
+      <span class="note">日期 + 标题同行 · 正文折叠 · 点击展开</span>
+    </div>
+
+    <div class="timeline">
+      <article class="diary-card is-featured is-open">
+        <header class="diary-card-head">
+          <time class="diary-date" datetime="2026-08-03"><span class="day">03</span>八月</time>
+          <h3 class="diary-title">环流与归途</h3>
+        </header>
+        <div class="diary-body">
+          <p>今夜的风从北边来，把云层推成一道道长长的尾巴。我在机翼下写这封信——说"信"其实不太对，这只是今晚广播台没有听众的一档节目。起落架上的霜化了又结，结成细小的六角星。据说每颗星都听过很多愿望，那今晚这条环流，能不能替我载一段，绕回你所在的那片海岸？</p>
+        </div>
+        <footer class="diary-tags" aria-label="标签">
+          <span class="diary-tag" data-tone="blue">#环流</span>
+          <span class="diary-tag" data-tone="pink">#夜航</span>
+          <span class="diary-tag">#爱弥斯</span>
+        </footer>
+      </article>
+
+      <article class="diary-card">
+        <header class="diary-card-head">
+          <time class="diary-date" datetime="2026-07-28"><span class="day">28</span>七月</time>
+          <h3 class="diary-title">收到一封远方来信</h3>
+        </header>
+        <div class="diary-body">
+          <p>信箱里躺着一封没有邮戳的信，纸张带着海盐的味道。字迹歪歪扭扭，像是边赶路边写的。信里问，雪绒花在夏天还开着吗。我提笔回信，写到一半发现窗外真的下起了雨，雨点敲在频率刻度条上，叮叮咚咚，像一首跑调的摇篮曲。</p>
+        </div>
+        <button class="diary-expand" aria-expanded="false">展开全文</button>
+        <footer class="diary-tags" aria-label="标签">
+          <span class="diary-tag" data-tone="blue">#来信</span>
+          <span class="diary-tag">#达妮娅</span>
+        </footer>
+      </article>
+
+      <article class="diary-card">
+        <header class="diary-card-head">
+          <time class="diary-date" datetime="2026-07-19"><span class="day">19</span>七月</time>
+          <h3 class="diary-title">夜航日志 · 第 47 页</h3>
+        </header>
+        <div class="diary-body">
+          <p>今天的航线很低，低到能看见地面上的灯火连成银河。座舱里只剩仪表盘的光。我想起第一次独自夜航，手心全是汗，把操纵杆攥得发烫。现在反而喜欢这样的时刻——安静的、只属于天空的、什么都可以不必想的时刻。</p>
+        </div>
+        <button class="diary-expand" aria-expanded="false">展开全文</button>
+        <footer class="diary-tags" aria-label="标签">
+          <span class="diary-tag" data-tone="pink">#夜航</span>
+          <span class="diary-tag">#漂泊者</span>
+        </footer>
+      </article>
+    </div>
+  </section>
+
+  <!-- 3. 表单背板示例 -->
+  <section aria-labelledby="form-title" id="form">
+    <div class="section-head">
+      <span class="kicker">Surface Fix</span>
+      <h2 id="form-title">背板修复示例 · 投稿表单</h2>
+      <span class="note">同样的表单，换上新 surface 背板与材质</span>
+    </div>
+    <form class="form-card" aria-label="投稿表单示例">
+      <h3>向星空投稿</h3>
+      <div class="form-row">
+        <label for="f-title">标题</label>
+        <input id="f-title" type="text" placeholder="给这篇作品起个名字" autocomplete="off">
+      </div>
+      <div class="form-row">
+        <label for="f-tags">标签（逗号分隔）</label>
+        <input id="f-tags" type="text" placeholder="例如：爱弥斯, 夜航, 治愈">
+      </div>
+      <div class="form-row">
+        <label for="f-body">正文</label>
+        <textarea id="f-body" rows="4" placeholder="写下你的故事……"></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-primary">提交投稿</button>
+        <button type="button" class="btn btn-ghost">存为草稿</button>
+      </div>
+    </form>
+    <p class="compare-note">
+      <strong>对比旧版：</strong>旧表单直接浮在星空背景上（无 surface 背板），新版表单用 <code>#1E1E2E</code> 卡片承载，并叠加绒感噪点纹理——层级从"看不见"到"看得清"，同时避免 AI 味纯色渐变。
+    </p>
+  </section>
+
+  <!-- 4. 星炬论坛 -->
+  <section aria-labelledby="forum-title" id="forum">
+    <div class="section-head">
+      <span class="kicker">Star Beacon Forum</span>
+      <h2 id="forum-title">星炬论坛</h2>
+      <span class="note">压缩 hero + 背板 + 索引卡 + rail 时间线</span>
+    </div>
+
+    <div class="forum-hero">
+      <div class="forum-hero-content">
+        <h2>星炬学院 · 公共广播台</h2>
+        <p>这里不是官方频道，是学员们自己的夜空。航线报告、机翼维护笔记、没寄出的信，都可以贴上来。</p>
+        <div class="forum-hero-actions">
+          <button class="btn btn-primary">发布新帖</button>
+          <button class="btn btn-ghost">查看规则</button>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="section-head" style="margin-top:32px">
+      <span class="kicker">Index</span>
+      <span style="font-family:var(--font-display);font-size:22px;font-weight:500">最新索引</span>
+    </h3>
+    <div class="forum-index" aria-label="论坛索引">
+      <article class="index-card" tabindex="0">
+        <a href="#" aria-label="《起落架维护笔记》帖子详情">
+          <h3>起落架维护笔记</h3>
+        </a>
+        <div class="index-card-meta">
+          <span>西格莉卡</span>
+          <span>2 小时前</span>
+          <span>17 回复</span>
+        </div>
+        <p class="index-card-desc">霜化又结的接口最容易开裂，今天记录了三种常见裂纹的判定方法。</p>
+        <div class="index-card-tags">
+          <span class="index-card-tag">#维护</span>
+          <span class="index-card-tag">#技术</span>
+        </div>
+      </article>
+      <article class="index-card" tabindex="0">
+        <a href="#" aria-label="《87.5 频率 tonight》帖子详情">
+          <h3>87.5 频率 tonight</h3>
+        </a>
+        <div class="index-card-meta">
+          <span>达妮娅</span>
+          <span>5 小时前</span>
+          <span>8 回复</span>
+        </div>
+        <p class="index-card-desc">今晚频道空着，我对着麦克风读了半封信。有人听到的话，回个信号。</p>
+        <div class="index-card-tags">
+          <span class="index-card-tag">#广播</span>
+          <span class="index-card-tag">#夜航</span>
+        </div>
+      </article>
+      <article class="index-card" tabindex="0">
+        <a href="#" aria-label="《渐湖航线旧地图》帖子详情">
+          <h3>渐湖航线旧地图</h3>
+        </a>
+        <div class="index-card-meta">
+          <span>漂泊者</span>
+          <span>1 天前</span>
+          <span>31 回复</span>
+        </div>
+        <p class="index-card-desc">在数据仓库底层翻到的旧航图，湖面倒影区域标记为"未知"，有人想组队去看看吗？</p>
+        <div class="index-card-tags">
+          <span class="index-card-tag">#航线</span>
+          <span class="index-card-tag">#探险</span>
+        </div>
+      </article>
+    </div>
+
+    <h3 class="section-head" style="margin-top:40px">
+      <span class="kicker">Rail</span>
+      <span style="font-family:var(--font-display);font-size:22px;font-weight:500">论坛时间线</span>
+    </h3>
+    <div class="forum-timeline" aria-label="论坛动态时间线">
+      <article class="forum-tl-item" tabindex="0">
+        <div class="forum-tl-head">
+          <time class="forum-tl-time">14:32</time>
+          <h4 class="forum-tl-title">87.5 频率 tonight</h4>
+        </div>
+        <p class="forum-tl-body">达妮娅更新："刚收到一个很远很弱的回应，只有两个字：晚安。"</p>
+      </article>
+      <article class="forum-tl-item" tabindex="0">
+        <div class="forum-tl-head">
+          <time class="forum-tl-time">11:08</time>
+          <h4 class="forum-tl-title">起落架维护笔记</h4>
+        </div>
+        <p class="forum-tl-body">西格莉卡回复："裂纹长度超过 2mm 必须返厂，别凭感觉飞。"</p>
+      </article>
+      <article class="forum-tl-item" tabindex="0">
+        <div class="forum-tl-head">
+          <time class="forum-tl-time">08:45</time>
+          <h4 class="forum-tl-title">渐湖航线旧地图</h4>
+        </div>
+        <p class="forum-tl-body">漂泊者更新："已登记三人，周末出发，暂定高度 2400。"</p>
+      </article>
+    </div>
+  </section>
+</main>
+
+<!-- 5. 侧边捐赠卡 -->
+<div class="support-dock" id="support-dock">
+  <button class="support-toggle" id="support-toggle" aria-label="打开赞助面板" aria-expanded="false" aria-controls="support-card">
+    <!-- 简笔画小蛋糕 SVG -->
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M12 22h24v6a12 12 0 0 1-24 0v-6Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M10 22c0-4 4-8 14-8s14 4 14 8H10Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M24 8v6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="28" cy="16" r="1.8" fill="currentColor"/>
+      <path d="M16 28c0 3 2 5 4 5s4-2 4-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <section class="support-card" id="support-card" aria-label="赞助支持">
+    <header class="support-card-head">
+      <span class="support-avatar" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 22h24v6a12 12 0 0 1-24 0v-6Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M10 22c0-4 4-8 14-8s14 4 14 8H10Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M24 8v6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="28" cy="16" r="1.8" fill="currentColor"/>
+          <path d="M16 28c0 3 2 5 4 5s4-2 4-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <div>
+        <h3 class="support-title">请制作人喝杯咖啡</h3>
+        <p class="support-desc">每一份支持都会变成星空下更稳定的信号。</p>
+      </div>
+      <button class="support-minimize" id="support-minimize" aria-label="收起赞助面板">−</button>
+    </header>
+    <div class="support-methods" role="tablist" aria-label="支付方式">
+      <button class="support-method is-active" role="tab" aria-selected="true" data-method="wechat">微信支付</button>
+      <button class="support-method" role="tab" aria-selected="false" data-method="alipay">支付宝</button>
+    </div>
+    <figure class="support-qr">
+      <div class="qr-holder">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='336' height='336'%3E%3Crect width='336' height='336' fill='%23ffffff'/%3E%3Cg fill='%23000'%3E%3Crect x='24' y='24' width='120' height='120'/%3E%3Crect x='192' y='24' width='120' height='120'/%3E%3Crect x='24' y='192' width='120' height='120'/%3E%3Crect x='192' y='192' width='120' height='120'/%3E%3Crect x='164' y='164' width='8' height='8'/%3E%3C/g%3E%3Cg fill='%23000'%3E%3Crect x='56' y='56' width='56' height='56' fill='%23fff'/%3E%3Crect x='224' y='56' width='56' height='56' fill='%23fff'/%3E%3Crect x='56' y='224' width='56' height='56' fill='%23fff'/%3E%3Crect x='224' y='224' width='56' height='56' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E"
+             alt="微信收款码（原型示意）" data-method="wechat" class="is-active">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='336' height='336'%3E%3Crect width='336' height='336' fill='%23ffffff'/%3E%3Cg fill='%23007fff'%3E%3Crect x='24' y='24' width='120' height='120'/%3E%3Crect x='192' y='24' width='120' height='120'/%3E%3Crect x='24' y='192' width='120' height='120'/%3E%3Crect x='192' y='192' width='120' height='120'/%3E%3Crect x='164' y='164' width='8' height='8'/%3E%3C/g%3E%3Cg fill='%23007fff'%3E%3Crect x='56' y='56' width='56' height='56' fill='%23fff'/%3E%3Crect x='224' y='56' width='56' height='56' fill='%23fff'/%3E%3Crect x='56' y='224' width='56' height='56' fill='%23fff'/%3E%3Crect x='224' y='224' width='56' height='56' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E"
+             alt="支付宝收款码（原型示意）" data-method="alipay">
+      </div>
+      <figcaption>原型阶段以示意码代替真实收款码</figcaption>
+    </figure>
+    <p class="support-note">选择方式后扫码即可。你的陪伴，是这里继续发光的理由。</p>
+  </section>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* === 捐赠卡：展开 / 收起 === */
+  var dock = document.getElementById('support-dock');
+  var toggle = document.getElementById('support-toggle');
+  var minimize = document.getElementById('support-minimize');
+
+  function setOpen(open) {
+    dock.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  toggle.addEventListener('click', function () { setOpen(true); });
+  minimize.addEventListener('click', function () { setOpen(false); });
+
+  /* === 捐赠卡：支付方式切换 === */
+  var methods = dock.querySelectorAll('.support-method');
+  var qrs = dock.querySelectorAll('.support-qr img');
+  methods.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      methods.forEach(function (b) {
+        b.classList.toggle('is-active', b === btn);
+        b.setAttribute('aria-selected', String(b === btn));
+      });
+      var m = btn.getAttribute('data-method');
+      qrs.forEach(function (img) {
+        img.classList.toggle('is-active', img.getAttribute('data-method') === m);
+      });
+    });
+  });
+
+  /* === 日记：展开 / 收起 === */
+  document.querySelectorAll('.diary-card').forEach(function (card) {
+    var btn = card.querySelector('.diary-expand');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var open = card.classList.toggle('is-open');
+      btn.textContent = open ? '收起' : '展开全文';
+      btn.setAttribute('aria-expanded', String(open));
+    });
+  });
+
+  /* === 星空背景粒子系统 === */
+  var canvas = document.getElementById('starfield');
+  var ctx = canvas.getContext('2d');
+  var width, height;
+  var particles = [];
+  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function makeParticle(type) {
+    var isSnow = type === 'snowfluff';
+    var sizeBase = isSnow ? 1.2 : 0.8;
+    return {
+      x: Math.random() * width,
+      y: Math.random() * height,
+      size: sizeBase + Math.random() * (isSnow ? 1.8 : 1.2),
+      speedY: isSnow ? -0.15 - Math.random() * 0.25 : -0.35 - Math.random() * 0.55,
+      speedX: isSnow ? (Math.random() - 0.5) * 0.25 : (Math.random() - 0.5) * 0.6,
+      opacity: 0.15 + Math.random() * 0.35,
+      hue: isSnow ? (340 + Math.random() * 60) : (55 + Math.random() * 40), /* 雪绒偏粉蓝，论坛偏金 */
+      shape: isSnow ? (Math.random() > 0.7 ? 'cross' : 'circle') : (Math.random() > 0.6 ? 'dash' : 'square'),
+      life: Math.random() * Math.PI * 2,
+      type: type
+    };
+  }
+
+  function initParticles() {
+    particles = [];
+    // 飞行雪绒主站区域（上半屏）用柔和雪花粒子
+    var snowCount = Math.floor((width * height) / 22000);
+    // 星炬论坛区域（下半屏）用更密、更快的几何粒子
+    var beaconCount = Math.floor((width * height) / 16000);
+    for (var i = 0; i < snowCount; i++) particles.push(makeParticle('snowfluff'));
+    for (var i = 0; i < beaconCount; i++) particles.push(makeParticle('beacon'));
+  }
+  initParticles();
+
+  function drawParticle(p) {
+    ctx.save();
+    ctx.globalAlpha = p.opacity;
+    ctx.translate(p.x, p.y);
+    ctx.fillStyle = 'hsl(' + p.hue + ' 60% 80%)';
+
+    if (p.shape === 'circle') {
+      ctx.beginPath(); ctx.arc(0, 0, p.size, 0, Math.PI * 2); ctx.fill();
+    } else if (p.shape === 'cross') {
+      var r = p.size * 1.6;
+      ctx.lineWidth = 1.2; ctx.strokeStyle = ctx.fillStyle;
+      ctx.beginPath();
+      ctx.moveTo(-r, 0); ctx.lineTo(r, 0);
+      ctx.moveTo(0, -r); ctx.lineTo(0, r);
+      ctx.stroke();
+    } else if (p.shape === 'square') {
+      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+    } else if (p.shape === 'dash') {
+      ctx.rotate(Math.atan2(p.speedY, p.speedX) + Math.PI / 2);
+      ctx.lineWidth = 1.5; ctx.strokeStyle = ctx.fillStyle;
+      ctx.beginPath(); ctx.moveTo(0, -p.size * 2); ctx.lineTo(0, p.size * 2); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function updateParticle(p) {
+    p.y += p.speedY;
+    p.x += p.speedX;
+    p.life += 0.02;
+    // 闪烁
+    p.opacity = 0.12 + Math.sin(p.life) * 0.08 + (p.type === 'beacon' ? 0.1 : 0.05);
+    if (p.y < -10) { p.y = height + 10; p.x = Math.random() * width; }
+    if (p.x < -10) p.x = width + 10;
+    if (p.x > width + 10) p.x = -10;
+  }
+
+  var frameCount = 0;
+  function loop() {
+    if (prefersReducedMotion) return;
+    frameCount++;
+    // 每 2 帧渲染一次以节省性能
+    if (frameCount % 2 === 0) {
+      ctx.clearRect(0, 0, width, height);
+      for (var i = 0; i < particles.length; i++) {
+        updateParticle(particles[i]);
+        drawParticle(particles[i]);
+      }
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+</script>
+</body>
+</html>
