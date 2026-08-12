@@ -42,6 +42,7 @@ const MAIN_JS = [
   'js/signature-utils.js',
   'js/main.js',
   'js/donation.js',
+  'js/sw-register.js',
 ];
 
 // 论坛本地 JS（不含 CDN supabase.min.js；含跨目录引用的 ../js/*）· v11.0 追加 signature-utils.js
@@ -65,8 +66,9 @@ const FORUM_JS = [
   'js/donation.js',              // ../js/donation.js
 ];
 
-// 主站 CSS（index.html 中 <link> 顺序）· v11.0 追加 snow-signature + snow-weapons
+// 主站 CSS（index.html 中 <link> 顺序）· v11.0 追加 snow-signature + snow-weapons · P3-1 追加 fonts
 const MAIN_CSS = [
+  'css/fonts.css',
   'css/tokens-base.css',
   'css/tokens-snow.css',
   'css/style.css',
@@ -79,8 +81,9 @@ const MAIN_CSS = [
   'css/snow-weapons.css',
 ];
 
-// 论坛 CSS（forum/index.html 中 <link> 顺序）· v11.0 追加 stf-signature + stf-weapons
+// 论坛 CSS（forum/index.html 中 <link> 顺序）· v11.0 追加 stf-signature + stf-weapons · P3-1 追加 fonts
 const FORUM_CSS = [
+  'css/fonts.css',
   'css/tokens-base.css',
   'css/forum-shared.css',
   'css/tokens-stf.css',
@@ -93,8 +96,9 @@ const FORUM_CSS = [
   'css/stf-weapons.css',
 ];
 
-// 角色页 CSS（7 个角色页共用）· v11.0 追加 snow-signature
+// 角色页 CSS（7 个角色页共用）· v11.0 追加 snow-signature · P3-1 追加 fonts
 const ARCHIVE_CSS = [
+  'css/fonts.css',
   'css/tokens-base.css',
   'css/tokens-snow.css',
   'css/archive-subset.css',

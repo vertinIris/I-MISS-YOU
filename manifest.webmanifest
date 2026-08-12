@@ -1,0 +1,16 @@
+{
+  "name": "飞行雪绒 · 星炬学院的日常",
+  "short_name": "飞行雪绒",
+  "description": "爱弥斯以飞行雪绒之名留下的同人社交账号",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a0a0f",
+  "theme_color": "#E89BB5",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "assets/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ],
+  "categories": ["social", "entertainment"]
+}

@@ -6,14 +6,14 @@
     <title>星炬学院 · 公共研讨频段</title>
     <meta name="description" content="星炬学院主论坛 —— 鸣潮角色档案、世界观考据、同人创作与社区讨论的独立聚合站。">
     <meta name="theme-color" content="#0A101C">
-    <!-- 对齐主站 CSP；论坛 Supabase 容错需 unpkg.com -->
+    <!-- 对齐主站 CSP；论坛 Supabase 容错需 unpkg.com — P3-1: fonts self-hosted, removed Google Fonts CDN -->
     <meta http-equiv="Content-Security-Policy"
           content="default-src 'self';
                    script-src 'self' 'unsafe-inline' cdn.jsdelivr.net unpkg.com;
-                   style-src 'self' 'unsafe-inline' cdn.jsdelivr.net fonts.googleapis.com;
+                   style-src 'self' 'unsafe-inline' cdn.jsdelivr.net;
                    img-src 'self' data: blob: https://*.supabase.co;
                    connect-src 'self' https://*.supabase.co wss://*.supabase.co;
-                   font-src 'self' cdn.jsdelivr.net fonts.gstatic.com;
+                   font-src 'self' cdn.jsdelivr.net;
                    base-uri 'self';
                    form-action 'self';
                    object-src 'none';
@@ -33,11 +33,7 @@
     <meta name="twitter:description" content="星炬学院主论坛：角色档案、世界观、同人创作与社区讨论。">
     <meta name="twitter:image" content="https://vertiniris.github.io/I-MISS-YOU/assets/og-cover.webp">
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
-    <!-- Fonts：非阻塞（对齐角色页 media=print + onload）；CJK 由 Noto SC 提供，系统字体作回退 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap"></noscript>
+    <!-- P3-1: Fonts self-hosted via css/fonts.css (merged into dist/css/forum.min.css) -->
     <!-- Styles (Stage II: 8 个 CSS 合并压缩为 1 个 → dist/css/forum.min.css，222KB→152KB) -->
     <link rel="stylesheet" href="../dist/css/forum.min.css">
     <!-- P0 UX: Notyf Toast 通知样式（自托管 vendor，SRI 保护） -->
@@ -117,9 +113,7 @@
                         <span class="stf-realm-label" id="stf-realm-label">在线 · 星炬学院</span>
                         <span class="stf-realm-code" id="stf-realm-code">STARTORCH · ARCHIVE</span>
                     </span>
-                    <svg class="stf-realm-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11" aria-hidden="true">
-                        <polyline points="6 9 12 15 18 9"/>
-                    </svg>
+                    <svg class="stf-realm-arrow" viewBox="0 0 24 24" width="11" height="11" aria-hidden="true"><use href="../assets/icons.svg#ic-stf-chevron-down"/></svg>
                 </button>
                 <div class="stf-realm-dropdown" id="stf-realm-dropdown" role="listbox" aria-label="选择地址">
                     <button type="button" class="stf-realm-option active" role="option" aria-selected="true"
@@ -216,7 +210,7 @@
                     <span class="stf-indexcard-desc">星炬学院的核心互动区 —— 发帖、话题筛选、点赞评论收藏，异步沉淀，与同好相遇。</span>
                     <span class="stf-indexcard-cta">
                         进入讨论区
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#ic-stf-chevron-right"/></svg>
                     </span>
                 </a>
 
@@ -228,7 +222,7 @@
                     <span class="stf-indexcard-sub">官方角色考据</span>
                     <span class="stf-indexcard-cta">
                         查阅档案
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#ic-stf-chevron-right"/></svg>
                     </span>
                 </a>
 
@@ -249,7 +243,7 @@
                     <span class="stf-indexcard-sub">索拉里斯考据卡</span>
                     <span class="stf-indexcard-cta">
                         考据世界
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#ic-stf-chevron-right"/></svg>
                     </span>
                 </a>
 
@@ -285,9 +279,7 @@
                             <button type="button" class="stf-filter-btn" data-filter="music">音乐</button>
                         </div>
                         <div class="stf-search">
-                            <svg class="stf-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/>
-                            </svg>
+                            <svg class="stf-search-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#ic-stf-search"/></svg>
                             <input type="search" class="stf-search-input" id="stf-search" placeholder="搜索标题 / 正文 / 作者" aria-label="搜索讨论帖">
                             <button type="button" class="stf-search-clear" id="stf-search-clear" aria-label="清空搜索" hidden>×</button>
                         </div>
@@ -321,7 +313,7 @@
                                    aria-label="新帖标题，点击展开完整编辑器">
                             <button type="button" class="btn-primary stf-composer__expand" id="stf-qc-expand"
                                     aria-expanded="false" aria-controls="stf-qc-fields" title="展开完整编辑器">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#ic-stf-chevron-down"/></svg>
                             </button>
                         </div>
                         <!-- 展开字段（默认隐藏） -->
@@ -539,7 +531,7 @@
                     <div class="stf-aside-card stf-aside-chat" id="stf-chat">
                         <button type="button" class="stf-chat-entry" id="stf-chat-entry" aria-expanded="false" aria-controls="stf-chat-panel" title="打开公共频段（次要入口）">
                             <span class="stf-chat-entry-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#ic-stf-chat"/></svg>
                             </span>
                             <span class="stf-chat-entry-body">
                                 <b>公共频段</b>
@@ -605,7 +597,7 @@
                             <span class="character-archive-name">爱弥斯</span>
                             <span class="character-archive-alias">飞行雪绒 · 电子幽灵</span>
                             <span class="character-archive-line">星炬学院拉贝尔学部隧者共鸣者，调频 9072 的主人。失踪之后，以「飞行雪绒」的身份在深夜电波里唱歌 —— 只要抬头，那颗星总能找到你。</span>
-                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#ic-stf-chevron-right"/></svg></span>
                         </a>
                     </div>
 
@@ -617,7 +609,7 @@
                             <span class="character-archive-name">漂泊者</span>
                             <span class="character-archive-alias">异乡的御者 · 玩家化身</span>
                             <span class="character-archive-line">从异乡而来的频率旅人，拉海洛的御者，爱弥斯眼中的家人；学院暗面调查的同行者。</span>
-                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#ic-stf-chevron-right"/></svg></span>
                         </a>
                     </div>
 
@@ -629,7 +621,7 @@
                             <span class="character-archive-name">达妮娅</span>
                             <span class="character-archive-alias">泡泡与虚质</span>
                             <span class="character-archive-line">星炬学院学生，热熔音感仪共鸣者，已确认失踪，未对学院构成威胁。</span>
-                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#ic-stf-chevron-right"/></svg></span>
                         </a>
                     </div>
 
@@ -641,7 +633,7 @@
                             <span class="character-archive-name">西格莉卡</span>
                             <span class="character-archive-alias">昭日者 · 西西</span>
                             <span class="character-archive-line">星炬学院学生，罗伊符文的共鸣者，气动臂铠战斗者。</span>
-                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#ic-stf-chevron-right"/></svg></span>
                         </a>
                     </div>
 
@@ -653,7 +645,7 @@
                             <span class="character-archive-name">琳奈</span>
                             <span class="character-archive-alias">预科生 · 莫宁的学生</span>
                             <span class="character-archive-line">星炬学院预科学生，衍射佩枪共鸣者，擅长光学迷彩与辅助机协同。</span>
-                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#ic-stf-chevron-right"/></svg></span>
                         </a>
                     </div>
 
@@ -665,7 +657,7 @@
                             <span class="character-archive-name">莫宁</span>
                             <span class="character-archive-alias">星枢演构 · 深空学者</span>
                             <span class="character-archive-line">深空联合学者，星炬学院隧者工学部教授，热熔长刃共鸣者。</span>
-                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#ic-stf-chevron-right"/></svg></span>
                         </a>
                     </div>
 
@@ -677,7 +669,7 @@
                             <span class="character-archive-name">洛瑟菈</span>
                             <span class="character-archive-alias">校长 · 记忆宫殿守望者</span>
                             <span class="character-archive-line">星炬学院校长，冷凝音感仪共鸣者，泛音社指导老师。</span>
-                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                            <span class="character-archive-cta">查阅档案 <svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#ic-stf-chevron-right"/></svg></span>
                         </a>
                     </div>
 
@@ -1301,5 +1293,6 @@
     <script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
             onerror="window.__loadSupabaseSDK('https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js', function(){ window.__loadSupabaseSDK('js/supabase.min.js', function(){ console.warn('[forum] Supabase SDK 所有来源均加载失败，回退纯本地模式'); }); });"></script>
     <!-- donation.js 已合并入 bundle-forum.js（Stage II） -->
+    <script src="../js/sw-register.js" defer></script>
 </body>
 </html>

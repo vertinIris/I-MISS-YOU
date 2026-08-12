@@ -1,0 +1,66 @@
+/* P3-1: Self-hosted fonts — replaces Google Fonts CDN
+ * Variable fonts (Noto Sans/Serif SC, JetBrains Mono) cover all weights via fvar axis.
+ * Static fonts (ZCOOL XiaoWei, IBM Plex Mono) have one file per weight.
+ * Paths resolve relative to dist/css/ (merged output location).
+ * unicode-range matches pyftsubset subsets → browser only fetches when needed.
+ */
+
+/* ── Noto Sans SC (variable wght 100–900, CJK subset) ── */
+@font-face {
+  font-family: 'Noto Sans SC';
+  src: url('../../assets/fonts/noto-sans-sc.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+2000-206F, U+4E00-9FFF, U+3000-303F, U+FF00-FFEF;
+}
+
+/* ── Noto Serif SC (variable wght 100–900, CJK subset) ── */
+@font-face {
+  font-family: 'Noto Serif SC';
+  src: url('../../assets/fonts/noto-serif-sc.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+2000-206F, U+4E00-9FFF, U+3000-303F, U+FF00-FFEF;
+}
+
+/* ── ZCOOL XiaoWei (static 400, CJK subset) ── */
+@font-face {
+  font-family: 'ZCOOL XiaoWei';
+  src: url('../../assets/fonts/zcool-xiaowei.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+2000-206F, U+4E00-9FFF, U+3000-303F, U+FF00-FFEF;
+}
+
+/* ── IBM Plex Mono 400 (static, Latin subset) ── */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('../../assets/fonts/ibm-plex-mono-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-007F, U+2000-206F, U+2200-23FF, U+2E00-2E7F;
+}
+
+/* ── IBM Plex Mono 500 (static, Latin subset) ── */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('../../assets/fonts/ibm-plex-mono-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-007F, U+2000-206F, U+2200-23FF, U+2E00-2E7F;
+}
+
+/* ── JetBrains Mono (variable wght 100–800, Latin subset) ── */
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('../../assets/fonts/jetbrains-mono.woff2') format('woff2');
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-007F, U+2000-206F, U+2200-23FF, U+2E00-2E7F;
+}

@@ -338,3 +338,6 @@
   white-space: nowrap;
   border: 0;
 }
+
+/* External SVG sprite icon sizing */
+svg[class*="ic-"] { width: 1em; height: 1em; vertical-align: middle; }

@@ -1,0 +1,62 @@
+[
+  {
+    "name": "noto-sans-sc",
+    "family": "Noto Sans SC",
+    "filename": "noto-sans-sc.woff2",
+    "is_variable": true,
+    "weight_range": "100 900",
+    "is_cjk": true,
+    "unicode_range": "U+0000-00FF,U+2000-206F,U+4E00-9FFF,U+3000-303F,U+FF00-FFEF",
+    "size_bytes": 5704756
+  },
+  {
+    "name": "noto-serif-sc",
+    "family": "Noto Serif SC",
+    "filename": "noto-serif-sc.woff2",
+    "is_variable": true,
+    "weight_range": "100 900",
+    "is_cjk": true,
+    "unicode_range": "U+0000-00FF,U+2000-206F,U+4E00-9FFF,U+3000-303F,U+FF00-FFEF",
+    "size_bytes": 8204288
+  },
+  {
+    "name": "zcool-xiaowei",
+    "family": "ZCOOL XiaoWei",
+    "filename": "zcool-xiaowei.woff2",
+    "is_variable": false,
+    "weight_range": "400",
+    "is_cjk": true,
+    "unicode_range": "U+0000-00FF,U+2000-206F,U+4E00-9FFF,U+3000-303F,U+FF00-FFEF",
+    "size_bytes": 2617368
+  },
+  {
+    "name": "ibm-plex-mono-400",
+    "family": "IBM Plex Mono",
+    "filename": "ibm-plex-mono-400.woff2",
+    "is_variable": false,
+    "weight_range": "400",
+    "is_cjk": false,
+    "unicode_range": "U+0000-007F,U+2000-206F,U+2200-23FF,U+2E00-2E7F",
+    "size_bytes": 11720
+  },
+  {
+    "name": "ibm-plex-mono-500",
+    "family": "IBM Plex Mono",
+    "filename": "ibm-plex-mono-500.woff2",
+    "is_variable": false,
+    "weight_range": "500",
+    "is_cjk": false,
+    "unicode_range": "U+0000-007F,U+2000-206F,U+2200-23FF,U+2E00-2E7F",
+    "size_bytes": 11968
+  },
+  {
+    "name": "jetbrains-mono",
+    "family": "JetBrains Mono",
+    "filename": "jetbrains-mono.woff2",
+    "is_variable": true,
+    "weight_range": "100 800",
+    "is_cjk": false,
+    "unicode_range": "U+0000-007F,U+2000-206F,U+2200-23FF,U+2E00-2E7F",
+    "size_bytes": 37432
+  }
+]
