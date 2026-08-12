@@ -1,6 +1,6 @@
 // Service Worker — 飞行雪绒 · 星炬学院
 // 设计目标：宁可走网络，也绝不返回空响应导致整页裸奔（无样式）。
-const CACHE_VERSION = 'snowfluff-v11.2';
+const CACHE_VERSION = 'snowfluff-v11.3';
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -21,11 +21,24 @@ const SHELL_ASSETS = [
 ];
 
 // 安装：必须等 SHELL 全部预缓存成功，再 skipWaiting 接管。
-// 若 addAll 任一资源失败，安装整体 reject → 旧 SW 继续控制 → 不会出现样式空窗。
+// 关键：fetch 使用 cache: 'reload' 强制绕过浏览器 HTTP 磁盘缓存，
+// 避免旧 SW / 旧 dist 文件被重新写入新 SHELL 缓存导致样式/内容空窗。
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(SHELL_CACHE)
-      .then((cache) => cache.addAll(SHELL_ASSETS))
+      .then(async (cache) => {
+        for (const url of SHELL_ASSETS) {
+          const request = new Request(url, { cache: 'reload' });
+          const response = await fetch(request).catch((err) => {
+            console.error('[SW] shell fetch failed:', url, err);
+            return null;
+          });
+          if (!response || !response.ok) {
+            throw new Error(`SHELL fetch failed for ${url}: ${response ? response.status : 'network error'}`);
+          }
+          await cache.put(url, response);
+        }
+      })
       .then(() => self.skipWaiting())
       .catch((err) => {
         console.error('[SW] shell precache failed, keeping old worker:', err);
@@ -84,7 +97,8 @@ self.addEventListener('fetch', (event) => {
       const cached = await caches.match(request, { ignoreVary: true });
       if (cached) return cached;
       try {
-        const res = await fetch(request);
+        // 静态资源更新时同样绕过浏览器磁盘缓存，防止旧 dist 污染 SW 缓存
+        const res = await fetch(request, { cache: 'reload' });
         if (res && (res.ok || res.type === 'opaque')) {
           const copy = res.clone();
           caches.open(RUNTIME_CACHE).then((cache) => cache.put(request, copy)).catch(() => {});

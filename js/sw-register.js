@@ -32,7 +32,7 @@
 
   window.addEventListener('load', function () {
     navigator.serviceWorker
-      .register('./sw.js?v=11.2')
+      .register('./sw.js?v=11.3')
       .then(function (reg) {
         console.log('[SW] registered, scope:', reg.scope);
         setupCleanUpdate(reg);
