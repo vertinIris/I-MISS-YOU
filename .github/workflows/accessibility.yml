@@ -31,7 +31,6 @@ jobs:
           axe http://127.0.0.1:8848/ \
             --tags wcag2a,wcag2aa,wcag21aa \
             --exit \
-            --no-sandbox \
             --timeout 60000 \
             --save axe-report-main.json
       - name: Scan forum
@@ -39,7 +38,6 @@ jobs:
           axe http://127.0.0.1:8848/forum/ \
             --tags wcag2a,wcag2aa,wcag21aa \
             --exit \
-            --no-sandbox \
             --timeout 60000 \
             --save axe-report-forum.json
       - name: Upload axe reports
