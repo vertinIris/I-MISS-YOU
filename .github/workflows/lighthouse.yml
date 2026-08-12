@@ -13,18 +13,25 @@ jobs:
   lighthouse:
     name: Lighthouse audit
     runs-on: ubuntu-latest
+    # 防止进程卡死导致 runner 挂掉并跑满 6 小时
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
       - name: Install Lighthouse CI
         run: npm install -g @lhci/cli@0.13.x
       - name: Start static server
         run: |
-          npx --yes serve -l 8848 . &
+          npx --yes serve -l 8848 . > /tmp/serve.log 2>&1 &
+          echo $! > /tmp/serve.pid
           sleep 3
       - name: Run Lighthouse CI
         run: lhci autorun --collect.url=http://127.0.0.1:8848/ --config=./lighthouserc.json
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+      - name: Stop static server
+        if: always()
+        run: |
+          if [ -f /tmp/serve.pid ]; then kill $(cat /tmp/serve.pid) 2>/dev/null || true; fi
