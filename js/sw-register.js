@@ -35,9 +35,29 @@
     window.location.reload();
   });
 
+  var SW_VERSION = 'v=11.3.2';
+
   window.addEventListener('load', function () {
+    // 强制清理过期 SW：若当前控制页面的 worker 版本不是最新，注销后重载。
+    // 这是为了处理旧版本 SW（v11.0/v11.1 等）不响应 SKIP_WAITING 导致新 SW 无法接管的残留问题。
+    var controller = navigator.serviceWorker.controller;
+    if (controller && String(controller.scriptURL || '').indexOf(SW_VERSION) === -1) {
+      if (!sessionStorage.getItem('sw-force-reset')) {
+        sessionStorage.setItem('sw-force-reset', '1');
+        console.log('[SW] outdated controller detected, force reset');
+        navigator.serviceWorker.getRegistrations().then(function (regs) {
+          return Promise.all(regs.map(function (r) { return r.unregister(); }));
+        }).then(function () {
+          window.location.reload();
+        }).catch(function () {
+          window.location.reload();
+        });
+        return;
+      }
+    }
+
     navigator.serviceWorker
-      .register('./sw.js?v=11.3.1')
+      .register('./sw.js?' + SW_VERSION)
       .then(function (reg) {
         console.log('[SW] registered, scope:', reg.scope);
         setupCleanUpdate(reg);

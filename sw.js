@@ -1,6 +1,6 @@
 // Service Worker — 飞行雪绒 · 星炬学院
 // 设计目标：宁可走网络，也绝不返回空响应导致整页裸奔（无样式）。
-const CACHE_VERSION = 'snowfluff-v11.3.1';
+const CACHE_VERSION = 'snowfluff-v11.3.2';
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
