@@ -280,3 +280,61 @@
 @media (hover: hover) {
   /* hover 容器：未来 hover-only 效果在此白名单内激活 */
 }
+
+/* ============================================================
+   P1-5: Responsive breakpoints 8-point grid + clamp() adaptation
+   Mobile-first: min-width queries for progressive enhancement
+   ============================================================ */
+:root {
+  --bp-320: 320px;
+  --bp-360: 360px;
+  --bp-480: 480px;
+  --bp-768: 768px;
+  --bp-1024: 1024px;
+  --bp-1280: 1280px;
+  --bp-1440: 1440px;
+  --bp-1920: 1920px;
+}
+
+@media (min-width: 360px) {
+  --section-pad: clamp(16px, 5vw, 32px);
+}
+@media (min-width: 768px) {
+  --section-pad: clamp(24px, 4vw, 48px);
+}
+@media (min-width: 1440px) {
+  --section-pad: clamp(40px, 3vw, 64px);
+}
+
+/* P1-5: pointer: coarse mobile tap target enforcement */
+@media (pointer: coarse) {
+  .btn, .nav-link, .stf-chip-type {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+@media (hover: none) {
+  .hover-only {
+    display: none !important;
+  }
+}
+
+/* ============================================================
+   P1-6: WCAG 2.1 AA — Focus ring enhancement + sr-only
+   ============================================================ */
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

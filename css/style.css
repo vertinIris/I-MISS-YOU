@@ -2159,6 +2159,25 @@ button {
     background: var(--glass-border);
 }
 
+.profile-stats--asym {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr;
+    gap: 12px;
+}
+
+.profile-stat--big {
+    padding: 16px 20px;
+}
+
+.profile-tag {
+    transform: rotate(var(--tag-rot, 0deg));
+    transition: transform 160ms ease;
+}
+
+.profile-tag:hover {
+    transform: rotate(0deg) scale(1.05);
+}
+
 /* ============ Timeline ============ */
 .timeline-container {
     position: relative;
@@ -2564,6 +2583,112 @@ button {
     max-width: 800px;
 }
 
+.diary-book {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    perspective: 1200px;
+}
+
+.diary-page {
+    padding: 24px;
+    position: relative;
+}
+
+.diary-page::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='p'><feTurbulence baseFrequency='0.7' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23p)' opacity='0.04'/></svg>");
+    pointer-events: none;
+    border-radius: inherit;
+}
+
+.diary-page--left {
+    border-right: 1px dashed color-mix(in srgb, var(--color-gold, #E8A23D) 25%, transparent);
+}
+
+.diary-page--right {
+}
+
+.sig-tape {
+    position: absolute;
+    width: 48px;
+    height: 16px;
+    background: linear-gradient(135deg,
+        color-mix(in srgb, var(--color-gold-warm, #E8A23D) 60%, transparent) 0%,
+        color-mix(in srgb, var(--color-gold-soft, #F5B544) 70%, transparent) 100%
+    );
+    opacity: 0.75;
+    border-radius: 2px;
+    z-index: 2;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.sig-tape--tl {
+    top: -6px;
+    left: 16px;
+    transform: rotate(-4deg);
+}
+
+.sig-tape--bl {
+    bottom: -6px;
+    right: 24px;
+    transform: rotate(3deg);
+}
+
+.sig-tape--tr {
+    top: -6px;
+    right: 16px;
+    transform: rotate(4deg);
+}
+
+.sig-tape--br {
+    bottom: -6px;
+    left: 24px;
+    transform: rotate(-3deg);
+}
+
+.sig-sticker {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    opacity: 0.8;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.sig-sticker--left {
+    bottom: 12px;
+    left: 12px;
+    background: radial-gradient(circle at 30% 30%,
+        color-mix(in srgb, var(--color-rose) 50%, white) 0%,
+        var(--color-rose) 70%
+    );
+    transform: rotate(-8deg);
+    box-shadow: 0 2px 6px rgba(255, 107, 157, 0.25);
+}
+
+.sig-sticker--right {
+    top: 12px;
+    right: 12px;
+    background: radial-gradient(circle at 30% 30%,
+        color-mix(in srgb, var(--color-blue-light) 40%, white) 0%,
+        var(--color-blue) 70%
+    );
+    transform: rotate(10deg);
+    box-shadow: 0 2px 6px rgba(107, 138, 255, 0.25);
+}
+
+.diary-page:hover .diary-entry {
+    transform: translateX(2px);
+}
+
+.diary-page--right:hover .diary-entry {
+    transform: translateX(-2px);
+}
+
 .diary-container {
     display: flex;
     flex-direction: column;
@@ -2686,6 +2811,41 @@ button {
     width: 100%;
     height: 100%;
     display: block;
+}
+
+.tape-deck {
+    display: flex;
+    justify-content: space-between;
+    width: 56px;
+    margin: 0 auto 16px;
+}
+
+.tape-reel {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-gold-warm, #E8A23D);
+    position: relative;
+    animation: tape-reel-spin 4s linear infinite;
+    animation-play-state: paused;
+}
+
+.tape-deck.playing .tape-reel {
+    animation-play-state: running;
+}
+
+.tape-reel::before {
+    content: "";
+    display: block;
+    width: 6px;
+    height: 6px;
+    background: var(--color-gold-soft, #F5B544);
+    border-radius: 50%;
+    margin: 7px auto;
+}
+
+@keyframes tape-reel-spin {
+    to { transform: rotate(360deg); }
 }
 
 .music-player-info {
@@ -2909,6 +3069,30 @@ button {
     font-size: 0.78rem;
     color: var(--text-tertiary);
     font-variant-numeric: tabular-nums;
+}
+
+.album-card-jcorner {
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+}
+
+.sig-tape-skip .music-progress-fill {
+    animation: tape-skip 0.3s steps(3) 1;
+}
+
+@keyframes tape-skip {
+    0% { transform: translateX(0); }
+    33% { transform: translateX(-4px); }
+    66% { transform: translateX(3px); }
+    100% { transform: translateX(0); }
+}
+
+.sig-tape-skip .track-item.active {
+    animation: track-skip-flash 0.3s steps(3) 1;
+}
+
+@keyframes track-skip-flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
 }
 
 .music-disclaimer {
@@ -3459,9 +3643,9 @@ button {
         justify-content: center;
     }
 
-    .profile-stats {
-        flex-wrap: wrap;
-        gap: 16px;
+    .profile-stats--asym {
+        grid-template-columns: 1fr;
+        gap: 12px;
     }
 
     .stat-divider {
@@ -3476,6 +3660,15 @@ button {
         left: -24px;
         width: 12px;
         height: 12px;
+    }
+
+    .diary-book {
+        grid-template-columns: 1fr;
+    }
+
+    .diary-page--left {
+        border-right: none;
+        border-bottom: 1px dashed color-mix(in srgb, var(--color-gold, #E8A23D) 25%, transparent);
     }
 
     .diary-entry {

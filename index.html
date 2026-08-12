@@ -49,6 +49,17 @@
     <link rel="stylesheet" href="vendor/notyf/notyf.min.css"
           integrity="sha384-snpJ3knpH6avB6cP1vPkNdmRzCYaCpom/3TNOyvo189BiogXYXQfXkyYpZ2/xADs"
           crossorigin="anonymous">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "飞行雪绒 · 星炬学院的日常",
+      "description": "爱弥斯以飞行雪绒之名留下的同人社交账号",
+      "url": "https://vertiniris.github.io/I-MISS-YOU/",
+      "inLanguage": "zh-CN",
+      "creator": { "@type": "Person", "name": "同人创作" }
+    }
+    </script>
 </head>
 <body>
 
@@ -248,7 +259,7 @@
                 </div>
 
                 <!-- Mobile Menu Button -->
-                <button class="nav-menu-btn" id="menu-btn" aria-label="菜单">
+                <button class="nav-menu-btn nav-menu-btn--tape" id="menu-btn" aria-label="菜单">
                     <span></span><span></span><span></span>
                 </button>
             </div>
@@ -428,9 +439,7 @@
                             <!-- Inner highlight (light blue — looking toward viewer) -->
                             <rect x="6" y="6" width="1" height="1" fill="#A8D8FF"/>
                             <rect x="9" y="6" width="1" height="1" fill="#A8D8FF"/>
-                            <!-- Eye sparkle (white — upper inner corner) -->
-                            <rect x="5" y="6" width="1" height="1" fill="#FFFFFF" opacity="0.9"/>
-                            <rect x="10" y="6" width="1" height="1" fill="#FFFFFF" opacity="0.9"/>
+                            <!-- Eye sparkle: deliberately omitted (conscious white space) -->
                             <!-- Blush (stronger pink — Aimisi warmth) -->
                             <rect x="4" y="8" width="1" height="1" fill="#FFB6D9"/>
                             <rect x="11" y="8" width="1" height="1" fill="#FFB6D9"/>
@@ -452,7 +461,7 @@
                             <rect x="13" y="10" width="1" height="3" fill="#FF8FB0"/>
                             <!-- Hair decorations (gold stars — Aimisi elegance) -->
                             <rect x="5" y="2" width="1" height="1" fill="#FFD700"/>
-                            <rect x="10" y="2" width="1" height="1" fill="#FFD700"/>
+                            <!-- Gold star @ (10,2): deliberately omitted (conscious white space) -->
                             <!-- Ribbon tie in hair -->
                             <rect x="2" y="4" width="1" height="1" fill="#FFD700" opacity="0.7"/>
                             <!-- Bottom fade -->
@@ -466,6 +475,8 @@
                             <rect x="0" y="5" width="1" height="1" fill="#8EB4E8" opacity="0.4"/>
                             <rect x="15" y="6" width="1" height="1" fill="#FFD700" opacity="0.4"/>
                             <rect x="14" y="9" width="1" height="1" fill="#A8D8FF" opacity="0.6"/>
+                            <!-- Error pixel: intentionally offset 0.5px (glitch artifact) -->
+                            <rect x="5.5" y="9" width="1" height="1" fill="#FF6B9D" opacity="0.6"/>
                         </svg>
                     </div>
                     <div class="profile-status">
@@ -492,27 +503,25 @@
                     </p>
 
                     <div class="profile-tags">
-                        <span class="tag tag-pink">#飞行雪绒</span>
-                        <span class="tag tag-purple">#星炬学院</span>
-                        <span class="tag tag-blue">#电子幽灵</span>
-                        <span class="tag tag-white" data-easter-lake title="渐湖记忆">#拉海洛</span>
-                        <span class="tag tag-pink">#隧者兵装</span>
-                        <span class="tag tag-purple">#调频9072</span>
+                        <span class="tag tag-pink profile-tag" style="--tag-rot:-1.5deg">#飞行雪绒</span>
+                        <span class="tag tag-purple profile-tag" style="--tag-rot:1.2deg">#星炬学院</span>
+                        <span class="tag tag-blue profile-tag" style="--tag-rot:-0.8deg">#电子幽灵</span>
+                        <span class="tag tag-white profile-tag" data-easter-lake title="渐湖记忆" style="--tag-rot:2deg">#拉海洛</span>
+                        <span class="tag tag-pink profile-tag" style="--tag-rot:-2deg">#隧者兵装</span>
+                        <span class="tag tag-purple profile-tag" style="--tag-rot:0.5deg">#调频9072</span>
                     </div>
                 </div>
             </div>
 
-            <div class="profile-stats">
-                <div class="stat-item">
+            <div class="profile-stats profile-stats--asym">
+                <div class="stat-item profile-stat--big">
                     <span class="stat-value" data-count="12847">0</span>
                     <span class="stat-label">关注者</span>
                 </div>
-                <div class="stat-divider"></div>
                 <div class="stat-item">
                     <span class="stat-value" data-count="88">0</span>
                     <span class="stat-label">动态</span>
                 </div>
-                <div class="stat-divider"></div>
                 <div class="stat-item">
                     <span class="stat-value" data-count="2560">0</span>
                     <span class="stat-label">获赞</span>
@@ -535,6 +544,10 @@
             <div class="music-player">
                 <div class="music-visualizer" id="music-visualizer">
                     <canvas id="viz-canvas"></canvas>
+                </div>
+                <div class="tape-deck" aria-hidden="true">
+                    <div class="tape-reel tape-reel--l"></div>
+                    <div class="tape-reel tape-reel--r"></div>
                 </div>
                 <div class="music-player-info">
                     <div class="music-now-playing">
@@ -587,7 +600,7 @@
                     <span>曲目列表</span>
                     <span class="playlist-badge">原创 · 无版权</span>
                 </div>
-                <div class="track-item active" data-track="0">
+                <div class="track-item active album-card-jcorner" data-track="0">
                     <span class="track-number">01</span>
                     <div class="track-details">
                         <span class="track-title">星炬学院的深夜</span>
@@ -595,7 +608,7 @@
                     </div>
                     <span class="track-duration">3:20</span>
                 </div>
-                <div class="track-item" data-track="1">
+                <div class="track-item album-card-jcorner" data-track="1">
                     <span class="track-number">02</span>
                     <div class="track-details">
                         <span class="track-title">信号中的回响</span>
@@ -603,7 +616,7 @@
                     </div>
                     <span class="track-duration">4:15</span>
                 </div>
-                <div class="track-item" data-track="2">
+                <div class="track-item album-card-jcorner" data-track="2">
                     <span class="track-number">03</span>
                     <div class="track-details">
                         <span class="track-title">渐湖的冰面</span>
@@ -611,7 +624,7 @@
                     </div>
                     <span class="track-duration">5:30</span>
                 </div>
-                <div class="track-item" data-track="3">
+                <div class="track-item album-card-jcorner" data-track="3">
                     <span class="track-number">04</span>
                     <div class="track-details">
                         <span class="track-title">双形态协奏曲</span>
@@ -619,7 +632,7 @@
                     </div>
                     <span class="track-duration">3:45</span>
                 </div>
-                <div class="track-item" data-track="4">
+                <div class="track-item album-card-jcorner" data-track="4">
                     <span class="track-number">05</span>
                     <div class="track-details">
                         <span class="track-title">调频9072</span>
@@ -1189,8 +1202,11 @@
             <p class="section-desc">来自飞行雪绒的私人日记 · 以角色视角记录</p>
         </div>
 
-        <div class="diary-container">
-            <!-- Diary Entry -->
+        <div class="diary-book">
+            <div class="diary-page diary-page--left">
+                <div class="sig-tape sig-tape--tl" aria-hidden="true"></div>
+                <div class="sig-tape sig-tape--bl" aria-hidden="true"></div>
+                <!-- Diary Entry -->
             <article class="diary-entry glass reveal">
                 <div class="diary-date">
                     <span class="diary-day">05</span>
@@ -1272,6 +1288,11 @@
                     </div>
                 </div>
             </article>
+                <div class="sig-sticker sig-sticker--left" aria-hidden="true"></div>
+            </div>
+            <div class="diary-page diary-page--right">
+                <div class="sig-tape sig-tape--tr" aria-hidden="true"></div>
+                <div class="sig-tape sig-tape--br" aria-hidden="true"></div>
 
                         <!-- Diary Entry -->
             <article class="diary-entry glass reveal">
@@ -1358,6 +1379,8 @@
                     </div>
                 </div>
             </article>
+                <div class="sig-sticker sig-sticker--right" aria-hidden="true"></div>
+            </div>
         </div>
     </section>
 
@@ -1531,7 +1554,7 @@
                         <span class="progress-text" id="upload-progress-text">0%</span>
                     </div>
                     <div class="upload-preview" id="upload-preview" hidden>
-                        <img id="upload-preview-img" alt="图片预览" class="upload-preview-img">
+                        <img id="upload-preview-img" alt="图片预览" class="upload-preview-img" loading="lazy">
                         <p class="upload-preview-name" id="upload-preview-name"></p>
                         <button type="button" class="upload-preview-clear" id="upload-preview-clear">移除附件</button>
                     </div>
@@ -1782,7 +1805,7 @@
                     <span>SENT · 9072</span>
                 </div>
                 <p>鸣潮同人创作项目 · 非官方非商业</p>
-                <p class="sn-footer__copy">© 飞行雪绒 · <span id="sn-footer-year">2026</span> · 以思念调频</p>
+                <p class="sn-footer__copy">© 飞行雪绒 · <span id="sn-footer-year">2026</span> · 以思念调频 · v11.0</p>
             </div>
         </div>
     </footer>
@@ -1816,7 +1839,7 @@
     <div id="secret-portal-root"></div>
     <!-- Stage II: 18 个本地 JS 合并为 1 个 bundle（477KB→222KB ↓53.4%）+ SRI 完整性校验 -->
     <script defer src="dist/bundle-main.js"
-            integrity="sha384-N76AMxbONQXxBmAtRLU+mx9NOWxRaosvtXVULFRsSV4vqECp3TGwOOJlEcHCpuEp"
+            integrity="sha384-cmbp3dHNRuob9WCqVj73Db1NRW17xmzh/vNJMxhOdWRL/IeTIRatcU1zWiLMCQ1C"
             crossorigin="anonymous"></script>
     <!-- 管理员登录 Modal（替代原生 prompt，移动端友好） -->
     <div class="admin-modal-overlay" id="admin-login-modal" hidden>
@@ -1881,5 +1904,6 @@
     </div>
 
     <!-- donation.js 已合并入 bundle-main.js（Stage II） -->
+    <script src="js/ui-variants.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://vertiniris.github.io/I-MISS-YOU/sitemap.xml

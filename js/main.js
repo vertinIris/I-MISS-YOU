@@ -534,6 +534,8 @@
             playBtn.querySelector('.play-icon').style.display = 'none';
             playBtn.querySelector('.pause-icon').style.display = '';
             if (disc) disc.classList.add('playing');
+            var tapeDeck = document.querySelector('.tape-deck');
+            if (tapeDeck) tapeDeck.classList.add('playing');
             startVisualizer();
             updateProgress();
         }
@@ -555,6 +557,8 @@
             playBtn.querySelector('.play-icon').style.display = '';
             playBtn.querySelector('.pause-icon').style.display = 'none';
             if (disc) disc.classList.remove('playing');
+            var tapeDeck = document.querySelector('.tape-deck');
+            if (tapeDeck) tapeDeck.classList.remove('playing');
             stopVisualizer();
         }
 
@@ -771,6 +775,8 @@
         }
 
         function nextTrack() {
+            var module = document.querySelector('.music-module');
+            if (module) { module.classList.add('sig-tape-skip'); setTimeout(function() { module.classList.remove('sig-tape-skip'); }, 300); }
             pauseTrack();
             musicPlayer.elapsed = 0;
             musicPlayer.currentTrack = (musicPlayer.currentTrack + 1) % musicPlayer.tracks.length;
@@ -779,6 +785,8 @@
         }
 
         function prevTrack() {
+            var module = document.querySelector('.music-module');
+            if (module) { module.classList.add('sig-tape-skip'); setTimeout(function() { module.classList.remove('sig-tape-skip'); }, 300); }
             pauseTrack();
             musicPlayer.elapsed = 0;
             musicPlayer.currentTrack = (musicPlayer.currentTrack - 1 + musicPlayer.tracks.length) % musicPlayer.tracks.length;
@@ -796,6 +804,8 @@
         for (var i = 0; i < trackItems.length; i++) {
             (function(item) {
                 item.addEventListener('click', function() {
+                    var module = document.querySelector('.music-module');
+                    if (module) { module.classList.add('sig-tape-skip'); setTimeout(function() { module.classList.remove('sig-tape-skip'); }, 300); }
                     pauseTrack();
                     musicPlayer.elapsed = 0;
                     musicPlayer.currentTrack = parseInt(item.getAttribute('data-track'), 10) || 0;

@@ -3,36 +3,6 @@
    绑定 P0-3/P0-4/P0-5 新 DOM 结构的配套样式
    ========================================================= */
 
-/* ---------- P0-3: Hero 火炬 SVG 呼吸光晕 ---------- */
-.stf-hero-torch {
-    position: absolute;
-    right: 6%;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 180px;
-    height: 200px;
-    pointer-events: none;
-    opacity: 0.9;
-}
-@media (max-width: 900px) { .stf-hero-torch { display: none; } }
-.stf-torch-aura {
-    animation: stf-torch-breath 4s ease-in-out infinite;
-    transform-origin: 60px 40px;
-}
-@keyframes stf-torch-breath {
-    0%,100% { transform: scale(1); opacity: 1; }
-    50%     { transform: scale(1.06); opacity: 0.85; }
-}
-.stf-torch-flame {
-    animation: stf-flame-flicker 1.2s ease-in-out infinite;
-    transform-origin: 60px 60px;
-}
-@keyframes stf-flame-flicker {
-    0%,100% { transform: scaleY(1) translateX(0); }
-    25%     { transform: scaleY(1.04) translateX(-1px); }
-    75%     { transform: scaleY(0.97) translateX(1px); }
-}
-
 /* ---------- P0-3: 档案馆索引墙 2-1-1 非对称 ---------- */
 .stf-indexwall {
     display: grid;

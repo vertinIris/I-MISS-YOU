@@ -201,3 +201,28 @@ body[data-char] {
     animation: none !important;
   }
 }
+
+/* ============================================================
+   P2-2: Character-specific decoration variants + 7-char asymmetry
+   ============================================================ */
+[data-char="aimisi"] .archive-timeline-item::before { border-color: var(--color-rose); }
+[data-char="denia"] .archive-timeline-item::before { border-color: var(--char-denia); }
+[data-char="drifter"] .archive-timeline-item::before { border-color: var(--color-blue); }
+[data-char="linne"] .archive-timeline-item::before { border-color: var(--char-linne); }
+[data-char="lucilla"] .archive-timeline-item::before { border-color: var(--char-lucilla); }
+[data-char="mornye"] .archive-timeline-item::before { border-color: var(--char-mornye); }
+[data-char="sigrica"] .archive-timeline-item::before { border-color: var(--char-sigrica); }
+
+/* 7-character summary asymmetry */
+[data-char] .archive-stats { grid-template-columns: repeat(3, 1fr); }
+[data-char="aimisi"] .archive-stats { grid-template-columns: 2fr 1fr 1fr; }
+[data-char="mornye"] .archive-stats { grid-template-columns: 1fr 2fr 1fr; }
+
+/* ============================================================
+   P2-3: Forum Realm scene-level structural differences
+   ============================================================ */
+[data-realm="startorch"] .forum-hero { background-image: radial-gradient(ellipse at top, var(--color-blue) 8%, transparent 60%), var(--neutral-900); }
+[data-realm="labelle"] .forum-hero { background-image: radial-gradient(ellipse at 30% bottom, var(--color-purple) 10%, transparent 55%), var(--neutral-900); }
+[data-realm="lahairo"] .forum-hero { background-image: radial-gradient(ellipse at 50% top, var(--color-rose) 6%, transparent 65%), var(--neutral-900); }
+[data-realm="snow-cabin"] .forum-hero { background-image: linear-gradient(180deg, color-mix(in srgb, var(--color-blue-light) 12%, var(--neutral-900)), var(--neutral-900)); }
+[data-realm="digital-sea"] .forum-hero { background-image: repeating-linear-gradient(0deg, color-mix(in srgb, var(--color-cyan) 3%, var(--neutral-900)) 0, color-mix(in srgb, var(--color-cyan) 3%, var(--neutral-900)) 1px, var(--neutral-900) 1px, var(--neutral-900) 4px); }

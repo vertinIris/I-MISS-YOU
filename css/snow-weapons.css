@@ -278,3 +278,25 @@
     .sn-footer__credits { grid-template-columns: 1fr; padding: 24px 20px 0; }
     .sn-footer__spectrum { padding: 20px 16px 8px; }
 }
+
+/* ---------- P1-4: Forum N6 Breadcrumb ---------- */
+.stf-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: JetBrains Mono, monospace;
+    font-size: 11px;
+    color: var(--neutral-400);
+}
+.stf-bc-item {
+    color: var(--neutral-300);
+    letter-spacing: 0.04em;
+}
+.stf-bc-item--active {
+    color: var(--color-blue-light);
+    font-weight: 500;
+}
+.stf-bc-sep {
+    color: var(--neutral-500);
+    opacity: 0.6;
+}

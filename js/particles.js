@@ -1,4 +1,4 @@
-﻿/* ========================================
+/* ========================================
    飞行雪绒 — Snowflake Particle System
    Three.js增强版 + 纯CSS降级方案
    兼容：Edge · 夸克 · Safari · 低性能设备
@@ -418,4 +418,18 @@
     } else {
         init();
     }
+
+    /* P2-4: Mobile auto-degrade + idle pause */
+    var isMobile = window.matchMedia('(max-width: 768px)').matches;
+    if (isMobile) {
+        var canvas = document.getElementById('particle-canvas');
+        if (canvas) { canvas.style.display = 'none'; }
+    }
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            if (window.SnowParticles && window.SnowParticles.useCSS) {
+                window.SnowParticles.useCSS();
+            }
+        }
+    });
 })();

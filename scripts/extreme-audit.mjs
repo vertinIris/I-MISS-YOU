@@ -119,7 +119,7 @@ try {
     else fail('缺 smoke-check script');
     if (String(pkg.version) === '10.0.0') ok('version ' + pkg.version);
     else if (String(pkg.version).startsWith('10.')) note('version=' + pkg.version + '（期望 10.0.0）');
-    else fail('version=' + pkg.version + '（期望 10.0.0）');
+    else fail('version=' + pkg.version + '（期望 10.x）');
     const m020 = String(pkg.scripts && pkg.scripts['db:migrate-020'] || '');
     if (/migration-020-forum-tables/.test(m020) && /023/.test(m020) && !/then migration-020-forum-chat/.test(m020)) {
         ok('db:migrate-020 指引 tables + 023（非废弃 chat）');
@@ -128,10 +128,10 @@ try {
     }
     if (/version:\s*'v10\.0'/.test(mainJs)) ok('__FXRE_API.version v10.0');
     else fail('__FXRE_API.version 未对齐 v10.0');
-    if (read('index.html').includes('v10.0')) ok('主站页脚 v10.0');
-    else fail('主站页脚缺 v10.0');
-    if (read('forum/index.html').includes('v10.0')) ok('论坛页脚 v10.0');
-    else fail('论坛页脚缺 v10.0');
+    if (read('index.html').includes('v11.0')) ok('主站页脚 v11.0');
+    else fail('主站页脚缺 v11.0');
+    if (read('forum/index.html').includes('v11.0')) ok('论坛页脚 v11.0');
+    else fail('论坛页脚缺 v11.0');
 } catch (e) {
     fail('package.json 解析失败');
 }

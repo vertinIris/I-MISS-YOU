@@ -44,6 +44,17 @@
     <link rel="stylesheet" href="../vendor/notyf/notyf.min.css"
           integrity="sha384-snpJ3knpH6avB6cP1vPkNdmRzCYaCpom/3TNOyvo189BiogXYXQfXkyYpZ2/xADs"
           crossorigin="anonymous">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "星炬学院 · 公共研讨频段",
+      "description": "鸣潮角色档案、世界观考据、同人创作与社区讨论的独立聚合站",
+      "url": "https://vertiniris.github.io/I-MISS-YOU/forum/",
+      "inLanguage": "zh-CN",
+      "creator": { "@type": "Person", "name": "同人创作" }
+    }
+    </script>
     <script>
         /* 沿用主站主题偏好 + 地址/realm；仅做视觉同步；不影响功能独立性 */
         (function () {
@@ -86,6 +97,11 @@
                 </svg>
                 <span>星炬学院</span>
             </a>
+            <div class="stf-breadcrumb" aria-label="面包屑导航">
+                <span class="stf-bc-item">星炬学院</span>
+                <span class="stf-bc-sep">/</span>
+                <span class="stf-bc-item stf-bc-item--active" id="stf-bc-current">讨论区</span>
+            </div>
             <div class="nav-links" id="nav-links">
                 <a href="#top" class="nav-link">首页</a>
                 <a href="#stf-community" class="nav-link">讨论区</a>
@@ -137,7 +153,7 @@
                 <span class="stf-account-avatar" id="stf-account-avatar" aria-hidden="true">＋</span>
                 <span class="stf-account-name" id="stf-account-name">登录</span>
             </button>
-            <button type="button" class="nav-toggle" id="nav-toggle" aria-label="展开菜单" aria-expanded="false">
+            <button type="button" class="nav-toggle nav-menu-btn--archive" id="nav-toggle" aria-label="展开菜单" aria-expanded="false">
                 <span></span><span></span><span></span>
             </button>
         </div>
@@ -145,24 +161,6 @@
 
     <header class="forum-hero">
         <div class="forum-hero-content">
-            <!-- 火炬 SVG 金色呼吸光晕（C1 学院大厅 Hero） -->
-            <div class="stf-hero-torch" aria-hidden="true">
-                <svg viewBox="0 0 120 140" fill="none">
-                    <defs>
-                        <radialGradient id="stf-torch-glow" cx="50%" cy="35%" r="60%">
-                            <stop offset="0%" stop-color="var(--color-gold)" stop-opacity="0.7"/>
-                            <stop offset="50%" stop-color="var(--color-gold-warm)" stop-opacity="0.2"/>
-                            <stop offset="100%" stop-color="var(--color-gold)" stop-opacity="0"/>
-                        </radialGradient>
-                    </defs>
-                    <circle cx="60" cy="40" r="56" fill="url(#stf-torch-glow)" class="stf-torch-aura"/>
-                    <!-- 火炬主体 -->
-                    <path d="M50 70 L50 115 Q50 125 60 125 Q70 125 70 115 L70 70 Z" fill="var(--color-gold-warm)" opacity="0.85"/>
-                    <!-- 火焰 -->
-                    <path d="M60 20 Q46 44 52 58 Q48 66 60 68 Q72 66 68 58 Q74 44 60 20 Z" fill="var(--color-gold)" class="stf-torch-flame"/>
-                    <path d="M60 34 Q54 46 57 56 Q60 58 63 56 Q66 46 60 34 Z" fill="var(--color-gold-soft)" opacity="0.9"/>
-                </svg>
-            </div>
             <h1 class="forum-hero-brand">星炬学院</h1>
             <div class="sig-freqbar" aria-hidden="true">
                 <span class="sig-freqbar-tick sig-freqbar-tick--major"></span>
