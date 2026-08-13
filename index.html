@@ -43,6 +43,8 @@
 
     <!-- Styles (Stage II: 8 个 CSS 合并压缩为 1 个 → dist/css/main.min.css，200KB→130KB) -->
     <link rel="stylesheet" href="dist/css/main.min.css">
+      <!-- Edge/legacy Chromium 兼容层：必须在 min.css 之后，@supports 能力检测自动启用 -->
+      <link rel="stylesheet" href="css/edge-compat.css">
     <!-- P0 UX: Notyf Toast 通知样式（自托管 vendor，SRI 保护） -->
     <link rel="stylesheet" href="vendor/notyf/notyf.min.css"
           integrity="sha384-snpJ3knpH6avB6cP1vPkNdmRzCYaCpom/3TNOyvo189BiogXYXQfXkyYpZ2/xADs"
@@ -1875,7 +1877,7 @@
     <div id="secret-portal-root"></div>
     <!-- Stage II: 18 个本地 JS 合并为 1 个 bundle（477KB→222KB ↓53.4%）+ SRI 完整性校验 -->
     <script defer src="dist/bundle-main.js"
-            integrity="sha384-srahxSc1yW+PDF7A+a1eeoRuLBGuiCwT7tBVzPKWMYv1fhxGOzTom2GfShhsmkhe"
+            integrity="sha384-s8J8m/ZicQ1uehLGLx5LeX1xiUjGIg0E2nLXQqPhrOYw+iyS9VStrXq7y7N7i94X"
             crossorigin="anonymous"></script>
     <!-- v10.1: web-vitals RUM 采集 — 匿名采集 LCP/INP/CLS/TTFB/FCP，写入 Supabase performance_metrics -->
     <script type="module" src="js/web-vitals-collector.js"></script>

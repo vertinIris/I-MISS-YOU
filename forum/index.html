@@ -39,6 +39,8 @@
     <script src="../js/forum-theme-bootstrap.js"></script>
     <!-- Styles (Stage II: 8 个 CSS 合并压缩为 1 个 → dist/css/forum.min.css，222KB→152KB) -->
     <link rel="stylesheet" href="../dist/css/forum.min.css">
+      <!-- Edge/legacy Chromium 兼容层：必须在 min.css 之后，@supports 能力检测自动启用 -->
+      <link rel="stylesheet" href="../css/edge-compat.css">
     <!-- P0 UX: Notyf Toast 通知样式（自托管 vendor，SRI 保护） -->
     <link rel="stylesheet" href="../vendor/notyf/notyf.min.css"
           integrity="sha384-snpJ3knpH6avB6cP1vPkNdmRzCYaCpom/3TNOyvo189BiogXYXQfXkyYpZ2/xADs"

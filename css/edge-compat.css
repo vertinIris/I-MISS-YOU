@@ -1,0 +1,487 @@
+/* ============================================================
+   Edge / legacy Chromium compatibility layer
+   ------------------------------------------------------------
+   加载顺序：必须在 dist/css/main.min.css / forum.min.css 之后。
+   目标：Edge 90-110（Chromium <111）等不支持 oklch() / color-mix()
+   的浏览器中，v10/v11 引入的现代色彩语法不会让整页背景、导航、
+   弹窗、表单与论坛关键控件退化为透明或不可读。
+
+   兼容策略：
+   1. 用 @supports 做能力检测，命中旧引擎时才覆盖为 hex/rgba 等价色；
+      新 Edge / Chrome 完全不受影响。
+   2. 颜色值为视觉近似等价，不追求与 oklch 逐位一致，优先保证
+      “可读、可点、层级稳定”。
+   3. 本文件同时服务于当前线上的 dist 构建产物；后续重建 CSS 时
+      应保留本文件（可选合并进 main.min.css / forum.min.css）。
+   ============================================================ */
+
+/* oklch() 或 color-mix() 任一不可用时启用整体回退 */
+@supports not ((color: oklch(0% 0 0)) and (background: color-mix(in srgb, #fff 10%, transparent))) {
+  :root {
+    /* —— 飞行雪绒（主站）hex/rgba 回退 —— */
+    --sn-paper: #130b11;
+    --sn-paper-2: #1b1016;
+    --sn-paper-3: #261622;
+    --sn-ink: #f7f2f4;
+    --sn-ink-2: #e5d8dd;
+    --sn-ink-3: #b9aab2;
+    --sn-rule: rgba(185, 170, 178, 0.35);
+
+    --sn-accent: #e879a8;
+    --sn-accent-strong: #d4548c;
+    --sn-accent-soft: #f5c0d8;
+    --sn-mist: #f7eaf1;
+    --sn-ice: #b7d4f5;
+
+    --c-primary-dim: rgba(232, 121, 168, 0.14);
+    --bg-primary: #130b11;
+    --bg-secondary: #1b1016;
+    --bg-tertiary: #261622;
+    --bg-gradient-1: #130b11;
+    --bg-gradient-2: #180e16;
+    --bg-gradient-3: #0e0a12;
+    --text-primary: #f7f2f4;
+    --text-secondary: #e5d8dd;
+    --text-tertiary: #b9aab2;
+
+    --glass-bg: rgba(247, 242, 244, 0.075);
+    --glass-bg-hover: rgba(247, 242, 244, 0.10);
+    --glass-border: rgba(247, 242, 244, 0.14);
+    --glass-border-hover: rgba(232, 121, 168, 0.40);
+    --surface-card: rgba(247, 242, 244, 0.085);
+    --surface-card-border: rgba(247, 242, 244, 0.14);
+    --surface-inset: rgba(247, 242, 244, 0.05);
+    --surface-accent: rgba(232, 121, 168, 0.14);
+    --surface-accent-border: rgba(232, 121, 168, 0.35);
+    --shadow-glow: 0 0 28px rgba(232, 121, 168, 0.12);
+    --focus-ring: rgba(232, 121, 168, 0.55);
+    --nav-bg: rgba(19, 11, 17, 0.82);
+
+    /* —— 星炬学院（论坛）hex/rgba 回退 —— */
+    --stf-paper: #0e1524;
+    --stf-paper-2: #162033;
+    --stf-paper-3: #1e2b44;
+    --stf-ink: #edf1fa;
+    --stf-ink-2: #c5d1e6;
+    --stf-ink-3: #94a3c0;
+    --stf-text-muted: rgba(197, 209, 230, 0.68);
+    --stf-surface-0: rgba(14, 21, 36, 0.96);
+    --stf-surface-1: rgba(255, 255, 255, 0.085);
+    --stf-surface-2: rgba(255, 255, 255, 0.12);
+    --stf-edge: rgba(168, 196, 240, 0.22);
+    --stf-edge-strong: rgba(168, 196, 240, 0.38);
+    --stf-inset: inset 0 1px 0 rgba(237, 241, 250, 0.10);
+    --stf-metal: 0 0 0 1px rgba(168, 196, 240, 0.20), inset 0 1px 0 rgba(237, 241, 250, 0.10);
+    --stf-focus: 0 0 0 2px rgba(10, 15, 28, 0.95), 0 0 0 4px rgba(168, 196, 240, 0.55);
+    
+    
+    
+    
+    
+  }
+
+  /* —— 页面底色：主站依赖 oklch/color-mix 背景，旧引擎必须显式给色 —— */
+  html, body {
+    color-scheme: dark;
+  }
+
+  body {
+    color: #f7f2f4;
+    background-color: #130b11;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(229, 132, 168, 0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 50%, rgba(245, 181, 68, 0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 100%, rgba(107, 138, 255, 0.05) 0%, transparent 50%),
+      linear-gradient(180deg, #130b11 0%, #180e16 50%, #0e0a12 100%);
+    background-attachment: fixed;
+  }
+
+  body.forum-page {
+    color: #eef3fb;
+    background-color: #0a101c;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 50% 40%, transparent 40%, rgba(4, 6, 14, 0.55) 100%),
+      radial-gradient(1000px 520px at 50% -8%, rgba(109, 143, 214, 0.10), transparent 60%),
+      linear-gradient(180deg, #0a101c 0%, #0c1220 45%, #080e18 100%);
+    background-attachment: fixed;
+  }
+
+    body.forum-page {
+      --focus-ring: rgba(168, 196, 240, 0.55);
+      --c-primary-dim: rgba(109, 143, 214, 0.14);
+      --surface-accent: rgba(109, 143, 214, 0.14);
+      --surface-accent-border: rgba(109, 143, 214, 0.35);
+      --shadow-glow: 0 0 22px rgba(109, 143, 214, 0.12);
+    }
+
+  /* —— 玻璃层：背景变量已回退，这里只兜住依赖 color-mix 的阴影/边框 —— */
+  .glass {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.10),
+      inset 0 0 24px rgba(0, 0, 0, 0.22),
+      0 8px 32px rgba(0, 0, 0, 0.45);
+  }
+
+  .glass:hover {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      inset 0 0 28px rgba(0, 0, 0, 0.20),
+      0 0 22px rgba(232, 162, 61, 0.14),
+      0 12px 40px rgba(0, 0, 0, 0.35);
+  }
+
+  .glass-chip {
+    border-color: rgba(255, 255, 255, 0.16);
+  }
+
+  .nav-logo-icon {
+    filter: drop-shadow(0 0 8px rgba(107, 138, 255, 0.45)) drop-shadow(0 0 14px rgba(168, 216, 255, 0.25));
+  }
+
+  .nav-link-forum {
+    border-color: rgba(168, 216, 255, 0.32);
+    background: linear-gradient(120deg, rgba(107, 138, 255, 0.14), rgba(232, 121, 168, 0.12));
+    color: #a8d8ff !important;
+  }
+
+  .nav-link-forum:hover,
+  .nav-link-forum:focus-visible {
+    border-color: rgba(232, 121, 168, 0.55);
+    background: linear-gradient(120deg, rgba(107, 138, 255, 0.28), rgba(232, 121, 168, 0.26));
+    color: #ffffff !important;
+  }
+
+  .community-card:hover {
+    box-shadow: 0 20px 46px rgba(0, 0, 0, 0.38), 0 0 28px rgba(255, 107, 157, 0.30);
+  }
+
+  .community-filter-btn.active,
+  .tag-chip.active {
+    box-shadow: 0 8px 20px rgba(232, 121, 168, 0.22);
+  }
+
+  /* —— 捐赠模块：大量 color-mix 直书，旧引擎下需完整兜底 —— */
+  .donate-fab {
+    border-color: rgba(232, 121, 168, 0.35);
+    color: rgba(255, 255, 255, 0.90);
+  }
+
+  .donate-fab:hover {
+    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.45), 0 0 18px rgba(232, 121, 168, 0.22);
+  }
+
+  .donate-fab-icon {
+    border-color: rgba(232, 121, 168, 0.45);
+    background: linear-gradient(135deg, rgba(232, 121, 168, 0.22), rgba(182, 107, 255, 0.18));
+  }
+
+  .donate-fab:hover .donate-fab-icon {
+    background: linear-gradient(135deg, rgba(232, 121, 168, 0.38), rgba(182, 107, 255, 0.28));
+    box-shadow: 0 0 16px rgba(232, 121, 168, 0.35);
+  }
+
+  .donate-panel {
+    border-color: rgba(232, 121, 168, 0.25);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), 0 0 40px rgba(232, 121, 168, 0.12);
+  }
+
+  .donate-close {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.70);
+  }
+
+  .donate-close:hover {
+    background: rgba(232, 121, 168, 0.20);
+    color: #ffffff;
+  }
+
+  .donate-emoji {
+    filter: drop-shadow(0 0 12px rgba(232, 121, 168, 0.35));
+  }
+
+  .donate-subtitle {
+    color: rgba(255, 255, 255, 0.65);
+  }
+
+  .donate-tab {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .donate-tab:hover {
+    background: rgba(255, 255, 255, 0.13);
+    color: #ffffff;
+  }
+
+  .donate-tab.is-active {
+    background: linear-gradient(135deg, rgba(107, 138, 255, 0.35), rgba(232, 121, 168, 0.32));
+    border-color: rgba(168, 216, 255, 0.45);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(107, 138, 255, 0.22);
+  }
+
+  .donate-tab-dot {
+    background: rgba(255, 255, 255, 0.35);
+  }
+
+  .donate-tab.is-active .donate-tab-dot {
+    box-shadow: 0 0 6px rgba(168, 216, 255, 0.70);
+  }
+
+  .donate-note {
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .donate-account-line {
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .donate-account-value {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .donate-btn {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .donate-btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+  }
+
+  .donate-btn-primary:hover {
+    box-shadow: 0 4px 16px rgba(232, 121, 168, 0.35);
+  }
+
+  /* —— 论坛：视觉层 direct oklch/color-mix 的关键控件兜底 —— */
+  body.forum-page .nav-glass {
+    background: rgba(10, 15, 28, 0.70) !important;
+    border-bottom-color: rgba(168, 196, 240, 0.22) !important;
+    box-shadow: 0 1px 0 rgba(201, 162, 39, 0.08), 0 10px 28px rgba(0, 0, 0, 0.28) !important;
+  }
+
+  .stf-account-btn {
+    background: rgba(109, 143, 214, 0.10) !important;
+    border-color: rgba(168, 196, 240, 0.38) !important;
+    color: #edf1fa;
+  }
+
+  .stf-account-btn:hover {
+    background: rgba(109, 143, 214, 0.16) !important;
+    border-color: rgba(201, 162, 39, 0.45) !important;
+  }
+
+  .forum-hero::before {
+    background:
+      radial-gradient(circle at 22% 18%, rgba(109, 143, 214, 0.16), transparent 46%),
+      radial-gradient(circle at 78% 28%, rgba(232, 197, 106, 0.08), transparent 44%),
+      radial-gradient(circle at 50% 92%, rgba(109, 143, 214, 0.10), transparent 52%) !important;
+  }
+
+  .forum-hero__backplate {
+    border-color: rgba(168, 196, 240, 0.22);
+    background:
+      radial-gradient(110% 80% at 50% -10%, rgba(109, 143, 214, 0.12), transparent 55%),
+      linear-gradient(180deg, #0b0e1a 0%, #0a0d18 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.07),
+      0 30px 70px -30px rgba(3, 5, 12, 0.70),
+      0 0 40px rgba(109, 143, 214, 0.06);
+  }
+
+  .forum-hero-sub {
+    color: rgba(240, 244, 255, 0.72);
+  }
+
+  .forum-hero-actions .btn-primary {
+    box-shadow: 0 6px 18px rgba(109, 143, 214, 0.18), var(--stf-inset) !important;
+  }
+
+  .forum-quicknav-row {
+    border-bottom-color: rgba(109, 143, 214, 0.14);
+  }
+
+  .forum-quicknav-row .hero-pill:hover,
+  .forum-quicknav-row .hero-pill:focus-visible {
+    background: rgba(109, 143, 214, 0.05) !important;
+  }
+
+  .stf-realm-trigger {
+    border-color: rgba(201, 162, 39, 0.32);
+    background: rgba(14, 21, 36, 0.94);
+    color: rgba(237, 241, 250, 0.96);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+  }
+
+  .stf-realm-trigger:hover,
+  .stf-realm-trigger:focus-visible,
+  .stf-realm-chip.open .stf-realm-trigger {
+    border-color: rgba(201, 162, 39, 0.55);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.36);
+  }
+
+  .stf-realm-label {
+    color: rgba(237, 241, 250, 0.88);
+  }
+
+  .stf-realm-dot {
+    box-shadow: 0 0 0 0 rgba(109, 143, 214, 0.40);
+  }
+
+  .stf-realm-dropdown {
+    border-color: rgba(201, 162, 39, 0.35);
+    background: rgba(12, 17, 31, 0.98);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  }
+
+  .stf-realm-option:hover,
+  .stf-realm-option:focus-visible {
+    background: rgba(40, 55, 90, 0.55);
+  }
+
+  .stf-realm-option.active {
+    background: rgba(52, 70, 115, 0.55);
+    box-shadow: inset 0 0 0 1px rgba(201, 162, 39, 0.35);
+  }
+
+  .stf-realm-opt-name {
+    color: rgba(237, 241, 250, 0.95);
+  }
+
+  .stf-realm-opt-desc {
+    color: rgba(197, 209, 230, 0.72);
+  }
+
+  .forum-page .section-label {
+    color: rgba(168, 196, 240, 0.70);
+  }
+
+  .forum-entry--primary {
+    background: rgba(109, 143, 214, 0.06) !important;
+  }
+
+  .forum-entry-ribbon {
+    color: #0e1524 !important;
+  }
+
+  .stf-feed-tab.active {
+    background: rgba(109, 143, 214, 0.22) !important;
+  }
+
+  .stf-pinned-badge {
+    background: rgba(201, 162, 39, 0.16) !important;
+    color: #e4c86a !important;
+  }
+
+  .stf-passport-panel {
+    background:
+      radial-gradient(ellipse at 10% 0%, rgba(109, 143, 214, 0.16), transparent 42%),
+      radial-gradient(ellipse at 90% 6%, rgba(201, 162, 39, 0.10), transparent 36%),
+      var(--stf-surface-0) !important;
+  }
+
+  .stf-passport-eyebrow {
+    color: rgba(228, 200, 106, 0.90) !important;
+  }
+
+  .stf-comment-submit,
+  .stf-fab,
+  .stf-chat-send {
+    background: linear-gradient(135deg, #6d8fd6, #8fa8e4) !important;
+  }
+
+  body.forum-page .btn-primary {
+    background: linear-gradient(135deg, #4a6ae0, #6d8fd6) !important;
+  }
+
+  .btn-primary {
+    box-shadow: 0 10px 28px rgba(109, 143, 214, 0.28), var(--stf-inset);
+  }
+
+  .stf-toolbar .btn-ghost {
+    border-color: rgba(168, 216, 255, 0.25);
+  }
+
+  .stf-toolbar .btn-ghost:hover {
+    border-color: rgba(168, 216, 255, 0.50);
+    background: rgba(109, 143, 214, 0.10);
+    color: #ffffff;
+  }
+
+  html.archive-orbit-active .archive-float.is-orbit-item .character-archive-card {
+    background: rgba(14, 21, 36, 0.92);
+    border-color: rgba(168, 196, 240, 0.20);
+    box-shadow: 0 0 0 1px rgba(168, 196, 240, 0.14);
+  }
+
+  html.archive-orbit-active .archive-album-shelf {
+    background: radial-gradient(ellipse 60% 40% at 50% 100%, rgba(201, 162, 39, 0.12), transparent 70%);
+  }
+
+  /* —— 主站签名组件里仅依赖 color-mix 的装饰 —— */
+  .sn-envelope {
+    background: linear-gradient(180deg, rgba(255, 182, 217, 0.12), rgba(240, 244, 255, 0.06));
+    border-color: rgba(232, 121, 168, 0.22);
+  }
+
+  .sn-footer {
+    border-top-color: rgba(255, 255, 255, 0.08);
+    background: radial-gradient(120% 60% at 50% 0%, rgba(232, 121, 168, 0.10), transparent 60%), #0b0b14;
+  }
+
+  .sn-footer__spectrum {
+    border-bottom-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .sig-tape,
+  .sig-sticker {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  }
+
+    /* —— 论坛索引墙 / 帖卡依赖 color-mix 的边框与阴影兜底 —— */
+    .stf-indexcard {
+      border-color: rgba(107, 138, 255, 0.30);
+    }
+
+    .stf-indexcard:hover {
+      border-color: rgba(255, 215, 0, 0.45);
+      box-shadow: 0 12px 32px rgba(107, 138, 255, 0.18);
+    }
+
+    .stf-indexcard:focus-visible {
+      border-color: rgba(255, 215, 0, 0.45);
+    }
+
+    .stf-binding-holes span {
+      border-color: rgba(232, 200, 106, 0.30);
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.15);
+    }
+
+}
+
+/* overflow: clip 仅在较新 Chromium 可用；旧引擎退化为 hidden，避免横向溢出 */
+@supports not (overflow: clip) {
+  html, body {
+    overflow-x: hidden;
+  }
+}
+
+/* 移动端固定背景会造成滚动掉帧/抖动；所有引擎统一降级 */
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll !important;
+  }
+}
+
+/* 占位符对比度：全站最低 4.2:1 提升到 AA */
+::placeholder {
+  color: rgba(238, 243, 251, 0.52) !important;
+  opacity: 1;
+}
+
+/* 捐赠 FAB 刻意压到 0.72-0.85 影响可用性；统一到 0.9，悬停 1 */
+.donate-fab {
+  opacity: 0.9;
+}

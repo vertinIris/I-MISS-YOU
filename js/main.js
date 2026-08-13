@@ -2769,7 +2769,8 @@
     function safeHTML(html) {
         if (typeof html !== 'string') return '';
         if (typeof window.sanitizeHTML === 'function') return window.sanitizeHTML(html);
-        return html;
+        // 防御性降级：sanitizeHTML 不可用时强制转义，绝不原样返回（防 XSS 漏网）
+        return escapeHTML(html);
     }
 
     /* ===== Phase 3: Submission System ===== */

@@ -106,6 +106,7 @@ Lighthouse CI：`.github/workflows/lighthouse.yml`（a11y ≥ 0.9 阻断，性�
 - **Lighthouse CI**：新增 `.github/workflows/lighthouse.yml` + `lighthouserc.json`，PR 性能回归防护
 - **migration-029**：论坛服务端搜索 RPC（`search_forum_submissions` + `search_forum_comments`），ILIKE 中文友好，客户端搜索仍保留
 - **bundle-forum.js 瘦身**：`forum-import-data.js`（416KB）从 bundle 拆出单独 defer 加载，bundle 534KB → 146.2KB（↓72.6%）
+- **Edge 兼容层**：新增 `css/edge-compat.css`，为 `oklch()`/`color-mix()` 提供 @supports 能力检测回退（主站/论坛/角色页/重置页均接入）；SW 版本 v11.5.0 预缓存该层
 - **main.js 模块化**：评估后暂缓（4564 行 IIFE 共享闭包变量，拆分风险高，需后续单独处理）
 
 ### v10.1 库接入 + 监控 + a11y（2026-08-12 第二批）

@@ -42,7 +42,7 @@ const MAIN_JS = [
   'js/signature-utils.js',
   'js/main.js',
   'js/donation.js',
-  'js/sw-register.js',
+  // 'js/sw-register.js', // v11.5: index.html 单独加载，避免 bundle 内重复注册
 ];
 
 // 论坛本地 JS（不含 CDN supabase.min.js；含跨目录引用的 ../js/*）· v11.0 追加 signature-utils.js
@@ -199,6 +199,35 @@ async function buildBundle(fileList, outName) {
 // ============================================================
 // 4. CSS 压缩
 // ============================================================
+// ============================================================
+// 4.1 CSS 安全加固（v11.4.0）
+//   a) 为每条 backdrop-filter 补 -webkit-backdrop-filter（WebKit / Safari / iOS 兼容，
+//      避免玻璃拟态在旧引擎上整体失效导致可读性/美观退化）。
+//   b) 追加全局 @media (prefers-reduced-motion: reduce) 守卫：关闭装饰性动画并隐藏
+//      8 层背景 + 粒子画布，防止眩晕/卡顿，保障「全方面体验」稳定流畅。
+// ============================================================
+function hardenCss(minified) {
+  let css = minified;
+
+  // (a) -webkit-backdrop-filter 镜像（顺序无关、幂等）：
+  //     先清掉已有 -webkit- 副本，再为每条 backdrop-filter 追加精确镜像，
+  //     保证每条玻璃拟态规则在 WebKit/Safari/iOS 上都有对应前缀。
+  css = css.replace(/-webkit-backdrop-filter:\s*[^;}]+;?/g, '');
+  css = css.replace(/(backdrop-filter:\s*[^;}]+;)/g, (m) => {
+    const webkit = m.replace('backdrop-filter:', '-webkit-backdrop-filter:');
+    return `${m}${webkit}`;
+  });
+
+  // (b) reduced-motion 守卫（追加在末尾，使用 !important 确保覆盖）
+  const reducedMotion = `
+@media (prefers-reduced-motion: reduce){
+*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+.star-field,.pink-galaxy,.galaxy-river,.ult-energy-core,.hex-shield,.data-rain,.shooting-star-container,.css-snow-container,#particle-canvas{display:none!important}
+}`;
+  css += reducedMotion;
+  return css;
+}
+
 function buildCss(fileList, outName) {
   console.log(`\n[BUILD] ── 构建 ${outName} ──`);
   const srcConcat = readConcat(fileList);
@@ -206,7 +235,11 @@ function buildCss(fileList, outName) {
   console.log(`[BUILD]   合并源 CSS ${fileList.length} 个，总体积 ${fmt(srcSize)}`);
 
   const result = cssMinify(srcConcat, { restructure: true, comments: false });
-  const minified = result.css;
+  let minified = result.css;
+
+  // 安全加固：webkit 前缀 + reduced-motion 守卫
+  minified = hardenCss(minified);
+
   const dstSize = Buffer.byteLength(minified, 'utf8');
   const ratio = (dstSize / srcSize * 100).toFixed(1);
   const saved = ((1 - dstSize/srcSize) * 100).toFixed(1);

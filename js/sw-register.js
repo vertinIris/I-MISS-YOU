@@ -35,7 +35,7 @@
     window.location.reload();
   });
 
-  var SW_VERSION = 'v=11.3.2';
+  var SW_VERSION = 'v=11.5.0';
 
   window.addEventListener('load', function () {
     // 强制清理过期 SW：若当前控制页面的 worker 版本不是最新，注销后重载。
@@ -94,7 +94,7 @@
           var tx = db.transaction([SUBMIT_QUEUE_STORE], 'readwrite');
           tx.objectStore(SUBMIT_QUEUE_STORE).add({ payload: payload, ts: Date.now() });
           tx.oncomplete = function () {
-            if (reg.sync) { reg.sync.register('submit-post-queue'); }
+            if (reg && reg.sync) { reg.sync.register('submit-post-queue'); }
             resolve(true);
           };
           tx.onerror = function () { resolve(false); };

@@ -18,13 +18,15 @@ const jsFiles = [
     'js/snow-easter.js', 'js/secret-portal.js', 'js/snow-realm.js',
     'forum/js/forum.js', 'forum/js/forum-auth.js', 'forum/js/forum-cloud.js',
     'forum/js/forum-chat.js', 'forum/js/forum-data.js', 'forum/js/forum-sync.js',
-    'forum/js/forum-upload.js', 'forum/js/forum-easter.js', 'forum/js/forum-supabase.js'
+    'forum/js/forum-upload.js', 'forum/js/forum-easter.js', 'forum/js/forum-supabase.js',
+      'js/reset-password.js'
 ];
 
 const assets = [
     'index.html', 'reset-password.html', 'forum/index.html',
     'assets/favicon.svg', 'assets/og-cover.png',
-    'forum/forum.css', 'forum/forum-theme.css', 'css/donation.css'
+    'forum/forum.css', 'forum/forum-theme.css', 'css/donation.css',
+    'css/edge-compat.css', 'js/reset-password.js',
 ];
 
 const symbolChecks = [
