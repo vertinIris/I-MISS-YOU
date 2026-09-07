@@ -5,10 +5,10 @@
 鸣潮角色爱弥斯（Aemeath）的秘密歌手身份「飞行雪绒」的同人社交账号体验站，附独立论坛「星炬学院」。  
 非商业同人创作：叙事、音乐合成、社区互动与角色档案。
 
-**当前版本**: **v10.0**（见 [`docs/STATUS.md`](docs/STATUS.md)）  
+**当前版本**: **v11.3.2**（见 [`docs/STATUS.md`](docs/STATUS.md)）  
 **线上（主）**: https://i-miss-you-bcu.pages.dev/ （Cloudflare Pages，大陆访问更稳）  
 **线上（备）**: https://vertiniris.github.io/I-MISS-YOU/ （GitHub Pages 源站）  
-**`package.json`**: `10.0.0`
+**`package.json`**: `11.3.2`
 
 ---
 

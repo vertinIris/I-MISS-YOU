@@ -4,7 +4,7 @@
 
 | 文档 | 用途 |
 |------|------|
-| [STATUS.md](./STATUS.md) | 对外版本 v10.0、migration 要点、Production 确认项 |
+| [STATUS.md](./STATUS.md) | 对外版本 v11.3.2、migration 要点、Production 确认项 |
 | [CONTENT-PIPELINE.md](./CONTENT-PIPELINE.md) | 论坛内容源 → `content:build` → 导入 / 种子 |
 | [WORLDVIEW.md](./WORLDVIEW.md) | 世界观正文与考据约定 |
 | [WORLDVIEW-REVIEW.md](./WORLDVIEW-REVIEW.md) | 世界观评审记录 |
