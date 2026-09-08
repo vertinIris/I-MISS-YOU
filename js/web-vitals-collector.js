@@ -31,7 +31,7 @@
 
     function queueMetric(name, value) {
         if (typeof value !== 'number' || !isFinite(value) || value < 0) return;
-        var queue = [];
+        var queue;
         try { queue = JSON.parse(safeGet(QUEUE_KEY) || '[]'); if (!Array.isArray(queue)) queue = []; } catch (_) { queue = []; }
         queue.push({
             metric_name: name,
@@ -47,7 +47,7 @@
     }
 
     async function flush() {
-        var queue = [];
+        var queue;
         try { queue = JSON.parse(safeGet(QUEUE_KEY) || '[]'); if (!Array.isArray(queue)) queue = []; } catch (_) { return; }
         if (!queue.length) return;
         if (!SUPABASE_URL || !SUPABASE_KEY || !window.supabaseClient) {

@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-08-14T08:28:51.302Z",
+  "generatedAt": "2026-09-08T00:49:57.631Z",
   "stage": "phase-2",
   "bundles": {
     "main": {
       "name": "bundle-main.js",
-      "srcSize": 494561,
-      "dstSize": 233717,
-      "ratio": "47.3",
-      "saved": "52.7",
-      "sri": "sha384-76Rzr3EKA7GSWijGOJ3KeB4gFnjCkshYD77Zm7X0FyozGg3WIrLur68M+9jWYytx",
+      "srcSize": 501371,
+      "dstSize": 236065,
+      "ratio": "47.1",
+      "saved": "52.9",
+      "sri": "sha384-cS+eg0Ws+yyEmNqeqCXcdGZ8Yn0nsHnDchgv5rixsuPIK+XhYIg3RzYwittFM61V",
       "mapGenerated": true
     },
     "forum": {
       "name": "bundle-forum.js",
-      "srcSize": 309565,
-      "dstSize": 149937,
+      "srcSize": 312507,
+      "dstSize": 151175,
       "ratio": "48.4",
       "saved": "51.6",
-      "sri": "sha384-5wNhaM52hUgyftzakuYYdfmExOqjVGnkW0mobk+WrrMEGKvk/htrmYSjNLuDglbj",
+      "sri": "sha384-x18ug7eIawJcP35rAQwQLcfjvgUVFHYUVaALZg4JVdxJwgeMEqGhvROSyRLkTaIJ",
       "mapGenerated": true
     }
   },

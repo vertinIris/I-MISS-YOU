@@ -7,7 +7,7 @@
  * 依赖：vendor/photoswipe/photoswipe.min.css + photoswipe-lightbox.esm.min.js + photoswipe.esm.min.js
  * 加载方式：ESM 动态 import（PhotoSwipe v5 仅提供 ESM bundle）
  */
-import PhotoSwipeLightbox from '../vendor/photoswipe/photoswipe-lightbox.esm.min.js';
+import PhotoSwipeLightbox from '../../vendor/photoswipe/photoswipe-lightbox.esm.min.js';
 
 let lightbox = null;
 const observed = new WeakSet();
@@ -17,7 +17,7 @@ function initLightbox() {
     lightbox = new PhotoSwipeLightbox({
         gallery: '.stf-post-detail, #stf-post-detail',
         children: 'img.stf-detail-cover',
-        pswpModule: () => import('../vendor/photoswipe/photoswipe.esm.min.js'),
+        pswpModule: () => import('../../vendor/photoswipe/photoswipe.esm.min.js'),
         /* 从 <img> 提取大图 URL 与尺寸（帖子封面即原图） */
         dataSource: (el) => {
             const src = el.src;

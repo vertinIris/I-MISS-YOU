@@ -28,15 +28,31 @@ var AdminPanel = (function() {
             : isAdmin();
     }
 
-    function openPanel() {
-        if (!canAccess()) {
-            if (typeof showSubmitToast === 'function') showSubmitToast('需要版主或管理员权限', 3000);
-            return;
-        }
+    function showPanel() {
         var panel = document.getElementById('admin-panel');
         if (!panel) return;
         panel.hidden = false;
         refreshPanel();
+    }
+
+    function openPanel() {
+        /* P0-2 修复：原先无权限时只弹一句 toast 就 return，
+         * 而入口按钮又默认 hidden，导致后台从任何路径都进不去。
+         * 现在无权限时主动拉起管理员登录，登录成功即打开后台。 */
+        if (canAccess()) {
+            showPanel();
+            return;
+        }
+        if (typeof AdminAuth !== 'undefined' && typeof AdminAuth.openLoginModal === 'function') {
+            AdminAuth.openLoginModal(function(success) {
+                if (success) {
+                    if (canAccess()) showPanel();
+                    else if (typeof showSubmitToast === 'function') showSubmitToast('需要版主或管理员权限', 3000);
+                }
+            });
+            return;
+        }
+        if (typeof showSubmitToast === 'function') showSubmitToast('管理员模块未加载', 3000);
     }
 
     function closePanel() {
@@ -284,7 +300,11 @@ var AdminPanel = (function() {
     function updateNavButton() {
         var btn = document.getElementById('admin-panel-open-btn');
         if (!btn) return;
-        btn.hidden = !canAccess();
+        /* P0-2 修复：按钮常驻显示（原先无权限即 hidden，用户根本找不到后台入口）。
+         * 无权限时点击会走 openPanel() 的管理员登录流程。 */
+        btn.hidden = false;
+        btn.classList.toggle('is-staff', canAccess());
+        btn.setAttribute('aria-label', canAccess() ? '版主/管理后台（已授权）' : '版主/管理后台（点击登录）');
     }
 
     function init() {

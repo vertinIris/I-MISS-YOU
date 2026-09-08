@@ -9,7 +9,7 @@
     <!-- v10.1: CSP 加固 — 移除 script-src 'unsafe-inline'，内联脚本提取为外部文件；保留 unpkg.com 作为 SDK 备用 CDN -->
     <meta http-equiv="Content-Security-Policy"
           content="default-src 'self';
-                   script-src 'self' cdn.jsdelivr.net unpkg.com;
+                   script-src 'self' cdn.jsdelivr.net unpkg.com cdnjs.cloudflare.com;
                    style-src 'self' 'unsafe-inline' cdn.jsdelivr.net;
                    img-src 'self' data: blob: https://*.supabase.co;
                    connect-src 'self' https://*.supabase.co wss://*.supabase.co;
@@ -36,7 +36,7 @@
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <!-- P3-1: Fonts self-hosted via css/fonts.css (merged into dist/css/forum.min.css) -->
     <!-- v10.1: 主题偏好同步脚本提取为外部文件，配合 CSP 加固（移除 'unsafe-inline'）；必须在 CSS 前同步执行避免 FOUC -->
-    <script src="../js/forum-theme-bootstrap.js"></script>
+    <script src="js/forum-theme-bootstrap.js"></script>
     <!-- Styles (Stage II: 8 个 CSS 合并压缩为 1 个 → dist/css/forum.min.css，222KB→152KB) -->
     <link rel="stylesheet" href="../dist/css/forum.min.css">
       <!-- Edge/legacy Chromium 兼容层：必须在 min.css 之后，@supports 能力检测自动启用 -->
@@ -1268,11 +1268,11 @@
     <!-- Stage II: 15 个本地 JS 合并为 1 个 bundle（696KB→534KB ↓23.3%）+ SRI 完整性校验 -->
     <!-- forum-supabase.js 内含 waitForSDK 轮询，不依赖 CDN SDK 严格顺序；bundle 可安全先于 SDK 加载 -->
     <script defer src="../dist/bundle-forum.js"
-            integrity="sha384-5wNhaM52hUgyftzakuYYdfmExOqjVGnkW0mobk+WrrMEGKvk/htrmYSjNLuDglbj"
+            integrity="sha384-x18ug7eIawJcP35rAQwQLcfjvgUVFHYUVaALZg4JVdxJwgeMEqGhvROSyRLkTaIJ"
             crossorigin="anonymous"></script>
     <!-- 论坛上云：Supabase 客户端 + 云端适配器（与主站共用同一项目，账号自动打通）
          v10.1: 内联脚本 + onerror 提取为外部文件 forum-supabase-loader.js，配合 CSP 加固 -->
-    <script defer src="../js/forum-supabase-loader.js"></script>
+    <script defer src="js/forum-supabase-loader.js"></script>
     <!-- v10.1: web-vitals RUM 采集 — 匿名采集 LCP/INP/CLS/TTFB/FCP，写入 Supabase performance_metrics -->
     <script type="module" src="../js/web-vitals-collector.js"></script>
     <!-- donation.js 已合并入 bundle-forum.js（Stage II） -->

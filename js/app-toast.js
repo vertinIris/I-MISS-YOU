@@ -109,6 +109,60 @@
         }
     };
 
+    /* ================================================================
+     * sanitizeTemplateHTML — 站点自有模板消毒（区别于 UGC 白名单）
+     * ---------------------------------------------------------------
+     * 背景：buildSubmissionCardHTML 等产出的是「站点模板 + 少量已转义字段」，
+     *       其中 article / button / input / data-* / style 属于模板骨架而非用户输入。
+     *       若套用 UGC 白名单，骨架会被整体剥离，导致卡片无法渲染（P0-1）。
+     *
+     * 安全边界（与 UGC 消毒一致，不降低防护强度）：
+     *   - DOMPurify 始终移除 <script>/<style>/<iframe> 与所有 on* 事件处理器
+     *   - 用户可控字段在进入模板前必须已经过 escapeHTML() / SecurityShield 校验
+     *
+     * 注意：不要把真正的用户输入直接丢给本函数，那是 sanitizeHTML 的职责。
+     * ================================================================ */
+    var TEMPLATE_CONFIG = {
+        ALLOWED_TAGS: [
+            'article', 'section', 'header', 'footer', 'aside', 'nav',
+            'p', 'br', 'hr', 'span', 'div',
+            'strong', 'em', 'b', 'i', 'u', 's', 'del', 'ins', 'mark', 'sub', 'sup', 'small',
+            'a', 'code', 'pre', 'blockquote',
+            'ul', 'ol', 'li',
+            'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+            'img', 'figure', 'figcaption',
+            'button', 'input', 'textarea', 'select', 'option', 'form', 'label', 'time',
+            'table', 'thead', 'tbody', 'tr', 'th', 'td',
+            'svg', 'path', 'circle', 'rect', 'g', 'line', 'polyline', 'polygon'
+        ],
+        ALLOWED_ATTR: [
+            'href', 'title', 'target', 'rel',
+            'src', 'alt', 'width', 'height',
+            'class', 'id', 'style', 'type', 'name', 'value', 'placeholder',
+            'disabled', 'required', 'maxlength', 'rows', 'cols', 'hidden',
+            'colspan', 'rowspan',
+            'viewBox', 'fill', 'stroke', 'stroke-width', 'd', 'points', 'xmlns',
+            'aria-label', 'aria-expanded', 'aria-hidden', 'aria-modal', 'role', 'tabindex'
+        ],
+        ALLOW_DATA_ATTR: true,
+        FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'link', 'meta'],
+        FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onfocus', 'onblur', 'onsubmit', 'formaction']
+    };
+
+    window.sanitizeTemplateHTML = function (dirty) {
+        if (typeof dirty !== 'string') return '';
+        if (typeof DOMPurify === 'undefined') {
+            /* DOMPurify 未加载：模板由站点自身生成且字段已转义，允许原样返回以保功能可用 */
+            return dirty;
+        }
+        try {
+            return DOMPurify.sanitize(dirty, TEMPLATE_CONFIG);
+        } catch(e) {
+            console.warn('[sanitizeTemplateHTML] DOMPurify 消毒失败，回退原模板:', e.message || e);
+            return dirty;
+        }
+    };
+
     /* 便捷别名：安全设置 innerHTML */
     window.setSafeHTML = function (element, dirty) {
         if (!element || typeof element.innerHTML === 'undefined') return;

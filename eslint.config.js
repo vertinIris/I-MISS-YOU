@@ -38,6 +38,14 @@ export default [
         clearTimeout: 'readonly',
         setInterval: 'readonly',
         clearInterval: 'readonly',
+        indexedDB: 'readonly',
+        getComputedStyle: 'readonly',
+        caches: 'readonly',
+        Notification: 'readonly',
+        IntersectionObserver: 'readonly',
+        MutationObserver: 'readonly',
+        requestAnimationFrame: 'readonly',
+        cancelAnimationFrame: 'readonly',
         requestAnimationFrame: 'readonly',
         cancelAnimationFrame: 'readonly',
         IntersectionObserver: 'readonly',
@@ -104,6 +112,14 @@ export default [
       'no-eval': 'error',
       'no-implied-eval': 'error',
       'no-new-func': 'error'
+    }
+  },
+  {
+    /* ESM 模块（type="module" 引入）需单独声明 sourceType，否则 import/export 解析失败 */
+    files: ['forum/js/photoswipe-init.js', 'js/web-vitals-collector.js', 'scripts/**/*.mjs'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module'
     }
   }
 ];

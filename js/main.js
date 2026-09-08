@@ -3444,19 +3444,52 @@
     function buildSubmissionCardNode(s) {
         var html = buildSubmissionCardHTML(s);
         var tmp = document.createElement('div');
-        tmp.innerHTML = safeHTML(html);
-        var el = tmp.firstElementChild;
+        /* P0-1 修复：卡片是「站点模板 + 已转义字段」，须用模板级白名单。
+         * 原先误用 UGC 白名单 safeHTML()，会把 <article>/<button>/data-* 整块剥离，
+         * 只剩 <span class="sig-tape-corner">，导致卡片永远渲染不出来。 */
+        var sanitizer = (typeof window.sanitizeTemplateHTML === 'function')
+            ? window.sanitizeTemplateHTML
+            : safeHTML;
+        tmp.innerHTML = sanitizer(html);
+        var el = tmp.querySelector('.community-card') || tmp.firstElementChild;
         if (el) el.__subHtml = html;
         return el;
     }
 
+    /* P0-1 修复：渲染令牌（每次协调自增）。
+     * 旧实现只按 .community-card 选择器清理，一旦卡片根节点因消毒/异常未能识别，
+     * 残留节点就会永久堆积（实测 grid 子节点 3 → 49 单调增长）。
+     * 现在给每个受管节点打令牌，清理时移除所有「非本轮」的直接子节点，杜绝泄漏。 */
+    var __communityRenderToken = 0;
+
     function reconcileCommunityGrid(grid, pageItems) {
         pageItems = pageItems || [];
+        var token = ++__communityRenderToken;
         var ids = {};
         pageItems.forEach(function(s) { ids[String(s.id)] = true; });
+
+        /* 第一遍：清理上轮遗留但本轮不再需要的受管节点 */
+        Array.prototype.slice.call(grid.children).forEach(function(child) {
+            if (child.__subToken && child.__subToken !== token) {
+                var id = child.getAttribute('data-id');
+                if (id == null || !(String(id) in ids)) child.remove();
+            }
+        });
+        /* 第二遍：兼容历史逻辑，清理失效卡片 */
         grid.querySelectorAll('.community-card').forEach(function(card) {
             var id = card.getAttribute('data-id');
             if (id == null || !(String(id) in ids)) card.remove();
+        });
+        /* 第三遍：清理无归属的孤立装饰节点（卡片被剥离后残留的 sig-tape-corner 等） */
+        Array.prototype.slice.call(grid.children).forEach(function(child) {
+            if (child.__subToken && child.__subToken !== token) child.remove();
+            else if (!child.classList.contains('community-card') && !child.__subToken) {
+                if (child.classList.contains('sig-tape-corner') ||
+                    child.classList.contains('comment-empty') ||
+                    child.classList.contains('community-empty')) {
+                    child.remove();
+                }
+            }
         });
         var existing = {};
         grid.querySelectorAll('.community-card').forEach(function(card) {
@@ -3491,6 +3524,7 @@
                 }
                 inDom = fresh;
             }
+            if (inDom) inDom.__subToken = token;
             prev = inDom;
         });
     }
@@ -4187,6 +4221,9 @@
     }
 
     function switchAccountTab(tab) {
+        /* 页面只有 register / login 两个 tab；未知取值（如 'upgrade'）会导致
+         * 两个面板同时被隐藏、面板内容空白，故回退到默认 tab。 */
+        if (tab !== 'register' && tab !== 'login') tab = 'register';
         var tabs = document.querySelectorAll('.account-tab');
         var registerPanel = document.getElementById('account-tab-register');
         var loginPanel = document.getElementById('account-tab-login');
@@ -4335,9 +4372,15 @@
         var statusBar = document.getElementById('auth-status');
         var openBtn = document.getElementById('auth-upgrade-toggle');
         function openFromSubmit(e) {
-            if (e) e.preventDefault();
+            if (e) {
+                e.preventDefault();
+                /* P0-3 修复：必须阻止冒泡。
+                 * 上方 document 级监听会在「点击不在 #nav-account 内」时立刻 closeAccountPanel()，
+                 * 投稿区的「打开账号」按钮位于面板之外，导致刚打开就被自己关掉（实测面板高度恒为 0）。 */
+                e.stopPropagation();
+            }
             openAccountPanel('upgrade');
-            btn.focus();
+            if (btn && typeof btn.focus === 'function') btn.focus();
         }
         if (openBtn) openBtn.addEventListener('click', openFromSubmit);
         if (statusBar) {
@@ -4763,7 +4806,7 @@
         archive: ArchiveAPI,
         sync: SyncAPI,
         user: UserAPI,
-        version: 'v11.3.2'
+        version: 'v11.5.1'
     };
 })();
 
