@@ -151,10 +151,25 @@
 
 ---
 
-## 六、修复优先级建议
+## 六、修复记录（同日已完成，版本 v11.5.1）
 
-1. **立即修复 P0-1**：给 `PURIFY_CONFIG` 增加投稿卡所需标签（`article`/`button`/`input`/`form`）与 `ALLOW_DATA_ATTR: true`、`style` 属性；或改为「字段级转义 + 结构化 DOM 构建」，避免整卡 HTML 消毒。同时修复 `reconcileCommunityGrid` 在找不到节点时不清空旧节点的逻辑。
-2. **修复 P0-2 / P0-3**：恢复页脚长按/双击的管理员入口，或提供显式可见的后台入口；修复 `#auth-upgrade-toggle` 的事件绑定。
-3. **修复 P1-1 五处 404 路径**，尤其 photoswipe 灯箱。
-4. **统一 SW 版本号与站点版本**，避免缓存错配。
-5. **增强 smoke-check**：从「文件存在性检查」升级为「真实浏览器关键路径断言」，否则同类缺陷无法在 CI 中被发现。
+| 编号 | 修复内容 | 验证结果 |
+|------|---------|---------|
+| P0-1 | `js/app-toast.js` 新增 `sanitizeTemplateHTML()`（模板级白名单，保留 article/button/input/data-*/style，仍禁 script/iframe 与所有 on* 事件属性）；`buildSubmissionCardNode()` 改用模板级消毒并回退取 `.community-card`；`reconcileCommunityGrid()` 引入渲染令牌 `__subToken`，每轮清理非本轮残留节点 | ✅ 卡片渲染 7 张；连续点击筛选 12 次后 grid 子节点 = 卡片数（4/4），无泄漏；投稿提交后 `VERIFY_MARKER_2026` 在页面可见；点赞/评论/收藏按钮齐全 |
+| P0-2 | `js/admin-panel.js`：入口按钮常驻显示（`btn.hidden = false` + `.is-staff` 状态类）；`openPanel()` 无权限时主动调用 `AdminAuth.openLoginModal()`，登录成功即开后台 | ✅ 管理按钮可见可点；点击后管理员登录框弹出 |
+| P0-3 | `js/main.js`：`openFromSubmit()` 补充 `e.stopPropagation()`，避免被 document 级监听立刻关闭；`switchAccountTab()` 对未知 tab 回退到 `register` | ✅ 面板高度 429px，内容正常显示 |
+| P1-1 | 5 处路径全部修正（`js/forum-theme-bootstrap.js`、`js/forum-supabase-loader.js`、`../../vendor/photoswipe/`、`../../js/snow-easter.js`、`js/supabase-adapter.js`） | ✅ 三个页面 404 全部清零 |
+| P1-2 | 站点与 SW 统一至 `v11.5.1`（package.json / `__FXRE_API.version` / 页脚 / `sw.js` CACHE_VERSION / `sw-register.js`） | ✅ 三方一致 |
+| P1-3 | **经复查为误判，已撤回**：「进入讨论区」是 `#stf-community` 锚点链接，实测点击后 `location.hash` 变为 `#stf-community`、页面滚动 1737px、目标元素置于视口顶部，功能正常 | ✅ 非缺陷 |
+| P1-4 | `_headers` + `index.html` + `forum/index.html` 的 CSP 放行 `cdnjs.cloudflare.com` | ✅ 警告消除 |
+| P2-1 | `eslint.config.js` 补充浏览器 globals（indexedDB/getComputedStyle/caches 等）、为 ESM 文件加 `sourceType: module` override；修掉 `web-vitals-collector.js` 两处无用赋值 | ✅ ESLint errors 5 → 0 |
+
+**回归验证**：时间线 7 帖、日志区正常、评论 81 条、曲目 5 条、音乐播放均正常，无 pageerror。
+
+---
+
+## 七、遗留建议
+
+1. **增强 smoke-check**：当前只校验文件存在性，无法发现上述任何运行时缺陷（本次实测 smoke-check 全绿但 P0 缺陷并存）。建议升级为真实浏览器关键路径断言。
+2. **消毒策略分层需制度化**：UGC 用 `sanitizeHTML()`，站点模板用 `sanitizeTemplateHTML()`。新增模板渲染时务必区分，否则会重现 P0-1。
+3. **论坛搜索效果**尚未做断言级验证（输入关键词后列表条数不变，需人工确认过滤是否生效）。
