@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-08T00:49:57.631Z",
+  "generatedAt": "2026-09-08T03:47:42.973Z",
   "stage": "phase-2",
   "bundles": {
     "main": {
       "name": "bundle-main.js",
-      "srcSize": 501371,
+      "srcSize": 501075,
       "dstSize": 236065,
       "ratio": "47.1",
       "saved": "52.9",
@@ -13,7 +13,7 @@
     },
     "forum": {
       "name": "bundle-forum.js",
-      "srcSize": 312507,
+      "srcSize": 312209,
       "dstSize": 151175,
       "ratio": "48.4",
       "saved": "51.6",

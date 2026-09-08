@@ -5,7 +5,7 @@
 ## 对外版本
 
 - 产品展示版：**v11.5.1**（主站页脚、论坛页脚、`window.__FXRE_API.version`）
-- `package.json`：`11.3.2`
+- `package.json`：`11.5.1`
 - 种子缓存键（`SEED_VERSION`）是数据修订号，可与对外版本不同，勿混用
 
 ## Migration 要点

@@ -5,7 +5,7 @@
  */
 import { execSync } from 'child_process';
 import { existsSync, readFileSync, readdirSync } from 'fs';
-import { join, dirname } from 'path';
+import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -103,6 +103,7 @@ try {
         { file: 'js/main.js', re: new RegExp("version:\\s*'v" + ver.replace(/\./g, '\\.') + "'") },
         { file: 'index.html', re: new RegExp('v' + ver.replace(/\./g, '\\.')) },
         { file: 'forum/index.html', re: new RegExp('v' + ver.replace(/\./g, '\\.')) },
+        { file: 'package-lock.json', re: new RegExp('"version":\\s*"' + ver.replace(/\./g, '\\.') + '"') },
     ];
     for (const { file, re } of expect) {
         if (re.test(readFileSync(join(root, file), 'utf8'))) console.log('OK', file, '版本 v' + ver);
@@ -131,6 +132,38 @@ if (existsSync(migDir)) {
 } else {
     console.log('MISSING db/');
     failed++;
+}
+
+// 本地引用存在性：拦截 src/href 指向不存在文件导致的 404
+console.log('\n=== 本地引用存在性 ===');
+{
+    const pages = ['index.html', 'reset-password.html', 'forum/index.html'].filter(f => existsSync(join(root, f)));
+    if (existsSync(join(root, 'characters'))) {
+        for (const d of readdirSync(join(root, 'characters'))) {
+            const p = join('characters', d, 'index.html');
+            if (existsSync(join(root, p))) pages.push(p);
+        }
+    }
+    const broken = [];
+    for (const page of pages) {
+        const src = readFileSync(join(root, page), 'utf8');
+        const re = /(?:src|href)="([^"]+)"/g;
+        let m;
+        while ((m = re.exec(src))) {
+            const raw = m[1];
+            if (/^(?:https?:)?\/\//.test(raw) || /^(?:#|data:|mailto:|tel:)/.test(raw)) continue;
+            const clean = raw.split(/[?#]/)[0];
+            if (!clean) continue;
+            const abs = clean.startsWith('/') ? join(root, clean.slice(1)) : resolve(dirname(join(root, page)), clean);
+            if (!existsSync(abs)) broken.push(`${page} → ${raw}`);
+        }
+    }
+    const uniq = [...new Set(broken)];
+    if (uniq.length) {
+        uniq.forEach(b => { console.log('FAIL 坏引用', b); failed++; });
+    } else {
+        console.log(`OK ${pages.length} 个页面本地引用均存在`);
+    }
 }
 
 console.log(failed ? `\n❌ ${failed} 项失败` : '\n✅ smoke-check 通过');

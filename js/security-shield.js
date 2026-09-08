@@ -1,5 +1,5 @@
 /**
- * SecurityShield — 前端安全防护网 v11.3.2
+ * SecurityShield — 前端安全防护网 v11.5.1
  *
  * 纵深防御层（配合 Supabase RLS + 服务端限流）：
  *   - XSS / 注入模式检测
