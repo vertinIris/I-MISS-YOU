@@ -121,17 +121,18 @@ try {
     const pkg = JSON.parse(read('package.json'));
     if (pkg.scripts && pkg.scripts['smoke-check']) ok('smoke-check script');
     else fail('缺 smoke-check script');
-    if (String(pkg.version) === '10.0.0') ok('version ' + pkg.version);
-    else if (String(pkg.version).startsWith('10.')) note('version=' + pkg.version + '（期望 10.0.0）');
-    else fail('version=' + pkg.version + '（期望 10.x）');
+    const ver = String(pkg.version || '');
+    if (/^\d+\.\d+\.\d+$/.test(ver)) ok('version ' + ver);
+    else fail('package.json version 异常: ' + ver);
     const m020 = String(pkg.scripts && pkg.scripts['db:migrate-020'] || '');
     if (/migration-020-forum-tables/.test(m020) && /023/.test(m020) && !/then migration-020-forum-chat/.test(m020)) {
         ok('db:migrate-020 指引 tables + 023（非废弃 chat）');
     } else {
         fail('db:migrate-020 仍指向废弃 chat 或指引不全');
     }
-    if (/version:\s*'v10\.0'/.test(mainJs)) ok('__FXRE_API.version v10.0');
-    else fail('__FXRE_API.version 未对齐 v10.0');
+    const verRe = new RegExp("version:\\s*'v" + String(pkg.version || '').replace(/\./g, '\\.') + "'");
+    if (verRe.test(mainJs)) ok('__FXRE_API.version 对齐 v' + pkg.version);
+    else fail('__FXRE_API.version 未与 package.json 版本对齐（期望 v' + pkg.version + '）');
     const mainFooter = read('index.html');
     const forumFooter = read('forum/index.html');
     if (/v11\.\d/.test(mainFooter)) ok('主站页脚 v11.x');

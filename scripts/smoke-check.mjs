@@ -36,9 +36,8 @@ const symbolChecks = [
     { file: 'js/main.js', includes: ['syncAllPostCommentCounts', 'applyRealtimeCommentEvent', 'sanitizeColor'] },
     { file: 'js/security-shield.js', includes: ['isSafeUrl', 'sanitizeColor', 'logViolation'] },
     { file: 'index.html', includes: ['admin-tab', 'collection-rename-btn', '以思念调频'] },
-    { file: 'forum/index.html', includes: ['v11.3.2', 'stf-hidden-trigger'] },
-    { file: 'js/main.js', includes: ["version: 'v11.3.2'"] },
-    { file: 'docs/STATUS.md', includes: ['v11.3.2', 'migration-023'] },
+    { file: 'forum/index.html', includes: ['stf-hidden-trigger'] },
+    { file: 'docs/STATUS.md', includes: ['migration-023'] },
     { file: '.github/workflows/static-checks.yml', includes: ['smoke-check', 'extreme-audit'] },
     { file: 'forum/js/forum.js', includes: ['safeMediaUrl', 'SecurityShield.init', 'submitBusy', 'openPostDetail', 'is_pinned', 'initForumRealmSelector', 'initScrollReveal'] },
     { file: 'js/snow-realm.js', includes: ['snowfluff-realm-sync', 'FORUM_COPY', 'BroadcastChannel'] },
@@ -95,6 +94,23 @@ for (const check of symbolChecks) {
     } else {
         console.log('OK', check.file);
     }
+}
+
+// 版本一致性：js/main.js (__FXRE_API) / 主站页脚 / 论坛页脚 必须与 package.json 对齐
+try {
+    const ver = String(JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version || '');
+    const expect = [
+        { file: 'js/main.js', re: new RegExp("version:\\s*'v" + ver.replace(/\./g, '\\.') + "'") },
+        { file: 'index.html', re: new RegExp('v' + ver.replace(/\./g, '\\.')) },
+        { file: 'forum/index.html', re: new RegExp('v' + ver.replace(/\./g, '\\.')) },
+    ];
+    for (const { file, re } of expect) {
+        if (re.test(readFileSync(join(root, file), 'utf8'))) console.log('OK', file, '版本 v' + ver);
+        else { console.log('FAIL', file, '版本未对齐 v' + ver); failed++; }
+    }
+} catch (e) {
+    console.log('FAIL 版本一致性检查异常:', e.message);
+    failed++;
 }
 
 console.log(`\n=== Migration 文件 (001-${String(MIGRATION_MAX).padStart(3, '0')}) ===`);
