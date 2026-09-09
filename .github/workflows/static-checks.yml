@@ -53,6 +53,9 @@ jobs:
   dist-sync:
     name: dist 构建产物同步
     runs-on: ubuntu-latest
+    # 诊断步骤需要创建 Issue 以回传跨环境差异详情
+    permissions:
+      issues: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -64,10 +67,17 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Rebuild dist
         run: node scripts/build-phase2.mjs
-      # 诊断：即便门禁失败也先打印差异概览，便于定位（构建产物与已提交版本的差异来源）
-      - name: Show diff overview (diagnostic)
+      # 诊断：比对「已提交版本」与「本次重建版本」的逐字节差异位置与上下文，
+      # 即使门禁失败也把详情贴到 Issue（跨 Windows/Linux 构建非确定性排查用），便于定位根因
+      - name: Diff diagnostic (OS-parity)
         if: always()
-        run: git diff --stat -- ':!dist/build-report-phase2.json' ':!dist/**/*.map' || true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node scripts/ci-dist-diff.mjs | tee /tmp/dist-diag.txt
+          if [ -s /tmp/dist-diag.txt ]; then
+            gh issue create --title "dist-sync diff diagnostic [$(git rev-parse --short HEAD)]" --body "$(cat /tmp/dist-diag.txt)" || true
+          fi
       - name: Verify dist is in sync with source
         run: |
           # 排除：build-report（含时间戳）与 *.map（source map 的 mappings 对源码行尾 CRLF/LF 敏感，
