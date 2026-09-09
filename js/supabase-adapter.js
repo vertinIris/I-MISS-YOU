@@ -77,17 +77,6 @@
         return [];
     }
 
-    function clearPendingQueue() {
-        pendingSync = [];
-        try { localStorage.removeItem(PENDING_KEY); } catch(_){}
-    }
-
-    function dropQuotaBlockedFromQueue() {
-        var before = pendingSync.length;
-        pendingSync = pendingSync.filter(function(item) { return !item._quotaBlocked; });
-        if (pendingSync.length !== before) savePendingQueue();
-    }
-
     var pendingSync = loadPendingQueue();
 
     /* 投稿类型：前端英文 key ↔ 数据库中文 CHECK 约束 */

@@ -11,7 +11,7 @@
  *   - CSP 违规上报
  *   - 同步按钮防刷
  */
-var SecurityShield = (function() {
+window.SecurityShield = (function() {
 
     var ENABLED = true;
     var MAX_ACTIONS_PER_MINUTE = 150;

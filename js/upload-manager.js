@@ -11,7 +11,7 @@
  *   - 与传统表单提交兼容
  */
 
-var UploadManager = (function() {
+window.UploadManager = (function() {
 
     /* 容量上限较改版前提升 3 倍：文本 10MB→30MB，图片 5MB→15MB；并丰富格式 */
     var ALLOWED_TYPES = {

@@ -9,7 +9,7 @@
  *   - 右下角同步状态指示器 + 可点击同步按钮
  */
 
-var SyncManager = (function() {
+window.SyncManager = (function() {
 
     var STATE = {
         REALTIME: 'realtime',

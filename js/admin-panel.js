@@ -2,7 +2,7 @@
  * AdminPanel — 版主/管理员后台 v9.6
  * 举报队列 · 评论审核（含批量）· 操作日志
  */
-var AdminPanel = (function() {
+window.AdminPanel = (function() {
 
     var activeTab = 'reports';
     var pendingComments = [];

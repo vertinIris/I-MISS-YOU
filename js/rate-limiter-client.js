@@ -10,7 +10,7 @@
  *   - 与服务端 RPC 限流配合使用
  */
 
-var ClientRateLimiter = (function() {
+window.ClientRateLimiter = (function() {
 
     // ---- 评论限流状态 ----
     var lastCommentTime = 0;

@@ -1,7 +1,7 @@
 /**
  * ContentUtils — 投稿正文解析（插图 URL / 预览文本）
  */
-var ContentUtils = (function() {
+window.ContentUtils = (function() {
 
     var IMAGE_MARK_RE = /\[插图\]\s*(https?:\/\/[^\s]+)/i;
     var SUPABASE_IMG_RE = /(https:\/\/[^\s]*\.supabase\.co[^\s]*\.(?:jpg|jpeg|png|gif|webp))/i;

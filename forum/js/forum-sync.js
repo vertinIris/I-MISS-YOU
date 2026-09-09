@@ -23,7 +23,6 @@
     'use strict';
 
     var AUTO_INTERVAL = 20000;   // 自动同步轮询间隔（ms）
-    var STORAGE_PREFIXES = ['stf_submissions', 'stf_seed', 'stf_comments_', 'stf_draft', 'stf_nickname'];
 
     var state = {
         mode: 'local',
@@ -53,28 +52,6 @@
         var d = new Date(ts);
         var p = function (n) { return String(n).padStart(2, '0'); };
         return p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
-    }
-
-    function collectLocal() {
-        var bag = {};
-        try {
-            for (var i = 0; i < localStorage.length; i++) {
-                var k = localStorage.key(i);
-                if (!k) continue;
-                var hit = false;
-                for (var j = 0; j < STORAGE_PREFIXES.length; j++) {
-                    if (k.indexOf(STORAGE_PREFIXES[j]) === 0) { hit = true; break; }
-                }
-                if (hit) bag[k] = localStorage.getItem(k);
-            }
-        } catch(_) { /* ignore */ }
-        return bag;
-    }
-
-    function hashOf(bag) {
-        var s = '';
-        Object.keys(bag).sort().forEach(function (k) { s += k + '=' + (bag[k] || '') + ';'; });
-        return s.length + ':' + s;
     }
 
     function getPending() {

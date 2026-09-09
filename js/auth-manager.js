@@ -17,7 +17,7 @@
  *     localStorage 令牌自动互通，UI 镜像键彼此独立。详见 docs/STATUS.md。
  */
 
-var AuthManager = (function() {
+window.AuthManager = (function() {
 
     var PROFILE_CACHE_KEY = 'fxre_profile_cache';
 

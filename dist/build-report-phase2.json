@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-09-08T03:47:42.973Z",
+  "generatedAt": "2026-09-09T14:34:05.058Z",
   "stage": "phase-2",
   "bundles": {
     "main": {
       "name": "bundle-main.js",
-      "srcSize": 501075,
-      "dstSize": 236065,
-      "ratio": "47.1",
-      "saved": "52.9",
-      "sri": "sha384-cS+eg0Ws+yyEmNqeqCXcdGZ8Yn0nsHnDchgv5rixsuPIK+XhYIg3RzYwittFM61V",
+      "srcSize": 504424,
+      "dstSize": 236787,
+      "ratio": "46.9",
+      "saved": "53.1",
+      "sri": "sha384-ooW/h0Kc7ttjCdP8q1300fXammaRCj3xCHJQ7xiOJh7t40lP4aEJRJnHTT9pa5zl",
       "mapGenerated": true
     },
     "forum": {
       "name": "bundle-forum.js",
-      "srcSize": 312209,
-      "dstSize": 151175,
-      "ratio": "48.4",
-      "saved": "51.6",
-      "sri": "sha384-x18ug7eIawJcP35rAQwQLcfjvgUVFHYUVaALZg4JVdxJwgeMEqGhvROSyRLkTaIJ",
+      "srcSize": 310958,
+      "dstSize": 151143,
+      "ratio": "48.6",
+      "saved": "51.4",
+      "sri": "sha384-Jxg5Qlmgh39WcsyDu3lBJQnFVCYbKeF+XtEOvN40Zg1VVL8FWZb5GGofKbthf4ht",
       "mapGenerated": true
     }
   },

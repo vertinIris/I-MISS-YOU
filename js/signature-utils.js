@@ -27,10 +27,6 @@
             var nudge = (Math.random() * 2 - 1).toFixed(1);  // -1.0 ~ 1.0
             var existing = el.style.transform;
             if (!existing || existing.indexOf('translate') === -1) {
-                var baseRot = -6;
-                var style = getComputedStyle(el);
-                var match = (style.transform || '').match(/rotate\(([-\d.]+)deg\)/);
-                if (match) baseRot = parseFloat(match[1]);
                 // Keep simple; elements set rotation via CSS classes.
                 el.style.transform = (existing ? existing + ' ' : '') + 'rotate(' + (parseFloat(nudge) + (el.classList.contains('sig-seal--var') ? 7 : 0)) + 'deg)';
             }

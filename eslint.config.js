@@ -98,7 +98,9 @@ export default [
       }
     },
     rules: {
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      /* 回调风格代码大量存在未使用形参/catch 变量，属良性噪音；
+         保留对顶层/块级变量（vars）的检出，真实死代码仍会告警 */
+      'no-unused-vars': ['warn', { args: 'none', caughtErrors: 'none', argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       /* no-console 仅禁用 dir/trace/group（调试残留），log/warn/error 为项目运行时状态输出，有意保留 */
       'no-console': ['warn', { allow: ['log', 'warn', 'error', 'info'] }],
       'no-undef': 'error',

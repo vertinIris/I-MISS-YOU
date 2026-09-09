@@ -550,7 +550,6 @@
         function scheduleNotes(track) {
             if (!musicPlayer.audioCtx || !musicPlayer.isPlaying) return;
             var ctx = musicPlayer.audioCtx;
-            var now = ctx.currentTime;
             var noteIdx = 0;
             var noteInterval = track.type === 'drone' ? 4 : (track.type === 'crystal' ? 1.5 : 1.2);
 
@@ -1494,32 +1493,6 @@
             '</div>';
     }
 
-    function renderCommentsThread(comments, opts) {
-        opts = opts || {};
-        var byId = {};
-        comments.forEach(function(c) {
-            if (c.id) byId[c.id] = c;
-        });
-        var roots = [];
-        var replyMap = {};
-        comments.forEach(function(c) {
-            var pid = c.parentId;
-            if (pid && byId[pid]) {
-                if (!replyMap[pid]) replyMap[pid] = [];
-                replyMap[pid].push(c);
-            } else {
-                roots.push(c);
-            }
-        });
-        var html = '';
-        roots.forEach(function(c) {
-            html += buildCommentItemHtml(c, opts, false);
-            (replyMap[c.id] || []).forEach(function(r) {
-                html += buildCommentItemHtml(r, opts, true);
-            });
-        });
-        return html;
-    }
 
     /* ===== R19: 评论列表增量 DOM 协调（按 data-comment-id keyed reconcile，替代整列表 innerHTML 重绘） ===== */
     function buildCommentNode(c, opts, isReply) {
@@ -1872,7 +1845,6 @@
             if (emptyEl) emptyEl.hidden = true;
 
             listEl.innerHTML = safeHTML(bookmarked.map(function(s) {
-                var meta = bookmarkMap[s.id] || {};
                 var colSelect = '';
                 if (isCloud && bookmarkRows) {
                     colSelect = '<select class="bookmarks-col-select" data-submission-id="' + s.id + '">' +
@@ -4107,9 +4079,6 @@
         });
     }
 
-    function handleManualSync(btn) {
-        return performFullCloudSync(btn);
-    }
 
     /**
      * v9.0: 认证状态初始化

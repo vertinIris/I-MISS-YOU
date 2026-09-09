@@ -1,0 +1,3 @@
+# 构建产物统一 LF 行尾，确保 CI 重建后与已提交版本逐字节一致
+# （避免 Windows autocrlf 把 LF→CRLF 后 git diff 误判 dist 不同步）
+dist/** text eol=lf

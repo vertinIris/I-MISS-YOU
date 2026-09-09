@@ -36,9 +36,11 @@
     }
 
     function fallbackLog(level, msg) {
+        /* eslint-disable no-console -- 动态兜底日志，level 受限为 log/warn/error/info */
         if (typeof console !== 'undefined' && console[level]) {
             console[level]('[AppToast:' + level + ']', msg);
         }
+        /* eslint-enable no-console */
     }
 
     function show(type, message, opts) {

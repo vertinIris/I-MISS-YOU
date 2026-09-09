@@ -1268,7 +1268,7 @@
     <!-- Stage II: 15 个本地 JS 合并为 1 个 bundle（696KB→534KB ↓23.3%）+ SRI 完整性校验 -->
     <!-- forum-supabase.js 内含 waitForSDK 轮询，不依赖 CDN SDK 严格顺序；bundle 可安全先于 SDK 加载 -->
     <script defer src="../dist/bundle-forum.js"
-            integrity="sha384-x18ug7eIawJcP35rAQwQLcfjvgUVFHYUVaALZg4JVdxJwgeMEqGhvROSyRLkTaIJ"
+            integrity="sha384-Jxg5Qlmgh39WcsyDu3lBJQnFVCYbKeF+XtEOvN40Zg1VVL8FWZb5GGofKbthf4ht"
             crossorigin="anonymous"></script>
     <!-- 论坛上云：Supabase 客户端 + 云端适配器（与主站共用同一项目，账号自动打通）
          v10.1: 内联脚本 + onerror 提取为外部文件 forum-supabase-loader.js，配合 CSP 加固 -->
