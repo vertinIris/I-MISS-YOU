@@ -78,12 +78,12 @@
   ],
   "dependencies": {
     "ters": "^0.0.1-concept-pre-alpha.4",
-    "terser": "^5.36.0"
+    "terser": "5.36.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "axe-core": "^4.13.0",
-    "csso": "^5.0.5",
+    "csso": "5.0.5",
     "eslint": "^9.39.5",
     "prettier": "^3.9.6",
     "stylelint": "^16.26.1",
