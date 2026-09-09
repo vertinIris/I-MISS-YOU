@@ -65,7 +65,9 @@ jobs:
       - name: Rebuild and verify dist is in sync with source
         run: |
           node scripts/build-phase2.mjs
-          git diff --exit-code -- ':!dist/build-report-phase2.json'
+          # 排除：build-report（含时间戳）与 *.map（source map 的 mappings 对源码行尾 CRLF/LF 敏感，
+          # 跨 Windows/Linux 环境必然不同，且不影响运行，不纳入同步比对）
+          git diff --exit-code -- ':!dist/build-report-phase2.json' ':!dist/**/*.map'
 
   # Optional job — skipped unless PLAYWRIGHT_PROBE=1 (does not block default checks)
   browser-probe:
