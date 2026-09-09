@@ -53,6 +53,8 @@ jobs:
   dist-sync:
     name: dist 构建产物同步
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -66,15 +68,23 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Rebuild dist
         run: node scripts/build-phase2.mjs
-      # 诊断（仅打印，便于失败复盘）：逐文件比对「已提交」与「本次重建」的字节差异位置
-      - name: Diff diagnostic (print only)
+      # 诊断（临时回传）：把 CI 工作树实际变更（git status）与限定范围 diff 贴到 Issue，便于定位根因
+      - name: Diff diagnostic (temporary, posts to issue)
         if: always()
-        run: node scripts/ci-dist-diff.mjs || true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "=== git status --short ==="
+            git status --short
+            echo "=== scoped diff --stat ==="
+            git diff --stat -- 'dist' 'index.html' 'forum/index.html' ':!dist/build-report-phase2.json' ':!dist/**/*.map'
+            echo "=== ci-dist-diff ==="
+            node scripts/ci-dist-diff.mjs || true
+          } | tee /tmp/diag.txt
+          gh issue create --title "dist-sync diag [$(git rev-parse --short HEAD)]" --body "$(cat /tmp/diag.txt)" || true
       - name: Verify dist is in sync with source
         run: |
-          # 仅比对「构建产物」本身，避免被 npm install 重写的 package-lock.json 等无关文件误伤：
-          #   dist/（排除 build-report 时间戳 与 *.map 跨环境行尾差异）
-          #   构建脚本会回写 SRI 的 index.html / forum/index.html
           git diff --exit-code -- 'dist' 'index.html' 'forum/index.html' \
             ':!dist/build-report-phase2.json' ':!dist/**/*.map'
 
