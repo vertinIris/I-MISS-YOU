@@ -177,14 +177,19 @@
 html {
     scroll-behavior: smooth;
     scroll-padding-top: 80px;
+    /* 确保根元素撑满视口，防止子元素定位/高度计算异常 */
+    height: 100%;
+    overflow-x: hidden;
 }
 
 body {
-    font-family: var(--font-sans);
-    background: var(--bg-primary);
-    color: var(--text-primary);
+    font-family: var(--font-sans, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif);
+    background: var(--bg-primary, #130b11);
+    color: var(--text-primary, #f7f2f4);
     line-height: 1.6;
     overflow-x: hidden;
+    /* 为固定导航栏预留空间，防止内容被遮挡 */
+    padding-top: 64px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition: background 0.5s ease, color 0.3s ease;
@@ -195,6 +200,16 @@ body {
         linear-gradient(180deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 50%, var(--bg-gradient-3) 100%);
     background-attachment: fixed;
     min-height: 100vh;
+}
+
+/* 主内容区域：建立独立的布局上下文，防止子元素溢出或定位异常 */
+#main-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    min-height: calc(100vh - 64px);
+    /* 确保内容不会被固定定位的背景层或导航遮挡 */
+    isolation: isolate;
 }
 
 a {
