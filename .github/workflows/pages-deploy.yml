@@ -1,0 +1,66 @@
+name: Pages Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 允许一个并发部署；取消进行中的旧运行
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    name: build + deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # 用 legacy-peer-deps 绕过 eslint/@eslint/js 主版本 peer 冲突（与 dist 构建无关）
+      - name: Install build deps
+        run: npm install --legacy-peer-deps --no-audit --no-fund
+
+      # 重建 dist（terser/csso minify，自动同步 SRI 哈希到 index.html / forum/index.html）
+      - name: Build dist
+        run: node scripts/build-phase2.mjs
+
+      # 准备上传产物：排除开发/构建辅助文件
+      - name: Prepare Pages artifact
+        run: |
+          mkdir -p /tmp/pages-out
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='node_modules/' \
+            --exclude='.github/' \
+            --exclude='.workbuddy/' \
+            --exclude='docs/' \
+            --exclude='scripts/' \
+            --exclude='*.log' \
+            --exclude='.gitignore' \
+            --exclude='package-lock.json' \
+            --exclude='package.json' \
+            ./ /tmp/pages-out/
+          echo "=== 产物文件清单（前 40 行）==="
+          find /tmp/pages-out -type f | head -40
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: /tmp/pages-out
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
