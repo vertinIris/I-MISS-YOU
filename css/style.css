@@ -1252,7 +1252,9 @@ button {
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 80px 24px 40px;
+    /* 底部预留 120px 作为「调频旋钮」滚动提示的独立子区，
+       避免绝对定位的 .scroll-indicator 与 .hero-actions 按钮垂直重叠 */
+    padding: 80px 24px 120px;
     z-index: 1;
 }
 

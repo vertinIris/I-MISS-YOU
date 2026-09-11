@@ -101,3 +101,30 @@
 | 9 | L-01~L-08 | 打磨项打包 | 轻 |
 
 **落地前置动作（无需改码）**：请用户在 Edge 执行 DevTools → Application → Storage → Clear site data（含 Unregister SW），再访问站点。若页面恢复正常，即确证 S-02/S-03 为当前故障的直接原因。
+
+---
+
+## 六、修复执行记录（2026-09-11，commit `641a6d6`）
+
+> 已实际改码并验证，非只读。CI：Static Checks / Pages Deploy / Accessibility Audit 全 success；本地 runtime-assert 8/8 通过（含新增 bundle 执行探针）。
+
+| 编号 | 状态 | 实际做法 |
+|---|---|---|
+| S-01 | ✅ 已修 | `css/style.css` 增 `@media (scripting:none) .reveal{opacity:1}`（CSS 原生 no-JS 兜底，CSP 安全，不依赖内联脚本）+ `revealFailsafe` 5s 超时自显 animation + `prefers-reduced-motion` 显示；`js/main.js` 的 `initScrollReveal` 包 try-catch，observer 失败批量加 `visible` |
+| S-02 | ✅ 已修 | `sw.js` 静态资源分支 `dist/*` 改 **network-first**（带 `cache:'reload'`），根除旧 bundle 被 SW 长期缓存与 HTML SRI 哈希冲突。CI 注入部署号步骤已加（`pages-deploy.yml` sed → `snowfluff-${GITHUB_SHA:0:8}`），但当前 GitHub Pages 从 `main` 分支直接服务，注入未进分支；**由"sw.js 内容已变化 → 浏览器自动触发 SW 更新 + activate 清理旧缓存"达成目标**，用户正常刷新即更新，无需手动 Clear storage |
+| S-03 | ✅ 随 S-02 | network-first 保证每次拉最新 dist，旧缓存 bundle 永不与新 HTML integrity 冲突 |
+| M-01 | ✅ 已修 | `css/snow-atmosphere.css` `.hero-content` 加 `padding-bottom:96px`；`css/style.css` `.scroll-indicator` 加 `z-index:2` + `@media (max-height:760px){display:none}` |
+| M-02 | ⏭️ 误判跳过 | 核实 `--font-display` 已在 `css/tokens-snow.css:109`（及 tokens-stf.css:124）定义并合并进 `main.min.css`，原报告"未定义"为误判，非真问题 |
+| M-03 | ✅ 已修 | `js/main.js` `init()` 拆核心 UI / 增强·云端两段 `try-catch`，单点异常不级联瘫痪；末尾 `document.documentElement.dataset.fxreReady='1'` 标记 |
+| M-05 | ✅ 已修 | `scripts/runtime-assert.mjs` 增 `data-fxre-ready="1"` 断言（= bundle 完整执行证据），CI 已跑通 |
+| L-01 | ✅ 已修 | `index.html` `sn-title-breath` → `sig-title-breath`（与 `snow-signature.css` 定义一致，字距呼吸动画生效） |
+| L-04 | ✅ 已修 | 删除 CSP meta 中无效的 `frame-ancestors 'none'`（经 meta 交付被浏览器忽略且控制台告警） |
+
+**未执行（择机/记录，非当前故障根因、成本较高）**：
+- L-02 字体子集化（~16MB→<1MB/款，需 fonttools 资源处理）
+- L-03 低性能模式开关（hardwareConcurrency≤4 降层数）
+- L-05 账号面板 input 包 `<form>` + autocomplete
+- L-06 main.js/style.css 按域拆分（纯结构，风险高）
+- L-07 eslint@^9 与 @eslint/js@^10 主版本对齐（之前 CI 报告已立项，仍挂账）
+
+**用户侧验证建议**：Edge 打开 https://vertiniris.github.io/I-MISS-YOU/ 正常刷新即可（SW 内容变化已自动接管）；若仍异常，F12→Application→Clear storage 一次强制解除。

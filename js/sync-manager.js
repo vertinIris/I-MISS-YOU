@@ -410,8 +410,10 @@ window.SyncManager = (function() {
             if (typeof onManualSync === 'function') onManualSync(btn);
         });
 
-        var nav = document.querySelector('nav') || document.body;
-        nav.appendChild(div);
+        // 挂载到 body 级「全局状态区」，而非 nav 内部。
+        // 导航栏 .nav-glass 带 backdrop-filter，会为 fixed 后代建立包含块，
+        // 若挂进 nav，同步指示器的 fixed 会相对导航栏定位而塌到导航区左上角。
+        document.body.appendChild(div);
     }
 
     function setManualSyncHandler(fn) {
