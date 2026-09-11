@@ -29,9 +29,9 @@ jobs:
         with:
           node-version: "22"
 
-      # 用 legacy-peer-deps 绕过 eslint/@eslint/js 主版本 peer 冲突（与 dist 构建无关）
+      # eslint/@eslint/js 已对齐到同版本（9.39.5），无 peer 冲突，裸 npm install 即可
       - name: Install build deps
-        run: npm install --legacy-peer-deps --no-audit --no-fund
+        run: npm install --no-audit --no-fund
 
       # 重建 dist（terser/csso minify，自动同步 SRI 哈希到 index.html / forum/index.html）
       - name: Build dist

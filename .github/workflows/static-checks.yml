@@ -59,12 +59,10 @@ jobs:
         with:
           node-version: "22"
       # 安装构建依赖（仅需 terser / csso）。
-      # 注意：仓库 package.json 中 eslint 与 @eslint/js 主版本存在 peer 冲突（eslint@9 需要
-      # @eslint/js@9，但当前 lock 解析为 @eslint/js@10），裸 npm install 会 ERESOLVE 失败并拖垮本 job。
-      # 该冲突与「dist 构建」无关，用 --legacy-peer-deps 绕过即可（不影响 terser/csso 安装与产物）。
-      # 后续可单独立项对齐 eslint 工具链版本。
+      # eslint 工具链已对齐：eslint@9.39.5 与 @eslint/js@9.39.5 同版本，无 peer 冲突，
+      # 裸 npm install 即可（2026-09-11 修复：移除 ters 废依赖 + 对齐 @eslint/js 到 v9）。
       - name: Install build deps
-        run: npm install --legacy-peer-deps --no-audit --no-fund
+        run: npm install --no-audit --no-fund
       - name: Rebuild dist
         run: node scripts/build-phase2.mjs
       # 诊断（仅打印，便于失败复盘）：逐文件比对「已提交」与「本次重建」的字节差异位置
