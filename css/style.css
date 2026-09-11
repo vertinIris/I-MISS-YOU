@@ -1776,6 +1776,14 @@ button {
     align-items: center;
     gap: 8px;
     animation: scrollBounce 2s ease-in-out infinite;
+    z-index: 2;
+}
+
+/* M-01：矮屏（笔记本）下隐藏滚动旋钮，避免与 hero 按钮重叠 */
+@media (max-height: 760px) {
+    .scroll-indicator {
+        display: none;
+    }
 }
 
 @keyframes scrollBounce {
@@ -3494,6 +3502,28 @@ button {
 .reveal.visible {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* S-01 降级兜底：JS 完全未执行（SRI/SW 拦截、脚本异常）时内容立即可见，避免全站隐身 */
+@media (scripting: none) {
+    .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+/* 极端兜底：JS 已加载但 IntersectionObserver 未触发（异常/被跳过），5s 后强制显示 */
+.reveal {
+    animation: revealFailsafe 1ms 5s forwards;
+}
+@keyframes revealFailsafe {
+    to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+    }
 }
 
 /* ============ Responsive Design ============ */

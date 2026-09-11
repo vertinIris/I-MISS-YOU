@@ -121,9 +121,26 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 静态资源：缓存优先（校验非空），未命中则网络，网络失败则任意缓存兜底（含旧缓存，避免裸奔）
+  // 静态资源：区分 dist 构建产物与其余资源
+  //  - dist/* 带 SRI 强校验，必须 network-first：绝不允许 SW 长期缓存旧 bundle 与 HTML 的
+  //    integrity 哈希冲突（否则浏览器静默拒绝执行，全站 JS 瘫痪）。失败再回退缓存兜底。
+  //  - 其余（图片/字体/css 等）cache-first 增强离线体验，校验非空防截断。
   event.respondWith(
     (async () => {
+      const url = new URL(request.url);
+      if (url.pathname.startsWith('/dist/')) {
+        try {
+          const res = await fetch(request, { cache: 'reload' });
+          if (res && (res.ok || res.type === 'opaque')) {
+            const copy = res.clone();
+            caches.open(RUNTIME_CACHE).then((c) => c.put(request, copy)).catch(() => {});
+            return res;
+          }
+        } catch (e) { /* 回退缓存 */ }
+        const cached = await safeCacheMatch(request);
+        if (cached) return cached;
+        return new Response('', { status: 504, statusText: 'offline' });
+      }
       const cached = await safeCacheMatch(request);
       if (cached) return cached;
       try {

@@ -37,19 +37,26 @@
     }
 
     function initScrollReveal() {
-        var reveals = document.querySelectorAll('.reveal');
-        if (!('IntersectionObserver' in window)) { for (var i = 0; i < reveals.length; i++) reveals[i].classList.add('visible'); return; }
-        var obs = new IntersectionObserver(function(entries) {
-            for (var j = 0; j < entries.length; j++) {
-                if (entries[j].isIntersecting) {
-                    var siblings = Array.prototype.filter.call(entries[j].target.parentElement.children, function(c) { return c.classList.contains('reveal'); });
-                    entries[j].target.style.transitionDelay = (siblings.indexOf(entries[j].target) * 0.1) + 's';
-                    entries[j].target.classList.add('visible');
-                    obs.unobserve(entries[j].target);
+        try {
+            var reveals = document.querySelectorAll('.reveal');
+            if (!('IntersectionObserver' in window)) { for (var i = 0; i < reveals.length; i++) reveals[i].classList.add('visible'); return; }
+            var obs = new IntersectionObserver(function(entries) {
+                for (var j = 0; j < entries.length; j++) {
+                    if (entries[j].isIntersecting) {
+                        var siblings = Array.prototype.filter.call(entries[j].target.parentElement.children, function(c) { return c.classList.contains('reveal'); });
+                        entries[j].target.style.transitionDelay = (siblings.indexOf(entries[j].target) * 0.1) + 's';
+                        entries[j].target.classList.add('visible');
+                        obs.unobserve(entries[j].target);
+                    }
                 }
-            }
-        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-        for (var k = 0; k < reveals.length; k++) obs.observe(reveals[k]);
+            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+            for (var k = 0; k < reveals.length; k++) obs.observe(reveals[k]);
+        } catch (err) {
+            // observer 不可用/异常：批量显示，保证内容可见（S-01 兜底）
+            var all = document.querySelectorAll('.reveal');
+            for (var m = 0; m < all.length; m++) all[m].classList.add('visible');
+            if (window.console) console.warn('[reveal] fallback visible:', err && err.message);
+        }
     }
 
     function formatNumber(num) { return num >= 10000 ? (num / 10000).toFixed(1) + 'w' : num.toLocaleString('zh-CN'); }
@@ -4558,6 +4565,8 @@
     }
 
     function init() {
+        /* M-03：分组容错——核心 UI 渲染与增强/云端同步隔离，单点异常不级联瘫痪 */
+        try {
         if (typeof SecurityShield !== 'undefined') SecurityShield.init();
         initTheme();
         initMobileMenu();
@@ -4583,6 +4592,10 @@
         loadUserProfile();
         initSubmission();
         initCommunity();
+        } catch (e) {
+            if (window.console) console.error('[init] 核心 UI 阶段异常已隔离，后续渲染可能不完整:', e && e.message);
+        }
+        try {
         initBookmarksPanel();
         initPublicCollectionPanel();
         if (typeof AdminPanel !== 'undefined') AdminPanel.init();
@@ -4684,6 +4697,11 @@
                 refreshAllCommentsFromCloud();
             }
         });
+        } catch (e) {
+            if (window.console) console.warn('[init] 增强/云端阶段异常已隔离（核心展示不受影响）:', e && e.message);
+        }
+        /* 标记 bundle 完整执行（runtime-assert M-05 探针用） */
+        document.documentElement.setAttribute('data-fxre-ready', '1');
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

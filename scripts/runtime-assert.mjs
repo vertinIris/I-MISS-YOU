@@ -103,6 +103,7 @@ const CHECKS = [
             { key: 'timeline-post', re: /class="post-card/g, min: 3, desc: '时间线内容已渲染' },
             { key: 'version', re: /v11\.\d+\.\d+/g, min: 1, desc: '页脚版本号存在' },
             { key: 'music-track', re: /class="[^"]*track/g, min: 1, desc: '曲目列表已渲染' },
+            { key: 'bundle-executed', re: /data-fxre-ready="1"/g, min: 1, desc: '主站 bundle 完整执行（init 跑完，SRI/SW 未拦截）' },
         ],
         forbids: [
             { key: 'orphan-tape', re: /class="sig-tape-corner"/g, maxRatioTo: 'community-card', desc: '无孤立装饰节点（投稿卡未渲染的征兆）' },

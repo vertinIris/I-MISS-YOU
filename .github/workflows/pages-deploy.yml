@@ -37,6 +37,13 @@ jobs:
       - name: Build dist
         run: node scripts/build-phase2.mjs
 
+      # S-02：注入部署号到 SW，强制每次部署触发 SW 更新 + 旧缓存清理（根除陈旧缓存滞留）
+      - name: Inject deploy version into Service Worker
+        run: |
+          sed -i "s/const CACHE_VERSION = '[^']*'/const CACHE_VERSION = 'snowfluff-${GITHUB_SHA:0:8}'/" sw.js
+          echo "SW CACHE_VERSION -> snowfluff-${GITHUB_SHA:0:8}"
+          grep "CACHE_VERSION =" sw.js
+
       # 准备上传产物：排除开发/构建辅助文件
       - name: Prepare Pages artifact
         run: |
