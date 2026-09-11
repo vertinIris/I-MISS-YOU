@@ -10,7 +10,7 @@
 //   4) 启用 navigationPreload，文档导航更快。
 //   5) 静态资源命中缓存时校验体积：content-length 为 0 视为损坏，回退网络，
 //      绝不让空/截断的 CSS/JS 误导“渲染成功”。
-const CACHE_VERSION = 'snowfluff-v11.5.1';
+const CACHE_VERSION = 'snowfluff-v11.5.2-layout-fix';
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
