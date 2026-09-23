@@ -41,6 +41,8 @@
     <link rel="stylesheet" href="../dist/css/forum.min.css">
       <!-- Edge/legacy Chromium 兼容层：必须在 min.css 之后，@supports 能力检测自动启用 -->
       <link rel="stylesheet" href="../css/edge-compat.css">
+      <!-- 重设计覆盖样式：左固定筛选栏 / 夜电台尾页 / 音乐播放器（在既有样式之后加载） -->
+      <link rel="stylesheet" href="../css/forum-redesign.css">
     <!-- P0 UX: Notyf Toast 通知样式（自托管 vendor，SRI 保护） -->
     <link rel="stylesheet" href="../vendor/notyf/notyf.min.css"
           integrity="sha384-snpJ3knpH6avB6cP1vPkNdmRzCYaCpom/3TNOyvo189BiogXYXQfXkyYpZ2/xADs"
@@ -239,18 +241,12 @@
             <div class="section-header reveal">
                 <span class="section-label">DISCUSS · FEED</span>
                 <h2 class="section-title">讨论区</h2>
-                <p class="section-desc">云端帖流 · 筛选 / 置顶 / 帖子详情 / 一层楼中楼 · 世界观卡与角色档案不进本区种子</p>
+                <p class="section-desc">云端帖流 · 筛选 / 置顶 / 帖子详情 / 楼中楼</p>
             </div>
 
             <div class="stf-discuss-layout">
-                <div class="stf-discuss-main">
-
-                    <div class="stf-feed-tabs" role="tablist" aria-label="讨论区筛选">
-                        <button type="button" class="stf-feed-tab active" data-sort="new" role="tab" aria-selected="true">全部</button>
-                        <button type="button" class="stf-feed-tab" data-sort="hot" role="tab" aria-selected="false">热门</button>
-                        <button type="button" class="stf-feed-tab" data-sort="essence" role="tab" aria-selected="false">精华</button>
-                    </div>
-
+                <aside class="stf-discuss-tools" aria-label="筛选与发布">
+                    <p class="stf-tools-legend">筛选 · 发布</p>
                     <div class="stf-toolbar">
                         <div class="stf-filters" role="group" aria-label="内容类型">
                             <button type="button" class="stf-filter-btn active" data-filter="all">全部类型</button>
@@ -266,6 +262,15 @@
                             <button type="button" class="stf-search-clear" id="stf-search-clear" aria-label="清空搜索" hidden>×</button>
                         </div>
                         <button type="button" class="btn-ghost magnetic" data-action="open-submit" title="打开发帖"><span>发帖</span></button>
+                    </div>
+                </aside>
+
+                <div class="stf-discuss-main">
+
+                    <div class="stf-feed-tabs" role="tablist" aria-label="讨论区筛选">
+                        <button type="button" class="stf-feed-tab active" data-sort="new" role="tab" aria-selected="true">全部</button>
+                        <button type="button" class="stf-feed-tab" data-sort="hot" role="tab" aria-selected="false">热门</button>
+                        <button type="button" class="stf-feed-tab" data-sort="essence" role="tab" aria-selected="false">精华</button>
                     </div>
 
                     <div class="stf-sync-bar" id="stf-sync-bar" aria-label="数据同步状态">
@@ -978,65 +983,129 @@
     </main>
 
     <!-- ============ Footer: Ft1 Archive-Card + Dewey-Decimal-Code ============ -->
-    <footer class="stf-footer">
-        <div class="stf-footer__card sig-metal-edge">
-            <!-- T1 装订孔（左侧 3 孔） -->
-            <div class="sig-binding sig-binding--3">
-                <span class="sig-binding__hole"></span>
-                <span class="sig-binding__hole"></span>
-                <span class="sig-binding__hole"></span>
-            </div>
-            <!-- T5 杜威十进制编号 -->
-            <div class="stf-footer__dewey">
-                <span class="sig-dewey">STF · 000.001</span>
-            </div>
-            <div class="stf-footer__body">
-                <h4 class="stf-footer__title">星炬学院 · 鸣潮同人档案馆</h4>
-                <div class="stf-footer__version">v11.5.1</div>
-                <div class="stf-footer__classify">
-                    <span class="stf-footer__tag">分类 · 共鸣者研究</span>
-                    <span class="stf-footer__tag">索拉里斯地理</span>
-                    <span class="stf-footer__tag">隧者适格 / 档案管理</span>
+    <!-- 音乐空间：移植主站夜电台播放器（大版本更新前的尾页元素） -->
+    <section class="section" id="music">
+        <div class="section-header reveal">
+            <span class="section-label">MUSIC</span>
+            <h2 class="section-title">飞行雪绒的音乐空间</h2>
+            <p class="section-desc">原创环境音 · 用旋律编织星炬学院的夜晚</p>
+        </div>
+        <div class="music-module glass reveal">
+            <div class="music-player">
+                <div class="music-visualizer" id="music-visualizer">
+                    <canvas id="viz-canvas"></canvas>
                 </div>
-                <!-- 管理员签名 SVG + T12 轻微抖动 -->
-                <div class="stf-footer__signature sig-sign-wobble" aria-hidden="true">
-                    <svg viewBox="0 0 160 28" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 22 Q 10 8 18 16 T 32 18 Q 38 8 46 16 L 54 22"/>
-                        <path d="M62 24 L 68 10 Q 72 6 76 12 L 82 22 Q 86 14 92 20 L 98 8"/>
-                        <path d="M108 20 Q 116 6 124 14 T 140 16 L 152 22"/>
-                    </svg>
-                    <span class="stf-footer__signer">—— 星炬学院档案馆 · 管理员手签</span>
+                <div class="tape-deck" id="tape-deck" aria-hidden="true">
+                    <div class="tape-reel tape-reel--l"></div>
+                    <div class="tape-reel tape-reel--r"></div>
                 </div>
+                <div class="music-player-info">
+                    <div class="music-now-playing">
+                        <div class="music-disc" id="music-disc">
+                            <svg viewBox="0 0 60 60" fill="none">
+                                <circle cx="30" cy="30" r="28" stroke="currentColor" stroke-width="0.5" opacity="0.5"/>
+                                <circle cx="30" cy="30" r="20" stroke="currentColor" stroke-width="0.3" opacity="0.3"/>
+                                <circle cx="30" cy="30" r="12" stroke="currentColor" stroke-width="0.3" opacity="0.3"/>
+                                <circle cx="30" cy="30" r="4" fill="currentColor" opacity="0.6"/>
+                            </svg>
+                        </div>
+                        <div class="music-track-info">
+                            <p class="music-track-name" id="track-name">选择一首曲目</p>
+                            <p class="music-track-meta" id="track-meta">飞行雪绒 · 原创</p>
+                        </div>
+                    </div>
+                    <div class="music-controls">
+                        <button class="music-btn" id="prev-track" aria-label="上一首">
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+                        </button>
+                        <button class="music-btn music-btn-play" id="play-btn" aria-label="播放">
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" class="play-icon"><path d="M8 5v14l11-7z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" class="pause-icon"><path d="M6 4h4v16H6zm8 0h4v16h-4z"/></svg>
+                        </button>
+                        <button class="music-btn" id="next-track" aria-label="下一首">
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+                        </button>
+                    </div>
+                    <div class="music-progress">
+                        <span class="music-time" id="current-time">0:00</span>
+                        <div class="music-progress-bar" id="progress-bar">
+                            <div class="music-progress-fill" id="progress-fill"></div>
+                        </div>
+                        <span class="music-time" id="total-time">3:00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="music-disclaimer">
+                <p>环境音为站内原创氛围片段，仅供同好交流，非商业用途。</p>
             </div>
         </div>
-        <div class="stf-footer__links">
-            <div class="stf-footer__link-group">
-                <h5>档案索引</h5>
-                <a href="#stf-community">讨论区</a>
-                <a href="#characters-archive">角色档案</a>
-                <a href="#worldview">世界观考据</a>
+    </section>
+
+    <!-- 尾页：恢复为大版本更新前的夜电台样式（频谱 EQ · FREQ 90.72 MHz · ON AIR） -->
+    <footer class="sn-footer">
+        <div class="sn-footer__spectrum" aria-hidden="true">
+            <div class="sn-footer__eq">
+                <span style="--eqh:30%"></span><span style="--eqh:55%"></span><span style="--eqh:42%"></span>
+                <span style="--eqh:70%"></span><span style="--eqh:48%"></span><span style="--eqh:28%"></span>
+                <span style="--eqh:82%"></span><span style="--eqh:36%"></span><span style="--eqh:58%"></span>
+                <span style="--eqh:44%"></span><span style="--eqh:66%"></span><span style="--eqh:32%"></span>
+                <span style="--eqh:74%"></span><span style="--eqh:52%"></span><span style="--eqh:40%"></span>
+                <span style="--eqh:88%"></span><span style="--eqh:38%"></span><span style="--eqh:60%"></span>
+                <span style="--eqh:46%"></span><span style="--eqh:78%"></span><span style="--eqh:34%"></span>
+                <span style="--eqh:68%"></span><span style="--eqh:50%"></span><span style="--eqh:26%"></span>
+                <span style="--eqh:72%"></span><span style="--eqh:44%"></span><span style="--eqh:56%"></span>
+                <span style="--eqh:80%"></span><span style="--eqh:36%"></span><span style="--eqh:62%"></span>
+                <span style="--eqh:48%"></span>
             </div>
-            <div class="stf-footer__link-group">
-                <h5>行政</h5>
-                <a href="#top">返回大厅 ↑</a>
-                <a href="../index.html">返回飞行雪绒</a>
-            </div>
-            <div class="stf-footer__legal">
-                <span class="stf-footer__seal sig-seal sig-seal--var" aria-hidden="true">
-                    <svg viewBox="0 0 80 80">
-                        <polygon points="40,4 68,16 76,40 68,64 40,76 12,64 4,40 12,16"
-                                 fill="none" stroke="currentColor" stroke-width="1.3"/>
-                        <text x="40" y="36" text-anchor="middle" font-family="Noto Serif SC" font-size="10" font-weight="700" fill="currentColor">星炬</text>
-                        <text x="40" y="50" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="currentColor" opacity="0.7">ARCHIVE</text>
-                    </svg>
+            <div class="sn-footer__freq-row">
+                <span class="sn-footer__freq-label">FREQ · 90.72 MHz</span>
+                <span class="sn-footer__onair">
+                    <span class="sn-footer__dot"></span>
+                    ON AIR · 飞行雪绒夜电台
                 </span>
-                <button type="button" class="stf-hidden-trigger" id="stf-hidden-trigger" aria-label="隐藏信号" style="background:none;border:none;padding:0;cursor:pointer;opacity:0.55;">
+                <span class="sn-footer__time" id="sn-footer-time">--:--</span>
+            </div>
+        </div>
+        <div class="sn-footer__credits">
+            <div class="sn-footer__col">
+                <div class="sn-footer__brand">
+                    <svg viewBox="0 0 40 40" aria-hidden="true">
+                        <g stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.9">
+                            <line x1="20" y1="4" x2="20" y2="36"/>
+                            <line x1="4" y1="12" x2="36" y2="28"/>
+                            <line x1="4" y1="28" x2="36" y2="12"/>
+                        </g>
+                        <circle cx="20" cy="20" r="3" fill="currentColor" opacity="0.85"/>
+                    </svg>
+                    <span>飞行雪绒</span>
+                </div>
+                <p class="sn-footer__tag">爱弥斯的夜电台。星炬学院的日常日志与听众来信。</p>
+            </div>
+            <div class="sn-footer__col sn-footer__col--links">
+                <h3 class="sn-footer__col-title">直达频段</h3>
+                <ul>
+                    <li><a href="#stf-community">讨论区</a></li>
+                    <li><a href="#characters-archive">角色档案</a></li>
+                    <li><a href="#worldview">世界观考据</a></li>
+                    <li><a href="#music">音乐空间</a></li>
+                </ul>
+            </div>
+            <div class="sn-footer__col sn-footer__col--links">
+                <h3 class="sn-footer__col-title">跨站入口</h3>
+                <ul>
+                    <li><a href="../index.html">返回飞行雪绒 →</a></li>
+                    <li><a href="../characters/aimisi/index.html">角色档案 · 爱弥斯</a></li>
+                </ul>
+            </div>
+            <div class="sn-footer__col sn-footer__col--meta">
+                <div class="sn-footer__postmark">SENT · 9072</div>
+                <p>鸣潮同人创作项目 · 非官方非商业</p>
+                <p class="sn-footer__copy">© 飞行雪绒 · <span id="stf-footer-year">2026</span> · 以思念调频 · v11.5.1</p>
+                <button type="button" class="stf-hidden-trigger" id="stf-hidden-trigger" aria-label="隐藏信号" style="background:none;border:none;padding:0;margin-top:8px;cursor:pointer;opacity:0.55;">
                     <svg class="stf-hidden-snowflake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" style="width:22px;height:22px;">
                         <path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/>
                     </svg>
                 </button>
-                <p>© 星炬学院 · 鸣潮同人档案馆 · <span id="stf-footer-year">2026</span></p>
-                <p class="stf-footer__hint">鸣潮 © 库洛游戏。本项目为非官方非商业同人创作站点。</p>
             </div>
         </div>
     </footer>
@@ -1276,6 +1345,7 @@
     <!-- v10.1: web-vitals RUM 采集 — 匿名采集 LCP/INP/CLS/TTFB/FCP，写入 Supabase performance_metrics -->
     <script type="module" src="../js/web-vitals-collector.js"></script>
     <!-- donation.js 已合并入 bundle-forum.js（Stage II） -->
+    <script src="js/forum-music.js" defer></script>
     <script src="../js/sw-register.js" defer></script>
 </body>
 </html>

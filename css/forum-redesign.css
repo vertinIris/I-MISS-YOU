@@ -1,0 +1,416 @@
+/* ============================================================
+   飞行雪绒 · 星炬学院论坛 — 重设计覆盖样式
+   说明：本文件在 forum.min.css / edge-compat.css 之后加载，
+   仅覆盖本次重设计涉及的局部（左固定筛选栏 / 夜电台页脚 / 音乐播放器），
+   不改变既有设计系统与其它模块。
+   设计基线：沿用论坛原有 Midnight-Rose 调色板与玻璃拟态，
+   仅把“页脚”恢复为大版本更新前的夜电台尾页样式，并把操作按钮收为左固定栏。
+   ============================================================ */
+
+/* ---------- 0. 局部变量（不污染全局 token） ---------- */
+.stf-discuss-tools,
+.sn-footer,
+.music-module {
+    --fr-glass: color-mix(in srgb, var(--color-white) 10%, transparent);
+    --fr-glass-soft: color-mix(in srgb, var(--color-white) 5%, transparent);
+    --fr-line: color-mix(in srgb, var(--color-white) 12%, transparent);
+    --fr-rose: var(--color-rose, #F4729B);
+    --fr-blue: var(--color-blue-light, #A8D8FF);
+    --fr-gold: var(--color-gold-warm, #E8A23D);
+    --fr-ink: var(--color-white, #F0F4FF);
+    --fr-ink-soft: color-mix(in srgb, var(--color-snow, #C9D4E8) 78%, transparent);
+    --fr-ink-dim: color-mix(in srgb, var(--color-snow, #C9D4E8) 52%, transparent);
+}
+
+/* ============================================================
+   1. 讨论区布局：左固定筛选栏 + 主内容 + 右侧栏
+   ============================================================ */
+.stf-discuss-layout {
+    /* 默认（<1201px）：单列，左栏置于顶部、非固定 */
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.stf-discuss-tools {
+    position: static;
+    align-self: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    order: -1;
+}
+
+/* ≥1201px：三栏，左栏 sticky 跟随滚动 */
+@media (min-width: 1201px) {
+    .stf-discuss-layout {
+        grid-template-columns: 224px minmax(0, 1fr) 280px;
+    }
+    .stf-discuss-tools {
+        position: sticky;
+        top: 88px;            /* 与右侧 .stf-discuss-aside 对齐 */
+        align-self: start;
+        order: 0;
+    }
+}
+
+/* 左栏内的工具栏改为纵向堆叠 */
+.stf-discuss-tools .stf-toolbar {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 14px;
+    flex-wrap: nowrap;
+    margin-top: 0;
+}
+.stf-discuss-tools .stf-filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+}
+.stf-discuss-tools .stf-filter-btn {
+    width: 100%;
+    text-align: left;
+    justify-content: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.stf-discuss-tools .stf-filter-btn::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: .35;
+    flex: none;
+}
+.stf-discuss-tools .stf-filter-btn.active::before {
+    opacity: 1;
+    background: var(--fr-blue);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--fr-blue) 70%, transparent);
+}
+.stf-discuss-tools .stf-search {
+    width: 100%;
+    min-width: 0;
+}
+.stf-discuss-tools .btn-ghost[data-action="open-submit"] {
+    width: 100%;
+    justify-content: center;
+}
+
+/* 左栏小标题（非冗余信息，帮助定位） */
+.stf-discuss-tools .stf-tools-legend {
+    font-size: 11px;
+    letter-spacing: .14em;
+    color: var(--fr-ink-dim);
+    text-transform: uppercase;
+    padding: 0 2px;
+}
+
+/* ============================================================
+   2. 夜电台尾页（大版本更新前的 sn-footer 样式）
+   ============================================================ */
+.sn-footer {
+    margin-top: clamp(3rem, 8vw, 6rem);
+    border-top: 1px solid var(--fr-line);
+    background:
+        radial-gradient(120% 80% at 50% -20%, color-mix(in srgb, var(--fr-rose) 8%, transparent), transparent 60%),
+        color-mix(in srgb, var(--color-white) 2%, transparent);
+    color: var(--fr-ink-soft);
+    font-size: 14px;
+}
+
+.sn-footer__spectrum {
+    padding: 18px 0 14px;
+    border-bottom: 1px solid var(--fr-line);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--fr-blue) 5%, transparent), transparent);
+    overflow: hidden;
+}
+
+.sn-footer__eq {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 3px;
+    height: 56px;
+    padding: 0 16px;
+}
+.sn-footer__eq span {
+    display: block;
+    width: 3px;
+    height: var(--eqh, 40%);
+    border-radius: 2px 2px 0 0;
+    background: linear-gradient(180deg, var(--fr-blue), color-mix(in srgb, var(--fr-rose) 80%, var(--fr-blue)));
+    transform-origin: bottom;
+    animation: fr-eq 1.1s ease-in-out infinite alternate;
+    opacity: .85;
+}
+.sn-footer__eq span:nth-child(3n)   { animation-delay: .15s; }
+.sn-footer__eq span:nth-child(3n+1) { animation-delay: .35s; }
+.sn-footer__eq span:nth-child(2n)   { animation-delay: .55s; }
+
+@keyframes fr-eq {
+    from { transform: scaleY(.45); }
+    to   { transform: scaleY(1); }
+}
+
+.sn-footer__freq-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 20px 0;
+    flex-wrap: wrap;
+}
+.sn-footer__freq-label {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: .08em;
+    color: var(--fr-ink-soft);
+}
+.sn-footer__onair {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    letter-spacing: .12em;
+    color: var(--fr-rose);
+}
+.sn-footer__dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--fr-rose);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--fr-rose) 60%, transparent);
+    animation: fr-onair 1.8s ease-out infinite;
+}
+@keyframes fr-onair {
+    0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--fr-rose) 55%, transparent); }
+    70%  { box-shadow: 0 0 0 7px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+}
+.sn-footer__time {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--fr-ink-dim);
+    font-variant-numeric: tabular-nums;
+}
+
+.sn-footer__credits {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+    gap: 28px;
+    padding: 34px 20px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+.sn-footer__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--fr-ink);
+    font-family: "Noto Serif SC", serif;
+    font-weight: 700;
+    font-size: 17px;
+}
+.sn-footer__brand svg { width: 26px; height: 26px; color: var(--fr-blue); }
+.sn-footer__tag {
+    margin: 12px 0 0;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--fr-ink-dim);
+    max-width: 32ch;
+}
+.sn-footer__col-title {
+    margin: 0 0 12px;
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--fr-ink-dim);
+    font-weight: 600;
+}
+.sn-footer__col ul { list-style: none; margin: 0; padding: 0; }
+.sn-footer__col li { margin: 0 0 9px; }
+.sn-footer__col a {
+    color: var(--fr-ink-soft);
+    text-decoration: none;
+    font-size: 13px;
+    transition: color .2s, padding-left .2s;
+}
+.sn-footer__col a:hover { color: var(--fr-blue); padding-left: 4px; }
+
+.sn-footer__col--meta p {
+    margin: 0 0 8px;
+    font-size: 12px;
+    color: var(--fr-ink-dim);
+    line-height: 1.6;
+}
+.sn-footer__copy {
+    color: var(--fr-ink-soft) !important;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px !important;
+    letter-spacing: .03em;
+}
+/* 邮戳小装饰（沿用 S9 偏移） */
+.sn-footer__postmark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    padding: 4px 10px;
+    border: 1px dashed color-mix(in srgb, var(--fr-gold) 55%, transparent);
+    border-radius: 6px;
+    color: var(--fr-gold);
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: .12em;
+    transform: rotate(-2deg);
+}
+
+@media (max-width: 760px) {
+    .sn-footer__credits { grid-template-columns: 1fr 1fr; gap: 22px; }
+}
+@media (max-width: 460px) {
+    .sn-footer__credits { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   3. 音乐播放器（移植主站夜电台播放器，使用论坛既有 token）
+   ============================================================ */
+#music { scroll-margin-top: 88px; }
+
+.music-module.glass {
+    border-radius: 22px;
+    overflow: hidden;
+}
+
+.music-player {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    background: linear-gradient(135deg,
+        color-mix(in srgb, var(--fr-rose) 7%, transparent) 0%,
+        color-mix(in srgb, var(--fr-blue) 7%, transparent) 100%);
+    border-bottom: 1px solid var(--fr-line);
+}
+
+.music-visualizer {
+    width: 100%;
+    height: 100px;
+    margin-bottom: 18px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: color-mix(in srgb, #000 18%, transparent);
+}
+#viz-canvas { width: 100%; height: 100%; display: block; }
+
+.tape-deck {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    width: 60px;
+    margin: 0 auto 16px;
+}
+.tape-reel {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--fr-gold);
+    position: relative;
+    animation: fr-reel 4s linear infinite;
+    animation-play-state: paused;
+}
+.tape-deck.playing .tape-reel { animation-play-state: running; }
+.tape-reel::before {
+    content: "";
+    display: block;
+    width: 6px; height: 6px;
+    background: var(--fr-gold);
+    border-radius: 50%;
+    margin: 7px auto;
+}
+@keyframes fr-reel { to { transform: rotate(360deg); } }
+
+.music-player-info { display: flex; flex-direction: column; gap: 16px; }
+
+.music-now-playing { display: flex; align-items: center; gap: 16px; }
+.music-disc {
+    width: 56px; height: 56px;
+    color: var(--fr-rose);
+    flex: none;
+}
+.music-disc.playing svg { animation: fr-spin 4s linear infinite; }
+@keyframes fr-spin { to { transform: rotate(360deg); } }
+.music-track-info { flex: 1; min-width: 0; }
+.music-track-name {
+    font-size: 15px; font-weight: 600; color: var(--fr-ink);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.music-track-meta { font-size: 12px; color: var(--fr-ink-dim); margin-top: 3px; }
+
+.music-controls { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.music-btn {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--fr-glass);
+    border: 1px solid var(--fr-line);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--fr-ink-soft);
+    cursor: pointer;
+    transition: transform .2s, color .2s, border-color .2s, box-shadow .2s, background .2s;
+}
+.music-btn:hover {
+    background: var(--fr-glass);
+    color: var(--fr-blue);
+    border-color: color-mix(in srgb, var(--fr-blue) 35%, transparent);
+    transform: scale(1.08);
+}
+.music-btn:active { transform: scale(.92); }
+.music-btn-play {
+    width: 54px; height: 54px;
+    background: linear-gradient(135deg, var(--fr-rose) 0%, var(--fr-blue) 60%, var(--fr-blue) 100%);
+    background-size: 200% 200%;
+    color: #fff; border: none;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--fr-rose) 32%, transparent);
+}
+.music-btn-play:hover { color: #fff; transform: scale(1.1); }
+.music-btn-play .pause-icon { display: none; }
+.music-btn-play.is-playing .play-icon { display: none; }
+.music-btn-play.is-playing .pause-icon { display: block; }
+
+.music-progress { display: flex; align-items: center; gap: 12px; }
+.music-time {
+    font-size: 12px; color: var(--fr-ink-dim);
+    font-variant-numeric: tabular-nums; min-width: 36px; text-align: center;
+}
+.music-progress-bar {
+    flex: 1; height: 4px;
+    background: var(--fr-line);
+    border-radius: 2px; overflow: hidden; cursor: pointer; position: relative;
+}
+.music-progress-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--fr-rose), var(--fr-blue));
+    border-radius: 2px;
+    transition: width .25s linear;
+}
+
+.music-disclaimer {
+    padding: 14px 24px;
+    border-top: 1px solid var(--fr-line);
+    background: color-mix(in srgb, var(--color-white) 2%, transparent);
+}
+.music-disclaimer p {
+    margin: 0;
+    font-size: 12px; color: var(--fr-ink-dim); line-height: 1.6;
+}
+
+/* ============================================================
+   4. 降级：尊重 prefers-reduced-motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    .sn-footer__eq span,
+    .sn-footer__dot,
+    .tape-reel,
+    .music-disc.playing svg {
+        animation: none !important;
+    }
+    .music-progress-fill { transition: none; }
+}
