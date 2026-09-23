@@ -1,0 +1,381 @@
+/* ============================================================
+   飞行雪绒 · 站点覆盖层 (site-v2)
+   反 AI 味编辑式 × 夜色纸感
+   加载于 main.min.css + refined.css 之后，仅覆盖视觉皮，
+   不改动任何 JS 挂载点（reveal / hidden / magnetic 等由 bundle 驱动）。
+   ============================================================ */
+
+/* ---------- 1. 屏蔽 AI-slop 背景层（DOM 保留，防 JS 报错） ---------- */
+.star-field, .pink-galaxy, .galaxy-river, .ult-energy-core,
+.hex-shield, .data-rain, .shooting-star-container, .css-snow-container,
+#particle-canvas {
+  display: none !important;
+}
+
+/* ---------- 2. 基础排版（令牌来自 refined.css） ---------- */
+body {
+  background: var(--paper) !important;
+  color: var(--ink-2) !important;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.12;
+}
+p { color: var(--ink-2); }
+a { color: inherit; text-decoration: none; }
+
+/* 静态夜色纸感（替代星云/粒子动画） */
+body::before {
+  content: "";
+  position: fixed; inset: 0; z-index: -2; pointer-events: none;
+  background:
+    radial-gradient(58% 48% at 80% 8%, var(--rose-dim), transparent 70%),
+    radial-gradient(46% 46% at 8% 92%, var(--ice-dim), transparent 70%);
+}
+body::after {
+  content: "";
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  opacity: 0.035; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- 3. 液态玻璃（克制，去霓虹） ---------- */
+.glass, .profile-card.glass, .music-module.glass,
+.easter-egg-card.glass, .today-pick.glass {
+  background: var(--surface) !important;
+  -webkit-backdrop-filter: var(--blur);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--surface-line) !important;
+  box-shadow: none !important;
+  border-radius: var(--r-lg) !important;
+}
+
+/* ---------- 4. 按钮（编辑式 · 一次一处高光） ---------- */
+.btn-primary, .btn-ghost, .btn-music, .magnetic,
+.account-submit, .community-guidelines-btn, .community-bookmarks-btn,
+.auth-upgrade-toggle {
+  font-family: var(--font-sans);
+  letter-spacing: 0.02em;
+  border-radius: var(--r-pill);
+  transition: transform var(--dur-fast) var(--ease-out),
+              background var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+}
+.btn-primary, .account-submit.btn-primary {
+  background: var(--rose) !important;
+  color: var(--paper) !important;
+  border: 1px solid var(--rose) !important;
+  padding: 0.7em 1.4em;
+}
+.btn-primary:hover { background: var(--rose-strong) !important; transform: translateY(-1px); }
+.btn-ghost, .community-guidelines-btn, .community-bookmarks-btn {
+  background: transparent !important;
+  color: var(--ink-2) !important;
+  border: 1px solid var(--rule-strong) !important;
+  padding: 0.7em 1.4em;
+}
+.btn-ghost:hover { border-color: var(--rose) !important; color: var(--ink) !important; }
+.btn-music {
+  background: transparent !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--rule-strong) !important;
+  padding: 0.7em 1.4em;
+}
+.btn-music:hover { border-color: var(--rose) !important; }
+.btn-icon { width: 18px; height: 18px; }
+
+/* 去霓虹/呼吸/常驻动画 */
+.sig-title-breath { animation: none !important; }
+.sn-hero-snowflake { display: none !important; }
+.sig-freqbar, .scroll-indicator, .sn-scroll-dial { display: none !important; }
+.hero-freq { color: var(--ice); font-family: var(--font-mono); font-size: var(--fs-micro); letter-spacing: 0.15em; }
+
+/* ---------- 5. 导航（编辑式玻璃 · 下滚隐藏由 JS 驱动） ---------- */
+.nav-glass {
+  background: color-mix(in oklch, var(--paper) 72%, transparent) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  backdrop-filter: blur(14px) saturate(120%);
+  border-bottom: 1px solid var(--rule) !important;
+  box-shadow: none !important;
+}
+.nav-glass.hidden { transform: translateY(-100%); }
+.nav-links a, .nav-link {
+  color: var(--ink-2);
+  font-family: var(--font-sans);
+  letter-spacing: 0.02em;
+  position: relative;
+}
+.nav-links a::after, .nav-link::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -4px;
+  height: 1px; background: var(--rose); transform: scaleX(0);
+  transform-origin: left; transition: transform var(--dur-base) var(--ease-out);
+}
+.nav-links a:hover::after, .nav-link:hover::after { transform: scaleX(1); }
+.nav-link-admin { color: var(--ice) !important; }
+.nav-account-btn, .menu-btn { color: var(--ink) !important; }
+
+/* 滚动进度（沿用 JS 挂载点） */
+.nav-sidechip-fill { background: var(--rose) !important; }
+.nav-sidechip-label { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-micro); }
+
+/* ---------- 6. Hero（编辑式 · 左对齐 · 留白） ---------- */
+.hero {
+  min-height: 86vh;
+  display: flex;
+  align-items: center;
+  padding-block: var(--section-y);
+}
+.hero-content {
+  width: min(1180px, 100%);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  text-align: left;
+  max-width: 54ch;
+}
+.hero-badge.glass-chip.location-selector {
+  display: inline-flex; align-items: center; gap: 0.5em;
+  background: var(--surface) !important;
+  border: 1px solid var(--surface-line) !important;
+  border-radius: var(--r-pill);
+  padding: 0.4em 0.9em;
+  color: var(--ink-2);
+  font-family: var(--font-mono); font-size: var(--fs-micro);
+  letter-spacing: 0.1em;
+}
+.pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rose); }
+.hero-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-mega);
+  line-height: 0.98;
+  color: var(--ink);
+  margin: 0.4em 0 0.2em;
+  letter-spacing: -0.02em;
+}
+.hero-title-mark { display: inline-block; }
+.sn-title-ch { font-family: var(--font-display); }
+.sn-title-scribble { color: var(--rose); width: 100%; max-width: 280px; height: 12px; margin-top: 0.2em; }
+.hero-tagline {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-h2);
+  color: var(--ink);
+  margin-top: 0.6em;
+}
+.hero-actions { display: flex; gap: 1rem; margin-top: 2.4rem; flex-wrap: wrap; }
+
+/* ---------- 7. 区块通用（编辑式 · 发丝分隔 · 留白） ---------- */
+.section {
+  padding-block: var(--section-y);
+  position: relative;
+}
+.container { width: min(1180px, 100%); margin-inline: auto; padding-inline: var(--gutter); }
+.section-header { max-width: 68ch; margin-bottom: 2.5rem; }
+.section-label {
+  font-family: var(--font-mono); font-size: var(--fs-micro);
+  letter-spacing: 0.25em; text-transform: uppercase; color: var(--ice);
+  display: block; margin-bottom: 0.8rem;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  color: var(--ink);
+  line-height: 1.1;
+}
+.section-desc { color: var(--ink-3); margin-top: 0.8rem; max-width: 60ch; }
+
+/* 区块间发丝分隔线 */
+.section + .section::before {
+  content: ""; position: absolute; top: 0; left: var(--gutter); right: var(--gutter);
+  height: 1px; background: var(--rule);
+}
+
+/* ---------- 8. 档案卡（去渐变 banner / 星星） ---------- */
+.profile-card { overflow: hidden; }
+.profile-banner { display: none !important; }
+.profile-avatar-shell {
+  width: 96px; height: 96px; border-radius: var(--r-md);
+  background: var(--surface); border: 1px solid var(--rule);
+  display: grid; place-items: center; padding: 8px;
+}
+.pixel-avatar { width: 100%; height: 100%; image-rendering: pixelated; }
+.profile-name { font-family: var(--font-display); font-size: var(--fs-h3); color: var(--ink); }
+.profile-handle { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-small); }
+.profile-bio { color: var(--ink-2); max-width: 56ch; margin-top: 1rem; line-height: 1.8; }
+.bio-emotion { color: var(--rose-soft); font-style: italic; }
+.profile-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.2rem; }
+.tag {
+  font-family: var(--font-mono); font-size: var(--fs-micro);
+  padding: 0.3em 0.8em; border-radius: var(--r-pill);
+  border: 1px solid var(--rule-strong);
+  color: var(--ink-2); background: var(--surface);
+  transform: none !important;
+}
+.profile-stats { display: flex; gap: 2.5rem; margin-top: 1.6rem; }
+.stat-value { font-family: var(--font-display); font-size: var(--fs-h2); color: var(--ink); }
+.stat-label { color: var(--ink-3); font-size: var(--fs-small); }
+
+/* ---------- 9. 音乐模块（编辑式玻璃） ---------- */
+.music-module { padding: clamp(1.5rem, 4vw, 2.5rem); display: grid; gap: 2rem; }
+.music-player { display: grid; gap: 1.5rem; }
+.music-visualizer { height: 120px; border-radius: var(--r-md); overflow: hidden; background: var(--surface); border: 1px solid var(--rule); }
+#viz-canvas { width: 100%; height: 100%; display: block; }
+.tape-deck { display: none !important; }
+.music-now-playing { display: flex; align-items: center; gap: 1rem; }
+.music-disc {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--rule-strong);
+  color: var(--rose); display: grid; place-items: center; flex: 0 0 auto;
+}
+.music-disc svg { width: 60%; height: 60%; }
+.music-track-name { font-family: var(--font-display); font-size: var(--fs-h3); color: var(--ink); }
+.music-track-meta { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-small); }
+.music-controls { display: flex; gap: 0.8rem; align-items: center; }
+.music-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--rule-strong) !important;
+  color: var(--ink) !important; display: grid; place-items: center;
+  transition: transform var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.music-btn:hover { border-color: var(--rose) !important; transform: translateY(-1px); }
+.music-btn-play { background: var(--rose) !important; color: var(--paper) !important; border-color: var(--rose) !important; }
+.music-progress { display: flex; align-items: center; gap: 0.8rem; }
+.music-time { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-micro); }
+.music-progress-bar { flex: 1; height: 4px; border-radius: 999px; background: var(--rule-strong); overflow: hidden; }
+.music-progress-fill { height: 100%; background: var(--rose); width: 0; }
+.music-playlist { border-top: 1px solid var(--rule); padding-top: 1.5rem; }
+.playlist-header { display: flex; justify-content: space-between; color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-micro); letter-spacing: 0.1em; margin-bottom: 1rem; }
+.track-item {
+  display: flex; align-items: center; gap: 1rem; padding: 0.9rem 0.5rem;
+  border-bottom: 1px solid var(--rule); cursor: pointer;
+  transition: padding-left var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.track-item:hover { padding-left: 1rem; background: var(--surface); }
+.track-item.active { background: var(--rose-dim); }
+.track-number { font-family: var(--font-mono); color: var(--ink-3); font-size: var(--fs-small); }
+.track-title { font-family: var(--font-display); color: var(--ink); display: block; }
+.track-desc { color: var(--ink-3); font-size: var(--fs-small); }
+.track-duration { margin-left: auto; color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-small); }
+.music-disclaimer { color: var(--ink-3); font-size: var(--fs-small); line-height: 1.7; max-width: 60ch; }
+
+/* ---------- 10. 时间线 / 日志 / 投稿卡片 ---------- */
+.post-card, .diary-card, .community-grid .post-card {
+  background: var(--surface) !important;
+  border: 1px solid var(--rule) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: none !important;
+  padding: 1.6rem !important;
+  margin-bottom: 1.2rem;
+}
+.post-card h3, .diary-card h3 { font-family: var(--font-display); color: var(--ink); margin-bottom: 0.6rem; }
+.timeline { max-width: 760px; }
+.section-diary { max-width: 760px; }
+
+/* 投稿表单 */
+.submit-form { display: grid; gap: 1rem; max-width: 640px; }
+.form-input, .form-select, .form-textarea {
+  width: 100%; padding: 0.8em 1em;
+  background: var(--paper-2) !important;
+  border: 1px solid var(--rule-strong) !important;
+  border-radius: var(--r-sm) !important;
+  color: var(--ink) !important;
+  font-family: var(--font-sans);
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--rose) !important; outline: none; }
+.auth-status-bar {
+  display: flex; align-items: center; gap: 0.8rem;
+  padding: 0.8rem 1rem; border: 1px solid var(--rule);
+  border-radius: var(--r-sm); background: var(--surface);
+  font-family: var(--font-mono); font-size: var(--fs-small); color: var(--ink-2);
+}
+.auth-upgrade-toggle { color: var(--rose) !important; border: none !important; background: none !important; padding: 0 !important; }
+
+/* ---------- 11. 账号面板 / 弹窗 ---------- */
+.account-panel {
+  background: var(--paper-2) !important;
+  border: 1px solid var(--rule-strong) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: none !important;
+  padding: 1.2rem;
+}
+.account-tab-panel h3, .account-panel h3 { font-family: var(--font-display); color: var(--ink); }
+.account-panel-error { color: var(--rose); font-size: var(--fs-small); }
+.modal-overlay, .donate-modal, .bookmarks-panel, .public-collection-panel, #admin-panel, .admin-modal-overlay {
+  background: color-mix(in oklch, var(--paper) 88%, transparent) !important;
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+  border: 1px solid var(--surface-line) !important;
+  border-radius: var(--r-lg) !important;
+}
+.modal-close, .bookmarks-panel-close, .public-collection-close { color: var(--ink-2) !important; }
+
+/* ---------- 12. 捐赠悬浮按钮 ---------- */
+.donate-fab {
+  background: var(--rose) !important; color: var(--paper) !important;
+  border: none !important; box-shadow: none !important;
+}
+.donate-fab:hover { background: var(--rose-strong) !important; }
+.donate-title { font-family: var(--font-display); color: var(--ink); }
+.donate-qr-img { border-radius: var(--r-sm); }
+
+/* ---------- 13. 彩蛋：去霓虹辉光 ---------- */
+.easter-egg-card svg [filter] { filter: none !important; }
+.easter-egg-card svg { color: var(--ice); }
+.egg-btn, .egg-trigger {
+  background: var(--rose) !important; color: var(--paper) !important;
+  border: 1px solid var(--rose) !important; border-radius: var(--r-pill);
+  padding: 0.7em 1.6em;
+}
+.egg-result { color: var(--ice); font-family: var(--font-mono); font-size: var(--fs-small); }
+
+/* ---------- 14. 夜电台页脚（红线 · 微调而非重建） ---------- */
+.sn-footer { background: var(--paper-2) !important; border-top: 1px solid var(--rule-strong) !important; }
+.sn-footer__eq span { background: var(--rose) !important; filter: none !important; box-shadow: none !important; }
+.sn-footer__freq-label { color: var(--ice); font-family: var(--font-mono); letter-spacing: 0.1em; }
+.sn-footer__onair { color: var(--rose); font-family: var(--font-mono); font-size: var(--fs-small); }
+.sn-footer__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rose); display: inline-block; }
+.sn-footer__time { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-small); }
+.sn-footer__col-title { font-family: var(--font-display); color: var(--ink); }
+.sn-footer__tag, .sn-footer__copy { color: var(--ink-3); font-size: var(--fs-small); }
+.sn-footer a { color: var(--ink-2); border-bottom: 1px solid transparent; transition: border-color var(--dur-fast) var(--ease-out); }
+.sn-footer a:hover { border-color: var(--rose); color: var(--ink); }
+.sig-postmark {
+  border: 1px solid var(--rose); color: var(--rose);
+  font-family: var(--font-mono); font-size: var(--fs-micro);
+  letter-spacing: 0.15em; padding: 0.3em 0.7em; border-radius: 4px; opacity: 0.85;
+}
+
+/* 跨站入口按钮（forum fentry fab） */
+.forum-entry-fab {
+  background: var(--surface) !important; color: var(--ink) !important;
+  border: 1px solid var(--rule-strong) !important; box-shadow: none !important;
+}
+
+/* ---------- 15. 细节：滚动条 / 选区 ---------- */
+::selection { background: var(--rose); color: var(--paper); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--rule-strong); border-radius: 999px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* ---------- 16. 尊重 reduced-motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- 17. 响应式 ---------- */
+@media (max-width: 768px) {
+  .hero-content { max-width: 100%; }
+  .profile-stats { gap: 1.5rem; flex-wrap: wrap; }
+  .music-module { grid-template-columns: 1fr; }
+  .section + .section::before { left: 1.25rem; right: 1.25rem; }
+}
