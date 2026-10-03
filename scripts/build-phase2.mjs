@@ -210,13 +210,12 @@ function hardenCss(minified) {
   let css = minified;
 
   // (a) -webkit-backdrop-filter 镜像（顺序无关、幂等）：
-  //     先清掉已有 -webkit- 副本，再为每条 backdrop-filter 追加精确镜像，
-  //     保证每条玻璃拟态规则在 WebKit/Safari/iOS 上都有对应前缀。
+  //     先清掉已有 -webkit- 副本，再为每条 backdrop-filter 追加精确镜像。
+  //     匹配不依赖结尾分号，兼容 minified 中“块末无分号”的写法
+  //     （如 `backdrop-filter:blur(20px)}`），保证每条玻璃拟态规则
+  //     在 WebKit/Safari/iOS 上都有对应前缀。
   css = css.replace(/-webkit-backdrop-filter:\s*[^;}]+;?/g, '');
-  css = css.replace(/(backdrop-filter:\s*[^;}]+;)/g, (m) => {
-    const webkit = m.replace('backdrop-filter:', '-webkit-backdrop-filter:');
-    return `${m}${webkit}`;
-  });
+  css = css.replace(/(backdrop-filter:\s*[^;}]+)/g, (m) => `${m};-webkit-${m}`);
 
   // (b) reduced-motion 守卫（追加在末尾，使用 !important 确保覆盖）
   const reducedMotion = `
