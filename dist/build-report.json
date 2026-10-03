@@ -1,0 +1,327 @@
+{
+  "generatedAt": "2026-10-03T17:50:46.976Z",
+  "stage": "phase-1",
+  "terserOpts": {
+    "compress": {
+      "defaults": true,
+      "passes": 1,
+      "unsafe": false,
+      "unsafe_comps": false,
+      "reduce_vars": true,
+      "hoist_funs": false,
+      "hoist_vars": false,
+      "dead_code": true,
+      "drop_debugger": true,
+      "drop_console": false,
+      "keep_infinity": true
+    },
+    "mangle": {
+      "toplevel": false,
+      "eval": false,
+      "reserved": [
+        "AdminAuth",
+        "AdminPanel",
+        "AuthManager",
+        "ClientRateLimiter",
+        "DataRepository",
+        "SecurityShield",
+        "SnowParticles",
+        "SupabaseAdapter",
+        "SyncManager",
+        "UploadManager",
+        "ContentUtils",
+        "DonationWidget",
+        "SnowRealm",
+        "SnowEaster",
+        "SecretPortal",
+        "ModalA11y",
+        "__FXRE",
+        "escapeHtml",
+        "formatTime",
+        "showSubmitToast",
+        "openAdminLoginModal",
+        "StarTorchAuth",
+        "StarTorchChat",
+        "StarTorchCloud",
+        "StarTorchData",
+        "StarTorchEaster",
+        "StarTorchSync",
+        "StarTorchUpload",
+        "StarTorchSupabase",
+        "stfInitAll",
+        "renderComments",
+        "renderCommunity",
+        "handleCommentSubmit",
+        "handleDeleteComment",
+        "applyRealtimeCommentEvent",
+        "ensureProfileExists",
+        "reconcileCommentThread",
+        "reconcileCommunityGrid",
+        "syncAllPostCommentCounts",
+        "manualRefreshAll",
+        "toggleBookmark",
+        "openDonationModal",
+        "closeDonationModal",
+        "stripeCheckout"
+      ],
+      "keep_fnames": true,
+      "keep_classnames": true
+    },
+    "format": {
+      "comments": false,
+      "preserve_annotations": false,
+      "semicolons": true,
+      "beautify": false
+    },
+    "sourceMap": false
+  },
+  "reserved": [
+    "AdminAuth",
+    "AdminPanel",
+    "AuthManager",
+    "ClientRateLimiter",
+    "DataRepository",
+    "SecurityShield",
+    "SnowParticles",
+    "SupabaseAdapter",
+    "SyncManager",
+    "UploadManager",
+    "ContentUtils",
+    "DonationWidget",
+    "SnowRealm",
+    "SnowEaster",
+    "SecretPortal",
+    "ModalA11y",
+    "__FXRE",
+    "escapeHtml",
+    "formatTime",
+    "showSubmitToast",
+    "openAdminLoginModal",
+    "StarTorchAuth",
+    "StarTorchChat",
+    "StarTorchCloud",
+    "StarTorchData",
+    "StarTorchEaster",
+    "StarTorchSync",
+    "StarTorchUpload",
+    "StarTorchSupabase",
+    "stfInitAll",
+    "renderComments",
+    "renderCommunity",
+    "handleCommentSubmit",
+    "handleDeleteComment",
+    "applyRealtimeCommentEvent",
+    "ensureProfileExists",
+    "reconcileCommentThread",
+    "reconcileCommunityGrid",
+    "syncAllPostCommentCounts",
+    "manualRefreshAll",
+    "toggleBookmark",
+    "openDonationModal",
+    "closeDonationModal",
+    "stripeCheckout"
+  ],
+  "totalFiles": 28,
+  "totalSrcBytes": 1168746,
+  "totalDstBytes": 765092,
+  "overallRatio": 65.5,
+  "overallSavedPercent": 34.5,
+  "files": [
+    {
+      "rel": "js/security-shield.js",
+      "srcSize": 10964,
+      "dstSize": 4750,
+      "ratio": "43.3",
+      "saved": "56.7"
+    },
+    {
+      "rel": "js/content-utils.js",
+      "srcSize": 1022,
+      "dstSize": 417,
+      "ratio": "40.8",
+      "saved": "59.2"
+    },
+    {
+      "rel": "js/supabase-adapter.js",
+      "srcSize": 47625,
+      "dstSize": 18182,
+      "ratio": "38.2",
+      "saved": "61.8"
+    },
+    {
+      "rel": "js/repository.js",
+      "srcSize": 42229,
+      "dstSize": 14853,
+      "ratio": "35.2",
+      "saved": "64.8"
+    },
+    {
+      "rel": "js/admin-auth.js",
+      "srcSize": 13697,
+      "dstSize": 5563,
+      "ratio": "40.6",
+      "saved": "59.4"
+    },
+    {
+      "rel": "js/rate-limiter.js",
+      "srcSize": 6378,
+      "dstSize": 1916,
+      "ratio": "30.0",
+      "saved": "70.0"
+    },
+    {
+      "rel": "js/auth-manager.js",
+      "srcSize": 21152,
+      "dstSize": 9317,
+      "ratio": "44.0",
+      "saved": "56.0"
+    },
+    {
+      "rel": "js/sync-manager.js",
+      "srcSize": 17071,
+      "dstSize": 7267,
+      "ratio": "42.6",
+      "saved": "57.4"
+    },
+    {
+      "rel": "js/upload-manager.js",
+      "srcSize": 11051,
+      "dstSize": 4888,
+      "ratio": "44.2",
+      "saved": "55.8"
+    },
+    {
+      "rel": "js/rate-limiter-client.js",
+      "srcSize": 4573,
+      "dstSize": 1138,
+      "ratio": "24.9",
+      "saved": "75.1"
+    },
+    {
+      "rel": "js/admin-panel.js",
+      "srcSize": 15326,
+      "dstSize": 8882,
+      "ratio": "58.0",
+      "saved": "42.0"
+    },
+    {
+      "rel": "js/particles.js",
+      "srcSize": 15230,
+      "dstSize": 7110,
+      "ratio": "46.7",
+      "saved": "53.3"
+    },
+    {
+      "rel": "js/secret-portal.js",
+      "srcSize": 17642,
+      "dstSize": 10949,
+      "ratio": "62.1",
+      "saved": "37.9"
+    },
+    {
+      "rel": "js/snow-easter.js",
+      "srcSize": 6219,
+      "dstSize": 2750,
+      "ratio": "44.2",
+      "saved": "55.8"
+    },
+    {
+      "rel": "js/snow-realm.js",
+      "srcSize": 7676,
+      "dstSize": 3748,
+      "ratio": "48.8",
+      "saved": "51.2"
+    },
+    {
+      "rel": "js/modal-a11y.js",
+      "srcSize": 2728,
+      "dstSize": 1313,
+      "ratio": "48.1",
+      "saved": "51.9"
+    },
+    {
+      "rel": "js/main.js",
+      "srcSize": 241974,
+      "dstSize": 125756,
+      "ratio": "52.0",
+      "saved": "48.0"
+    },
+    {
+      "rel": "js/donation.js",
+      "srcSize": 3128,
+      "dstSize": 1617,
+      "ratio": "51.7",
+      "saved": "48.3"
+    },
+    {
+      "rel": "forum/js/forum-import-data.js",
+      "srcSize": 416391,
+      "dstSize": 402949,
+      "ratio": "96.8",
+      "saved": "3.2"
+    },
+    {
+      "rel": "forum/js/forum-data.js",
+      "srcSize": 16589,
+      "dstSize": 12072,
+      "ratio": "72.8",
+      "saved": "27.2"
+    },
+    {
+      "rel": "forum/js/forum-auth.js",
+      "srcSize": 38077,
+      "dstSize": 16853,
+      "ratio": "44.3",
+      "saved": "55.7"
+    },
+    {
+      "rel": "forum/js/forum-upload.js",
+      "srcSize": 12555,
+      "dstSize": 6379,
+      "ratio": "50.8",
+      "saved": "49.2"
+    },
+    {
+      "rel": "forum/js/forum.js",
+      "srcSize": 112318,
+      "dstSize": 56806,
+      "ratio": "50.6",
+      "saved": "49.4"
+    },
+    {
+      "rel": "forum/js/forum-sync.js",
+      "srcSize": 13820,
+      "dstSize": 6228,
+      "ratio": "45.1",
+      "saved": "54.9"
+    },
+    {
+      "rel": "forum/js/forum-supabase.js",
+      "srcSize": 3270,
+      "dstSize": 1148,
+      "ratio": "35.1",
+      "saved": "64.9"
+    },
+    {
+      "rel": "forum/js/forum-cloud.js",
+      "srcSize": 25636,
+      "dstSize": 11855,
+      "ratio": "46.2",
+      "saved": "53.8"
+    },
+    {
+      "rel": "forum/js/forum-chat.js",
+      "srcSize": 35374,
+      "dstSize": 16085,
+      "ratio": "45.5",
+      "saved": "54.5"
+    },
+    {
+      "rel": "forum/js/forum-easter.js",
+      "srcSize": 9031,
+      "dstSize": 4301,
+      "ratio": "47.6",
+      "saved": "52.4"
+    }
+  ]
+}

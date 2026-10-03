@@ -368,6 +368,43 @@ body::after {
   background: none;
 }
 
+/* ---------- 10c. 角色日志 · 缩略（首两段摘要 + 原生 <details> 展开） ----------
+   默认只露前两段作为「摘要」，其余折进原生 details —— 不依赖 JS，
+   全文仍完整留在 DOM 里，可读性与检索都不打折。 */
+.diary-more { margin-top: 0.85rem; }
+.diary-more > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+  width: fit-content;
+  padding: 0.25em 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.14em;
+  color: var(--rose);
+  border-bottom: 1px solid transparent;
+  transition: color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+}
+/* 抹掉各浏览器的默认三角，换成自己的加 / 减号 */
+.diary-more > summary::-webkit-details-marker { display: none; }
+.diary-more > summary::marker { content: ""; }
+.diary-more > summary::after { content: "＋"; font-size: 0.95em; line-height: 1; }
+.diary-more[open] > summary::after { content: "－"; }
+.diary-more > summary:hover {
+  color: var(--rose-strong);
+  border-bottom-color: var(--rule-strong);
+}
+.diary-more > summary:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+.diary-more[open] > summary { margin-bottom: 0.7rem; }
+
 /* 投稿表单 */
 .submit-form { display: grid; gap: 1rem; max-width: 640px; }
 .form-input, .form-select, .form-textarea {
@@ -406,7 +443,7 @@ body::after {
 }
 .modal-close, .bookmarks-panel-close, .public-collection-close { color: var(--ink-2) !important; }
 
-/* ---------- 12. 捐赠悬浮按钮 ---------- */
+/* ---------- 12. 捐赠悬浮按钮（右下 · 阅读进度环实时跟随） ---------- */
 .donate-fab {
   right: 24px !important; left: auto !important; bottom: 24px !important;
   background: var(--rose) !important; color: var(--paper) !important;
@@ -414,9 +451,30 @@ body::after {
   opacity: 1 !important;
 }
 .donate-fab:hover { background: var(--rose-strong) !important; }
-.donate-fab-icon { border-color: transparent !important; background: rgba(255, 255, 255, 0.18) !important; }
+.donate-fab-icon {
+  position: relative;
+  border-color: transparent !important; background: rgba(255, 255, 255, 0.18) !important;
+}
 .donate-title { font-family: var(--font-display); color: var(--ink); }
 .donate-qr-img { border-radius: var(--r-sm); }
+
+/* 阅读进度环：绕咖啡图标一圈细环，随滚动实时填充
+   —— 用 scroll-timeline 实现，零 JS，规避本站点严格 CSP 的内联脚本限制。 */
+@keyframes coffee-follow { from { --coffee-progress: 0%; } to { --coffee-progress: 100%; } }
+@property --coffee-progress { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
+@supports (animation-timeline: scroll()) {
+  .donate-fab-icon::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: conic-gradient(#fff var(--coffee-progress), transparent 0);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+            mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+    animation: coffee-follow linear;
+    animation-timeline: scroll(root block);
+  }
+}
 
 /* ---------- 13. 彩蛋：去霓虹辉光 ---------- */
 .easter-egg-card svg [filter] { filter: none !important; }
@@ -491,6 +549,21 @@ body::after {
   grid-template-columns: 1.5fr 1fr 1fr 1.3fr !important;
   gap: clamp(1.6rem, 4vw, 3rem) !important;
 }
+
+/* 主站专属收尾句：独占整行，作为整站的「句号」而不是站点地图。
+   Anti-AI-slop 首要手段 —— 让每一个面都用属于自己的一句话收尾，
+   而不是四个站点各摆一列看起来一模一样的链接。 */
+.sn-footer__closing {
+  grid-column: 1 / -1;
+  font-family: var(--font-display);
+  font-size: clamp(1.45rem, 3.6vw, 2.15rem);
+  line-height: 1.44;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  margin: 0 0 1.5rem;
+  max-width: 24ch;
+}
+
 .sn-footer__brand {
   font-family: var(--font-display);
   font-size: 1.15rem !important;
@@ -554,11 +627,12 @@ body::after {
   letter-spacing: 0.15em; padding: 0.3em 0.7em; border-radius: 4px; opacity: 0.85;
 }
 
-/* 跨站入口按钮（forum fentry fab · 与论坛 stf-back-home 同位同款：左下 24px） */
+/* 跨站入口按钮（与论坛 stf-back-home 同位同款：右下 24/88，与咖啡叠成一列） */
 .forum-entry-fab {
-  left: 24px !important; right: auto !important; bottom: 24px !important;
+  right: 24px !important; left: auto !important; bottom: 88px !important;
   background: var(--surface) !important; color: var(--ink) !important;
   border: 1px solid var(--rule-strong) !important; box-shadow: none !important;
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
   opacity: 1 !important;
 }
 .forum-entry-fab-icon {
@@ -580,6 +654,9 @@ body::after {
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+  /* 咖啡进度环是滚动驱动动画，通配规则会把 duration 压成 0.001ms 让环直接填满僵住；
+     这里显式撤除，才是真正尊重「减少动效」的意图。 */
+  .donate-fab-icon::after { animation: none !important; display: none !important; }
 }
 
 /* ---------- 17. 响应式 ---------- */
