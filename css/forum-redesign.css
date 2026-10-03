@@ -416,19 +416,190 @@
 }
 
 /* ============================================================
-   5. 页脚编辑式精修（与主站 site-v2 同语言）
+   5. 全站视觉统一（v11.6.1）：页脚 / 顶部导航 / 悬浮按钮
+   说明：与主站 css/site-v2.css §12/§14 同视觉、同位置。
+   本块使用字面量色值（论坛无 refined.css 令牌），
+   与主站解析后的令牌值保持一致。
    ============================================================ */
+
+/* ---------- 5.1 夜电台页脚 · 编辑式重排（同主站 §14） ---------- */
+.sn-footer {
+  background: #1e1218 !important;
+  border-top: 1px solid rgba(240, 244, 255, 0.26) !important;
+  color: rgba(240, 244, 255, 0.55);
+}
+.sn-footer__spectrum {
+  padding: 0 !important;
+  border-bottom: 1px solid rgba(240, 244, 255, 0.14) !important;
+  background: none !important;
+}
+.sn-footer__eq {
+  height: 38px !important;
+  justify-content: center !important;
+  align-items: flex-end !important;
+  gap: 3px !important;
+  padding: 0 16px 10px !important;
+}
+.sn-footer__eq span {
+  flex: 0 0 2px !important;
+  min-width: 2px !important;
+  height: var(--eqh, 40%) !important;
+  background: rgba(240, 244, 255, 0.26) !important;
+  border-radius: 1px !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform-origin: bottom;
+  animation: sn-eq-wave 3.4s ease-in-out infinite;
+  opacity: 0.7;
+}
+.sn-footer__eq span:nth-child(4n) { background: #F4729B !important; opacity: 0.45; }
+.sn-footer__freq-row {
+  padding: 12px clamp(1.25rem, 5vw, 4rem) 14px !important;
+  font-family: "IBM Plex Mono", ui-monospace, "Cascadia Code", monospace;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.12em;
+  color: rgba(240, 244, 255, 0.55) !important;
+}
+.sn-footer__freq-label { color: #A8D8FF !important; font-weight: 500; }
+.sn-footer__onair { color: #F9A8C9 !important; gap: 7px; letter-spacing: 0.14em; }
+.sn-footer__dot {
+  width: 6px !important;
+  height: 6px !important;
+  background: #F4729B !important;
+  box-shadow: none !important;
+  animation: sn-blink 2.4s ease-in-out infinite;
+}
+.sn-footer__time { color: rgba(240, 244, 255, 0.55) !important; font-variant-numeric: tabular-nums; }
+.sn-footer__credits {
+  max-width: 1180px !important;
+  margin-inline: auto !important;
+  padding: 2.8rem clamp(1.25rem, 5vw, 4rem) 0.5rem !important;
+  grid-template-columns: 1.5fr 1fr 1fr 1.3fr !important;
+  gap: clamp(1.6rem, 4vw, 3rem) !important;
+}
+.sn-footer__brand {
+  font-family: "Noto Serif SC", "Songti SC", Georgia, serif;
+  font-size: 1.15rem !important;
+  font-weight: 600 !important;
+  color: #F0F4FF !important;
+  margin-bottom: 0 !important;
+}
+.sn-footer__brand svg { width: 22px !important; height: 22px !important; color: #F4729B !important; }
+.sn-footer__tag {
+  margin-top: 0.9rem !important;
+  max-width: 26ch;
+  line-height: 1.85;
+  color: rgba(240, 244, 255, 0.55) !important;
+}
+.sn-footer__col-title {
+  font-family: "IBM Plex Mono", ui-monospace, "Cascadia Code", monospace !important;
+  font-size: 0.72rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase !important;
+  color: rgba(240, 244, 255, 0.55) !important;
+  margin: 0 0 1.1rem !important;
+}
+.sn-footer__col ul { margin: 0; padding: 0; list-style: none; }
+.sn-footer__col li { margin: 0 0 0.65rem !important; }
+.sn-footer__col a {
+  color: rgba(240, 244, 255, 0.82);
+  font-size: 0.875rem;
+  border-bottom: none;
+  transition: color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sn-footer__col a:hover { color: #F4729B; }
+.sn-footer__col--meta p {
+  margin: 0 0 0.5rem !important;
+  font-size: 0.875rem;
+  line-height: 1.8;
+  color: rgba(240, 244, 255, 0.55) !important;
+}
+.sn-footer__copy {
+  font-family: "IBM Plex Mono", ui-monospace, "Cascadia Code", monospace !important;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.05em;
+  margin-top: 0.6rem !important;
+  color: rgba(240, 244, 255, 0.55) !important;
+}
+.sig-postmark {
+  border: 1px solid #F4729B !important; color: #F4729B !important;
+  font-family: "IBM Plex Mono", ui-monospace, monospace !important;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.15em !important; padding: 0.3em 0.7em !important;
+  border-radius: 4px !important; opacity: 0.85 !important;
+  background: none !important; box-shadow: none !important;
+}
 @media (min-width: 761px) {
-  .sn-footer__col--links,
-  .sn-footer__col--meta {
-    border-left: 1px solid var(--fr-line);
-    padding-left: clamp(1.4rem, 3vw, 2.2rem);
-  }
+  .sn-footer__col--links { border-left: 1px solid rgba(240, 244, 255, 0.14); padding-left: clamp(1.4rem, 3vw, 2.2rem); }
 }
-.sn-footer__col-title { letter-spacing: 0.2em; }
-.sn-footer__eq { justify-content: center; opacity: 0.9; }
-.sn-footer__brand { letter-spacing: 0.02em; }
+@media (max-width: 900px) {
+  .sn-footer__credits { grid-template-columns: 1fr 1fr !important; }
+}
 @media (max-width: 540px) {
-  .sn-footer__col--links,
-  .sn-footer__col--meta { border-left: 0; padding-left: 0; }
+  .sn-footer__credits { grid-template-columns: 1fr !important; gap: 1.8rem !important; padding-top: 2rem !important; }
+  .sn-footer__col--links { border-left: 0; padding-left: 0; }
+  .sn-footer__freq-row { padding-inline: 1.25rem !important; }
+  .sn-footer__eq { justify-content: flex-start !important; }
 }
+
+/* ---------- 5.2 顶部导航 · 夜色纸感材质（同主站 §5，替换磨砂玻璃） ---------- */
+.nav-glass {
+  background: rgba(19, 11, 17, 0.72) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(120%) !important;
+  backdrop-filter: blur(14px) saturate(120%) !important;
+  border-bottom: 1px solid rgba(240, 244, 255, 0.14) !important;
+  box-shadow: none !important;
+}
+body .nav-glass { background: rgba(19, 11, 17, 0.72) !important; }
+body.forum-page .nav-glass { background: rgba(19, 11, 17, 0.72) !important; }
+.nav-links a, .nav-link {
+  color: rgba(240, 244, 255, 0.82) !important;
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  letter-spacing: 0.02em;
+  position: relative;
+}
+.nav-links a::after, .nav-link::after {
+  content: "" !important; position: absolute !important; left: 0 !important; right: 0 !important;
+  bottom: -4px !important; height: 1px !important; background: #F4729B !important;
+  transform: scaleX(0) !important; transform-origin: left !important;
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.nav-links a:hover::after, .nav-link:hover::after { transform: scaleX(1) !important; }
+.nav-logo span {
+  font-family: "Noto Serif SC", "Songti SC", Georgia, serif !important;
+  color: #F0F4FF !important; letter-spacing: 0.12em !important;
+}
+
+/* ---------- 5.3 悬浮按钮统一（同主站 §12/§14） ----------
+   跨站入口（stf-back-home）= 左下 24px；请喝咖啡（donate-fab）= 右下 24px；
+   边缘同步指示器上移至咖啡按钮上方，避免重叠。 */
+.stf-back-home {
+  left: 24px !important; right: auto !important; bottom: 24px !important;
+  background: rgba(240, 244, 255, 0.05) !important;
+  color: #F0F4FF !important;
+  border: 1px solid rgba(240, 244, 255, 0.26) !important;
+  box-shadow: none !important;
+  border-radius: 999px !important;
+  opacity: 1 !important;
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+}
+.stf-back-home-icon {
+  border-color: rgba(240, 244, 255, 0.26) !important;
+  background: rgba(244, 114, 155, 0.12) !important; color: #F4729B !important;
+}
+.donate-fab {
+  right: 24px !important; left: auto !important; bottom: 24px !important;
+  background: #F4729B !important; color: #130b11 !important;
+  border: none !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35) !important;
+  opacity: 1 !important;
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+}
+body.forum-page .donate-fab { opacity: 1 !important; }
+.donate-fab:hover { background: #E1588A !important; }
+.donate-fab-icon {
+  border-color: transparent !important;
+  background: rgba(255, 255, 255, 0.18) !important; color: #130b11 !important;
+}
+.stf-edge-indicator { right: 24px !important; bottom: 76px !important; }

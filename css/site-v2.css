@@ -408,10 +408,13 @@ body::after {
 
 /* ---------- 12. 捐赠悬浮按钮 ---------- */
 .donate-fab {
+  right: 24px !important; left: auto !important; bottom: 24px !important;
   background: var(--rose) !important; color: var(--paper) !important;
-  border: none !important; box-shadow: none !important;
+  border: none !important; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35) !important;
+  opacity: 1 !important;
 }
 .donate-fab:hover { background: var(--rose-strong) !important; }
+.donate-fab-icon { border-color: transparent !important; background: rgba(255, 255, 255, 0.18) !important; }
 .donate-title { font-family: var(--font-display); color: var(--ink); }
 .donate-qr-img { border-radius: var(--r-sm); }
 
@@ -551,10 +554,16 @@ body::after {
   letter-spacing: 0.15em; padding: 0.3em 0.7em; border-radius: 4px; opacity: 0.85;
 }
 
-/* 跨站入口按钮（forum fentry fab） */
+/* 跨站入口按钮（forum fentry fab · 与论坛 stf-back-home 同位同款：左下 24px） */
 .forum-entry-fab {
+  left: 24px !important; right: auto !important; bottom: 24px !important;
   background: var(--surface) !important; color: var(--ink) !important;
   border: 1px solid var(--rule-strong) !important; box-shadow: none !important;
+  opacity: 1 !important;
+}
+.forum-entry-fab-icon {
+  border-color: var(--rule-strong) !important;
+  background: var(--rose-dim) !important; color: var(--rose) !important;
 }
 
 /* ---------- 15. 细节：滚动条 / 选区 ---------- */

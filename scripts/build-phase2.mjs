@@ -79,6 +79,7 @@ const MAIN_CSS = [
   'css/snow-atmosphere.css',
   'css/snow-signature.css',
   'css/snow-weapons.css',
+  'css/sn-footer.css',
 ];
 
 // 论坛 CSS（forum/index.html 中 <link> 顺序）· v11.0 追加 stf-signature + stf-weapons · P3-1 追加 fonts
@@ -94,6 +95,7 @@ const FORUM_CSS = [
   'forum/forum-visual.css',
   'css/stf-signature.css',
   'css/stf-weapons.css',
+  'css/sn-footer.css',
 ];
 
 // 角色页 CSS（7 个角色页共用）· v11.0 追加 snow-signature · P3-1 追加 fonts

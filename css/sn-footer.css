@@ -1,0 +1,148 @@
+/* ============================================================
+   雪绒频谱签名 Footer + 论坛面包屑（共享基础块）
+   由 css/snow-weapons.css 抽取，主站与论坛打包清单共用，
+   保证两站页脚渲染同源。站点各自的编辑式覆盖见
+   css/site-v2.css §14（主站）与 css/forum-redesign.css（论坛）。
+   ============================================================ */
+
+/* ---------- Ft5: 雪绒频谱签名 Footer ---------- */
+.sn-footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
+    background:
+        radial-gradient(120% 60% at 50% 0%, color-mix(in srgb, var(--color-rose) 10%, transparent), transparent 60%),
+        var(--neutral-900);
+    padding: 0 0 28px;
+    margin-top: 64px;
+}
+.sn-footer__spectrum {
+    padding: 28px 32px 12px;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-white) 5%, transparent);
+}
+.sn-footer__eq {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2px;
+    height: 56px;
+    padding: 0 8px 12px;
+}
+.sn-footer__eq > span {
+    flex: 1 1 auto;
+    min-width: 2px;
+    background: linear-gradient(180deg, var(--color-rose), var(--color-blue-light));
+    border-radius: 1px 1px 0 0;
+    height: var(--eqh, 40%);
+    animation: sn-eq-wave 2.4s ease-in-out infinite;
+}
+.sn-footer__eq > span:nth-child(3n)   { animation-delay: -0.4s; }
+.sn-footer__eq > span:nth-child(7n)   { animation-delay: -1.2s; }
+.sn-footer__eq > span:nth-child(11n)  { animation-delay: -0.8s; }
+.sn-footer__eq > span:nth-child(5n+3) { animation-delay: -1.6s; }
+@keyframes sn-eq-wave {
+    0%,100% { transform: scaleY(1); }
+    50%     { transform: scaleY(0.68); }
+}
+.sn-footer__freq-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    font-family: IBM Plex Mono, monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--neutral-300);
+}
+.sn-footer__freq-label { color: var(--color-blue-light); font-weight: 500; }
+.sn-footer__onair {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-rose-soft);
+}
+.sn-footer__dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--color-rose);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-rose) 20%, transparent);
+    animation: sn-blink 1.4s ease-in-out infinite;
+}
+@keyframes sn-blink { 50% { opacity: 0.35; } }
+.sn-footer__time { color: var(--color-gold-soft); }
+.sn-footer__credits {
+    max-width: var(--site-max, 1200px);
+    margin: 0 auto;
+    padding: 32px 32px 0;
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
+    gap: 28px;
+}
+.sn-footer__brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: Noto Serif SC, serif;
+    font-size: 20px; font-weight: 700;
+    color: var(--color-white);
+    margin-bottom: 12px;
+}
+.sn-footer__brand svg { width: 28px; height: 28px; color: var(--color-blue-light); }
+.sn-footer__tag {
+    color: var(--neutral-300);
+    font-size: 13px;
+    line-height: 1.7;
+    margin: 0;
+}
+.sn-footer__col-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--color-blue-light);
+    text-transform: uppercase;
+    margin: 0 0 12px;
+}
+.sn-footer__col ul { list-style: none; padding: 0; margin: 0; }
+.sn-footer__col li { margin: 6px 0; }
+.sn-footer__col a {
+    color: var(--neutral-300);
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 160ms ease;
+}
+.sn-footer__col a:hover { color: var(--color-rose); }
+.sn-footer__copy {
+    margin-top: 10px;
+    color: var(--neutral-400);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+}
+.sn-footer__col--meta { color: var(--neutral-300); font-size: 13px; line-height: 1.8; }
+@media (max-width: 900px) {
+    .sn-footer__credits { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 540px) {
+    .sn-footer__credits { grid-template-columns: 1fr; padding: 24px 20px 0; }
+    .sn-footer__spectrum { padding: 20px 16px 8px; }
+}
+
+/* ---------- P1-4: Forum N6 Breadcrumb ---------- */
+.stf-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: JetBrains Mono, monospace;
+    font-size: 11px;
+    color: var(--neutral-400);
+}
+.stf-bc-item {
+    color: var(--neutral-300);
+    letter-spacing: 0.04em;
+}
+.stf-bc-item--active {
+    color: var(--color-blue-light);
+    font-weight: 500;
+}
+.stf-bc-sep {
+    color: var(--neutral-500);
+    opacity: 0.6;
+}
