@@ -10,7 +10,7 @@
 //   4) 启用 navigationPreload，文档导航更快。
 //   5) 静态资源命中缓存时校验体积：content-length 为 0 视为损坏，回退网络，
 //      绝不让空/截断的 CSS/JS 误导“渲染成功”。
-const CACHE_VERSION = 'snowfluff-v11.5.2-layout-fix';
+const CACHE_VERSION = 'snowfluff-v11.6.0-sw-perf';
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -27,6 +27,7 @@ const SHELL_ASSETS = [
   './dist/bundle-forum.js',
   './dist/css/main.min.css',
   './dist/css/forum.min.css',
+  './assets/fonts/noto-serif-sc-subset.woff2',
     './css/edge-compat.css',
     './js/reset-password.js',
   './assets/favicon.svg'
@@ -87,6 +88,60 @@ async function safeCacheMatch(request) {
   return res;
 }
 
+// ── v11.6.0 dist 缓存策略 ──────────────────────────────────────
+// 旧策略（network-first + cache:'reload'）每次刷新强制全量重下 ~725KB，
+// 且国内访问 github.io 网络抖动时失败 → SW 返回空 504 → 页面裸奔（论坛“无法进入”、
+// 页脚堆叠塌陷的元凶）。新策略：
+//   1) 缓存优先 → 秒开、零重复下载（刷新缓慢的根治）；
+//   2) 命中缓存后用 request.integrity 做 SHA-384 校验：哈希匹配才服务，
+//      部署新版本时新 HTML 带新 integrity，旧缓存必然校验失败 → 自动走网络拿新产物，
+//      从机制上杜绝「SW 回旧 bundle 与新 HTML 的 SRI 冲突 → 浏览器静默拒绝执行」；
+//   3) 命中缓存的同时后台 revalidate（SWR），下一次刷新即为最新；
+//   4) CI 每次部署改写 CACHE_VERSION → 新 SW 安装期会用 cache:'reload' 重预缓存全部
+//      shell 资源，激活后缓存必然新鲜，与上述校验双保险。
+function distUrl(url) {
+  return url.pathname.includes('/dist/');
+}
+
+async function sha384Matches(buffer, integrity) {
+  try {
+    const digest = await crypto.subtle.digest('SHA-384', buffer);
+    const bytes = new Uint8Array(digest);
+    let bin = '';
+    const CHUNK = 0x8000;
+    for (let i = 0; i < bytes.length; i += CHUNK) {
+      bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK));
+    }
+    return ('sha384-' + btoa(bin)) === integrity;
+  } catch (e) {
+    return false;
+  }
+}
+
+// 校验缓存体是否满足页面要求的 integrity；满足则返回可用的 Response（body 重建）。
+async function verifiedResponse(cached, integrity) {
+  if (!integrity) return cached;
+  try {
+    const buf = await cached.arrayBuffer();
+    if (await sha384Matches(buf, integrity)) {
+      return new Response(buf, { status: cached.status, statusText: cached.statusText, headers: cached.headers });
+    }
+  } catch (e) { /* 校验失败走网络 */ }
+  return null;
+}
+
+// SWR：后台静默拉最新 dist 产物更新缓存（正常 fetch，可享浏览器 HTTP 缓存）。
+function revalidateDist(request) {
+  return fetch(request)
+    .then((res) => {
+      if (res && (res.ok || res.type === 'opaque')) {
+        return caches.open(RUNTIME_CACHE)
+          .then((c) => c.put(request, res.clone()).catch(() => {}));
+      }
+    })
+    .catch(() => { /* 离线/抖动时静默保留旧缓存 */ });
+}
+
 // 请求拦截：任何分支都必须返回有效响应，绝不返回 undefined / 空体。
 self.addEventListener('fetch', (event) => {
   const { request } = event;
@@ -121,30 +176,56 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 静态资源：区分 dist 构建产物与其余资源
-  //  - dist/* 带 SRI 强校验，必须 network-first：绝不允许 SW 长期缓存旧 bundle 与 HTML 的
-  //    integrity 哈希冲突（否则浏览器静默拒绝执行，全站 JS 瘫痪）。失败再回退缓存兜底。
-  //  - 其余（图片/字体/css 等）cache-first 增强离线体验，校验非空防截断。
+  // 静态资源：dist 构建产物与其余资源分治
+  //  - dist/*：缓存优先 + integrity 校验 + SWR（见文件头 v11.6.0 说明）
+  //  - 其余（图片/字体/css 等）cache-first，校验非空防截断。
   event.respondWith(
     (async () => {
       const url = new URL(request.url);
-      if (url.pathname.startsWith('/dist/')) {
-        try {
-          const res = await fetch(request, { cache: 'reload' });
-          if (res && (res.ok || res.type === 'opaque')) {
-            const copy = res.clone();
-            caches.open(RUNTIME_CACHE).then((c) => c.put(request, copy)).catch(() => {});
-            return res;
-          }
-        } catch (e) { /* 回退缓存 */ }
+      const integrity = request.integrity || '';
+
+      if (distUrl(url)) {
         const cached = await safeCacheMatch(request);
-        if (cached) return cached;
+        if (cached) {
+          const verified = await verifiedResponse(cached, integrity);
+          if (verified) {
+            event.waitUntil(revalidateDist(request));
+            return verified;
+          }
+          // 缓存体哈希不符（新部署）→ 继续走下方网络分支
+        }
+        try {
+          const res = await fetch(request);
+          if (res && (res.ok || res.type === 'opaque')) {
+            if (!integrity) {
+              const copy = res.clone();
+              caches.open(RUNTIME_CACHE).then((c) => c.put(request, copy)).catch(() => {});
+              return res;
+            }
+            try {
+              const buf = await res.clone().arrayBuffer();
+              if (await sha384Matches(buf, integrity)) {
+                const copy = res.clone();
+                caches.open(RUNTIME_CACHE).then((c) => c.put(request, copy)).catch(() => {});
+                return res;
+              }
+              // 网络体也不满足 integrity：交给浏览器自行判定（返回原响应，
+              // 浏览器会按 SRI 规则拒绝，行为与无 SW 时一致）
+              return res;
+            } catch (e) {
+              return res;
+            }
+          }
+        } catch (e) { /* 网络失败 → 兜底 */ }
+        const stale = await safeCacheMatch(request);
+        if (stale) return stale;
         return new Response('', { status: 504, statusText: 'offline' });
       }
+
       const cached = await safeCacheMatch(request);
       if (cached) return cached;
       try {
-        const res = await fetch(request, { cache: 'reload' });
+        const res = await fetch(request);
         if (res && (res.ok || res.type === 'opaque')) {
           const copy = res.clone();
           caches.open(RUNTIME_CACHE).then((cache) => cache.put(request, copy)).catch(() => {});

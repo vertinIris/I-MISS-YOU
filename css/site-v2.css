@@ -274,7 +274,99 @@ body::after {
 }
 .post-card h3, .diary-card h3 { font-family: var(--font-display); color: var(--ink); margin-bottom: 0.6rem; }
 .timeline { max-width: 760px; }
-.section-diary { max-width: 760px; }
+
+/* ---------- 10b. 角色日志 · 编辑式网格（替代旧“书页”竖排） ----------
+   结构策略：.diary-page 用 display:contents 拆壳，把两张“书页”里的
+   6 篇日志摊平成一张响应式卡片网格（桌面 3 列 → 平板 2 列 → 手机 1 列），
+   不改动任何 HTML / JS 挂载点。 */
+.section-diary { max-width: none; }
+.diary-book {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+  gap: 1.1rem;
+  perspective: none;
+}
+.diary-page { display: contents; }
+.diary-page::after { content: none !important; }
+.diary-page--left { border-right: 0; }
+.diary-page:hover .diary-entry,
+.diary-page--right:hover .diary-entry { transform: none; }
+
+/* 旧书页的金色胶带 / 贴纸属于典型 AI 味装饰，网格化后移除 */
+.sig-tape, .sig-sticker { display: none !important; }
+
+.diary-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin: 0 !important;
+  padding: 1.5rem 1.5rem 1.3rem !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--rule) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: none !important;
+  transition: border-color var(--dur-fast) var(--ease-out),
+              background var(--dur-fast) var(--ease-out);
+}
+.diary-entry:hover {
+  transform: none !important;
+  background: var(--surface-2) !important;
+  border-color: var(--rule-strong) !important;
+}
+
+/* 日期：从“方块章”改为编辑式首行（大号衬线日 + 等宽月份） */
+.diary-date {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.55rem;
+  min-width: 0;
+  padding: 0;
+  background: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+.diary-day {
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  line-height: 1;
+  color: var(--ink);
+}
+.diary-month {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.2em;
+  color: var(--ink-3);
+}
+.diary-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.3;
+}
+.diary-text { color: var(--ink-2); font-size: var(--fs-small); line-height: 1.95; }
+.diary-text p { margin: 0 0 0.6em; }
+.diary-text p:last-child { margin-bottom: 0; }
+
+/* 标签沉底，网格卡片高度对齐 */
+.diary-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: auto;
+  padding-top: 0.9rem;
+}
+.diary-tag {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-pill);
+  padding: 0.18em 0.7em;
+  background: none;
+}
 
 /* 投稿表单 */
 .submit-form { display: grid; gap: 1rem; max-width: 640px; }
@@ -333,17 +425,126 @@ body::after {
 }
 .egg-result { color: var(--ice); font-family: var(--font-mono); font-size: var(--fs-small); }
 
-/* ---------- 14. 夜电台页脚（红线 · 微调而非重建） ---------- */
-.sn-footer { background: var(--paper-2) !important; border-top: 1px solid var(--rule-strong) !important; }
-.sn-footer__eq span { background: var(--rose) !important; filter: none !important; box-shadow: none !important; }
-.sn-footer__freq-label { color: var(--ice); font-family: var(--font-mono); letter-spacing: 0.1em; }
-.sn-footer__onair { color: var(--rose); font-family: var(--font-mono); font-size: var(--fs-small); }
-.sn-footer__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rose); display: inline-block; }
-.sn-footer__time { color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-small); }
-.sn-footer__col-title { font-family: var(--font-display); color: var(--ink); }
-.sn-footer__tag, .sn-footer__copy { color: var(--ink-3); font-size: var(--fs-small); }
-.sn-footer a { color: var(--ink-2); border-bottom: 1px solid transparent; transition: border-color var(--dur-fast) var(--ease-out); }
-.sn-footer a:hover { border-color: var(--rose); color: var(--ink); }
+/* ---------- 14. 夜电台页脚 · 编辑式重排 ----------
+   保留全部 DOM / JS 挂载点（EQ、时钟、邮戳），只重排视觉层级：
+   频谱压成细线 → 频段行（等宽字） → 四栏 credits（发丝线分栏） → 版权。 */
+.sn-footer {
+  background: var(--paper-2) !important;
+  border-top: 1px solid var(--rule-strong) !important;
+  color: var(--ink-3);
+}
+
+/* 频谱：31 根柱压成居中的低调细线 EQ，只留夜电台的一点呼吸 */
+.sn-footer__spectrum {
+  padding: 0 !important;
+  border-bottom: 1px solid var(--rule) !important;
+  background: none !important;
+}
+.sn-footer__eq {
+  height: 38px !important;
+  justify-content: center !important;
+  align-items: flex-end !important;
+  gap: 3px !important;
+  padding: 0 16px 10px !important;
+}
+.sn-footer__eq span {
+  flex: 0 0 2px !important;
+  min-width: 2px !important;
+  height: var(--eqh, 40%) !important;
+  background: var(--rule-strong) !important;
+  border-radius: 1px !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform-origin: bottom;
+  animation: sn-eq-wave 3.4s ease-in-out infinite;
+  opacity: 0.7;
+}
+.sn-footer__eq span:nth-child(4n) { background: var(--rose) !important; opacity: 0.45; }
+
+/* 频段行：等宽字 · 拉开字距 · 贴 gutter */
+.sn-footer__freq-row {
+  padding: 12px var(--gutter) 14px !important;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro) !important;
+  letter-spacing: 0.12em;
+  color: var(--ink-3) !important;
+}
+.sn-footer__freq-label { color: var(--ice) !important; font-weight: 500; }
+.sn-footer__onair { color: var(--rose-soft) !important; gap: 7px; letter-spacing: 0.14em; }
+.sn-footer__dot {
+  width: 6px !important;
+  height: 6px !important;
+  background: var(--rose) !important;
+  box-shadow: none !important;
+  animation: sn-blink 2.4s ease-in-out infinite;
+}
+.sn-footer__time { color: var(--ink-3) !important; font-variant-numeric: tabular-nums; }
+
+/* credits：四栏信息架构，栏目间发丝线分隔 */
+.sn-footer__credits {
+  max-width: 1180px !important;
+  margin-inline: auto !important;
+  padding: 2.8rem var(--gutter) 0.5rem !important;
+  grid-template-columns: 1.5fr 1fr 1fr 1.3fr !important;
+  gap: clamp(1.6rem, 4vw, 3rem) !important;
+}
+.sn-footer__brand {
+  font-family: var(--font-display);
+  font-size: 1.15rem !important;
+  font-weight: 600 !important;
+  color: var(--ink) !important;
+  margin-bottom: 0 !important;
+}
+.sn-footer__brand svg { width: 22px !important; height: 22px !important; color: var(--rose) !important; }
+.sn-footer__tag {
+  margin-top: 0.9rem !important;
+  max-width: 26ch;
+  line-height: 1.85;
+  color: var(--ink-3) !important;
+}
+.sn-footer__col-title {
+  font-family: var(--font-mono) !important;
+  font-size: var(--fs-micro) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase !important;
+  color: var(--ink-3) !important;
+  margin: 0 0 1.1rem !important;
+}
+.sn-footer__col ul { margin: 0; padding: 0; list-style: none; }
+.sn-footer__col li { margin: 0 0 0.65rem !important; }
+.sn-footer__col a {
+  color: var(--ink-2);
+  font-size: var(--fs-small);
+  border-bottom: none;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.sn-footer__col a:hover { color: var(--rose); border-color: transparent; }
+.sn-footer__col--meta p {
+  margin: 0 0 0.5rem !important;
+  font-size: var(--fs-small);
+  line-height: 1.8;
+  color: var(--ink-3) !important;
+}
+.sn-footer__copy {
+  font-family: var(--font-mono) !important;
+  font-size: var(--fs-micro) !important;
+  letter-spacing: 0.05em;
+  margin-top: 0.6rem !important;
+  color: var(--ink-3) !important;
+}
+@media (min-width: 761px) {
+  .sn-footer__col--links { border-left: 1px solid var(--rule); padding-left: clamp(1.4rem, 3vw, 2.2rem); }
+}
+@media (max-width: 900px) {
+  .sn-footer__credits { grid-template-columns: 1fr 1fr !important; }
+}
+@media (max-width: 540px) {
+  .sn-footer__credits { grid-template-columns: 1fr !important; gap: 1.8rem !important; padding-top: 2rem !important; }
+  .sn-footer__col--links { border-left: 0; padding-left: 0; }
+  .sn-footer__freq-row { padding-inline: 1.25rem !important; }
+  .sn-footer__eq { justify-content: flex-start !important; }
+}
 .sig-postmark {
   border: 1px solid var(--rose); color: var(--rose);
   font-family: var(--font-mono); font-size: var(--fs-micro);

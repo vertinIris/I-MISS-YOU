@@ -414,3 +414,21 @@
     }
     .music-progress-fill { transition: none; }
 }
+
+/* ============================================================
+   5. 页脚编辑式精修（与主站 site-v2 同语言）
+   ============================================================ */
+@media (min-width: 761px) {
+  .sn-footer__col--links,
+  .sn-footer__col--meta {
+    border-left: 1px solid var(--fr-line);
+    padding-left: clamp(1.4rem, 3vw, 2.2rem);
+  }
+}
+.sn-footer__col-title { letter-spacing: 0.2em; }
+.sn-footer__eq { justify-content: center; opacity: 0.9; }
+.sn-footer__brand { letter-spacing: 0.02em; }
+@media (max-width: 540px) {
+  .sn-footer__col--links,
+  .sn-footer__col--meta { border-left: 0; padding-left: 0; }
+}

@@ -1,35 +1,19 @@
 /* P3-1: Self-hosted fonts — replaces Google Fonts CDN
- * Variable fonts (Noto Sans/Serif SC, JetBrains Mono) cover all weights via fvar axis.
- * Static fonts (ZCOOL XiaoWei, IBM Plex Mono) have one file per weight.
+ * 性能策略（v11.6.0 瘦身）：
+ *  - Noto Serif SC → 按站内实际用字（assets/fonts/serif-corpus.txt，~1.5k 字）
+ *    子集化：8.2MB → ~0.4MB。语料覆盖静态页与种子数据；UGC 中缺字回退系统衬线。
+ *  - Noto Sans SC / ZCOOL XiaoWei 的完整 CJK 字库（5.7MB / 2.6MB）已移除，
+ *    正文走系统字体栈（PingFang SC / Microsoft YaHei），标题衬线走上面的子集。
+ *    字体名保留在各 font-family 栈中：本机装有该字体的用户仍可命中。
+ *  - 三个拉丁等宽小字体（<60KB）保留。
  * Paths resolve relative to dist/css/ (merged output location).
- * unicode-range matches pyftsubset subsets → browser only fetches when needed.
  */
 
-/* ── Noto Sans SC (variable wght 100–900, CJK subset) ── */
-@font-face {
-  font-family: 'Noto Sans SC';
-  src: url('../../assets/fonts/noto-sans-sc.woff2') format('woff2');
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0000-00FF, U+2000-206F, U+4E00-9FFF, U+3000-303F, U+FF00-FFEF;
-}
-
-/* ── Noto Serif SC (variable wght 100–900, CJK subset) ── */
+/* ── Noto Serif SC (variable wght 100–900, 用字子集 ~0.4MB) ── */
 @font-face {
   font-family: 'Noto Serif SC';
-  src: url('../../assets/fonts/noto-serif-sc.woff2') format('woff2');
+  src: url('../../assets/fonts/noto-serif-sc-subset.woff2') format('woff2');
   font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0000-00FF, U+2000-206F, U+4E00-9FFF, U+3000-303F, U+FF00-FFEF;
-}
-
-/* ── ZCOOL XiaoWei (static 400, CJK subset) ── */
-@font-face {
-  font-family: 'ZCOOL XiaoWei';
-  src: url('../../assets/fonts/zcool-xiaowei.woff2') format('woff2');
-  font-weight: 400;
   font-style: normal;
   font-display: swap;
   unicode-range: U+0000-00FF, U+2000-206F, U+4E00-9FFF, U+3000-303F, U+FF00-FFEF;
