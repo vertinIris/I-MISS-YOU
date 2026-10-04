@@ -198,6 +198,9 @@ body::after {
 /* ---------- 8. 档案卡（去渐变 banner / 星星） ---------- */
 .profile-card { overflow: hidden; }
 .profile-banner { display: none !important; }
+/* banner 被隐藏后，基础样式里的 margin-top:-40px（为叠banner设计）
+   会把头像和文案拉出卡片上缘，被 overflow:hidden 裁掉 —— 归零并补回内距 */
+.profile-card .profile-body { margin-top: 0 !important; padding-top: 26px; }
 .profile-avatar-shell {
   width: 96px; height: 96px; border-radius: var(--r-md);
   background: var(--surface); border: 1px solid var(--rule);
@@ -275,52 +278,56 @@ body::after {
 .post-card h3, .diary-card h3 { font-family: var(--font-display); color: var(--ink); margin-bottom: 0.6rem; }
 .timeline { max-width: 760px; }
 
-/* ---------- 10b. 角色日志 · 编辑式网格（替代旧“书页”竖排） ----------
-   结构策略：.diary-page 用 display:contents 拆壳，把两张“书页”里的
-   6 篇日志摊平成一张响应式卡片网格（桌面 3 列 → 平板 2 列 → 手机 1 列），
-   不改动任何 HTML / JS 挂载点。 */
-.section-diary { max-width: none; }
+/* ---------- 10b. 角色日志 · 刊目式对页（ledger） ----------
+   均匀等宽卡片阵列是 AI 味重灾区。改回「电台日志刊目」：
+   左右对页（中缝发丝线），每篇一行刊目 —— 左列大号衬线日期，右列标题与摘要，
+   无卡片底、无圆角、无阴影，靠 hairline 与字号层级撑住版式。
+   当页首篇作头条（日期与标题放大、日期转玫色）。
+   摘要 + <details> 展开机制保留，全文仍完整留在 DOM。 */
+.section-diary { max-width: 1080px; }
 .diary-book {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
-  gap: 1.1rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
   perspective: none;
 }
-.diary-page { display: contents; }
+.diary-page { display: block; position: relative; padding: 0; }
 .diary-page::after { content: none !important; }
-.diary-page--left { border-right: 0; }
+.diary-page--left { border-right: 1px solid var(--rule); padding-right: 2.4rem; }
+.diary-page--right { padding-left: 2.4rem; }
 .diary-page:hover .diary-entry,
 .diary-page--right:hover .diary-entry { transform: none; }
 
-/* 旧书页的金色胶带 / 贴纸属于典型 AI 味装饰，网格化后移除 */
+/* 旧书页的金色胶带 / 贴纸属于典型 AI 味装饰，刊目化后移除 */
 .sig-tape, .sig-sticker { display: none !important; }
 
 .diary-entry {
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 1.4rem;
+  align-items: start;
   margin: 0 !important;
-  padding: 1.5rem 1.5rem 1.3rem !important;
-  background: var(--surface) !important;
-  border: 1px solid var(--rule) !important;
-  border-radius: var(--r-md) !important;
+  padding: 1.5rem 0 1.4rem !important;
+  background: none !important;
+  border: none !important;
+  border-top: 1px solid var(--rule) !important;
+  border-radius: 0 !important;
   box-shadow: none !important;
-  transition: border-color var(--dur-fast) var(--ease-out),
-              background var(--dur-fast) var(--ease-out);
+  transition: none;
 }
 .diary-entry:hover {
   transform: none !important;
-  background: var(--surface-2) !important;
-  border-color: var(--rule-strong) !important;
+  background: none !important;
 }
+.diary-entry:first-child { border-top: 0 !important; padding-top: 0.2rem !important; }
 
-/* 日期：从“方块章”改为编辑式首行（大号衬线日 + 等宽月份） */
+/* 日期：大号衬线日 + 等宽月，纵向置于左列（像页码） */
 .diary-date {
   display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  gap: 0.55rem;
-  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  min-width: 3.2rem;
   padding: 0;
   background: none !important;
   border: none !important;
@@ -338,16 +345,26 @@ body::after {
   letter-spacing: 0.2em;
   color: var(--ink-3);
 }
+/* 当页头条：首篇放大 —— 日期转玫色、字号加大，标题随升 */
+.diary-entry:first-child .diary-day { font-size: 3.2rem; color: var(--rose); }
+.diary-entry:first-child .diary-title { font-size: 1.5rem; }
 .diary-title {
   font-family: var(--font-display);
   font-size: var(--fs-h3);
   color: var(--ink);
   margin: 0;
   line-height: 1.3;
+  transition: color var(--dur-fast) var(--ease-out);
 }
+.diary-entry:hover .diary-title { color: var(--rose-strong); }
 .diary-text { color: var(--ink-2); font-size: var(--fs-small); line-height: 1.95; }
 .diary-text p { margin: 0 0 0.6em; }
 .diary-text p:last-child { margin-bottom: 0; }
+/* 对页底部收一条发丝线，避免最后一篇「悬空」 */
+.diary-page--left .diary-entry:last-child,
+.diary-page--right .diary-entry:last-child {
+  border-bottom: 1px solid var(--rule) !important;
+}
 
 /* 标签沉底，网格卡片高度对齐 */
 .diary-tags {
@@ -621,15 +638,19 @@ body::after {
   .sn-footer__freq-row { padding-inline: 1.25rem !important; }
   .sn-footer__eq { justify-content: flex-start !important; }
 }
-.sig-postmark {
+/* 邮戳：与论坛同构的 .sn-footer__postmark，配色走主站玫色 */
+.sn-footer__postmark {
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-bottom: 12px;
   border: 1px solid var(--rose); color: var(--rose);
   font-family: var(--font-mono); font-size: var(--fs-micro);
   letter-spacing: 0.15em; padding: 0.3em 0.7em; border-radius: 4px; opacity: 0.85;
 }
 
-/* 跨站入口按钮（与论坛 stf-back-home 同位同款：右下 24/88，与咖啡叠成一列） */
+/* 跨站入口按钮：左下 24px（与论坛的 stf-back-home 对称）；
+   右下让给咖啡 + 同步状态。左进右出，方向语义：去论坛=离开主站=靠左。 */
 .forum-entry-fab {
-  right: 24px !important; left: auto !important; bottom: 88px !important;
+  left: 24px !important; right: auto !important; bottom: 24px !important;
   background: var(--surface) !important; color: var(--ink) !important;
   border: 1px solid var(--rule-strong) !important; box-shadow: none !important;
   -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
@@ -660,6 +681,15 @@ body::after {
 }
 
 /* ---------- 17. 响应式 ---------- */
+@media (max-width: 880px) {
+  /* 刊目对页合拢为单栏：中缝让位，右页接管上分隔线 */
+  .diary-book { grid-template-columns: 1fr; }
+  .diary-page--left { border-right: 0; padding-right: 0; }
+  .diary-page--right { padding-left: 0; margin-top: 0.6rem; border-top: 1px solid var(--rule); }
+  .diary-page--right .diary-entry:first-child { border-top: 0 !important; padding-top: 0.2rem !important; }
+  .diary-date { flex-direction: row; align-items: baseline; gap: 0.55rem; min-width: 0; }
+  .diary-entry:first-child .diary-day { font-size: 2.4rem; }
+}
 @media (max-width: 768px) {
   .hero-content { max-width: 100%; }
   .profile-stats { gap: 1.5rem; flex-wrap: wrap; }

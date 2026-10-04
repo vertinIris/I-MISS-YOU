@@ -39,7 +39,7 @@
     <title>飞行雪绒 · 星炬学院的日常</title>
 
     <!-- P3-1: Fonts self-hosted via css/fonts.css (merged into dist/css/main.min.css) -->
-    <!-- v11.7.0: 衬线子集字预加载（标题首屏字体），等宽小字体同步预热 -->
+    <!-- v11.7.1: 衬线子集字预加载（标题首屏字体），等宽小字体同步预热 -->
     <link rel="preload" href="assets/fonts/noto-serif-sc-subset.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin>
 
@@ -1872,12 +1872,10 @@
                 </ul>
             </div>
             <div class="sn-footer__col sn-footer__col--meta">
-                <!-- S9 邮戳偏移装饰 -->
-                <div class="sig-postmark" style="position:static;margin-bottom:12px;display:inline-flex;align-items:center;justify-content:center;">
-                    <span>SENT · 9072</span>
-                </div>
+                <!-- 邮戳与论坛同构（.sn-footer__postmark），配色走主站玫色 -->
+                <div class="sn-footer__postmark">SENT · 9072</div>
                 <p>鸣潮同人创作项目 · 非官方非商业</p>
-                <p class="sn-footer__copy">© 飞行雪绒 · <span id="sn-footer-year">2026</span> · 以思念调频 · v11.7.0</p>
+                <p class="sn-footer__copy">© 飞行雪绒 · <span id="sn-footer-year">2026</span> · 以思念调频 · v11.7.1</p>
             </div>
         </div>
     </footer>
@@ -1902,7 +1900,7 @@
     <div id="secret-portal-root"></div>
     <!-- Stage II: 18 个本地 JS 合并为 1 个 bundle（477KB→222KB ↓53.4%）+ SRI 完整性校验 -->
     <script defer src="dist/bundle-main.js"
-            integrity="sha384-Wfn1KINGn0obzovhuJ4L1Y8n1+GpWMlHUfokfr9ktZatBLRpqv++Lq4Z88/U4DsF"
+            integrity="sha384-Ql/ZMswl6GuH40YhKcEPGzQQhn9x3IIu3Dg1FU9B1RbKpPHpqugZy0l4XDLelEej"
             crossorigin="anonymous"></script>
     <!-- v10.1: web-vitals RUM 采集 — 匿名采集 LCP/INP/CLS/TTFB/FCP，写入 Supabase performance_metrics -->
     <script type="module" src="js/web-vitals-collector.js"></script>

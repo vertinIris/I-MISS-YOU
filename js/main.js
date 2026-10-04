@@ -4793,7 +4793,7 @@
         archive: ArchiveAPI,
         sync: SyncAPI,
         user: UserAPI,
-        version: 'v11.7.0'
+        version: 'v11.7.1'
     };
 })();
 
