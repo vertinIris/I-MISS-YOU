@@ -10,7 +10,7 @@
 //   4) 启用 navigationPreload，文档导航更快。
 //   5) 静态资源命中缓存时校验体积：content-length 为 0 视为损坏，回退网络，
 //      绝不让空/截断的 CSS/JS 误导“渲染成功”。
-const CACHE_VERSION = 'snowfluff-v11.6.1-footer-unify';
+const CACHE_VERSION = 'snowfluff-v11.7.2';
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -142,6 +142,20 @@ function revalidateDist(request) {
     .catch(() => { /* 离线/抖动时静默保留旧缓存 */ });
 }
 
+// v11.7.2：手维护的非 dist css/js（site-v2 / forum-redesign / refined / edge-compat 等
+// 覆盖层不进 bundle、不重建 dist，历次「改了又没生效」的事故源）命中缓存后
+// 强制绕过 HTTP 缓存回源更新（SWR）。即使 CACHE_VERSION 忘记 bump 也会自愈。
+function revalidateRuntimeHard(request) {
+  return fetch(new Request(request, { cache: 'reload' }))
+    .then((res) => {
+      if (res && (res.ok || res.type === 'opaque')) {
+        return caches.open(RUNTIME_CACHE)
+          .then((c) => c.put(request, res.clone()).catch(() => {}));
+      }
+    })
+    .catch(() => { /* 离线/抖动时静默保留旧缓存 */ });
+}
+
 // 请求拦截：任何分支都必须返回有效响应，绝不返回 undefined / 空体。
 self.addEventListener('fetch', (event) => {
   const { request } = event;
@@ -223,7 +237,13 @@ self.addEventListener('fetch', (event) => {
       }
 
       const cached = await safeCacheMatch(request);
-      if (cached) return cached;
+      if (cached) {
+        // v11.7.2：css/js 命中后后台硬回源（SWR），防止覆盖层样式被旧缓存钉死。
+        if (/\.css$|\.js$/i.test(url.pathname)) {
+          event.waitUntil(revalidateRuntimeHard(request));
+        }
+        return cached;
+      }
       try {
         const res = await fetch(request);
         if (res && (res.ok || res.type === 'opaque')) {

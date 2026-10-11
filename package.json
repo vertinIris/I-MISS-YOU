@@ -1,6 +1,6 @@
 {
   "name": "flying-edelweiss",
-  "version": "11.7.1",
+  "version": "11.7.2",
   "description": "飞行雪绒 — 鸣潮角色爱弥斯的同人社交账号体验网站",
   "type": "module",
   "scripts": {
@@ -49,6 +49,8 @@
     "db:migrate-030": "echo 'Run db/migration-030-perf-metrics-rum.sql — performance_metrics table for web-vitals RUM collection'",
     "content:build": "node scripts/build-forum-import.cjs",
     "content:pipeline": "node -e \"console.log('Source: 论坛内容/二创内容库 → npm run content:build → forum/js/forum-import-data.js → forum pull/seed → Supabase.\\nDocs: docs/CONTENT-PIPELINE.md')\"",
+    "build": "node scripts/build-phase2.mjs",
+    "build:all": "node scripts/build-phase1.mjs && node scripts/build-phase2.mjs",
     "serve:win": "powershell -ExecutionPolicy Bypass -File ./run.ps1"
   },
   "keywords": [

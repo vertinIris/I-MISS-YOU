@@ -96,7 +96,9 @@ for (const check of symbolChecks) {
     }
 }
 
-// 版本一致性：js/main.js (__FXRE_API) / 主站页脚 / 论坛页脚 必须与 package.json 对齐
+// 版本一致性：js/main.js (__FXRE_API) / 主站页脚 / 论坛页脚 / SW 缓存号 必须与 package.json 对齐
+// v11.7.2 补入 sw.js CACHE_VERSION 与 js/sw-register.js SW_VERSION —— 二者漏 bump 会导致
+// 用户浏览器被旧 SW 缓存钉死在旧样式（「改了又出现」事故的根因）。
 try {
     const ver = String(JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version || '');
     const expect = [
@@ -104,6 +106,8 @@ try {
         { file: 'index.html', re: new RegExp('v' + ver.replace(/\./g, '\\.')) },
         { file: 'forum/index.html', re: new RegExp('v' + ver.replace(/\./g, '\\.')) },
         { file: 'package-lock.json', re: new RegExp('"version":\\s*"' + ver.replace(/\./g, '\\.') + '"') },
+        { file: 'sw.js', re: new RegExp("CACHE_VERSION = 'snowfluff-v" + ver.replace(/\./g, '\\.') + "'") },
+        { file: 'js/sw-register.js', re: new RegExp("SW_VERSION = 'v=" + ver.replace(/\./g, '\\.') + "'") },
     ];
     for (const { file, re } of expect) {
         if (re.test(readFileSync(join(root, file), 'utf8'))) console.log('OK', file, '版本 v' + ver);

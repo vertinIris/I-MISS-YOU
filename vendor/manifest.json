@@ -1,8 +1,17 @@
 {
-  "description": "飞行雪绒 vendor 清单 — 自托管第三方运行时库（无 CDN 依赖，规避 R-08 单点故障风险）",
+  "description": "飞行雪绒 vendor 清单 — 自托管第三方运行时库（Supabase JS 为例外：经 CDN 加载并附本地回退，见 libraries.supabase）",
   "generated": "2026-08-11",
   "policy": "所有库均从官方 GitHub 仓库或 npm registry 下载预编译版本，本地自托管。版本锁定，SRI 双保险。",
   "libraries": {
+    "supabase": {
+      "version": "2.x (jsdelivr @supabase/supabase-js@2)",
+      "source": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js",
+      "license": "MIT",
+      "purpose": "Supabase JS 客户端 — 主站/论坛云端 Auth + Realtime + 数据访问（CDN 加载，论坛另有本地回退 forum/js/supabase.min.js）",
+      "cdn": true,
+      "localFallback": "forum/js/supabase.min.js",
+      "note": "anon key 属公开凭证（RLS 在数据库层控权），可安全提交；真实 URL/anon 由 CI 注入 dist/，源码仅保留当前值"
+    },
     "dompurify": {
       "version": "3.2.7",
       "source": "https://github.com/cure53/DOMPurify (main branch dist/)",
