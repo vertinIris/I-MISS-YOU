@@ -600,14 +600,13 @@ body.forum-page .nav-glass { background: rgba(12, 14, 24, 0.94) !important; }
   color: #F0F4FF !important; letter-spacing: 0.12em !important;
 }
 
-/* ---------- 5.3 悬浮簇：入口居左 · 咖啡+同步状态居右 ----------
-   方向语义：跨站入口（回主站=离开论坛）靠左下 24px；
-   右侧保留「咖啡 bottom:24 + 同步状态 bottom:88」竖列。
-   两者滚动时始终可见（real-time follow）。
+/* ---------- 5.3 悬浮簇：右下一列（v11.7.3 用户定稿） ----------
+   顺序自上而下：同步状态(152) → 跨站入口(88) → 咖啡(24)，全部 right:24。
+   与主站右列结构对称；fixed 定位随滚动实时跟随。
    咖啡按钮实色去毛玻璃，图标环用 CSS scroll-timeline 显示阅读进度，
    无 JS、无内联脚本，规避 CSP 与移动端性能风险。 */
 .stf-back-home {
-  left: 24px !important; right: auto !important; bottom: 24px !important;
+  right: 24px !important; left: auto !important; bottom: 88px !important;
   background: rgba(240, 244, 255, 0.05) !important;
   color: #F0F4FF !important;
   border: 1px solid rgba(240, 244, 255, 0.26) !important;
@@ -653,7 +652,7 @@ body.forum-page .donate-fab { opacity: 1 !important; }
   }
 }
 /* 同步状态胶囊归位右侧竖列（咖啡上方），入口已让出左下也不回右边 */
-.stf-edge-indicator { left: auto !important; right: 24px !important; bottom: 88px !important; }
+.stf-edge-indicator { left: auto !important; right: 24px !important; bottom: 152px !important; }
 
 /* ---------- 5.4 首页背板实色重写（兼容性保底） ----------
    病根：历次「修复」都把深色写在 color-mix()/oklch() 里；不支持这两个函数的

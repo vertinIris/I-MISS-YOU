@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-11T09:41:36.022Z",
+  "generatedAt": "2026-10-11T11:11:24.890Z",
   "stage": "phase-2",
   "bundles": {
     "main": {
@@ -8,7 +8,7 @@
       "dstSize": 237263,
       "ratio": "47.4",
       "saved": "52.6",
-      "sri": "sha384-y6te0AmjU+2NbRv9ISvZ+aE2ljFmPbF3Gn4JX4Od/JcIhcPZM41i6McSOCF4Sp8x",
+      "sri": "sha384-inXBuDq4i8EZo01YRVnPxvPI+0DaDmpSEq7/IpTocRvQWBVjanLns91wBuG8UOCp",
       "mapGenerated": true
     },
     "forum": {

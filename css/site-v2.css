@@ -205,6 +205,14 @@ body::after {
   width: 96px; height: 96px; border-radius: var(--r-md);
   background: var(--surface); border: 1px solid var(--rule);
   display: grid; place-items: center; padding: 8px;
+  box-sizing: border-box;
+}
+/* 基础样式里 .profile-avatar 是 100px 定宽圆 + 4px 粗边，
+   比 shell 的 content box（96-16=80px）大 → 圆溢出方框右下角。
+   这里让它填满 content box 并去掉粗边，圆形居中于方框内。 */
+.profile-avatar-shell .profile-avatar {
+  width: 100%; height: 100%;
+  border: none; box-shadow: none;
 }
 .pixel-avatar { width: 100%; height: 100%; image-rendering: pixelated; }
 .profile-name { font-family: var(--font-display); font-size: var(--fs-h3); color: var(--ink); }
@@ -647,10 +655,11 @@ body::after {
   letter-spacing: 0.15em; padding: 0.3em 0.7em; border-radius: 4px; opacity: 0.85;
 }
 
-/* 跨站入口按钮：左下 24px（与论坛的 stf-back-home 对称）；
-   右下让给咖啡 + 同步状态。左进右出，方向语义：去论坛=离开主站=靠左。 */
+/* ---------- 悬浮簇：右下一列（v11.7.3 用户定稿） ----------
+   顺序自上而下：同步状态(152) → 论坛入口(88) → 咖啡(24)，全部 right:24。
+   fixed 定位随滚动实时跟随。 */
 .forum-entry-fab {
-  left: 24px !important; right: auto !important; bottom: 24px !important;
+  right: 24px !important; left: auto !important; bottom: 88px !important;
   background: var(--surface) !important; color: var(--ink) !important;
   border: 1px solid var(--rule-strong) !important; box-shadow: none !important;
   -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
@@ -659,6 +668,18 @@ body::after {
 .forum-entry-fab-icon {
   border-color: var(--rule-strong) !important;
   background: var(--rose-dim) !important; color: var(--rose) !important;
+}
+
+/* 同步状态指示器：base 样式 fixed right:20 bottom:20，会与咖啡按钮重叠。
+   排入右列顶部，并套编辑式皮肤（实色、发丝线、去毛玻璃）。 */
+.sync-indicator {
+  right: 24px !important; bottom: 152px !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--rule) !important;
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+  box-shadow: none !important;
+  color: var(--ink-2) !important;
+  font-family: var(--font-mono) !important; font-size: var(--fs-micro) !important;
 }
 
 /* ---------- 15. 细节：滚动条 / 选区 ---------- */
