@@ -1102,7 +1102,7 @@
             <div class="sn-footer__col sn-footer__col--meta">
                 <div class="sn-footer__postmark">SENT · 9072</div>
                 <p>星炬学院由同好共建 · 非官方・非商业</p>
-                <p class="sn-footer__copy">© 星炬学院 · <span id="stf-footer-year">2026</span> · 以思念调频 · v11.7.3</p>
+                <p class="sn-footer__copy">© 星炬学院 · <span id="stf-footer-year">2026</span> · 以思念调频 · v11.7.4</p>
                 <button type="button" class="stf-hidden-trigger" id="stf-hidden-trigger" aria-label="隐藏信号" style="background:none;border:none;padding:0;margin-top:8px;cursor:pointer;opacity:0.55;">
                     <svg class="stf-hidden-snowflake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" style="width:22px;height:22px;">
                         <path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/>
@@ -1339,8 +1339,11 @@
     <!-- Stage II: 15 个本地 JS 合并为 1 个 bundle（696KB→534KB ↓23.3%）+ SRI 完整性校验 -->
     <!-- forum-supabase.js 内含 waitForSDK 轮询，不依赖 CDN SDK 严格顺序；bundle 可安全先于 SDK 加载 -->
     <script defer src="../dist/bundle-forum.js"
-            integrity="sha384-Jxg5Qlmgh39WcsyDu3lBJQnFVCYbKeF+XtEOvN40Zg1VVL8FWZb5GGofKbthf4ht"
+            integrity="sha384-RxIbcvJE2zMAbgAydQMJde1FUa3AvtRi066OFyAI9NylZdqTa7ihW4uNBhDq/78X"
             crossorigin="anonymous"></script>
+    <!-- 同步状态监测 / 主动同步按钮：独立加载，确保无论 bundle 是否执行都会挂载
+         （forum-sync.js 自带幂等守卫，重复加载不会双初始化）。需在 StarTorchData 之后。 -->
+    <script defer src="../forum/js/forum-sync.js"></script>
     <!-- 论坛上云：Supabase 客户端 + 云端适配器（与主站共用同一项目，账号自动打通）
          v10.1: 内联脚本 + onerror 提取为外部文件 forum-supabase-loader.js，配合 CSP 加固 -->
     <script defer src="js/forum-supabase-loader.js"></script>

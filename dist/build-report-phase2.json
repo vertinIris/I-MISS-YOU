@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-11T11:11:24.890Z",
+  "generatedAt": "2026-10-11T11:45:44.065Z",
   "stage": "phase-2",
   "bundles": {
     "main": {
@@ -8,16 +8,16 @@
       "dstSize": 237263,
       "ratio": "47.4",
       "saved": "52.6",
-      "sri": "sha384-inXBuDq4i8EZo01YRVnPxvPI+0DaDmpSEq7/IpTocRvQWBVjanLns91wBuG8UOCp",
+      "sri": "sha384-u2t7wE0afOeLxjllMNbWTF6dVxPG7MOTvfqQJQYCjJ8jdb9gWL7yv4MMyV49Q2ov",
       "mapGenerated": true
     },
     "forum": {
       "name": "bundle-forum.js",
-      "srcSize": 310958,
-      "dstSize": 151143,
+      "srcSize": 311232,
+      "dstSize": 151170,
       "ratio": "48.6",
       "saved": "51.4",
-      "sri": "sha384-Jxg5Qlmgh39WcsyDu3lBJQnFVCYbKeF+XtEOvN40Zg1VVL8FWZb5GGofKbthf4ht",
+      "sri": "sha384-RxIbcvJE2zMAbgAydQMJde1FUa3AvtRi066OFyAI9NylZdqTa7ihW4uNBhDq/78X",
       "mapGenerated": true
     }
   },

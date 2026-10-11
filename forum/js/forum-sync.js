@@ -22,6 +22,11 @@
 (function () {
     'use strict';
 
+    /* 幂等守卫：本模块既可能被打包进 bundle-forum.js，也可能以独立
+       <script> 形式加载。无论哪种路径，只初始化一次，避免重复创建
+       边缘指示器 / 重复轮询定时器。 */
+    if (window.StarTorchSync) return;
+
     var AUTO_INTERVAL = 20000;   // 自动同步轮询间隔（ms）
 
     var state = {
