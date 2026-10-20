@@ -3,7 +3,8 @@
  * 飞行雪绒 / 星炬学院 smoke-check — 语法 + 资源 + 关键符号 + migration 链
  * 用法: node scripts/smoke-check.mjs
  */
-import { execSync } from 'child_process';
+import { spawnSync } from 'child_process';
+import vm from 'node:vm';
 import { existsSync, readFileSync, readdirSync } from 'fs';
 import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
@@ -52,6 +53,33 @@ const symbolChecks = [
 /** 期望存在的 migration 前缀（020 有 tables/chat 双文件属历史命名，均计入） */
 const MIGRATION_MAX = 30;
 
+/** 顶层 ESM 特征：vm.Script 无法解析，spawn 不可用时应跳过而非误报 */
+const ESM_RE = /^\s*(?:import|export)\s|^\s*export\s*\{|import\.meta/m;
+
+/**
+ * 语法检查：优先子进程 node --check（CI/常规环境最准确）。
+ * spawn 被宿主环境阻塞时（Windows 沙箱常见 EBUSY）降级为内置 vm.Script 解析，
+ * 避免把环境问题误报成语法失败。
+ */
+function checkSyntax(p, f) {
+    const r = spawnSync(process.execPath, ['--check', p], { encoding: 'utf8', windowsHide: true });
+    if (!r.error) {
+        return r.status === 0
+            ? { ok: true, tag: 'OK' }
+            : { ok: false, msg: String(r.stderr || '').trim().split('\n').slice(0, 3).join(' ') };
+    }
+    const src = readFileSync(p, 'utf8');
+    if (ESM_RE.test(src)) {
+        return { ok: true, tag: 'SKIP', note: `ESM 且 spawn 不可用(${r.error.code})，跳过` };
+    }
+    try {
+        new vm.Script(src, { filename: f });
+        return { ok: true, tag: 'OK', note: `spawn 不可用(${r.error.code})，内置解析通过` };
+    } catch (e) {
+        return { ok: false, msg: e.message };
+    }
+}
+
 let failed = 0;
 
 console.log('=== JS 语法检查 ===');
@@ -62,11 +90,11 @@ for (const f of jsFiles) {
         failed++;
         continue;
     }
-    try {
-        execSync(`node --check "${p}"`, { stdio: 'pipe' });
-        console.log('OK', f);
-    } catch (e) {
-        console.log('FAIL', f);
+    const res = checkSyntax(p, f);
+    if (res.ok) {
+        console.log(res.tag, f, res.note ? `— ${res.note}` : '');
+    } else {
+        console.log('FAIL', f, '—', res.msg);
         failed++;
     }
 }
