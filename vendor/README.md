@@ -17,6 +17,10 @@
 | Font-Awesome | 7.3.1 | 图标库 — 通用 UI 图标（Solid/Regular/Brands 三样式 + fa-spin 动画） | P1 推荐 |
 | anime.js | 4.5.0 | JS 动画引擎 — 高级视觉特效（磁性按钮/曲线轮播/hero 入场/滚动触发） | P1 推荐 |
 | Material Design Icons | 7.4.47 | 图标库 — 学院蓝金论坛"权威感"图标，可变字体支持 | P1 推荐 |
+| Fuse.js | 6.6.2 | 客户端模糊搜索 — 论坛/主站离线检索，服务端 search RPC 的降级方案（20.5k★） | P1 推荐 |
+| howler.js | 2.2.4 | 音频播放层 — 夜电台/音乐页 autoplay unlock、淡入淡出（25.4k★） | P1 推荐 |
+| canvas-confetti | 1.9.4 | 粒子动效 — 点赞/投稿成功/彩蛋反馈，内置 snow 预设（12.8k★） | P1 推荐 |
+| Day.js | 1.11.23 | 轻量时间格式化（核心 2kB）— 统一时间线/投稿/评论时间展示（48.7k★） | P1 推荐 |
 
 完整元数据（含 SRI 哈希、集成代码片段、使用示例）见 `manifest.json`。
 

@@ -131,6 +131,54 @@
       ],
       "integration": "<link rel=\"stylesheet\" href=\"vendor/mdi/css/materialdesignicons.min.css\" integrity=\"sha384-HphS8cQyN+eYiJ5PMbzShG6qZdRtvHPVLPkYb8JwMkmNgaIxrFVDhQe3jIbq3EZ2\" crossorigin=\"anonymous\">",
       "usage": "<span class=\"mdi mdi-home\"></span>\n<span class=\"mdi mdi-account\"></span>\n<span class=\"mdi mdi-forum\"></span>"
+    },
+    "fuse": {
+      "version": "6.6.2",
+      "source": "npm registry fuse.js@6.6.2 (GitHub krisk/Fuse — 20.5k★)",
+      "license": "Apache-2.0",
+      "purpose": "客户端模糊搜索 — 论坛/主站内容离线检索，作为服务端 search_forum_* RPC 不可用时的降级方案（P1 推荐）",
+      "files": [
+        { "path": "fuse/fuse.min.js", "size": 23539, "sri": "sha384-zPE55eyESN+FxCWGEnlNxGyAPJud6IZ6TtJmXb56OFRGhxZPN4akj9rjA3gw5Qqa" }
+      ],
+      "integration": "<script src=\"vendor/fuse/fuse.min.js\" integrity=\"sha384-zPE55eyESN+FxCWGEnlNxGyAPJud6IZ6TtJmXb56OFRGhxZPN4akj9rjA3gw5Qqa\" crossorigin=\"anonymous\"></script>",
+      "usage": "const fuse = new Fuse(list, { keys: ['title','content','author'], threshold: 0.35, ignoreLocation: true, includeScore: true });\nfuse.search('爱弥斯').slice(0, 10);",
+      "note": "7.x 起官方移除 UMD 构建（仅 ESM/CJS），本站禁内联脚本，故锁定 6.6.2 —— 最后一个提供 UMD 全局 window.Fuse 的版本"
+    },
+    "howler": {
+      "version": "2.2.4",
+      "source": "npm registry howler@2.2.4 (GitHub goldfire/howler.js — 25.4k★)",
+      "license": "MIT",
+      "purpose": "音频播放层 — 夜电台/音乐页：移动端 autoplay unlock、跨浏览器回退、音量淡入淡出、音频精灵（P1 推荐）",
+      "files": [
+        { "path": "howler/howler.min.js", "size": 36173, "sri": "sha384-SSf4pKRrGaeWL8bdA89QvGkhZo5WvIVCGwKVzfX7z+9sSaIHtE/AkOLehofI4JVY" }
+      ],
+      "integration": "<script src=\"vendor/howler/howler.min.js\" integrity=\"sha384-SSf4pKRrGaeWL8bdA89QvGkhZo5WvIVCGwKVzfX7z+9sSaIHtE/AkOLehofI4JVY\" crossorigin=\"anonymous\"></script>",
+      "usage": "const sfx = new Howl({ src: ['assets/audio/xxx.mp3'], html5: true, volume: 0.6, preload: true });\nsfx.fade(0, 0.6, 1200); sfx.play();\nHowler.autoUnlock = true; Howler.volume(0.8);"
+    },
+    "canvas-confetti": {
+      "version": "1.9.4",
+      "source": "npm registry canvas-confetti@1.9.4 (GitHub catdad/canvas-confetti — 12.8k★)",
+      "license": "ISC",
+      "purpose": "彩蛋/庆祝粒子动效 — 点赞、投稿成功、9072 连点彩蛋反馈；内置 snow 预设契合雪绒主题（P1 推荐）",
+      "files": [
+        { "path": "canvas-confetti/confetti.browser.min.js", "size": 10811, "sri": "sha384-JSZXO0kKYHTylAsDYTb+7Kg2eUyalm19b8Pydcdf8sQ1cCKYZr9lLahoKT9+LFY5" }
+      ],
+      "integration": "<script src=\"vendor/canvas-confetti/confetti.browser.min.js\" integrity=\"sha384-JSZXO0kKYHTylAsDYTb+7Kg2eUyalm19b8Pydcdf8sQ1cCKYZr9lLahoKT9+LFY5\" crossorigin=\"anonymous\"></script>",
+      "usage": "confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 }, colors: ['#FFD7E8','#FF8FB0','#6B8AFF','#F0F4FF'] });\n// 雪绒主题落雪：confetti({ particleCount: 120, spread: 120, scalar: 0.9, shapes: ['circle'], gravity: 0.35, ticks: 220 });",
+      "note": "默认创建全屏 canvas 且 pointer-events:none，不拦截点击（彩蛋挂载点安全）。reduced-motion 下应在业务层跳过调用"
+    },
+    "dayjs": {
+      "version": "1.11.23",
+      "source": "npm registry dayjs@1.11.23 (GitHub iamkun/dayjs — 48.7k★)",
+      "license": "MIT",
+      "purpose": "轻量时间格式化/相对时间（核心 2kB）— 统一时间线/投稿/评论的时间展示，替代各处手写 Intl 逻辑（P1 推荐）",
+      "files": [
+        { "path": "dayjs/dayjs.min.js", "size": 7161, "sri": "sha384-1Ft4/JTNbt7S/44V0himpcjx+YfQ1a6W6SYBJMr94ba6jwZhWoWoLaZsMmtJILgq" },
+        { "path": "dayjs/zh-cn.js", "size": 1463, "sri": "sha384-JlOvD9rwLmKdB9EoDKPPtxT02Btalz7oisrWI0tS0cwjMnTvZB9ww5BpcPAnhn+a" }
+      ],
+      "integration": "<script src=\"vendor/dayjs/dayjs.min.js\" integrity=\"sha384-1Ft4/JTNbt7S/44V0himpcjx+YfQ1a6W6SYBJMr94ba6jwZhWoWoLaZsMmtJILgq\" crossorigin=\"anonymous\"></script>\n<script src=\"vendor/dayjs/zh-cn.js\" integrity=\"sha384-JlOvD9rwLmKdB9EoDKPPtxT02Btalz7oisrWI0tS0cwjMnTvZB9ww5BpcPAnhn+a\" crossorigin=\"anonymous\"></script>",
+      "usage": "dayjs.locale('zh-cn');\ndayjs(ts).format('YYYY-MM-DD HH:mm');",
+      "note": "fromNow()/相对时间需额外引入 relativeTime 插件，当前未下载（保持最小体积）；需要时再补 vendor/dayjs/relativeTime.js + locale 扩展"
     }
   },
   "devTools": {
