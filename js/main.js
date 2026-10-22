@@ -95,6 +95,7 @@
                 /* 恢复页面加载时的 liked 状态 */
                 if (likedStates[postId]) {
                     btn.classList.add('liked');
+                    btn.setAttribute('aria-pressed', 'true');
                     if (countEl) countEl.textContent = formatNumber(baseCount + 1);
                 }
 
@@ -102,10 +103,12 @@
                     var states = getPostLikedStates();
                     if (btn.classList.contains('liked')) {
                         btn.classList.remove('liked');
+                        btn.setAttribute('aria-pressed', 'false');
                         states[postId] = false;
                         if (countEl) countEl.textContent = formatNumber(baseCount);
                     } else {
                         btn.classList.add('liked');
+                        btn.setAttribute('aria-pressed', 'true');
                         states[postId] = true;
                         if (countEl) countEl.textContent = formatNumber(baseCount + 1);
                         createHeartParticle(btn);
@@ -4793,7 +4796,7 @@
         archive: ArchiveAPI,
         sync: SyncAPI,
         user: UserAPI,
-        version: 'v11.7.4'
+        version: 'v11.7.5'
     };
 })();
 

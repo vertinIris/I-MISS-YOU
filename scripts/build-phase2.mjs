@@ -104,6 +104,7 @@ const ARCHIVE_CSS = [
   'css/tokens-base.css',
   'css/tokens-snow.css',
   'css/archive-subset.css',
+  'css/archive-chrome.css',
   'css/snow-atmosphere.css',
   'css/zone-atmosphere.css',
   'css/snow-signature.css',

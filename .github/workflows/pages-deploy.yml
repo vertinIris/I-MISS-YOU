@@ -54,6 +54,7 @@ jobs:
             --exclude='.github/' \
             --exclude='.workbuddy/' \
             --exclude='docs/' \
+            --exclude='design-docs/' \
             --exclude='scripts/' \
             --exclude='*.log' \
             --exclude='.gitignore' \

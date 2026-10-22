@@ -1058,10 +1058,10 @@
                 <span style="--eqh:48%"></span>
             </div>
             <div class="sn-footer__freq-row">
-                <span class="sn-footer__freq-label">FREQ · 90.72 MHz</span>
+                <span class="sn-footer__freq-label">ARCHIVE · 90.72 MHz</span>
                 <span class="sn-footer__onair">
                     <span class="sn-footer__dot"></span>
-                    ON AIR · 飞行雪绒夜电台
+                    归档中 · 星炬学院档案处
                 </span>
                 <span class="sn-footer__time" id="sn-footer-time">--:--</span>
             </div>
@@ -1102,7 +1102,7 @@
             <div class="sn-footer__col sn-footer__col--meta">
                 <div class="sn-footer__postmark">SENT · 9072</div>
                 <p>星炬学院由同好共建 · 非官方・非商业</p>
-                <p class="sn-footer__copy">© 星炬学院 · <span id="stf-footer-year">2026</span> · 以思念调频 · v11.7.4</p>
+                <p class="sn-footer__copy">© 星炬学院 · <span id="stf-footer-year">2026</span> · 以思念调频 · v11.7.5</p>
                 <button type="button" class="stf-hidden-trigger" id="stf-hidden-trigger" aria-label="隐藏信号" style="background:none;border:none;padding:0;margin-top:8px;cursor:pointer;opacity:0.55;">
                     <svg class="stf-hidden-snowflake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" style="width:22px;height:22px;">
                         <path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/>
@@ -1318,6 +1318,13 @@
     <script defer src="../vendor/dompurify/purify.min.js"
             integrity="sha384-2m6jHxAbjK2Ek09HQz6ZgdZJUHtgE5lCktvnidnOVD5ecaGIpi67pb29q2cv5IGG"
             crossorigin="anonymous"></script>
+    <!-- v11.7.5: Day.js 时间统一（评论/投稿展示口径 YYYY-MM-DD HH:mm）+ Fuse.js 模糊搜索兜底（精确优先） -->
+    <script defer src="../vendor/dayjs/dayjs.min.js"
+            integrity="sha384-1Ft4/JTNbt7S/44V0himpcjx+YfQ1a6W6SYBJMr94ba6jwZhWoWoLaZsMmtJILgq"
+            crossorigin="anonymous"></script>
+    <script defer src="../vendor/fuse/fuse.min.js"
+            integrity="sha384-zPE55eyESN+FxCWGEnlNxGyAPJud6IZ6TtJmXb56OFRGhxZPN4akj9rjA3gw5Qqa"
+            crossorigin="anonymous"></script>
     <!-- v10.1: Markdown 渲染（marked + highlight.js）— 帖子详情/评论代码块高亮 -->
     <script defer src="../vendor/marked/marked.min.js"></script>
     <link rel="stylesheet" href="../vendor/highlight.js/github.min.css">
@@ -1339,7 +1346,7 @@
     <!-- Stage II: 15 个本地 JS 合并为 1 个 bundle（696KB→534KB ↓23.3%）+ SRI 完整性校验 -->
     <!-- forum-supabase.js 内含 waitForSDK 轮询，不依赖 CDN SDK 严格顺序；bundle 可安全先于 SDK 加载 -->
     <script defer src="../dist/bundle-forum.js"
-            integrity="sha384-RxIbcvJE2zMAbgAydQMJde1FUa3AvtRi066OFyAI9NylZdqTa7ihW4uNBhDq/78X"
+            integrity="sha384-N8NjY0C4AZHj6by0Qhgr9uX8yTk8YGHueq12eHnVgDkYXsW4Hr8wyJMvqOWzH3ew"
             crossorigin="anonymous"></script>
     <!-- 同步状态监测 / 主动同步按钮：独立加载，确保无论 bundle 是否执行都会挂载
          （forum-sync.js 自带幂等守卫，重复加载不会双初始化）。需在 StarTorchData 之后。 -->

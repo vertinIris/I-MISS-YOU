@@ -27,7 +27,7 @@
          style-src 保留 'unsafe-inline' 因大量内联样式（待后续 hash 化）；_headers 文件补充 HSTS 等 -->
     <meta http-equiv="Content-Security-Policy"
           content="default-src 'self';
-                   script-src 'self' cdn.jsdelivr.net cdnjs.cloudflare.com;
+                   script-src 'self' cdn.jsdelivr.net cdnjs.cloudflare.com unpkg.com;
                    style-src 'self' 'unsafe-inline' cdn.jsdelivr.net;
                    img-src 'self' data: blob: https://*.supabase.co;
                    connect-src 'self' https://*.supabase.co wss://*.supabase.co;
@@ -39,7 +39,7 @@
     <title>飞行雪绒 · 星炬学院的日常</title>
 
     <!-- P3-1: Fonts self-hosted via css/fonts.css (merged into dist/css/main.min.css) -->
-    <!-- v11.7.1: 衬线子集字预加载（标题首屏字体），等宽小字体同步预热 -->
+    <!-- 衬线子集字预加载（标题首屏字体，v11.7.1 引入），等宽小字体同步预热 -->
     <link rel="preload" href="assets/fonts/noto-serif-sc-subset.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin>
 
@@ -700,7 +700,7 @@
                     <p>这点呼吸声我收进今晚的底噪。9072 需要一点教室的温度。</p>
                 </div>
                 <div class="post-actions">
-                    <button class="post-action like-btn" data-likes="291">
+                    <button class="post-action like-btn" aria-pressed="false" data-likes="291">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                         </svg>
@@ -769,7 +769,7 @@
                     <p>我没出声。出声也没用。但这句我会记住，回头说不定能塞进间奏。</p>
                 </div>
                 <div class="post-actions">
-                    <button class="post-action like-btn" data-likes="408">
+                    <button class="post-action like-btn" aria-pressed="false" data-likes="408">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                         </svg>
@@ -841,7 +841,7 @@
                     <p>「好呀」说得很轻。我把它录进频率碎片。不是歌。先存着。</p>
                 </div>
                 <div class="post-actions">
-                    <button class="post-action like-btn" data-likes="642">
+                    <button class="post-action like-btn" aria-pressed="false" data-likes="642">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                         </svg>
@@ -912,7 +912,7 @@
                     <p>我听见了。不会写进歌里。有些频率不适合播出。</p>
                 </div>
                 <div class="post-actions">
-                    <button class="post-action like-btn" data-likes="518">
+                    <button class="post-action like-btn" aria-pressed="false" data-likes="518">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                         </svg>
@@ -982,7 +982,7 @@
                     <p>调频 9072，凌晨一点信号最好。睡不着的话，来听听。</p>
                 </div>
                 <div class="post-actions">
-                    <button class="post-action like-btn" data-likes="1024">
+                    <button class="post-action like-btn" aria-pressed="false" data-likes="1024">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                         </svg>
@@ -1053,7 +1053,7 @@
                     <p>雪绒海豹要是会唱歌，大概是低频的嗡。下次用 9072 试着仿一下。</p>
                 </div>
                 <div class="post-actions">
-                    <button class="post-action like-btn" data-likes="892">
+                    <button class="post-action like-btn" aria-pressed="false" data-likes="892">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                         </svg>
@@ -1124,7 +1124,7 @@
                     <p>要轻松快乐地活着嘛。也包括快乐地开机兵。</p>
                 </div>
                 <div class="post-actions">
-                    <button class="post-action like-btn" data-likes="756">
+                    <button class="post-action like-btn" aria-pressed="false" data-likes="756">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                         </svg>
@@ -1809,7 +1809,7 @@
                 <!-- 邮戳与论坛同构（.sn-footer__postmark），配色走主站玫色 -->
                 <div class="sn-footer__postmark">SENT · 9072</div>
                 <p>鸣潮同人创作项目 · 非官方非商业</p>
-                <p class="sn-footer__copy">© 飞行雪绒 · <span id="sn-footer-year">2026</span> · 以思念调频 · v11.7.4</p>
+                <p class="sn-footer__copy">© 飞行雪绒 · <span id="sn-footer-year">2026</span> · 以思念调频 · v11.7.5</p>
             </div>
         </div>
     </footer>
@@ -1834,7 +1834,7 @@
     <div id="secret-portal-root"></div>
     <!-- Stage II: 18 个本地 JS 合并为 1 个 bundle（477KB→222KB ↓53.4%）+ SRI 完整性校验 -->
     <script defer src="dist/bundle-main.js"
-            integrity="sha384-u2t7wE0afOeLxjllMNbWTF6dVxPG7MOTvfqQJQYCjJ8jdb9gWL7yv4MMyV49Q2ov"
+            integrity="sha384-QueqX62wqHk4xE5OzU8Edfmzhix9IlwJslrQrHqegHtbVQZZEW+E1gX2J7Pk87of"
             crossorigin="anonymous"></script>
     <!-- v10.1: web-vitals RUM 采集 — 匿名采集 LCP/INP/CLS/TTFB/FCP，写入 Supabase performance_metrics -->
     <script type="module" src="js/web-vitals-collector.js"></script>

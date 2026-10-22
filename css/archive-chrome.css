@@ -1,0 +1,25 @@
+/* =========================================================
+   Archive chrome — 角色档案页共用结构性样式（非装饰）
+   角色页不加载 css/style.css，.skip-link 样式在此补齐
+   ========================================================= */
+
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 12px;
+    z-index: 10000;
+    padding: 8px 14px;
+    background: var(--surface-card, rgba(255, 255, 255, 0.085));
+    border: 1px solid var(--surface-card-border, rgba(255, 255, 255, 0.12));
+    border-radius: 10px;
+    color: var(--text-primary, #F0F4FF);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: top 0.2s ease;
+}
+.skip-link:focus {
+    top: 12px;
+    outline: 2px solid var(--focus-ring, #A8D8FF);
+    outline-offset: 2px;
+}

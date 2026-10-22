@@ -97,12 +97,12 @@ window.AdminPanel = (function() {
             }
             reportsEl.innerHTML = reports.map(function(r) {
                 return '<li class="admin-log-item admin-report-item">' +
-                    '<span class="admin-log-action">举报 · ' + escapeHtml(r.target_type) + ' #' + r.target_id + '</span>' +
+                    '<span class="admin-log-action">举报 · ' + escapeHtml(r.target_type) + ' #' + escapeHtml(r.target_id) + '</span>' +
                     '<span class="admin-log-reason">' + escapeHtml(r.reason || '') + '</span>' +
                     '<span class="admin-log-time">' + formatTime(r.created_at) + '</span>' +
                     '<div class="admin-report-actions">' +
-                    '<button type="button" class="admin-action-btn" data-mod-type="' + r.target_type + '" data-mod-id="' + r.target_id + '" data-mod-action="hide">隐藏</button>' +
-                    (isAdmin() ? '<button type="button" class="admin-action-btn admin-action-danger" data-mod-type="' + r.target_type + '" data-mod-id="' + r.target_id + '" data-mod-action="delete">删除</button>' : '') +
+                    '<button type="button" class="admin-action-btn" data-mod-type="' + escapeHtml(r.target_type) + '" data-mod-id="' + escapeHtml(r.target_id) + '" data-mod-action="hide">隐藏</button>' +
+                    (isAdmin() ? '<button type="button" class="admin-action-btn admin-action-danger" data-mod-type="' + escapeHtml(r.target_type) + '" data-mod-id="' + escapeHtml(r.target_id) + '" data-mod-action="delete">删除</button>' : '') +
                     '</div></li>';
             }).join('');
             bindModActions(reportsEl);
@@ -136,16 +136,16 @@ window.AdminPanel = (function() {
                 var hiddenTag = c.is_hidden ? ' <span class="admin-tag-hidden">已隐藏</span>' : '';
                 return '<li class="admin-log-item admin-comment-item">' +
                     '<label class="admin-comment-check">' +
-                    '<input type="checkbox" class="admin-comment-cb" data-comment-id="' + c.id + '">' +
+                    '<input type="checkbox" class="admin-comment-cb" data-comment-id="' + escapeHtml(c.id) + '">' +
                     '<span class="admin-log-action">#' + c.id + ' · ' + escapeHtml(c.target_id) + hiddenTag + '</span>' +
                     '</label>' +
                     '<span class="admin-log-reason">' + escapeHtml(c.author_name || '') + '：' + escapeHtml(preview) + '</span>' +
                     '<span class="admin-log-time">' + formatTime(c.created_at) + '</span>' +
                     '<div class="admin-report-actions">' +
                     (c.is_hidden
-                        ? '<button type="button" class="admin-action-btn" data-comment-id="' + c.id + '" data-comment-action="restore">恢复</button>'
-                        : '<button type="button" class="admin-action-btn" data-comment-id="' + c.id + '" data-comment-action="hide">隐藏</button>') +
-                    (isAdmin() ? '<button type="button" class="admin-action-btn admin-action-danger" data-comment-id="' + c.id + '" data-comment-action="delete">删除</button>' : '') +
+                        ? '<button type="button" class="admin-action-btn" data-comment-id="' + escapeHtml(c.id) + '" data-comment-action="restore">恢复</button>'
+                        : '<button type="button" class="admin-action-btn" data-comment-id="' + escapeHtml(c.id) + '" data-comment-action="hide">隐藏</button>') +
+                    (isAdmin() ? '<button type="button" class="admin-action-btn admin-action-danger" data-comment-id="' + escapeHtml(c.id) + '" data-comment-action="delete">删除</button>' : '') +
                     '</div></li>';
             }).join('');
 

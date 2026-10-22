@@ -67,6 +67,46 @@
         return html;
     }
 
+    /* ===== 时间格式化：Day.js 优先（defer 已在 bundle 前就绪），未加载时回退手写逻辑 =====
+     * 展示口径统一为 YYYY-MM-DD HH:mm（学院档案处人设）；只改展示，写库时间戳仍是 ISO */
+    function fmtStamp(d) {
+        var src = (d && typeof d.getTime === 'function') ? d : new Date(d);
+        if (isNaN(src.getTime())) return '';
+        if (window.dayjs) return window.dayjs(src).format('YYYY-MM-DD HH:mm');
+        var p = function (n) { return String(n).padStart(2, '0'); };
+        return src.getFullYear() + '-' + p(src.getMonth() + 1) + '-' + p(src.getDate()) +
+            ' ' + p(src.getHours()) + ':' + p(src.getMinutes());
+    }
+
+    /* ===== 礼花：投稿成功反馈。按需动态注入同源脚本（CSP 允许 self），不常驻 10.8KB =====
+     * reduced-motion 业务层先挡一次，库内 disableForReducedMotion 双保险；失败静默不影响主流程 */
+    var _confettiLoading = false;
+
+    function celebrate() {
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        if (window.confetti) { burstConfetti(); return; }
+        if (_confettiLoading) return;
+        _confettiLoading = true;
+        var s = document.createElement('script');
+        s.src = '../vendor/canvas-confetti/confetti.browser.min.js';
+        s.onload = function () { _confettiLoading = false; burstConfetti(); };
+        s.onerror = function () { _confettiLoading = false; };
+        document.head.appendChild(s);
+    }
+
+    function burstConfetti() {
+        if (!window.confetti) return;
+        window.confetti({
+            particleCount: 70,
+            spread: 62,
+            startVelocity: 34,
+            origin: { y: 0.68 },
+            colors: ['#6D8FD6', '#E8C56A', '#FFD7E8', '#F0F4FF'],
+            disableForReducedMotion: true
+        });
+    }
+    window.StarTorchForum.celebrate = celebrate;
+
     function sanitizeColor(c) {
         if (typeof SecurityShield !== 'undefined' && SecurityShield.sanitizeColor) {
             return SecurityShield.sanitizeColor(c, '#6d8fd6');
@@ -312,6 +352,41 @@
         return s && s.is_pinned ? 1 : 0;
     }
 
+    /* ===== 模糊搜索：Fuse.js 渐进增强 — 精确子串优先，0 结果时才模糊兜底（库未加载则行为与旧版一致） ===== */
+    var _fuseIdx = null;
+    var _fuseKey = '';
+
+    function _fuseKeyOf(list) {
+        return list.length + ':' + (list.length ? (list[0].id || '') : '');
+    }
+
+    function _buildFuse(list) {
+        _fuseIdx = new window.Fuse(list, {
+            keys: [
+                { name: 'title', weight: 0.5 },
+                { name: 'content', weight: 0.25 },
+                { name: 'name', weight: 0.15 },
+                { name: 'tags', weight: 0.1 }
+            ],
+            threshold: 0.32,
+            ignoreLocation: true,
+            minMatchCharLength: 2,
+            includeScore: true
+        });
+        _fuseKey = _fuseKeyOf(list);
+    }
+
+    function applySearch(list, q) {
+        var lower = q.toLowerCase();
+        var exact = list.filter(function (s) {
+            var hay = [s.title, s.content, s.name].concat(s.tags || []).join(' ').toLowerCase();
+            return hay.indexOf(lower) !== -1;
+        });
+        if (exact.length > 0 || !window.Fuse) return exact;
+        if (!_fuseIdx || _fuseKey !== _fuseKeyOf(list)) _buildFuse(list);
+        return _fuseIdx.search(q).map(function (r) { return r.item; });
+    }
+
     /* ============ Rendering ============ */
     function getFilteredSubmissions() {
         var submissions = StarTorchData.getSubmissions().filter(function (s) { return !s.is_hidden; });
@@ -326,13 +401,7 @@
             });
         }
 
-        if (searchQuery) {
-            var q = searchQuery.toLowerCase();
-            filtered = filtered.filter(function (s) {
-                var hay = [s.title, s.content, s.name].concat(s.tags || []).join(' ').toLowerCase();
-                return hay.indexOf(q) !== -1;
-            });
-        }
+        if (searchQuery) filtered = applySearch(filtered, searchQuery);
 
         function withPinFirst(cmp) {
             return function (a, b) {
@@ -430,7 +499,7 @@
             '<button type="button" class="stf-card-detail-link" data-action="open-detail">阅读详情</button>' +
             tagsHtml +
             '<div class="stf-card-actions">' +
-                '<button type="button" class="stf-card-action' + (s.liked ? ' liked' : '') + '" data-action="like" title="点赞">' +
+                '<button type="button" class="stf-card-action' + (s.liked ? ' liked' : '') + '" data-action="like" aria-pressed="' + (s.liked ? 'true' : 'false') + '" title="点赞">' +
                     '<svg viewBox="0 0 24 24" fill="' + (s.liked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
                     '<span>' + (s.likes || 0) + '</span>' +
                 '</button>' +
@@ -438,7 +507,7 @@
                     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
                     '<span>' + commentCount + '</span>' +
                 '</button>' +
-                '<button type="button" class="stf-card-action' + (s.bookmarked ? ' bookmarked' : '') + '" data-action="bookmark" title="收藏">' +
+                '<button type="button" class="stf-card-action' + (s.bookmarked ? ' bookmarked' : '') + '" data-action="bookmark" aria-pressed="' + (s.bookmarked ? 'true' : 'false') + '" title="收藏">' +
                     '<svg viewBox="0 0 24 24" fill="' + (s.bookmarked ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>' +
                     '<span>收藏</span>' +
                 '</button>' +
@@ -810,9 +879,7 @@
             color: user
                 ? sanitizeColor(user.color)
                 : (identity ? identity.color : ((opts && opts.color) || '#A8D8FF')),
-            timeStr: (now.getMonth() + 1) + '月' + now.getDate() + '日 ' +
-                String(now.getHours()).padStart(2, '0') + ':' +
-                String(now.getMinutes()).padStart(2, '0'),
+            timeStr: fmtStamp(now),
             author: user ? user.key : null,
             parent_id: parentId || null
         };
@@ -1015,11 +1082,7 @@
             realm: 'startorch',
             tags: tags || [],
             time: now.getTime(),
-            timeStr: now.getFullYear() + '-' +
-                String(now.getMonth() + 1).padStart(2, '0') + '-' +
-                String(now.getDate()).padStart(2, '0') + ' ' +
-                String(now.getHours()).padStart(2, '0') + ':' +
-                String(now.getMinutes()).padStart(2, '0'),
+            timeStr: fmtStamp(now),
             likes: 0,
             liked: false,
             bookmarks: 0,
@@ -1108,6 +1171,7 @@
             updateCounter('stf-submit');
             closeSubmitModal();
             showToast('发帖成功，已发布到讨论区 ✨');
+            celebrate();
         } finally {
             submitBusy = false;
         }
@@ -1157,6 +1221,7 @@
             updateCounter('stf-composer');
             closeComposer();
             showToast('已发布到讨论区 ✨');
+            celebrate();
         } finally {
             submitBusy = false;
         }

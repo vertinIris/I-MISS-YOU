@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-04T03:28:47.608Z",
+  "generatedAt": "2026-10-22T15:49:06.932Z",
   "stage": "phase-1",
   "terserOpts": {
     "compress": {
@@ -122,10 +122,10 @@
     "stripeCheckout"
   ],
   "totalFiles": 28,
-  "totalSrcBytes": 1168746,
-  "totalDstBytes": 765092,
-  "overallRatio": 65.5,
-  "overallSavedPercent": 34.5,
+  "totalSrcBytes": 1172046,
+  "totalDstBytes": 766575,
+  "overallRatio": 65.4,
+  "overallSavedPercent": 34.6,
   "files": [
     {
       "rel": "js/security-shield.js",
@@ -199,10 +199,10 @@
     },
     {
       "rel": "js/admin-panel.js",
-      "srcSize": 15326,
-      "dstSize": 8882,
-      "ratio": "58.0",
-      "saved": "42.0"
+      "srcSize": 15434,
+      "dstSize": 8990,
+      "ratio": "58.2",
+      "saved": "41.8"
     },
     {
       "rel": "js/particles.js",
@@ -241,8 +241,8 @@
     },
     {
       "rel": "js/main.js",
-      "srcSize": 241974,
-      "dstSize": 125756,
+      "srcSize": 242169,
+      "dstSize": 125871,
       "ratio": "52.0",
       "saved": "48.0"
     },
@@ -283,17 +283,17 @@
     },
     {
       "rel": "forum/js/forum.js",
-      "srcSize": 112318,
-      "dstSize": 56806,
-      "ratio": "50.6",
-      "saved": "49.4"
+      "srcSize": 115041,
+      "dstSize": 58039,
+      "ratio": "50.5",
+      "saved": "49.5"
     },
     {
       "rel": "forum/js/forum-sync.js",
-      "srcSize": 13820,
-      "dstSize": 6228,
-      "ratio": "45.1",
-      "saved": "54.9"
+      "srcSize": 14094,
+      "dstSize": 6255,
+      "ratio": "44.4",
+      "saved": "55.6"
     },
     {
       "rel": "forum/js/forum-supabase.js",
