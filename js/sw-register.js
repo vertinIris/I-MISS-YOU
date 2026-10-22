@@ -3,6 +3,10 @@
   'use strict';
   if (!('serviceWorker' in navigator)) return;
 
+  // SW 相对「本脚本文件」解析而非页面：论坛页（/forum/）加载同一文件时，
+  // './sw.js' 会解析到 /forum/sw.js 而 404，导致直达论坛的访客永远注册不上 SW
+  var SCRIPT_URL = document.currentScript ? document.currentScript.src : '';
+
   // 干净更新策略：新 SW 安装完成后自动接管，并在接管后重载一次页面，
   // 避免停留于「旧缓存已删、新缓存未接管」的样式空窗（无需手动清缓存）。
   function setupCleanUpdate(reg) {
@@ -56,8 +60,10 @@
       }
     }
 
+    var swUrl = SCRIPT_URL ? new URL('../sw.js', SCRIPT_URL).href
+                           : new URL('sw.js', window.location.href).href;
     navigator.serviceWorker
-      .register('./sw.js?' + SW_VERSION)
+      .register(swUrl + '?' + SW_VERSION)
       .then(function (reg) {
         console.log('[SW] registered, scope:', reg.scope);
         setupCleanUpdate(reg);

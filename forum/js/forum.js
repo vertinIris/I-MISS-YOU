@@ -368,7 +368,7 @@
                 { name: 'name', weight: 0.15 },
                 { name: 'tags', weight: 0.1 }
             ],
-            threshold: 0.32,
+            threshold: 0.36,
             ignoreLocation: true,
             minMatchCharLength: 2,
             includeScore: true

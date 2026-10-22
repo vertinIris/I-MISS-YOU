@@ -150,12 +150,14 @@ function sriSha384(buf) {
   return `sha384-${hash}`;
 }
 
-function readConcat(fileList) {
+function readConcat(fileList, joiner) {
+  // CSS 文件边界禁止带分号：csso 在「};」后会把下一文件的首条规则静默吞掉
+  // （2026-10-22 实测 .skip-link 基础块被吃），仅 JS 需要「;」防 IIFE ASI 问题
   return fileList.map(rel => {
     const fp = path.join(ROOT, rel);
     if (!fs.existsSync(fp)) throw new Error(`源文件不存在: ${rel}`);
     return fs.readFileSync(fp, 'utf8');
-  }).join('\n;\n');  // 分号分隔避免 IIFE 之间 ASI 问题
+  }).join(joiner || '\n;\n');
 }
 
 // ============================================================
@@ -232,7 +234,7 @@ function hardenCss(minified) {
 
 function buildCss(fileList, outName) {
   console.log(`\n[BUILD] ── 构建 ${outName} ──`);
-  const srcConcat = readConcat(fileList);
+  const srcConcat = readConcat(fileList, '\n');
   const srcSize = Buffer.byteLength(srcConcat, 'utf8');
   console.log(`[BUILD]   合并源 CSS ${fileList.length} 个，总体积 ${fmt(srcSize)}`);
 
