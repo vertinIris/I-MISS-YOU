@@ -1346,7 +1346,7 @@
     <!-- Stage II: 15 个本地 JS 合并为 1 个 bundle（696KB→534KB ↓23.3%）+ SRI 完整性校验 -->
     <!-- forum-supabase.js 内含 waitForSDK 轮询，不依赖 CDN SDK 严格顺序；bundle 可安全先于 SDK 加载 -->
     <script defer src="../dist/bundle-forum.js"
-            integrity="sha384-N8NjY0C4AZHj6by0Qhgr9uX8yTk8YGHueq12eHnVgDkYXsW4Hr8wyJMvqOWzH3ew"
+            integrity="sha384-2R57D7fIUunUdeJvZuQeamwHt/pIFGGA+AXCz/kPnEJM0KjYZf+VWKjljuwU+46C"
             crossorigin="anonymous"></script>
     <!-- 同步状态监测 / 主动同步按钮：独立加载，确保无论 bundle 是否执行都会挂载
          （forum-sync.js 自带幂等守卫，重复加载不会双初始化）。需在 StarTorchData 之后。 -->
