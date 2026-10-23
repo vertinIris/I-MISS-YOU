@@ -220,7 +220,15 @@ function hardenCss(minified) {
   //     （如 `backdrop-filter:blur(20px)}`），保证每条玻璃拟态规则
   //     在 WebKit/Safari/iOS 上都有对应前缀。
   css = css.replace(/-webkit-backdrop-filter:\s*[^;}]+;?/g, '');
-  css = css.replace(/(backdrop-filter:\s*[^;}]+)/g, (m) => `${m};-webkit-${m}`);
+  // 仅镜像「声明上下文」中的 backdrop-filter：前面是 { 或 ;（或串首）。
+  // 若前面是 ( 说明落在 @supports 条件前导里（如 @supports not (backdrop-filter:…)），
+  // 原样跳过 —— 2026-10-23 实测此前会把镜像插进前导并注入多余 )，
+  // 导致其后的 .sync-indicator / .forum-entry-fab / .donate-fab 全部被浏览器丢弃。
+  css = css.replace(/(backdrop-filter:\s*[^;}]+)/g, (m, _g, offset, str) => {
+    const prev = offset > 0 ? str[offset - 1] : '';
+    if (prev === '(' || prev === '-') return m;
+    return `${m};-webkit-${m}`;
+  });
 
   // (b) reduced-motion 守卫（追加在末尾，使用 !important 确保覆盖）
   const reducedMotion = `

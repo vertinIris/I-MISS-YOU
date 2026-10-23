@@ -39,7 +39,7 @@
     window.location.reload();
   });
 
-  var SW_VERSION = 'v=11.7.5';
+  var SW_VERSION = 'v=11.7.6';
 
   window.addEventListener('load', function () {
     // 强制清理过期 SW：若当前控制页面的 worker 版本不是最新，注销后重载。

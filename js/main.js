@@ -4796,7 +4796,7 @@
         archive: ArchiveAPI,
         sync: SyncAPI,
         user: UserAPI,
-        version: 'v11.7.5'
+        version: 'v11.7.6'
     };
 })();
 

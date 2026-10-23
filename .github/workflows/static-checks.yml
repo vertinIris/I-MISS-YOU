@@ -31,6 +31,9 @@ jobs:
         run: node scripts/smoke-check.mjs
       - name: Extreme audit
         run: node scripts/extreme-audit.mjs
+      # CSS 完整性（2026-10-23 事故后门禁）：源码/产物花括号平衡 + @supports 前导防前缀镜像污染
+      - name: CSS integrity check
+        run: node scripts/css-integrity-check.mjs
 
   runtime-assert:
     name: runtime-assert (headless DOM)
