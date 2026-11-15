@@ -38,11 +38,12 @@
     <!-- v10.1: 主题偏好同步脚本提取为外部文件，配合 CSP 加固（移除 'unsafe-inline'）；必须在 CSS 前同步执行避免 FOUC -->
     <script src="js/forum-theme-bootstrap.js"></script>
     <!-- Styles (Stage II: 8 个 CSS 合并压缩为 1 个 → dist/css/forum.min.css，222KB→152KB) -->
-    <link rel="stylesheet" href="../dist/css/forum.min.css">
+    <link rel="stylesheet" href="../dist/css/forum.min.css?v=11.7.6-plaque">
       <!-- Edge/legacy Chromium 兼容层：必须在 min.css 之后，@supports 能力检测自动启用 -->
       <link rel="stylesheet" href="../css/edge-compat.css">
       <!-- 重设计覆盖样式：左固定筛选栏 / 夜电台尾页 / 音乐播放器（在既有样式之后加载） -->
-      <link rel="stylesheet" href="../css/forum-redesign.css">
+      <link rel="stylesheet" href="../css/forum-redesign.css?v=11.7.6-plaque">
+      <!-- 档案柜视觉：forum-visual 需与 redesign 同破缓存 -->
     <!-- P0 UX: Notyf Toast 通知样式（自托管 vendor，SRI 保护） -->
     <link rel="stylesheet" href="../vendor/notyf/notyf.min.css"
           integrity="sha384-snpJ3knpH6avB6cP1vPkNdmRzCYaCpom/3TNOyvo189BiogXYXQfXkyYpZ2/xADs"
@@ -239,9 +240,9 @@
     <section class="forum-section forum-section--core" id="stf-community">
         <div class="forum-section-inner">
             <div class="section-header reveal">
-                <span class="section-label">DISCUSS · FEED</span>
-                <h2 class="section-title">讨论区</h2>
-                <p class="section-desc">云端帖流 · 筛选 / 置顶 / 帖子详情 / 楼中楼</p>
+                <span class="section-label">BULLETIN</span>
+                <h2 class="section-title">布告栏</h2>
+                <p class="section-desc">学院研讨钉板 · 邮戳式帖笺 · 筛选 / 置顶 / 楼中楼 · 夜电台叙事请回飞行雪绒</p>
             </div>
 
             <div class="stf-discuss-layout">
@@ -546,7 +547,7 @@
             <div class="section-header reveal">
                 <span class="section-label">ARCHIVE</span>
                 <h2 class="section-title">星炬学院档案库</h2>
-                <p class="section-desc">角色页入口 · 官方 / 同人共识 / 本站原创分层标注 · 宇宙规则考据请回「世界观」区</p>
+                <p class="section-desc">标本柜式查阅 · 官方 / 同人共识 / 本站原创分层 · 宇宙规则请回「世界观」· 夜电台叙事在飞行雪绒</p>
                 <!-- 设定：走廊里三十七人擦肩无人转头；连点满 37 触发彩蛋，勿作导航 -->
                 <button type="button" class="stf-corridor-mark" id="stf-corridor-mark" title="走廊回声" aria-label="走廊计数彩蛋">走廊 · 三十七</button>
             </div>
@@ -564,7 +565,8 @@
 
                     <!-- 爱弥斯：栅格内强调（span 宽列），不破坏响应式 -->
                     <div class="archive-float archive-float--featured">
-                        <a class="character-archive-card is-featured glass" href="../characters/aimisi/index.html" style="--char: var(--aimisi-pink);">
+                        <a class="character-archive-card is-featured" href="../characters/aimisi/index.html" style="--char: var(--aimisi-pink);" data-cat="STF-01">
+                            <span class="character-archive-cat" aria-hidden="true">STF-01</span>
                             <span class="character-archive-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                             </span>
@@ -576,7 +578,8 @@
                     </div>
 
                     <div class="archive-float">
-                        <a class="character-archive-card glass" href="../characters/drifter/index.html" style="--char: var(--drifter-blue);">
+                        <a class="character-archive-card" href="../characters/drifter/index.html" style="--char: var(--drifter-blue);" data-cat="STF-02">
+                            <span class="character-archive-cat" aria-hidden="true">STF-02</span>
                             <span class="character-archive-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
                             </span>
@@ -588,7 +591,8 @@
                     </div>
 
                     <div class="archive-float">
-                        <a class="character-archive-card glass" href="../characters/denia/index.html" style="--char: var(--denia-lavender);">
+                        <a class="character-archive-card" href="../characters/denia/index.html" style="--char: var(--denia-lavender);" data-cat="STF-03">
+                            <span class="character-archive-cat" aria-hidden="true">STF-03</span>
                             <span class="character-archive-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12a4 4 0 0 1 8 0"/></svg>
                             </span>
@@ -600,7 +604,8 @@
                     </div>
 
                     <div class="archive-float">
-                        <a class="character-archive-card glass" href="../characters/sigrica/index.html" style="--char: var(--sigrica-green);">
+                        <a class="character-archive-card" href="../characters/sigrica/index.html" style="--char: var(--sigrica-green);" data-cat="STF-04">
+                            <span class="character-archive-cat" aria-hidden="true">STF-04</span>
                             <span class="character-archive-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                             </span>
@@ -612,7 +617,8 @@
                     </div>
 
                     <div class="archive-float">
-                        <a class="character-archive-card glass" href="../characters/linne/index.html" style="--char: var(--linne-purple);">
+                        <a class="character-archive-card" href="../characters/linne/index.html" style="--char: var(--linne-purple);" data-cat="STF-05">
+                            <span class="character-archive-cat" aria-hidden="true">STF-05</span>
                             <span class="character-archive-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                             </span>
@@ -624,7 +630,8 @@
                     </div>
 
                     <div class="archive-float">
-                        <a class="character-archive-card glass" href="../characters/mornye/index.html" style="--char: var(--mornye-red);">
+                        <a class="character-archive-card" href="../characters/mornye/index.html" style="--char: var(--mornye-red);" data-cat="STF-06">
+                            <span class="character-archive-cat" aria-hidden="true">STF-06</span>
                             <span class="character-archive-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
                             </span>
@@ -636,7 +643,8 @@
                     </div>
 
                     <div class="archive-float">
-                        <a class="character-archive-card glass" href="../characters/lucilla/index.html" style="--char: var(--lucilla-gold);">
+                        <a class="character-archive-card" href="../characters/lucilla/index.html" style="--char: var(--lucilla-gold);" data-cat="STF-07">
+                            <span class="character-archive-cat" aria-hidden="true">STF-07</span>
                             <span class="character-archive-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
                             </span>
@@ -657,7 +665,7 @@
             <div class="section-header reveal">
                 <span class="section-label">LORE</span>
                 <h2 class="section-title">世界观考据</h2>
-                <p class="section-desc">论坛三区之一 · 只放宇宙规则与地理势力摘要卡 · 角色履历见「角色档案」· 同人长帖见「讨论区」</p>
+                <p class="section-desc">卷宗抽屉 · 只收宇宙规则与地理势力 · 角色履历归档案柜 · 同人长帖归布告栏 · 不与雪绒频道镜像</p>
             </div>
             <p class="lore-priority-note reveal">
                 资料层级：<span class="lore-tier lore-tier-official">官方</span>
@@ -670,83 +678,90 @@
 
             <div class="lore-group reveal" aria-labelledby="lore-group-cosmos">
                 <h3 class="lore-group-title" id="lore-group-cosmos">宇宙与规则 · 总典卷一～二</h3>
-                <div class="lore-grid">
-                    <article class="lore-card" style="--char: var(--drifter-blue);">
-                        <span class="lore-tier lore-tier-official">官方</span>
-                        <h3>索拉里斯 · Sol-3</h3>
-                        <p>太阳星系第三颗星球。第一声「悲鸣」起，旧日法则失效，异象肆虐；人类在毁灭与新生并存的世界里，守住文明星火。</p>
+                <div class="lore-grid lore-grid--dossier">
+                    <article class="lore-card lore-card--dossier" style="--char: var(--drifter-blue);">
+                        <span class="lore-spine" aria-hidden="true">Sol-3</span>
+                        <div class="lore-dossier">
+                            <span class="lore-tier lore-tier-official">官方</span>
+                            <h3>索拉里斯 · Sol-3</h3>
+                            <p>太阳星系第三颗星球。第一声「悲鸣」起，旧日法则失效，异象肆虐；人类在毁灭与新生并存的世界里，守住文明星火。</p>
+                        </div>
                     </article>
-                    <article class="lore-card" style="--char: var(--sigrica-green);">
-                        <span class="lore-tier lore-tier-official">官方</span>
-                        <h3>悲鸣与海蚀</h3>
-                        <p>悲鸣是灾变态势的统称。海蚀涵盖无音区、残象潮、黑石；黎那汐塔称「黑潮」，拉海洛常表现为「虚质磁暴」。</p>
+                    <article class="lore-card lore-card--dossier" style="--char: var(--sigrica-green);">
+                        <span class="lore-spine" aria-hidden="true">悲鸣</span>
+                        <div class="lore-dossier">
+                            <span class="lore-tier lore-tier-official">官方</span>
+                            <h3>悲鸣与海蚀</h3>
+                            <p>悲鸣是灾变态势的统称。海蚀涵盖无音区、残象潮、黑石；黎那汐塔称「黑潮」，拉海洛常表现为「虚质磁暴」。</p>
+                        </div>
                     </article>
-                    <article class="lore-card" style="--char: var(--denia-lavender);">
-                        <span class="lore-tier lore-tier-official">官方</span>
-                        <h3>频率 · 残响 · 声骸</h3>
-                        <p>物质与信息可还原为频率。残响是衰减残余，回音是完整可封存形态；残象被击溃后留下的残响，经盘古终端可转化为声骸。</p>
+                    <article class="lore-card lore-card--dossier" style="--char: var(--denia-lavender);">
+                        <span class="lore-spine" aria-hidden="true">频率</span>
+                        <div class="lore-dossier">
+                            <span class="lore-tier lore-tier-official">官方</span>
+                            <h3>频率 · 残响 · 声骸</h3>
+                            <p>物质与信息可还原为频率。残响是衰减残余，回音是完整可封存形态；残象被击溃后留下的残响，经盘古终端可转化为声骸。</p>
+                        </div>
                     </article>
-                    <article class="lore-card" style="--char: var(--drifter-blue-light);">
-                        <span class="lore-tier lore-tier-official">官方</span>
-                        <h3>共鸣者与残象</h3>
-                        <p>共鸣者凭体表声痕感知并操控频率。残象是混乱频率构成的类生命体，具声核，本能吞噬频率以维系自身。</p>
+                    <article class="lore-card lore-card--dossier" style="--char: var(--drifter-blue-light);">
+                        <span class="lore-spine" aria-hidden="true">共鸣</span>
+                        <div class="lore-dossier">
+                            <span class="lore-tier lore-tier-official">官方</span>
+                            <h3>共鸣者与残象</h3>
+                            <p>共鸣者凭体表声痕感知并操控频率。残象是混乱频率构成的类生命体，具声核，本能吞噬频率以维系自身。</p>
+                        </div>
                     </article>
-                    <article class="lore-card" style="--char: var(--lucilla-gold);">
-                        <span class="lore-tier lore-tier-official">官方</span>
-                        <h3>岁主与鸣式</h3>
-                        <p>岁主与文明同寿，授识、渡灾、晓示预言。鸣式伴随悲鸣而生，折射集体意志的隐忧，是毁灭性的残象灾害。</p>
+                    <article class="lore-card lore-card--dossier" style="--char: var(--lucilla-gold);">
+                        <span class="lore-spine" aria-hidden="true">岁主</span>
+                        <div class="lore-dossier">
+                            <span class="lore-tier lore-tier-official">官方</span>
+                            <h3>岁主与鸣式</h3>
+                            <p>岁主与文明同寿，授识、渡灾、晓示预言。鸣式伴随悲鸣而生，折射集体意志的隐忧，是毁灭性的残象灾害。</p>
+                        </div>
                     </article>
                 </div>
             </div>
 
             <div class="lore-group reveal" aria-labelledby="lore-group-geo">
                 <h3 class="lore-group-title" id="lore-group-geo">地理与势力 · 总典卷三</h3>
-                <div class="lore-grid">
-                    <article class="lore-card" style="--char: var(--drifter-blue);">
-                        <span class="lore-tier lore-tier-official">官方</span>
-                        <h3>瑝珑 · 今州</h3>
-                        <p>瑝珑属地共一庭六州。今州是边塞重城与残象潮前线；城池湖中而建，夜归将士镇守北方。</p>
+                <div class="lore-grid lore-grid--dossier">
+                    <article class="lore-card lore-card--dossier" style="--char: var(--drifter-blue);">
+                        <span class="lore-spine" aria-hidden="true">今州</span>
+                        <div class="lore-dossier"><span class="lore-tier lore-tier-official">官方</span><h3>瑝珑 · 今州</h3><p>瑝珑属地共一庭六州。今州是边塞重城与残象潮前线；城池湖中而建，夜归将士镇守北方。</p></div>
                     </article>
-                    <article class="lore-card" style="--char: var(--drifter-blue-light);">
-                        <span class="lore-tier lore-tier-official">官方</span>
-                        <h3>黑海岸</h3>
-                        <p>风暴海上的黑石群岛组织，借助泰缇斯系统观测悲鸣，与各国深度合作。抵达需认可或指引。</p>
+                    <article class="lore-card lore-card--dossier" style="--char: var(--drifter-blue-light);">
+                        <span class="lore-spine" aria-hidden="true">黑海岸</span>
+                        <div class="lore-dossier"><span class="lore-tier lore-tier-official">官方</span><h3>黑海岸</h3><p>风暴海上的黑石群岛组织，借助泰缇斯系统观测悲鸣，与各国深度合作。抵达需认可或指引。</p></div>
                     </article>
-                    <article class="lore-card" style="--char: var(--denia-lavender);">
-                        <span class="lore-tier lore-tier-official">官方</span>
-                        <h3>黎那汐塔</h3>
-                        <p>「声骸之国」：多城邦岛国，以公共声骸技术闻名。拉古那与七丘等城邦高度独立，海蚀在此称黑潮。</p>
+                    <article class="lore-card lore-card--dossier" style="--char: var(--denia-lavender);">
+                        <span class="lore-spine" aria-hidden="true">黎那汐</span>
+                        <div class="lore-dossier"><span class="lore-tier lore-tier-official">官方</span><h3>黎那汐塔</h3><p>「声骸之国」：多城邦岛国，以公共声骸技术闻名。拉古那与七丘等城邦高度独立，海蚀在此称黑潮。</p></div>
                     </article>
-                    <article class="lore-card" style="--char: var(--denia-lavender);">
-                        <span class="lore-tier lore-tier-official">官方</span>
-                        <h3>残星会</h3>
-                        <p>对立阵营的隐秘势力。部分角色身负双重身份，立场复杂 —— 考据时请以官方剧情为准，不轻易下定论。</p>
+                    <article class="lore-card lore-card--dossier" style="--char: var(--denia-lavender);">
+                        <span class="lore-spine" aria-hidden="true">残星</span>
+                        <div class="lore-dossier"><span class="lore-tier lore-tier-official">官方</span><h3>残星会</h3><p>对立阵营的隐秘势力。部分角色身负双重身份，立场复杂 —— 考据时请以官方剧情为准，不轻易下定论。</p></div>
                     </article>
-                    <article class="lore-card" style="--char: var(--drifter-blue);">
-                        <span class="lore-tier lore-tier-official">官方</span>
-                        <h3>拉海洛 · 星炬学院</h3>
-                        <p>3.x 舞台：罗伊冰原下的地下绿洲，地域海蚀常表现为虚质磁暴。星炬学院为官方学园；爱弥斯曾是拉贝尔学部隧者适格者，现为电子幽灵。细考见总典 §3.6（本地卷宗卷三仅维护用，不进 Pages）。</p>
+                    <article class="lore-card lore-card--dossier" style="--char: var(--drifter-blue);">
+                        <span class="lore-spine" aria-hidden="true">拉海洛</span>
+                        <div class="lore-dossier"><span class="lore-tier lore-tier-official">官方</span><h3>拉海洛 · 星炬学院</h3><p>3.x 舞台：罗伊冰原下的地下绿洲，地域海蚀常表现为虚质磁暴。星炬学院为官方学园；爱弥斯曾是拉贝尔学部隧者适格者，现为电子幽灵。细考见总典 §3.6（本地卷宗卷三仅维护用，不进 Pages）。</p></div>
                     </article>
-                    <article class="lore-card" style="--char: var(--lucilla-gold);">
-                        <span class="lore-tier lore-tier-official">官方</span>
-                        <h3>深空联合 · 换日</h3>
-                        <p>官方确认的跨国科研同盟：研究院 + 创立星炬学院；发起拉海洛先行计划。换日计划为 3.0 主线硬文本。完整条约法理仍标待核实，勿写死「母体编制表」。</p>
+                    <article class="lore-card lore-card--dossier" style="--char: var(--lucilla-gold);">
+                        <span class="lore-spine" aria-hidden="true">深空</span>
+                        <div class="lore-dossier"><span class="lore-tier lore-tier-official">官方</span><h3>深空联合 · 换日</h3><p>官方确认的跨国科研同盟：研究院 + 创立星炬学院；发起拉海洛先行计划。换日计划为 3.0 主线硬文本。完整条约法理仍标待核实，勿写死「母体编制表」。</p></div>
                     </article>
-                    <article class="lore-card" style="--char: var(--sigrica-green);">
-                        <span class="lore-tier lore-tier-official">官方</span>
-                        <h3>隧者 · 炉芯 · 阿列夫一</h3>
-                        <p>拉海洛核心造物与鸣式威胁语境：隧者、炉芯监视阿列夫一；适格者可显化隧者兵装。九子细表不在此卡写死。</p>
+                    <article class="lore-card lore-card--dossier" style="--char: var(--sigrica-green);">
+                        <span class="lore-spine" aria-hidden="true">隧者</span>
+                        <div class="lore-dossier"><span class="lore-tier lore-tier-official">官方</span><h3>隧者 · 炉芯 · 阿列夫一</h3><p>拉海洛核心造物与鸣式威胁语境：隧者、炉芯监视阿列夫一；适格者可显化隧者兵装。九子细表不在此卡写死。</p></div>
                     </article>
                 </div>
             </div>
 
             <div class="lore-group reveal" aria-labelledby="lore-group-bridge">
                 <h3 class="lore-group-title" id="lore-group-bridge">双站桥接 · 总典卷六（非角色档案）</h3>
-                <div class="lore-grid">
-                    <article class="lore-card" style="--char: var(--aimisi-pink, var(--color-rose));">
-                        <span class="lore-tier lore-tier-orig">项目原创</span>
-                        <h3>飞行雪绒 · 调频 9072</h3>
-                        <p>官方确认爱弥斯的歌手化名「飞行雪绒」。频道页与深夜频率 9072 为同人演绎（左下角浮钮可打开频道）—— 用官方「频率」语言叙事，不改写索拉里斯物理法则；角色履历仍归「角色档案」。</p>
+                <div class="lore-grid lore-grid--dossier">
+                    <article class="lore-card lore-card--dossier" style="--char: var(--aimisi-pink, var(--color-rose));">
+                        <span class="lore-spine" aria-hidden="true">9072</span>
+                        <div class="lore-dossier"><span class="lore-tier lore-tier-orig">项目原创</span><h3>飞行雪绒 · 调频 9072</h3><p>官方确认爱弥斯的歌手化名「飞行雪绒」。频道页与深夜频率 9072 为同人演绎（左下角浮钮可打开频道）—— 用官方「频率」语言叙事，不改写索拉里斯物理法则；角色履历仍归「角色档案」。</p></div>
                     </article>
                 </div>
             </div>
@@ -1345,8 +1360,8 @@
     <script defer src="../forum/js/forum-import-data.js"></script>
     <!-- Stage II: 15 个本地 JS 合并为 1 个 bundle（696KB→534KB ↓23.3%）+ SRI 完整性校验 -->
     <!-- forum-supabase.js 内含 waitForSDK 轮询，不依赖 CDN SDK 严格顺序；bundle 可安全先于 SDK 加载 -->
-    <script defer src="../dist/bundle-forum.js"
-            integrity="sha384-2R57D7fIUunUdeJvZuQeamwHt/pIFGGA+AXCz/kPnEJM0KjYZf+VWKjljuwU+46C"
+    <script defer src="../dist/bundle-forum.js?v=11.7.6-place"
+            integrity="sha384-xVfBoGHwxAehFYh/thssUVKil6YmQl+kCocE7LHBLJJTrUU0tmh6HwaSIHW1aigQ"
             crossorigin="anonymous"></script>
     <!-- 同步状态监测 / 主动同步按钮：独立加载，确保无论 bundle 是否执行都会挂载
          （forum-sync.js 自带幂等守卫，重复加载不会双初始化）。需在 StarTorchData 之后。 -->

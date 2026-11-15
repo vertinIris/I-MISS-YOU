@@ -600,31 +600,41 @@ body.forum-page .nav-glass { background: rgba(12, 14, 24, 0.94) !important; }
   color: #F0F4FF !important; letter-spacing: 0.12em !important;
 }
 
-/* ---------- 5.3 悬浮簇：右下一列（v11.7.3 用户定稿） ----------
-   顺序自上而下：同步状态(152) → 跨站入口(88) → 咖啡(24)，全部 right:24。
-   与主站右列结构对称；fixed 定位随滚动实时跟随。
-   咖啡按钮实色去毛玻璃，图标环用 CSS scroll-timeline 显示阅读进度，
-   无 JS、无内联脚本，规避 CSP 与移动端性能风险。 */
+/* ---------- 5.3 悬浮簇分区（2026-11-14）----------
+   左栏学院工具：同步(152) → 回主站频道(88)
+   右栏捐赠：咖啡(24)
+   气质：星炬蓝金锐角，与主站玫色左栏区分；去毛玻璃/辉光。 */
 .stf-back-home {
-  right: 24px !important; left: auto !important; bottom: 88px !important;
-  background: rgba(240, 244, 255, 0.05) !important;
+  left: 20px !important; right: auto !important; bottom: 88px !important;
+  background: rgba(16, 21, 42, 0.92) !important;
   color: #F0F4FF !important;
-  border: 1px solid rgba(240, 244, 255, 0.26) !important;
+  border: 1px solid rgba(168, 196, 240, 0.28) !important;
   box-shadow: none !important;
-  border-radius: 999px !important;
+  border-radius: 10px !important;
   opacity: 1 !important;
   -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
 }
-.stf-back-home:hover { background: rgba(109, 143, 214, 0.14) !important; border-color: rgba(109, 143, 214, 0.5) !important; }
+.stf-back-home:hover {
+  background: rgba(109, 143, 214, 0.16) !important;
+  border-color: rgba(232, 197, 106, 0.45) !important;
+  box-shadow: none !important;
+}
 .stf-back-home-icon {
+  border-radius: 8px !important;
   border-color: rgba(109, 143, 214, 0.5) !important;
   background: rgba(109, 143, 214, 0.14) !important; color: #A8C4F0 !important;
+}
+.stf-back-home-text {
+  font-family: var(--font-mono, "IBM Plex Mono", monospace) !important;
+  letter-spacing: 0.06em;
+  font-size: 0.75rem !important;
 }
 .donate-fab {
   right: 24px !important; left: auto !important; bottom: 24px !important;
   background: #F4729B !important; color: #130b11 !important;
   border: none !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28) !important;
   opacity: 1 !important;
   -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
 }
@@ -632,27 +642,30 @@ body.forum-page .donate-fab { opacity: 1 !important; }
 .donate-fab:hover { background: #E1588A !important; }
 .donate-fab-icon {
   position: relative;
+  overflow: hidden;
+  contain: paint;
+  border-radius: 10px !important;
   border-color: transparent !important;
   background: rgba(255, 255, 255, 0.18) !important; color: #130b11 !important;
 }
-/* 进度环：跟随阅读进度实时填充（scroll-timeline，无 JS） */
-@keyframes coffee-follow { from { --coffee-progress: 0%; } to { --coffee-progress: 100%; } }
-@property --coffee-progress { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
-@supports (animation-timeline: scroll()) {
-  .donate-fab-icon::after {
-    content: "";
-    position: absolute;
-    inset: -4px;
-    border-radius: 50%;
-    background: conic-gradient(#fff var(--coffee-progress), transparent 0);
-    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
-            mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
-    animation: coffee-follow linear;
-    animation-timeline: scroll(root block);
-  }
+/* 同 site-v2：彻底禁用 FAB conic，杜绝锯齿刺 */
+.donate-fab-icon::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  animation: none !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
 }
-/* 同步状态胶囊归位右侧竖列（咖啡上方），入口已让出左下也不回右边 */
-.stf-edge-indicator { left: auto !important; right: 24px !important; bottom: 152px !important; }
+.stf-edge-indicator {
+  left: 20px !important; right: auto !important; bottom: 152px !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+  background: rgba(16, 21, 42, 0.92) !important;
+  border: 1px solid rgba(168, 196, 240, 0.28) !important;
+  font-family: var(--font-mono, "IBM Plex Mono", monospace) !important;
+}
 
 /* ---------- 5.4 首页背板实色重写（兼容性保底） ----------
    病根：历次「修复」都把深色写在 color-mix()/oklch() 里；不支持这两个函数的
@@ -718,4 +731,265 @@ body.forum-page .donate-fab { opacity: 1 !important; }
 .stf-binding-holes span {
   background: #060911 !important;
   border-color: rgba(232, 197, 106, 0.35) !important;
+}
+/* —— PLACE 2026-11-14：三区隐喻（覆盖层，抗 SW 旧 forum.min） —— */
+#worldview .lore-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  max-width: 720px !important;
+  margin-top: 18px !important;
+  grid-template-columns: none !important;
+}
+#worldview .lore-card {
+  display: grid !important;
+  grid-template-columns: 2.75rem minmax(0, 1fr) !important;
+  grid-template-rows: auto 1fr !important;
+  gap: 0 !important;
+  padding: 0 !important;
+  border-radius: 1px !important;
+  border: 1px solid rgba(168, 196, 240, 0.16) !important;
+  border-left: 0 !important;
+  background:
+    linear-gradient(90deg, transparent 2.75rem, rgba(255, 255, 255, 0.02) 2.75rem),
+    linear-gradient(165deg, rgba(22, 28, 44, 0.96), rgba(10, 12, 20, 0.98)) !important;
+  box-shadow: 0 10px 28px -18px rgba(0, 0, 0, 0.7) !important;
+  transition: border-color 0.28s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  overflow: hidden !important;
+}
+#worldview .lore-card:hover {
+  transform: translateX(4px) !important;
+  border-color: rgba(168, 196, 240, 0.32) !important;
+  box-shadow: 0 14px 32px -16px rgba(0, 0, 0, 0.75) !important;
+}
+#worldview .lore-card .lore-tier {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  margin: 12px 16px 0 !important;
+  width: fit-content !important;
+}
+#worldview .lore-card h3 {
+  grid-column: 1 !important;
+  grid-row: 1 / -1 !important;
+  writing-mode: vertical-rl !important;
+  text-orientation: mixed !important;
+  margin: 0 !important;
+  padding: 14px 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.78rem !important;
+  letter-spacing: 0.22em !important;
+  line-height: 1.15 !important;
+  color: color-mix(in srgb, var(--char, #a8c4f0) 88%, #fff) !important;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--char, #6d8fd6) 42%, #0c1018), color-mix(in srgb, var(--char, #6d8fd6) 18%, #080a10)) !important;
+  border-right: 1px solid rgba(0, 0, 0, 0.35) !important;
+}
+#worldview .lore-card p {
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+  margin: 0 !important;
+  padding: 8px 16px 14px !important;
+  font-size: 0.88rem !important;
+  line-height: 1.75 !important;
+}
+#worldview .lore-group-title {
+  font-family: var(--font-mono, "IBM Plex Mono", monospace) !important;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.18em !important;
+  font-weight: 500 !important;
+  color: rgba(168, 196, 240, 0.62) !important;
+  border-bottom: 1px dashed rgba(168, 196, 240, 0.2) !important;
+  padding-bottom: 8px !important;
+}
+
+#stf-community-grid.stf-feed {
+  gap: 14px !important;
+  padding: 18px 14px 22px !important;
+  border: 1px solid rgba(196, 168, 120, 0.18) !important;
+  border-radius: 2px !important;
+  background:
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(196, 168, 120, 0.06), transparent 70%),
+    repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(196, 168, 120, 0.04) 27px, rgba(196, 168, 120, 0.04) 28px),
+    linear-gradient(180deg, rgba(18, 16, 14, 0.55), rgba(10, 10, 12, 0.85)) !important;
+}
+#stf-community .stf-card {
+  border-radius: 2px !important;
+  border: 1px solid rgba(220, 200, 160, 0.22) !important;
+  background: linear-gradient(165deg, rgba(32, 30, 28, 0.97), rgba(16, 16, 20, 0.98)) !important;
+  box-shadow: 0 1px 0 rgba(255, 248, 230, 0.06) inset, 3px 4px 0 rgba(0, 0, 0, 0.35) !important;
+}
+#stf-community .stf-card-badge {
+  border-radius: 2px !important;
+  border: 1px dashed rgba(220, 200, 160, 0.45) !important;
+  background: transparent !important;
+  font-family: var(--font-mono, monospace) !important;
+  color: rgba(232, 210, 160, 0.9) !important;
+}
+#stf-community .stf-card-avatar {
+  border-radius: 2px !important;
+}
+
+html.archive-orbit-active .archive-orbit-stage {
+  perspective: 1480px !important;
+  perspective-origin: 50% 38% !important;
+  border-radius: 6px !important;
+  border: 1px solid rgba(168, 196, 240, 0.22) !important;
+  background: linear-gradient(180deg, rgba(18, 24, 44, 0.55) 0%, rgba(8, 10, 18, 0.92) 55%, rgba(6, 8, 14, 0.98) 100%) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), inset 0 -40px 80px rgba(0, 0, 0, 0.45), 0 28px 60px -28px rgba(0, 0, 0, 0.65) !important;
+  overflow: hidden !important;
+}
+html.archive-orbit-active .archive-orbit-ring {
+  transform: rotateX(-22deg) !important;
+  transform-style: preserve-3d !important;
+}
+html.archive-orbit-active .archive-orbit-stage::after {
+  content: "SPECIMEN · 标本柜" !important;
+  position: absolute !important;
+  left: 50% !important;
+  bottom: 10px !important;
+  transform: translateX(-50%) !important;
+  font-family: var(--font-mono, monospace) !important;
+  font-size: 0.62rem !important;
+  letter-spacing: 0.28em !important;
+  color: rgba(168, 196, 240, 0.55) !important;
+  pointer-events: none !important;
+  z-index: 3 !important;
+}
+
+/* —— 2026-11-14b：标本铭牌（反霓虹描边同质卡） —— */
+html.archive-orbit-active .archive-orbit-stage {
+  background:
+    radial-gradient(ellipse 90% 50% at 50% 100%, rgba(232, 197, 106, 0.08), transparent 55%),
+    linear-gradient(180deg, #141820 0%, #0a0c12 42%, #06070c 100%) !important;
+  border: 1px solid rgba(180, 160, 120, 0.22) !important;
+  border-radius: 2px !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.5),
+    inset 0 -80px 100px -40px rgba(0, 0, 0, 0.7),
+    0 40px 80px -40px rgba(0, 0, 0, 0.8) !important;
+}
+html.archive-orbit-active .archive-float.is-orbit-item .character-archive-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 6px !important;
+  padding: 16px 14px 14px !important;
+  border-radius: 1px !important;
+  border: 1px solid rgba(210, 190, 150, 0.28) !important;
+  border-top: 2px solid color-mix(in srgb, var(--char, #c4a878) 70%, #eee) !important;
+  background:
+    linear-gradient(165deg, #1c1a16 0%, #12110e 55%, #0c0b09 100%) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 240, 210, 0.08) inset,
+    0 18px 28px rgba(0, 0, 0, 0.55) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+}
+html.archive-orbit-active .archive-float.is-orbit-item .character-archive-card::before,
+html.archive-orbit-active .archive-float.is-orbit-item .character-archive-card::after {
+  display: none !important;
+  content: none !important;
+  box-shadow: none !important;
+}
+.character-archive-cat {
+  font-family: var(--font-mono, "IBM Plex Mono", monospace);
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  color: rgba(210, 190, 150, 0.7);
+  order: -1;
+}
+html.archive-orbit-active .character-archive-icon {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 1px !important;
+  background: color-mix(in srgb, var(--char) 22%, #0a0908) !important;
+  border: 1px solid color-mix(in srgb, var(--char) 45%, transparent) !important;
+  box-shadow: none !important;
+}
+html.archive-orbit-active .character-archive-name {
+  font-family: "Noto Serif SC", "Songti SC", serif !important;
+  font-size: 1.15rem !important;
+  letter-spacing: 0.14em !important;
+  font-weight: 600 !important;
+  color: #f2ebe0 !important;
+  text-shadow: none !important;
+}
+html.archive-orbit-active .character-archive-alias {
+  font-family: var(--font-mono, monospace) !important;
+  font-size: 0.68rem !important;
+  letter-spacing: 0.06em !important;
+  color: color-mix(in srgb, var(--char) 75%, #c8b896) !important;
+  opacity: 0.95 !important;
+}
+html.archive-orbit-active .archive-orbit-stage::after {
+  content: "CABINET · 标本格 · 悬停停转" !important;
+  letter-spacing: 0.2em !important;
+  color: rgba(210, 190, 150, 0.45) !important;
+}
+
+/* —— 卷宗抽屉（HTML spine + dossier） —— */
+#worldview .lore-grid--dossier {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 9px !important;
+  max-width: 740px !important;
+  grid-template-columns: none !important;
+}
+#worldview .lore-card--dossier {
+  display: grid !important;
+  grid-template-columns: 2.9rem minmax(0, 1fr) !important;
+  padding: 0 !important;
+  border-radius: 1px !important;
+  border: 1px solid rgba(168, 196, 240, 0.18) !important;
+  border-left: 0 !important;
+  background: #0e121a !important;
+  overflow: hidden !important;
+  transform: none !important;
+  box-shadow: 0 12px 28px -20px rgba(0, 0, 0, 0.75) !important;
+}
+#worldview .lore-card--dossier:hover {
+  transform: translateX(5px) !important;
+  border-color: rgba(168, 196, 240, 0.35) !important;
+}
+#worldview .lore-spine {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 0;
+  font-family: "Noto Serif SC", serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.28em;
+  color: #e8eef8;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--char) 55%, #10141c), color-mix(in srgb, var(--char) 22%, #080a10));
+  border-right: 1px solid rgba(0, 0, 0, 0.4);
+}
+#worldview .lore-dossier {
+  padding: 12px 16px 14px;
+}
+#worldview .lore-card--dossier h3 {
+  writing-mode: horizontal-tb !important;
+  margin: 6px 0 8px !important;
+  padding: 0 !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  font-size: 1.05rem !important;
+  letter-spacing: 0.06em !important;
+  color: color-mix(in srgb, var(--char) 80%, #fff) !important;
+  display: block !important;
+}
+#worldview .lore-card--dossier p {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 0.88rem !important;
+  line-height: 1.75 !important;
+  color: rgba(230, 236, 248, 0.78) !important;
+}
+#worldview .lore-card--dossier .lore-tier {
+  margin: 0 !important;
 }

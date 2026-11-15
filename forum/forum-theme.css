@@ -712,7 +712,7 @@ body.forum-page .donate-fab {
 body.forum-page .donate-fab:hover {
     opacity: 0.95;
     border-color: rgba(232, 197, 106, 0.4) !important;
-    box-shadow: 0 6px 24px color-mix(in srgb, black 40%, transparent), 0 0 14px color-mix(in srgb, var(--stf-brand, #6d8fd6) 16%, transparent) !important;
+    box-shadow: 0 4px 14px color-mix(in srgb, black 36%, transparent) !important;
 }
 
 body.forum-page .donate-fab:focus-visible {
@@ -727,8 +727,8 @@ body.forum-page .donate-fab-icon {
 
 body.forum-page .donate-fab:hover .donate-fab-icon {
     background: color-mix(in srgb, var(--stf-brand, #6d8fd6) 30%, transparent) !important;
-    box-shadow: 0 0 14px color-mix(in srgb, var(--stf-brand, #6d8fd6) 28%, transparent);
-    transform: scale(1.06) !important;
+    box-shadow: none;
+    transform: scale(1.04) !important;
 }
 
 body.forum-page .donate-modal {

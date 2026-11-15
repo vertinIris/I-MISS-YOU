@@ -4,8 +4,9 @@
 
 ## 对外版本
 
-- 产品展示版：**v11.7.1**（主站页脚、论坛页脚、`window.__FXRE_API.version`）
-- `package.json`：`11.7.1`
+- 产品展示版：**v11.7.6**（主站页脚、论坛页脚、`window.__FXRE_API.version`）
+- `package.json`：`11.7.6`
+- 设计入口：根目录 [`design.md`](../design.md)（含 §0 Agent 入口）
 - 种子缓存键（`SEED_VERSION`）是数据修订号，可与对外版本不同，勿混用
 
 ## Migration 要点

@@ -662,37 +662,282 @@ body.forum-page .btn-primary::after {
   }
 }
 
-/* —— 角色墙 orbit：深度可读、暂停态清晰 —— */
+/* —— 角色墙 orbit：标本柜感（更深透视 + 柜体材质，反「贴片卡片」） —— */
 html.archive-orbit-active .archive-orbit-stage {
-  perspective: 1100px;
-  perspective-origin: 50% 42%;
+  perspective: 1480px;
+  perspective-origin: 50% 38%;
+  border-radius: 6px;
+  border: 1px solid rgba(168, 196, 240, 0.22);
+  background:
+    linear-gradient(180deg, rgba(18, 24, 44, 0.55) 0%, rgba(8, 10, 18, 0.92) 55%, rgba(6, 8, 14, 0.98) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -40px 80px rgba(0, 0, 0, 0.45),
+    0 28px 60px -28px rgba(0, 0, 0, 0.65);
+  overflow: hidden;
 }
 
 html.archive-orbit-active .archive-orbit-ring {
   transform-style: preserve-3d;
-  transform: rotateX(-8deg);
+  transform: rotateX(-18deg);
 }
 
 html.archive-orbit-active .archive-orbit-ring.is-paused {
-  /* pause-on-hover：JS 停转；深度 transform 由 paint() 保留 */
   filter: none;
+  transform: rotateX(-11deg);
 }
 
 html.archive-orbit-active .archive-float.is-orbit-item .character-archive-card {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  background: oklch(14% 0.03 250deg / 0.92);
-  border: 1px solid var(--stf-edge, oklch(78% 0.06 250deg / 0.2));
-  box-shadow: var(--stf-metal, 0 0 0 1px oklch(78% 0.06 250deg / 0.14));
+  border-radius: 4px 4px 2px 2px;
+  background:
+    linear-gradient(165deg, rgba(36, 44, 72, 0.95) 0%, rgba(14, 18, 32, 0.98) 48%, rgba(10, 12, 22, 1) 100%);
+  border: 1px solid rgba(168, 196, 240, 0.28);
+  border-top-width: 3px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 18px 36px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(0, 0, 0, 0.35);
 }
 
 html.archive-orbit-active .archive-float.is-orbit-item .character-archive-name {
   font-family: var(--font-display);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: var(--stf-ink, #eef3fb);
 }
 
 html.archive-orbit-active .archive-album-shelf {
-  opacity: 0.35;
-  background: radial-gradient(ellipse 60% 40% at 50% 100%, oklch(78% 0.12 85deg / 0.12), transparent 70%);
+  opacity: 0.85;
+  height: 56px;
+  background:
+    linear-gradient(180deg, transparent, rgba(8, 10, 18, 0.9)),
+    radial-gradient(ellipse 70% 55% at 50% 0%, rgba(232, 197, 106, 0.16), transparent 70%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(168, 196, 240, 0.07) 0 1px,
+      transparent 1px 28px
+    );
+  border-top: 1px solid rgba(168, 196, 240, 0.18);
+}
+
+/* —— 标本柜框体：玻璃门缝 + 地坪光池 + 铭牌 —— */
+html.archive-orbit-active .archive-orbit-stage::before {
+  content: "";
+  position: absolute;
+  inset: 10% 8% 18%;
+  border: 1px solid rgba(168, 196, 240, 0.14);
+  border-radius: 2px;
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.35),
+    inset 40px 0 60px -40px rgba(255, 255, 255, 0.04),
+    inset -40px 0 60px -40px rgba(255, 255, 255, 0.03);
+  pointer-events: none;
+  z-index: 2;
+}
+html.archive-orbit-active .archive-orbit-stage::after {
+  content: "SPECIMEN · 标本柜";
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  font-family: var(--font-mono, "IBM Plex Mono", monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  color: rgba(168, 196, 240, 0.55);
+  pointer-events: none;
+  z-index: 3;
+}
+html.archive-orbit-active #characters-archive .section-label {
+  letter-spacing: 0.35em;
+}
+html.archive-orbit-active .archive-orbit-ring {
+  transform: rotateX(-22deg);
+}
+html.archive-orbit-active .archive-orbit-ring.is-paused {
+  transform: rotateX(-14deg);
+}
+html.archive-orbit-active .archive-float.is-orbit-item .character-archive-card {
+  min-height: 158px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.1) inset,
+    0 22px 40px rgba(0, 0, 0, 0.62),
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    0 0 24px color-mix(in srgb, var(--char, #6d8fd6) 18%, transparent);
+}
+
+/* —— 世界观：卷宗抽屉（竖脊 + 横页），反四宫格同宽卡 —— */
+#worldview .section-desc {
+  max-width: 52ch;
+}
+#worldview .lore-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 720px;
+  margin-top: 18px;
+}
+#worldview .lore-card {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  gap: 0;
+  padding: 0;
+  border-radius: 1px;
+  border: 1px solid rgba(168, 196, 240, 0.16);
+  border-left: 0;
+  background:
+    linear-gradient(90deg, transparent 2.75rem, rgba(255, 255, 255, 0.02) 2.75rem),
+    linear-gradient(165deg, rgba(22, 28, 44, 0.96), rgba(10, 12, 20, 0.98));
+  box-shadow: 0 10px 28px -18px rgba(0, 0, 0, 0.7);
+  transition: border-color 0.28s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+#worldview .lore-card:hover {
+  transform: translateX(4px);
+  border-color: rgba(168, 196, 240, 0.32);
+  box-shadow: 0 14px 32px -16px rgba(0, 0, 0, 0.75);
+}
+#worldview .lore-card .lore-tier {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 12px 16px 0;
+  width: fit-content;
+}
+#worldview .lore-card h3 {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  margin: 0;
+  padding: 14px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  line-height: 1.15;
+  color: color-mix(in srgb, var(--char, #a8c4f0) 88%, #fff);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--char, #6d8fd6) 42%, #0c1018), color-mix(in srgb, var(--char, #6d8fd6) 18%, #080a10));
+  border-right: 1px solid rgba(0, 0, 0, 0.35);
+  box-shadow: 2px 0 0 rgba(255, 255, 255, 0.04);
+}
+#worldview .lore-card p {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+  padding: 8px 16px 14px;
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: color-mix(in srgb, var(--color-snow, #eef3fb) 78%, transparent);
+}
+#worldview .lore-group-title {
+  font-family: var(--font-mono, "IBM Plex Mono", monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+  color: rgba(168, 196, 240, 0.62);
+  border-bottom: 1px dashed rgba(168, 196, 240, 0.2);
+  padding-bottom: 8px;
+  margin-top: 2.2rem;
+}
+
+/* —— 讨论区：布告栏 + 邮戳信笺，反社交 App feed —— */
+#stf-community .stf-feed,
+#stf-community .stf-timeline,
+#stf-community-grid.stf-feed {
+  gap: 14px;
+  padding: 18px 14px 22px;
+  border: 1px solid rgba(196, 168, 120, 0.18);
+  border-radius: 2px;
+  background:
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(196, 168, 120, 0.06), transparent 70%),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 27px,
+      rgba(196, 168, 120, 0.04) 27px,
+      rgba(196, 168, 120, 0.04) 28px
+    ),
+    linear-gradient(180deg, rgba(18, 16, 14, 0.55), rgba(10, 10, 12, 0.85));
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+}
+.stf-feed .stf-card,
+.stf-timeline .stf-card {
+  border-radius: 2px !important;
+  border: 1px solid rgba(220, 200, 160, 0.22) !important;
+  border-left: 1px solid rgba(220, 200, 160, 0.22) !important;
+  background:
+    linear-gradient(165deg, rgba(32, 30, 28, 0.97) 0%, rgba(16, 16, 20, 0.98) 100%) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 248, 230, 0.06) inset,
+    3px 4px 0 rgba(0, 0, 0, 0.35) !important;
+  padding: 14px 16px 12px !important;
+  transform: rotate(0deg);
+}
+.stf-feed .stf-timeline__item:nth-child(odd) .stf-card {
+  transform: rotate(-0.35deg);
+}
+.stf-feed .stf-timeline__item:nth-child(even) .stf-card {
+  transform: rotate(0.4deg);
+}
+.stf-feed .stf-card:hover,
+.stf-timeline .stf-card:hover {
+  transform: rotate(0deg) translateY(-2px) !important;
+  border-color: rgba(232, 210, 160, 0.4) !important;
+  background: linear-gradient(165deg, rgba(38, 34, 30, 0.98), rgba(18, 18, 22, 0.99)) !important;
+}
+.stf-feed .stf-card::before,
+.stf-timeline .stf-card::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #f0e6d0, #8a6a3a 55%, #3a2a14 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+  z-index: 2;
+  pointer-events: none;
+}
+.stf-card-avatar {
+  border-radius: 2px !important;
+  font-family: var(--font-display, "Noto Serif SC", serif) !important;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+.stf-card-badge {
+  border-radius: 2px !important;
+  border: 1px dashed rgba(220, 200, 160, 0.45) !important;
+  background: transparent !important;
+  font-family: var(--font-mono, monospace) !important;
+  font-size: 0.65rem !important;
+  letter-spacing: 0.08em;
+  padding: 0.2em 0.55em !important;
+  color: rgba(232, 210, 160, 0.9) !important;
+}
+.stf-card-title {
+  font-family: var(--font-display, "Noto Serif SC", serif) !important;
+  letter-spacing: 0.04em;
+}
+.stf-card-actions {
+  border-top: 1px dashed rgba(196, 168, 120, 0.22) !important;
+  margin-top: 10px;
+  padding-top: 8px;
+}
+.stf-card-action {
+  border-radius: 2px !important;
+}
+
+@media (max-width: 899px), (prefers-reduced-motion: reduce) {
+  .stf-feed .stf-timeline__item:nth-child(odd) .stf-card,
+  .stf-feed .stf-timeline__item:nth-child(even) .stf-card {
+    transform: none;
+  }
+  .stf-feed .stf-card:hover,
+  .stf-timeline .stf-card:hover {
+    transform: none !important;
+  }
 }

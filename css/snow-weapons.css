@@ -123,6 +123,8 @@
 /* ---------- P0-6: 信封造型 听众来信 ---------- */
 .sn-envelope {
     position: relative;
+    overflow: hidden; /* 约束 flap clip-path，避免高度塌陷时三角「锯齿」刺穿内容 */
+    isolation: isolate;
     background: linear-gradient(180deg,
         color-mix(in srgb, var(--color-pink-warm) 12%, transparent),
         color-mix(in srgb, var(--color-snow) 6%, transparent)
@@ -136,6 +138,9 @@
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 22px;
+    max-height: 28px;
+    pointer-events: none;
+    z-index: 0;
     background: linear-gradient(180deg,
         color-mix(in srgb, var(--color-pink-warm) 35%, transparent),
         transparent

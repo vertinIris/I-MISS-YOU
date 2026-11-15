@@ -90,10 +90,15 @@ body::after {
 .btn-music:hover { border-color: var(--rose) !important; }
 .btn-icon { width: 18px; height: 18px; }
 
-/* 去霓虹/呼吸/常驻动画 */
+/* 去霓虹/呼吸/常驻动画；保留 .sig-freqbar 为品牌签名（DESIGN.md） */
 .sig-title-breath { animation: none !important; }
 .sn-hero-snowflake { display: none !important; }
-.sig-freqbar, .scroll-indicator, .sn-scroll-dial { display: none !important; }
+.scroll-indicator, .sn-scroll-dial { display: none !important; }
+.hero .sig-freqbar {
+  display: flex !important;
+  margin-top: 0.85rem;
+  opacity: 0.72;
+}
 .hero-freq { color: var(--ice); font-family: var(--font-mono); font-size: var(--fs-micro); letter-spacing: 0.15em; }
 
 /* ---------- 5. 导航（编辑式玻璃 · 下滚隐藏由 JS 驱动） ---------- */
@@ -160,12 +165,15 @@ body::after {
 .hero-title-mark { display: inline-block; }
 .sn-title-ch { font-family: var(--font-display); }
 .sn-title-scribble { color: var(--rose); width: 100%; max-width: 280px; height: 12px; margin-top: 0.2em; }
+/* 副标：去衬线斜体（Fable 默认 AI 味）；品牌字留给标题 */
 .hero-tagline {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: var(--fs-h2);
-  color: var(--ink);
-  margin-top: 0.6em;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 500;
+  font-size: var(--fs-h3, clamp(1rem, 2vw, 1.2rem));
+  letter-spacing: 0.18em;
+  color: var(--ink-2);
+  margin-top: 0.75em;
 }
 .hero-actions { display: flex; gap: 1rem; margin-top: 2.4rem; flex-wrap: wrap; }
 
@@ -176,10 +184,15 @@ body::after {
 }
 .container { width: min(1180px, 100%); margin-inline: auto; padding-inline: var(--gutter); }
 .section-header { max-width: 68ch; margin-bottom: 2.5rem; }
+/* 区块眉标：去强 uppercase+宽字距（Fable/AI eyebrow 味），保留 mono 电台感 */
 .section-label {
-  font-family: var(--font-mono); font-size: var(--fs-micro);
-  letter-spacing: 0.25em; text-transform: uppercase; color: var(--ice);
-  display: block; margin-bottom: 0.8rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.08em;
+  text-transform: none;
+  color: var(--ink-3);
+  display: block;
+  margin-bottom: 0.65rem;
 }
 .section-title {
   font-family: var(--font-display);
@@ -274,7 +287,35 @@ body::after {
 .track-duration { margin-left: auto; color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-small); }
 .music-disclaimer { color: var(--ink-3); font-size: var(--fs-small); line-height: 1.7; max-width: 60ch; }
 
-/* ---------- 10. 时间线 / 日志 / 投稿卡片 ---------- */
+/* ---------- 10. 时间线 / 日志 / 投稿卡片（频道日志，非论坛 feed） ---------- */
+#timeline .timeline-container {
+  max-width: 680px;
+  margin-inline: auto;
+  border-left: 1px solid var(--rule);
+  padding-left: 1.4rem;
+}
+#timeline .timeline-line { display: none !important; }
+#timeline .post-card {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid var(--rule) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 1.4rem 0 1.6rem !important;
+  margin-bottom: 0;
+}
+#timeline .post-type-badge {
+  border-radius: 2px !important;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.08em;
+  background: transparent !important;
+  border: 1px solid var(--rule-strong);
+}
+#timeline .post-author {
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+}
 .post-card, .diary-card, .community-grid .post-card {
   background: var(--surface) !important;
   border: 1px solid var(--rule) !important;
@@ -468,37 +509,34 @@ body::after {
 }
 .modal-close, .bookmarks-panel-close, .public-collection-close { color: var(--ink-2) !important; }
 
-/* ---------- 12. 捐赠悬浮按钮（右下 · 阅读进度环实时跟随） ---------- */
+/* ---------- 12. 捐赠悬浮按钮（右下 · 阅读进度环；与左栏工具分离） ---------- */
 .donate-fab {
   right: 24px !important; left: auto !important; bottom: 24px !important;
   background: var(--rose) !important; color: var(--paper) !important;
-  border: none !important; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35) !important;
+  border: none !important; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28) !important;
+  border-radius: 12px !important;
   opacity: 1 !important;
 }
 .donate-fab:hover { background: var(--rose-strong) !important; }
 .donate-fab-icon {
   position: relative;
+  overflow: hidden;
+  contain: paint;
+  border-radius: 10px !important;
   border-color: transparent !important; background: rgba(255, 255, 255, 0.18) !important;
 }
 .donate-title { font-family: var(--font-display); color: var(--ink); }
 .donate-qr-img { border-radius: var(--r-sm); }
 
-/* 阅读进度环：绕咖啡图标一圈细环，随滚动实时填充
-   —— 用 scroll-timeline 实现，零 JS，规避本站点严格 CSP 的内联脚本限制。 */
-@keyframes coffee-follow { from { --coffee-progress: 0%; } to { --coffee-progress: 100%; } }
-@property --coffee-progress { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
-@supports (animation-timeline: scroll()) {
-  .donate-fab-icon::after {
-    content: "";
-    position: absolute;
-    inset: -4px;
-    border-radius: 50%;
-    background: conic-gradient(#fff var(--coffee-progress), transparent 0);
-    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
-            mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
-    animation: coffee-follow linear;
-    animation-timeline: scroll(root block);
-  }
+/* 进度环已废止：WebView2/部分 Chromium 会宣称 mask 可用但实际失效，
+   conic 扇面直接铺满视口成「锯齿刺」。阅读进度改走顶栏/侧条，不再挂 FAB。 */
+.donate-fab-icon::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  animation: none !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
 }
 
 /* ---------- 13. 彩蛋：去霓虹辉光 ---------- */
@@ -655,31 +693,52 @@ body::after {
   letter-spacing: 0.15em; padding: 0.3em 0.7em; border-radius: 4px; opacity: 0.85;
 }
 
-/* ---------- 悬浮簇：右下一列（v11.7.3 用户定稿） ----------
-   顺序自上而下：同步状态(152) → 论坛入口(88) → 咖啡(24)，全部 right:24。
-   fixed 定位随滚动实时跟随。 */
+/* ---------- 悬浮簇分区（2026-11-14）----------
+   左栏工具（电台感侧轨）：同步(152) → 星炬论坛(88)
+   右栏捐赠：咖啡(24)
+   借鉴 Ujima Radio 侧栏分区 + Discourse 侧栏留白，去毛玻璃辉光。 */
 .forum-entry-fab {
-  right: 24px !important; left: auto !important; bottom: 88px !important;
+  left: 20px !important; right: auto !important; bottom: 88px !important;
   background: var(--surface) !important; color: var(--ink) !important;
   border: 1px solid var(--rule-strong) !important; box-shadow: none !important;
+  border-radius: 12px !important;
   -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
   opacity: 1 !important;
 }
+.forum-entry-fab:hover {
+  border-color: var(--rose) !important;
+  transform: translateY(-1px);
+  box-shadow: none !important;
+}
 .forum-entry-fab-icon {
+  border-radius: 10px !important;
   border-color: var(--rule-strong) !important;
-  background: var(--rose-dim) !important; color: var(--rose) !important;
+  background: color-mix(in oklch, var(--rose) 18%, transparent) !important;
+  color: var(--rose) !important;
+}
+.forum-entry-fab-text {
+  font-family: var(--font-mono) !important;
+  font-size: var(--fs-micro) !important;
+  letter-spacing: 0.06em;
 }
 
-/* 同步状态指示器：base 样式 fixed right:20 bottom:20，会与咖啡按钮重叠。
-   排入右列顶部，并套编辑式皮肤（实色、发丝线、去毛玻璃）。 */
 .sync-indicator {
-  right: 24px !important; bottom: 152px !important;
+  left: 20px !important; right: auto !important; bottom: 152px !important;
   background: var(--surface) !important;
   border: 1px solid var(--rule) !important;
+  border-radius: 12px !important;
   -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
   box-shadow: none !important;
   color: var(--ink-2) !important;
   font-family: var(--font-mono) !important; font-size: var(--fs-micro) !important;
+}
+.sync-indicator-btn {
+  border-radius: 10px !important;
+  box-shadow: none !important;
+}
+.sync-indicator-btn:hover {
+  box-shadow: none !important;
+  transform: scale(1.04);
 }
 
 /* ---------- 15. 细节：滚动条 / 选区 ---------- */

@@ -56,9 +56,22 @@
 }
 
 .donate-fab:hover .donate-fab-icon {
-    background: linear-gradient(135deg, color-mix(in srgb, var(--color-rose) 38%, transparent), color-mix(in srgb, var(--color-purple) 28%, transparent));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-rose) 38%, transparent), color-mix(in srgb, var(--color-purple) 18%, transparent));
     transform: scale(1.08) rotate(-8deg);
     box-shadow: 0 0 16px color-mix(in srgb, var(--color-rose) 35%, transparent);
+}
+
+/* 禁止任何进度环 ::after：mask 失效时 conic 会铺满视口成锯齿刺 */
+.donate-fab-icon::before,
+.donate-fab-icon::after {
+    content: none !important;
+    display: none !important;
+    background: none !important;
+    animation: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
 .donate-fab-text {

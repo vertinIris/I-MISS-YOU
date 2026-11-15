@@ -2293,9 +2293,9 @@
         function layoutMetrics() {
             var w = orbit.clientWidth || 720;
             /* W2 重标定：倾斜后半径略增、yLift 上移，避免卡片挤中 */
-            var radius = Math.min(340, Math.max(220, Math.floor(w * 0.36)));
-            /* 负 rotateX 俯视：相对旧值略减上抬，卡片仍避开底部光池 */
-            return { radius: radius, yLift: -22 };
+            /* 标本柜：半径略大、前后景差更开，避免「框内贴片」 */
+            var radius = Math.min(380, Math.max(250, Math.floor(w * 0.4)));
+            return { radius: radius, yLift: -28 };
         }
 
         function paint(angleDeg) {
@@ -2308,9 +2308,9 @@
                 var x = Math.sin(a) * m.radius;
                 var z = Math.cos(a) * m.radius;
                 var depth = (z + m.radius) / (2 * m.radius);
-                var scale = 0.74 + depth * 0.32;
-                var opacity = 0.4 + depth * 0.6;
-                var bright = 0.6 + depth * 0.44;
+                var scale = 0.68 + depth * 0.4;
+                var opacity = 0.32 + depth * 0.68;
+                var bright = 0.52 + depth * 0.55;
                 card.style.transform =
                     'translate(-50%, -50%) translate3d(' + x.toFixed(1) + 'px,' + m.yLift + 'px,' + z.toFixed(1) + 'px) scale(' + scale.toFixed(3) + ')';
                 card.style.zIndex = String(100 + Math.round(depth * 100));

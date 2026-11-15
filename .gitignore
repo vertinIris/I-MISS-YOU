@@ -12,6 +12,8 @@ node_modules/
 .cursor/skills/hallmark/
 .cursor/skills/front-end-checklist/
 .cursor/skills/ui-ux-pro-max/
+.cursor/skills/taste-skill/
+.cursor/skills/impeccable/
 # 本地大预览图
 _preview-*.png
 *_preview*.png
