@@ -146,6 +146,37 @@ try {
     failed++;
 }
 
+// P0-1 门禁（2026-11-18）：bundle 的 SRI 必须与 dist 产物一致，且 ?v= 查询串必须对齐版本。
+// 历史事故：forum 的 `?v=x-place` 占位串使 build-phase2 的 SRI 回填正则匹配数 0，
+// 静默跳过校验 → 重建后 integrity 不更新 → 浏览器拒绝执行脚本（论坛白屏）。
+try {
+    const ver = String(JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version || '');
+    const vPattern = ver.replace(/\./g, '\\.');
+    const bundles = [
+        { html: 'index.html', name: 'bundle-main.js' },
+        { html: 'forum/index.html', name: 'bundle-forum.js' },
+    ];
+    for (const { html, name } of bundles) {
+        const text = readFileSync(join(root, html), 'utf8');
+        const esc = name.replace(/\./g, '\\.');
+        const tag = text.match(new RegExp(`<script[^>]*src="([^"]*${esc}(?:\\?[^"]*)?)"[^>]*integrity="([^"]+)"`));
+        if (!tag) {
+            console.log('FAIL', html, name, '未找到含 integrity 的 bundle script 标签');
+            failed++;
+            continue;
+        }
+        if (!tag[1].includes('?v=' + ver) && !tag[1].endsWith(esc.replace(/\\./g, '.'))) {
+            console.log('FAIL', html, name, '?v= 查询串未对齐版本 v' + ver, '(实际 src:', tag[1] + ')');
+            failed++;
+        } else {
+            console.log('OK', html, name, 'cache-bust 版本对齐');
+        }
+    }
+} catch (e) {
+    console.log('FAIL SRI/cache-bust 门禁异常:', e.message);
+    failed++;
+}
+
 console.log(`\n=== Migration 文件 (001-${String(MIGRATION_MAX).padStart(3, '0')}) ===`);
 const migDir = join(root, 'db');
 if (existsSync(migDir)) {

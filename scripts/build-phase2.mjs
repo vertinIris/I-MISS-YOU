@@ -273,18 +273,22 @@ function updateSriInHtml(htmlPath, bundleName, sri) {
   console.log(`\n[BUILD]   → 更新 ${path.basename(htmlPath)} 中的 ${bundleName} SRI...`);
   let html = fs.readFileSync(htmlPath, 'utf8');
 
-  // 匹配 <script src=".../bundleName" integrity="old-sri" 的模式
-  // 支持 index.html (src="dist/bundle-*.js") 和 forum/index.html (src="../dist/bundle-*.js")
+  // 匹配 <script src=".../bundleName[?query]" integrity="old-sri" ...> 的模式
+  // 支持 index.html (src="dist/bundle-*.js") 和 forum/index.html (src="../dist/bundle-*.js?v=x")
+  // P0-1 修复（2026-11-18）：原正则要求 bundleName 紧跟引号， forum 的 `?v=` 查询串导致
+  // 匹配数 0 → 仅 warn 且跳过校验 → 重建后 SRI 不更新 → 浏览器拒绝执行脚本（白屏）。
+  // 现在：① 允许文件名后带查询串；② 匹配数 0 视为构建失败，杜绝静默跳过。
   const escapedName = bundleName.replace(/\./g, '\\.');
   const scriptRegex = new RegExp(
-    `<script[^>]*src="([^"]*)${escapedName}"[^>]*integrity="[^"]*"[^>]*crossorigin="anonymous"[^>]*>`,
+    `<script[^>]*src="([^"]*)${escapedName}(?:\\?[^"]*)?"[^>]*integrity="[^"]*"[^>]*crossorigin="anonymous"[^>]*>`,
     'g'
   );
 
   const matches = html.match(scriptRegex);
-  if (!matches) {
-    console.warn(`[BUILD]   ⚠️ 未在 ${path.basename(htmlPath)} 中找到 ${bundleName} 的 script 标签`);
-    return false;
+  if (!matches || matches.length === 0) {
+    console.error(`[BUILD]   ❌ 未在 ${path.basename(htmlPath)} 中找到 ${bundleName} 的 script 标签（含 SRI/crossorigin）`);
+    console.error('           SRI 无法自动回填 → 重建后浏览器会因 integrity 不匹配拒绝执行脚本。构建中止。');
+    process.exit(1);
   }
 
   html = html.replace(scriptRegex, (match) => {
@@ -351,8 +355,9 @@ function updateSriInHtml(htmlPath, bundleName, sri) {
   const verifyHtml = (htmlPath, bundleName, expectedSri) => {
     const html = fs.readFileSync(htmlPath, 'utf8');
     const esc = bundleName.replace(/\./g, '\\.');
-    // HTML 中属性顺序：src="bundleName" 在前，integrity="..." 在后
-    const regex = new RegExp(`src="[^"]*${esc}"[^>]*integrity="([^"]*)"`);
+    // HTML 中属性顺序：src="bundleName[?query]" 在前，integrity="..." 在后
+    // P0-1 修复：与 updateSriInHtml 保持一致，允许 ?v= 查询串
+    const regex = new RegExp(`src="[^"]*${esc}(?:\\?[^"]*)?"[^>]*integrity="([^"]*)"`);
     const match = html.match(regex);
     if (match && match[1] === expectedSri) {
       console.log(`[BUILD]   ✅ ${path.basename(htmlPath)}: ${bundleName} SRI 一致`);

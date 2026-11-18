@@ -38,10 +38,19 @@ jobs:
         run: node scripts/build-phase2.mjs
 
       # S-02：注入部署号到 SW，强制每次部署触发 SW 更新 + 旧缓存清理（根除陈旧缓存滞留）
+      # P0-2 修复（2026-11-18）：原逻辑把 CACHE_VERSION 改为裸 SHA（snowfluff-<sha>），
+      # 脱离语义版本口径、且 sed 无成功断言 → 正则一变即静默失效。
+      # 现在：保留语义版本 + 追加部署号；sed 后必须 grep 断言命中，否则 fail 整个部署。
       - name: Inject deploy version into Service Worker
         run: |
-          sed -i "s/const CACHE_VERSION = '[^']*'/const CACHE_VERSION = 'snowfluff-${GITHUB_SHA:0:8}'/" sw.js
-          echo "SW CACHE_VERSION -> snowfluff-${GITHUB_SHA:0:8}"
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          DEPLOY_VERSION="snowfluff-v${PKG_VERSION}-${GITHUB_SHA:0:8}"
+          sed -i "s/const CACHE_VERSION = '[^']*'/const CACHE_VERSION = '${DEPLOY_VERSION}'/" sw.js
+          echo "SW CACHE_VERSION -> ${DEPLOY_VERSION}"
+          if ! grep -q "const CACHE_VERSION = '${DEPLOY_VERSION}'" sw.js; then
+            echo "ERROR: CACHE_VERSION 注入失败，终止部署以避免陈旧缓存滞留"
+            exit 1
+          fi
           grep "CACHE_VERSION =" sw.js
 
       # 准备上传产物：排除开发/构建辅助文件

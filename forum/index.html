@@ -1360,7 +1360,7 @@
     <script defer src="../forum/js/forum-import-data.js"></script>
     <!-- Stage II: 15 个本地 JS 合并为 1 个 bundle（696KB→534KB ↓23.3%）+ SRI 完整性校验 -->
     <!-- forum-supabase.js 内含 waitForSDK 轮询，不依赖 CDN SDK 严格顺序；bundle 可安全先于 SDK 加载 -->
-    <script defer src="../dist/bundle-forum.js?v=11.7.6-place"
+    <script defer src="../dist/bundle-forum.js?v=11.7.6"
             integrity="sha384-xVfBoGHwxAehFYh/thssUVKil6YmQl+kCocE7LHBLJJTrUU0tmh6HwaSIHW1aigQ"
             crossorigin="anonymous"></script>
     <!-- 同步状态监测 / 主动同步按钮：独立加载，确保无论 bundle 是否执行都会挂载
